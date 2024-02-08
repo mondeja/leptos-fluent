@@ -29,6 +29,7 @@ jobs:
   test-release-crate:
     if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master'
     strategy:
+      fail-fast: false
       matrix:
         crate: [leptos-fluent-macros, leptos-fluent]
     name: Test ${{ matrix.crate }} release
@@ -45,6 +46,7 @@ jobs:
   release-crate:
     if: startsWith(github.ref, 'refs/tags/')
     strategy:
+      fail-fast: false
       matrix:
         crate: [leptos-fluent-macros, leptos-fluent]
     name: Release ${{ matrix.crate }}
