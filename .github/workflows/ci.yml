@@ -31,7 +31,7 @@ jobs:
     strategy:
       matrix:
         crate: [leptos-fluent, leptos-fluent-macros]
-    name: Test crate release of ${{ matrix.crate }}
+    name: Test ${{ matrix.crate }} release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -47,7 +47,7 @@ jobs:
     strategy:
       matrix:
         crate: [leptos-fluent, leptos-fluent-macros]
-    name: Release crate ${{ matrix.crate }}
+    name: Release ${{ matrix.crate }}
     needs:
       - lint
       - test-release-crate
