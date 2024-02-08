@@ -27,7 +27,7 @@ jobs:
         run: pre-commit run --all-files --show-diff-on-failure
 
   test-release-crate:
-    if: github.ref == 'refs/heads/master'
+    if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master'
     strategy:
       matrix:
         crate: [leptos-fluent, leptos-fluent-macros]
@@ -48,7 +48,9 @@ jobs:
       matrix:
         crate: [leptos-fluent, leptos-fluent-macros]
     name: Release crate ${{ matrix.crate }}
-    needs: lint
+    needs:
+      - lint
+      - test-release-crate
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
