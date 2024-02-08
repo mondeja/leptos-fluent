@@ -26,13 +26,9 @@ jobs:
       - name: Lint
         run: pre-commit run --all-files --show-diff-on-failure
 
-  test-release-crate:
+  test-release-leptos-fluent-macros:
     if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master'
-    strategy:
-      fail-fast: false
-      matrix:
-        crate: [leptos-fluent-macros, leptos-fluent]
-    name: Test ${{ matrix.crate }} release
+    name: Test leptos-fluent-macros release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -41,17 +37,13 @@ jobs:
       - name: Publish
         run: |
           cargo login ${{ secrets.CRATES_TOKEN }}
-          cargo publish -v --dry-run -p ${{ matrix.crate }}
+          cargo publish -v --dry-run -p leptos-fluent-macros
 
-  release-crate:
+  release-leptos-fluent-macros:
     if: startsWith(github.ref, 'refs/tags/')
-    strategy:
-      fail-fast: false
-      matrix:
-        crate: [leptos-fluent-macros, leptos-fluent]
-    name: Release ${{ matrix.crate }}
+    name: Release leptos-fluent-macros
     needs:
-      - test-release-crate
+      - test-release-leptos-fluent-macros
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -60,4 +52,19 @@ jobs:
       - name: Publish
         run: |
           cargo login ${{ secrets.CRATES_TOKEN }}
-          cargo publish -v -p ${{ matrix.crate }}
+          cargo publish -v -p leptos-fluent-macros
+
+  release-leptos-fluent:
+    if: startsWith(github.ref, 'refs/tags/')
+    name: Release leptos-fluent
+    needs:
+      - release-leptos-fluent-macros
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Rust
+        uses: hecrj/setup-rust-action@v2
+      - name: Publish
+        run: |
+          cargo login ${{ secrets.CRATES_TOKEN }}
+          cargo publish -v -p leptos-fluent
