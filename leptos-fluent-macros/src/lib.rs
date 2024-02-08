@@ -92,12 +92,12 @@ impl Parse for I18nLoader {
 ///
 /// #[component]
 /// pub fn App() -> impl IntoView {
-///     let i18n = leptos_fluent! {{
+///     let ctx = leptos_fluent! {{
 ///         locales: LOCALES,
 ///         languages_json: "./locales/languages.json",
 ///         sync_html_tag_lang: true,
 ///     }};
-///     i18n.provide_context(i18n.default_language());
+///     ctx.provide_context(ctx.default_language());
 ///
 ///     view! {
 ///         ...

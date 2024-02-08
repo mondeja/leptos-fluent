@@ -6,7 +6,8 @@ use fluent_templates::{
     StaticLoader,
 };
 use leptos::{
-    provide_context, RwSignal, SignalGet, SignalGetUntracked, SignalSet,
+    expect_context, provide_context, RwSignal, SignalGet, SignalGetUntracked,
+    SignalSet,
 };
 pub use leptos_fluent_macros::leptos_fluent;
 use once_cell::sync::Lazy;
@@ -157,4 +158,9 @@ impl I18n {
             Err(_) => None,
         }
     }
+}
+
+/// Get the current context for internationalization
+pub fn i18n() -> I18n {
+    expect_context::<I18n>()
 }
