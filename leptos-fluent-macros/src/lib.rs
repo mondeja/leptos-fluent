@@ -75,21 +75,21 @@ impl Parse for I18nLoader {
 }
 
 /// A macro to create the i18n context
-/// 
+///
 /// # Example
-/// 
+///
 /// ```rust,ignore
 /// use fluent_templates::static_loader;
 /// use leptos::*;
 /// use leptos_fluent::leptos_fluent;
-/// 
+///
 /// static_loader! {
 ///     pub static LOCALES = {
 ///         locales: "./locales",
 ///         fallback_language: "en-US",
 ///     };
 /// }
-/// 
+///
 /// #[component]
 /// pub fn App() -> impl IntoView {
 ///     let i18n = leptos_fluent! {{
@@ -98,18 +98,18 @@ impl Parse for I18nLoader {
 ///         sync_html_tag_lang: true,
 ///     }};
 ///     i18n.provide_context(i18n.default_language());
-/// 
+///
 ///     view! {
 ///         ...
 ///     }
 /// }
 /// ```
-/// 
+///
 /// The `LOCALES` returned by `static_loader!` is injected into the `leptos_fluent!`
 /// macro to provide the transations to the i18n context.
-/// 
+///
 /// ## Arguments
-/// 
+///
 /// - `locales`: The locales to be used by the application. This should be the same
 ///   identifier used in the `static_loader!` macro, which returns a
 ///   `once_cell:sync::Lazy<StaticLoader>` instance.

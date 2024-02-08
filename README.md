@@ -3,7 +3,6 @@
 [![Crates.io](https://img.shields.io/crates/v/leptos-fluent)](https://crates.io/crates/leptos-fluent)
 [![License](https://img.shields.io/crates/l/leptos-fluent?logo=mit)](https://github.com/mondeja/leptos-fluent/blob/master/LICENSE.md)
 
-
 Internationalization framework for [Leptos] using [fluent-templates].
 
 ## Installation
@@ -14,7 +13,7 @@ cargo add leptos leptos-fluent fluent-templates
 
 ## Quickstart
 
-```rust
+````rust
 use leptos::*;
 use leptos_fluent::{leptos_fluent, I18n, Language};
 use fluent_templates::static_loader;
@@ -62,7 +61,7 @@ fn OtherComponent() -> impl IntoView {
         <p>{move || i18n.tr("hello-world")}</p>
     }
 }
-```
+````
 
-[Leptos]: https://leptos.dev/
+[leptos]: https://leptos.dev/
 [fluent-templates]: https://github.com/XAMPPRocky/fluent-templates

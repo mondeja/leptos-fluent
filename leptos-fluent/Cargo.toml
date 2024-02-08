@@ -1,13 +1,16 @@
 [package]
 name = "leptos-fluent"
 description = "Fluent framework for internationalization of Leptos applications"
-version.workspace = true
-edition.workspace = true
+edition = "2021"
+version = "0.0.1"
+license = "MIT"
+documentation = "https://docs.rs/leptos-fluent"
+repository = "https://github.com/mondeja/leptos-fluent"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
-leptos-fluent-macros = { path = "../leptos-fluent-macros" }
-fluent-templates = "*"
-leptos = "*"
-unic-langid-impl = "*"
-once_cell = "*"
+leptos-fluent-macros = "0.0.1"
+fluent-templates = "0"
+leptos = "0"
+unic-langid-impl = "0"
+once_cell = "1"

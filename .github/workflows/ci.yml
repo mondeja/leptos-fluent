@@ -28,10 +28,10 @@ jobs:
 
   test-release-crate:
     if: github.ref == 'refs/heads/master'
-    matrix:
-      crate: [leptos-fluent, leptos-fluent-macros]
+    strategy:
+      matrix:
+        crate: [leptos-fluent, leptos-fluent-macros]
     name: Test crate release of ${{ matrix.crate }}
-    needs: test-rust
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -39,16 +39,16 @@ jobs:
         uses: hecrj/setup-rust-action@v2
       - name: Publish
         run: |
-          cd ${{ matrix.crate }}
           cargo login ${{ secrets.CRATES_TOKEN }}
-          cargo publish -v --dry-run
+          cargo publish -v --dry-run -p ${{ matrix.crate }}
 
   release-crate:
     if: startsWith(github.ref, 'refs/tags/')
-    matrix:
-      crate: [leptos-fluent, leptos-fluent-macros]
+    strategy:
+      matrix:
+        crate: [leptos-fluent, leptos-fluent-macros]
     name: Release crate ${{ matrix.crate }}
-    needs: test-rust
+    needs: lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -56,6 +56,5 @@ jobs:
         uses: hecrj/setup-rust-action@v2
       - name: Publish
         run: |
-          cd ${{ matrix.crate }}
           cargo login ${{ secrets.CRATES_TOKEN }}
-          cargo publish -v
+          cargo publish -v -p ${{ matrix.crate }}

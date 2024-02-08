@@ -17,12 +17,12 @@ use std::rc::Rc;
 #[derive(Clone, Debug)]
 pub struct Language {
     /// Language identifier
-    /// 
+    ///
     /// Can be any valid language tag, such as `en-US`, `en`, `es`, `es-ES`, etc.
     /// The languages will be negotiated.
     pub id: LanguageIdentifier,
     /// Language name
-    /// 
+    ///
     /// The name of the language, such as `English`, `Español`, etc.
     /// This name will be intended to be displayed in the language selector,
     /// but can also be used to translate it itself to other languages.
@@ -76,11 +76,11 @@ impl SignalSet for LanguageSignal {
 }
 
 /// Internationalization context
-/// 
+///
 /// This context is used to provide the current language, the available languages
 /// and all the translations. It is capable of doing what is needed to translate
 /// and manage translations in a whole application.
-/// 
+///
 /// If you need to separate the translations of different parts of the application,
 /// you can wrap this context in another struct and provide it to Leptos as a context.
 pub struct I18n {
@@ -106,7 +106,7 @@ impl I18n {
     }
 
     pub fn tr(&self, key: &str) -> String {
-        let lang_id = &self.language.0().id;
+        let lang_id = &self.language.get().id;
         self.locales.lookup(lang_id, key).unwrap_or_else(|| {
             panic!(
                 "Translation for key '{}' not found in locale '{}'",
@@ -120,7 +120,7 @@ impl I18n {
         key: &str,
         args: &HashMap<String, FluentValue<'_>>,
     ) -> String {
-        let lang_id = &self.language.0().id;
+        let lang_id = &self.language.get().id;
         self.locales
             .lookup_with_args(lang_id, key, args)
             .unwrap_or_else(|| {
