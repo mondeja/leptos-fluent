@@ -1,0 +1,2 @@
+* text=auto
+Cargo.lock -diff

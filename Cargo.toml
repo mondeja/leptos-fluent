@@ -1,0 +1,10 @@
+[workspace]
+members = [
+    "leptos-fluent",
+    "leptos-fluent-macros",
+]
+resolver = "2"
+
+[workspace.package]
+edition = "2021"
+version = "0.0.1"
