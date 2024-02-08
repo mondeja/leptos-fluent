@@ -1,5 +1,8 @@
 extern crate proc_macro;
 
+mod languages;
+
+use languages::read_languages_file;
 use proc_macro2::TokenStream;
 use quote::quote;
 use std::path::PathBuf;
@@ -11,8 +14,14 @@ use syn::{
 
 struct I18nLoader {
     locales_ident: syn::Ident,
-    languages_json_file: PathBuf,
+    languages_file: PathBuf,
     sync_html_tag_lang: bool,
+    initial_language_from_url: bool,
+    initial_language_from_url_param: syn::LitStr,
+    initial_language_from_url_to_localstorage: bool,
+    initial_language_from_localstorage: bool,
+    initial_language_from_navigator: bool,
+    localstorage_key: syn::LitStr,
 }
 
 impl Parse for I18nLoader {
@@ -25,8 +34,16 @@ impl Parse for I18nLoader {
         let fields;
         braced!(fields in input);
         let mut locales_identifier: Option<syn::Ident> = None;
-        let mut languages_json_path: Option<syn::LitStr> = None;
+        let mut languages_path: Option<syn::LitStr> = None;
         let mut sync_html_tag_lang_litbool: Option<syn::LitBool> = None;
+        let mut initial_language_from_url_litbool: Option<syn::LitBool> = None;
+        let mut initial_language_from_url_param: Option<syn::LitStr> = None;
+        let mut initial_language_from_url_to_localstorage_litbool: Option<
+            syn::LitBool,
+        > = None;
+        let mut initial_language_from_localstorage: Option<syn::LitBool> = None;
+        let mut initial_language_from_navigator: Option<syn::LitBool> = None;
+        let mut localstorage_key: Option<syn::LitStr> = None;
 
         while !fields.is_empty() {
             let k = fields.parse::<Ident>()?;
@@ -34,12 +51,28 @@ impl Parse for I18nLoader {
 
             if k == "locales" {
                 locales_identifier = Some(fields.parse()?);
-            } else if k == "languages_json" {
-                languages_json_path = Some(fields.parse()?);
+            } else if k == "languages" {
+                languages_path = Some(fields.parse()?);
             } else if k == "sync_html_tag_lang" {
                 sync_html_tag_lang_litbool = Some(fields.parse()?);
+            } else if k == "initial_language_from_url" {
+                initial_language_from_url_litbool = Some(fields.parse()?);
+            } else if k == "initial_language_from_url_param" {
+                initial_language_from_url_param = Some(fields.parse()?);
+            } else if k == "initial_language_from_url_to_localstorage" {
+                initial_language_from_url_to_localstorage_litbool =
+                    Some(fields.parse()?);
+            } else if k == "initial_language_from_localstorage" {
+                initial_language_from_localstorage = Some(fields.parse()?);
+            } else if k == "initial_language_from_navigator" {
+                initial_language_from_navigator = Some(fields.parse()?);
+            } else if k == "localstorage_key" {
+                localstorage_key = Some(fields.parse()?);
             } else {
-                return Err(syn::Error::new(k.span(), "Not a valid parameter"));
+                return Err(syn::Error::new(
+                    k.span(),
+                    "Not a valid parameter for leptos_fluent! macro.",
+                ));
             }
 
             if fields.is_empty() {
@@ -48,15 +81,25 @@ impl Parse for I18nLoader {
             fields.parse::<token::Comma>()?;
         }
 
-        // languages_json
-        let languages_json = languages_json_path.ok_or_else(|| {
-            syn::Error::new(input.span(), "Missing `languages_json` field")
+        // languages
+        let languages = languages_path.ok_or_else(|| {
+            syn::Error::new(input.span(), "Missing `languages` field")
         })?;
 
-        let languages_json_file = workspace_path.join(languages_json.value());
+        let languages_file = workspace_path.join(languages.value());
 
-        if std::fs::metadata(&languages_json_file).is_err() {
-            return Err(syn::Error::new(languages_json.span(), format!("Couldn't read languages.json file, this path should be relative to your crate's `Cargo.toml`. Looking for: {:?}", languages_json_file)));
+        if std::fs::metadata(&languages_file).is_err() {
+            return Err(syn::Error::new(
+                languages.span(),
+                format!(
+                    concat!(
+                        "Couldn't read languages file, this path should",
+                        " be relative to your crate's `Cargo.toml`.",
+                        " Looking for: {:?}",
+                    ),
+                    languages_file,
+                ),
+            ));
         }
 
         let locales_ident = locales_identifier.ok_or_else(|| {
@@ -65,11 +108,40 @@ impl Parse for I18nLoader {
 
         Ok(Self {
             locales_ident,
-            languages_json_file,
+            languages_file,
             sync_html_tag_lang: match sync_html_tag_lang_litbool {
                 Some(lit) => lit.value,
                 None => false,
             },
+            initial_language_from_url: match initial_language_from_url_litbool {
+                Some(lit) => lit.value,
+                None => false,
+            },
+            initial_language_from_url_param:
+                match initial_language_from_url_param {
+                    Some(lit) => lit,
+                    None => {
+                        syn::LitStr::new("lang", proc_macro2::Span::call_site())
+                    }
+                },
+            initial_language_from_url_to_localstorage:
+                match initial_language_from_url_to_localstorage_litbool {
+                    Some(lit) => lit.value,
+                    None => false,
+                },
+            initial_language_from_localstorage:
+                match initial_language_from_localstorage {
+                    Some(lit) => lit.value,
+                    None => false,
+                },
+            initial_language_from_navigator:
+                match initial_language_from_navigator {
+                    Some(lit) => lit.value,
+                    None => false,
+                },
+            localstorage_key: localstorage_key.unwrap_or_else(|| {
+                syn::LitStr::new("lang", proc_macro2::Span::call_site())
+            }),
         })
     }
 }
@@ -84,7 +156,7 @@ impl Parse for I18nLoader {
 /// use leptos_fluent::leptos_fluent;
 ///
 /// static_loader! {
-///     pub static LOCALES = {
+///     static LOCALES = {
 ///         locales: "./locales",
 ///         fallback_language: "en-US",
 ///     };
@@ -94,10 +166,16 @@ impl Parse for I18nLoader {
 /// pub fn App() -> impl IntoView {
 ///     let ctx = leptos_fluent! {{
 ///         locales: LOCALES,
-///         languages_json: "./locales/languages.json",
+///         languages: "./locales/languages.json",
 ///         sync_html_tag_lang: true,
+///         initial_language_from_url: true,
+///         initial_language_from_url_param: "lang",
+///         initial_language_from_url_to_localstorage: true,
+///         initial_language_from_localstorage: true,
+///         initial_language_from_navigator: true,
+///         localstorage_key: "lang",
 ///     }};
-///     ctx.provide_context(ctx.default_language());
+///     ctx.provide_context(None);
 ///
 ///     view! {
 ///         ...
@@ -110,34 +188,46 @@ impl Parse for I18nLoader {
 ///
 /// ## Arguments
 ///
-/// - `locales`: The locales to be used by the application. This should be the same
-///   identifier used in the `static_loader!` macro, which returns a
+/// - **`locales`\***: The locales to be used by the application. This should be the
+///   same identifier used in the `static_loader!` macro, which returns a
 ///   `once_cell:sync::Lazy<StaticLoader>` instance.
-/// - `languages_json`: The path to the `languages.json` file, which should be a JSON
+/// - **`languages`\***: The path to the languages file, which should be a JSON
 ///   array of arrays, where each inner array contains the language identifier and
 ///   the language name, respectively. The language identifier should be a valid
-///   language tag, such as `en-US`, `en`, `es`, `es-ES`, etc.
-/// - `sync_html_tag_lang`: A boolean to synchronize the `<html lang="...">` attribute
-///   with the current language using `leptos::create_effect`.
+///   language tag, such as `en-US`, `es-ES`, `en`, `es`, etc.
+/// - **`sync_html_tag_lang`**: Either to synchronize the `<html lang="...">` attribute
+///   with the current language using `leptos::create_effect`. By default, it is
+///   `false`.
+/// - **`initial_language_from_url`**: Either to load the initial language of the user
+///   from a URL parameter. By default, it is `false`.
+/// - **`initial_language_from_url_param`**: The parameter name to look for the initial
+///   language in the URL. By default, it is `"lang"`.
+/// - **`initial_language_from_url_to_localstorage`**: Either to save the initial language
+///   of the user from the URL to local storage. By default, it is `false`.
+/// - **`initial_language_from_localstorage`**: Either to load the initial language of the
+///   user from local storage if not found in the URL param. By default, it is `false`.
+/// - **`initial_language_from_navigator`**: Either to load the initial language of the user
+///   from `navigator.languages` if not found in local storage. By default, it is `false`.
+/// - **`localstorage_key`**: The local storage field to get and save the current language
+///   of the user. By default, it is `"lang"`.
 #[proc_macro]
 pub fn leptos_fluent(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
     let I18nLoader {
         locales_ident,
-        languages_json_file,
+        languages_file,
         sync_html_tag_lang,
+        initial_language_from_url,
+        initial_language_from_url_param,
+        initial_language_from_url_to_localstorage,
+        initial_language_from_localstorage,
+        initial_language_from_navigator,
+        localstorage_key,
     } = parse_macro_input!(input as I18nLoader);
 
-    let languages = serde_json::from_str::<Vec<Vec<String>>>(
-        std::fs::read_to_string(languages_json_file)
-            .expect("Couldn't read languages.json file")
-            .as_str(),
-    )
-    .expect("Invalid JSON")
-    .iter()
-    .map(|lang| (lang[0].clone(), lang[1].clone()))
-    .collect::<Vec<(String, String)>>();
+    let languages = read_languages_file(&languages_file);
+    let n_languages = languages.len();
 
     let languages_quote = format!(
         "[{}]",
@@ -159,7 +249,6 @@ pub fn leptos_fluent(
     )
     .parse::<TokenStream>()
     .unwrap();
-    let n_languages = languages.len();
 
     let sync_html_tag_lang_quote = if sync_html_tag_lang {
         quote! {
@@ -167,9 +256,11 @@ pub fn leptos_fluent(
             ::leptos::create_effect(move |_| ::leptos::document()
                 .document_element()
                 .unwrap()
-                .unchecked_into::<::web_sys::HtmlHtmlElement>()
-                .set_lang(
-                    &::leptos::expect_context::<::leptos_fluent::I18n>().language.get().id.to_string())
+                .unchecked_into::<::web_sys::HtmlElement>()
+                .set_attribute(
+                    "lang",
+                    &::leptos::expect_context::<::leptos_fluent::I18n>().language.get().id.to_string()
+                )
             );
         }
     } else {
@@ -189,6 +280,12 @@ pub fn leptos_fluent(
                 ),
                 languages: &LANGUAGES,
                 locales: &#locales_ident,
+                initial_language_from_url: #initial_language_from_url,
+                initial_language_from_url_param: #initial_language_from_url_param,
+                initial_language_from_url_to_localstorage: #initial_language_from_url_to_localstorage,
+                initial_language_from_localstorage: #initial_language_from_localstorage,
+                initial_language_from_navigator: #initial_language_from_navigator,
+                localstorage_key: #localstorage_key,
             };
             #sync_html_tag_lang_quote;
             i18n
