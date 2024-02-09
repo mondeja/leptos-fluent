@@ -466,10 +466,11 @@ pub fn leptos_fluent(
     };
 
     let provide_context_quote = match provide_context_bool {
-        Some(lit) => quote! {
-            if #lit {
+        Some(lit) => match lit.value {
+            true => quote! {
                 i18n.provide_context(None);
-            }
+            },
+            false => quote! {},
         },
         None => match provide_context_expr {
             Some(expr) => quote! {
