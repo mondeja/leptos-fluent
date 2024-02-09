@@ -2,7 +2,7 @@
 
 [![Crates.io](https://img.shields.io/crates/v/leptos-fluent)](https://crates.io/crates/leptos-fluent)
 [![License](https://img.shields.io/crates/l/leptos-fluent?logo=mit)](https://github.com/mondeja/leptos-fluent/blob/master/LICENSE.md)
-[![docs.rs](https://img.shields.io/docsrs/leptos-fluent?logo=docs.rs)](https://docs.rs/leptos-fluent)
+[![docs.rs](https://img.shields.io/docsrs/leptos-fluent?logo=docs.rs)][documentation]
 
 Internationalization framework for [Leptos] using [fluent-templates].
 
@@ -94,5 +94,14 @@ fn OtherComponent() -> impl IntoView {
 }
 ````
 
+## Resources
+
+- [Quickstart]
+- [Examples]
+- [Documentation]
+
 [leptos]: https://leptos.dev/
 [fluent-templates]: https://github.com/XAMPPRocky/fluent-templates
+[quickstart]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.leptos_fluent.html
+[examples]: https://github.com/mondeja/leptos-fluent/tree/master/examples
+[documentation]: https://docs.rs/leptos-fluent
