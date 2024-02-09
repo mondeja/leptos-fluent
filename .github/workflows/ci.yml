@@ -61,7 +61,6 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/')
     name: Release leptos-fluent-macros
     needs:
-      - build-examples
       - test-release-leptos-fluent-macros
     runs-on: ubuntu-latest
     steps:
