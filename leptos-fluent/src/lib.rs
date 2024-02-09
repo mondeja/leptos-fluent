@@ -13,6 +13,7 @@
 //!
 //! - [**Quickstart**](macro.leptos_fluent.html)
 //! - [**Usage**](https://github.com/mondeja/leptos-fluent#usage)
+//! - [**Examples**](https://github.com/mondeja/leptos-fluent/tree/master/examples)
 
 mod localstorage;
 mod url;
