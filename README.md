@@ -96,9 +96,9 @@ fn OtherComponent() -> impl IntoView {
 
 ## Resources
 
--   [Quickstart]
--   [Examples]
--   [Documentation]
+- [Quickstart]
+- [Examples]
+- [Documentation]
 
 [leptos]: https://leptos.dev/
 [fluent-templates]: https://github.com/XAMPPRocky/fluent-templates

@@ -1,12 +1,12 @@
 repos:
-    - repo: https://github.com/pre-commit/mirrors-prettier
-      rev: v3.0.0-alpha.4
-      hooks:
-          - id: prettier
-    - repo: https://github.com/doublify/pre-commit-rust
-      rev: v1.0
-      hooks:
-          - id: fmt
-          - id: cargo-check
-          - id: clippy
-            args: [--, -A, clippy::comparison-chain, -Dwarnings]
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v3.0.0-alpha.4
+    hooks:
+      - id: prettier
+  - repo: https://github.com/doublify/pre-commit-rust
+    rev: v1.0
+    hooks:
+      - id: fmt
+      - id: cargo-check
+      - id: clippy
+        args: [--, -A, clippy::comparison-chain, -Dwarnings]

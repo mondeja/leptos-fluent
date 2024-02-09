@@ -6,12 +6,12 @@
 
 Added some parameters to `leptos_fluent!` macro:
 
--   `initial_language_from_url`
--   `initial_language_from_url_param`
--   `initial_language_from_url_to_localstorage`
--   `initial_language_from_localstorage`
--   `initial_language_from_navigator`
--   `localstorage_key`
+- `initial_language_from_url`
+- `initial_language_from_url_param`
+- `initial_language_from_url_to_localstorage`
+- `initial_language_from_localstorage`
+- `initial_language_from_navigator`
+- `localstorage_key`
 
 ### Breaking changes
 
@@ -19,7 +19,7 @@ Now `provide_context` accepts a `Option<&'static Language>` instead of `&'static
 
 ## 2024-02-08 - v0.0.2
 
--   Added `i18n()` function.
+- Added `i18n()` function.
 
 ## 2024-02-08 - v0.0.1
 

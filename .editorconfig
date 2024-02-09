@@ -5,7 +5,6 @@ end_of_line = lf
 charset = utf-8
 indent_style = space
 trim_trailing_whitespace = true
-indent_size = 4
 
 # We do Markdown processing in tests
 [*.md]
@@ -13,6 +12,9 @@ trim_trailing_whitespace = false
 
 [*.toml]
 indent_size = 2
+
+[*.rs]
+indent_size = 4
 
 [*.css]
 indent_size = 2
