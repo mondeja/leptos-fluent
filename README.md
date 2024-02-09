@@ -52,7 +52,7 @@ pub fn App() -> impl IntoView {
         // Set the discovered initial language of the user from the URL in
         // the local storage. By default, it is `false`.
         initial_language_from_url_to_localstorage: true,
-        // Get the initial language from the local storage if not found in an URL pram.
+        // Get the initial language from the local storage if not found in an URL param.
         // By default, it is `false`.
         initial_language_from_localstorage: true,
         // Get the initial language from `navigator.languages` if not found in the local
@@ -61,9 +61,9 @@ pub fn App() -> impl IntoView {
         // Name of the field in the local storage to get and set the current language
         // of the user. By default, it is `"lang"`.
         localstorage_key: "language",
-        // Provide context to Leptos discovering the initial language
-        // from the options above. By default, it is `false` and you need
-        // to call `ctx.provide_context(None)` manually to set the
+        // Provide context to Leptos discovering the initial language from
+        // the options above. By default, it is `false` and you need to call
+        // `ctx.provide_context(None)` manually to set the initial language.
         provide_context: true,
     }};
 
