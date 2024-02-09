@@ -22,8 +22,8 @@ fn App() -> impl IntoView {
         initial_language_from_localstorage: true,
         initial_language_from_navigator: true,
         localstorage_key: "language",
-    }}
-    .provide_context(None);
+        provide_context: true,
+    }};
 
     view! { <OtherComponent/> }
 }
