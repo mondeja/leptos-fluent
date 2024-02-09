@@ -1,6 +1,7 @@
 use fluent_templates::static_loader;
 use leptos::*;
 use leptos_fluent::{i18n, leptos_fluent, Language};
+use std::collections::HashMap;
 
 static_loader! {
     static LOCALES = {
@@ -14,6 +15,13 @@ fn App() -> impl IntoView {
     leptos_fluent! {{
         locales: LOCALES,
         languages: "./locales/languages.json",
+        sync_html_tag_lang: true,
+        initial_language_from_url: true,
+        initial_language_from_url_param: "lang",
+        initial_language_from_url_to_localstorage: true,
+        initial_language_from_localstorage: true,
+        initial_language_from_navigator: true,
+        localstorage_key: "language",
     }}
     .provide_context(None);
 
@@ -44,6 +52,21 @@ fn OtherComponent() -> impl IntoView {
             />
 
         </select>
+        <p>
+            {move || {
+                let i18n = i18n();
+                i18n.trs(
+                    "html-tag-lang-is-now",
+                    &{
+                        let mut map = HashMap::new();
+                        map.insert("lang".to_string(), i18n.language.get().id.to_string().into());
+                        map
+                    },
+                )
+            }}
+
+        </p>
+        <p>{move || i18n().tr("add-es-en-url-param")}</p>
     }
 }
 

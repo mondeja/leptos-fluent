@@ -2,6 +2,7 @@
 members = [
     "leptos-fluent",
     "leptos-fluent-macros",
+    "examples/complete",
     "examples/minimal",
 ]
 resolver = "2"
