@@ -83,12 +83,12 @@ fn OtherComponent() -> impl IntoView {
     view! {
         <p>
             <span>{move || i18n().tr("foo")}</span>
-            <span>{move || i18n().trs("bar-with-args"), &{
+            <span>{move || i18n().trs("bar-with-args", &{
                 let mut map = HashMap::new();
                 map.insert("arg1".to_string(), "value1".into());
                 map.insert("arg2".to_string(), "value2".into());
                 map
-            }}</span>
+            })}</span>
         </p>
     }
 }
