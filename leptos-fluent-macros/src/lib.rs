@@ -64,14 +64,14 @@ impl Parse for I18nLoader {
             } else if k == "initial_language_from_url_param" {
                 match fields.parse::<syn::LitStr>() {
                     Ok(lit) => initial_language_from_url_param_str = Some(lit),
-                    Err(_) => {
-                        match fields.parse::<syn::Expr>() {
-                            Ok(expr) => initial_language_from_url_param_expr =
-                                Some(expr),
-                            Err(_) => {
-                                return Err(syn::Error::new(
+                    Err(_) => match fields.parse::<syn::Expr>() {
+                        Ok(expr) => {
+                            initial_language_from_url_param_expr = Some(expr)
+                        }
+                        Err(_) => {
+                            return Err(syn::Error::new(
                                     fields.span(),
-                                    &format!(
+                                    format!(
                                         concat!(
                                             "Not a valid value for",
                                             " 'initial_language_from_url_param'",
@@ -81,9 +81,8 @@ impl Parse for I18nLoader {
                                         fields,
                                     )
                                 ));
-                            }
                         }
-                    }
+                    },
                 }
             } else if k == "initial_language_from_url_to_localstorage" {
                 initial_language_from_url_to_localstorage_litbool =
@@ -95,14 +94,12 @@ impl Parse for I18nLoader {
             } else if k == "localstorage_key" {
                 match fields.parse::<syn::LitStr>() {
                     Ok(lit) => localstorage_key_str = Some(lit),
-                    Err(_) => {
-                        match fields.parse::<syn::Expr>() {
-                            Ok(expr) => localstorage_key_expr =
-                                Some(expr),
-                            Err(_) => {
-                                return Err(syn::Error::new(
+                    Err(_) => match fields.parse::<syn::Expr>() {
+                        Ok(expr) => localstorage_key_expr = Some(expr),
+                        Err(_) => {
+                            return Err(syn::Error::new(
                                     fields.span(),
-                                    &format!(
+                                    format!(
                                         concat!(
                                             "Not a valid value for",
                                             " 'localstorage_key' of leptos_fluent! macro.",
@@ -112,9 +109,8 @@ impl Parse for I18nLoader {
                                         fields,
                                     )
                                 ));
-                            }
                         }
-                    }
+                    },
                 }
             } else {
                 return Err(syn::Error::new(
@@ -169,9 +165,12 @@ impl Parse for I18nLoader {
                 match initial_language_from_url_param_str {
                     Some(lit) => Some(lit),
                     None => match initial_language_from_url_param_expr {
-                        None => Some(syn::LitStr::new("lang", proc_macro2::Span::call_site())),
+                        None => Some(syn::LitStr::new(
+                            "lang",
+                            proc_macro2::Span::call_site(),
+                        )),
                         Some(_) => None,
-                    }
+                    },
                 },
             initial_language_from_url_param_expr,
             initial_language_from_url_to_localstorage:
@@ -192,9 +191,12 @@ impl Parse for I18nLoader {
             localstorage_key_str: match localstorage_key_str {
                 Some(lit) => Some(lit),
                 None => match localstorage_key_expr {
-                    None => Some(syn::LitStr::new("lang", proc_macro2::Span::call_site())),
+                    None => Some(syn::LitStr::new(
+                        "lang",
+                        proc_macro2::Span::call_site(),
+                    )),
                     Some(_) => None,
-                }
+                },
             },
             localstorage_key_expr,
         })
@@ -337,13 +339,14 @@ pub fn leptos_fluent(
         quote! {}
     };
 
-    let initial_language_from_url_param = match initial_language_from_url_param_str {
-        Some(lit) => quote! { #lit },
-        None => match initial_language_from_url_param_expr {
-            Some(expr) => quote! { #expr },
-            None => quote! {},
-        },
-    };
+    let initial_language_from_url_param =
+        match initial_language_from_url_param_str {
+            Some(lit) => quote! { #lit },
+            None => match initial_language_from_url_param_expr {
+                Some(expr) => quote! { #expr },
+                None => quote! {},
+            },
+        };
 
     let localstorage_key = match localstorage_key_str {
         Some(lit) => quote! { #lit },
