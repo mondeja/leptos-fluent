@@ -381,7 +381,7 @@ pub fn leptos_fluent(
             ::leptos::create_effect(move |_| ::leptos::document()
                 .document_element()
                 .unwrap()
-                .unchecked_into::<::web_sys::HtmlElement>()
+                .unchecked_into::<::leptos::web_sys::HtmlElement>()
                 .set_attribute(
                     "lang",
                     &::leptos::expect_context::<::leptos_fluent::I18n>().language.get().id.to_string()

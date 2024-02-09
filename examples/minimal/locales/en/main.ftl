@@ -1,1 +1,1 @@
-select-a-language = Select a language
+select-a-language = Select a language:
