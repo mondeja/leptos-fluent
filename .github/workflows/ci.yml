@@ -33,6 +33,7 @@ jobs:
       matrix:
         example:
           - minimal
+          - complete
     steps:
       - uses: actions/checkout@v4
       - name: Setup Rust
