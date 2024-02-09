@@ -183,9 +183,6 @@ impl Parse for I18nLoader {
 /// }
 /// ```
 ///
-/// The `LOCALES` returned by `static_loader!` is injected into the [`leptos_fluent!`]
-/// macro to provide the transations to the i18n context.
-///
 /// ## Arguments
 ///
 /// - **`locales` \***: The locales to be used by the application. This should be the
