@@ -9,10 +9,10 @@
 //! [Leptos]: https://leptos.dev/
 //! [fluent-templates]: https://github.com/XAMPPRocky/fluent-templates
 //!
-//! ## Examples
+//! ## Resources
 //!
 //! - [**Quickstart**](macro.leptos_fluent.html)
-//! - [**Complete example**](https://github.com/mondeja/leptos-fluent#quickstart)
+//! - [**Usage**](https://github.com/mondeja/leptos-fluent#usage)
 
 mod localstorage;
 mod url;
