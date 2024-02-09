@@ -9,7 +9,7 @@ repository = "https://github.com/mondeja/leptos-fluent"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
-leptos-fluent-macros = "0.0.4"
+leptos-fluent-macros = "0.0.5"
 fluent-templates = "0"
 leptos = ">=0.1"
 leptos_router = ">=0.1"
