@@ -30,6 +30,7 @@ static_loader! {
 #[component]
 pub fn App() -> impl IntoView {
     let ctx = leptos_fluent! {{
+        // Translations locales provided by fluent-templates.
         locales: LOCALES,
         // Path to the JSON file with the list of languages in the form:
         // ```json
@@ -60,11 +61,14 @@ pub fn App() -> impl IntoView {
         // Name of the field in the local storage to get and set the current language
         // of the user. By default, it is `"lang"`.
         localstorage_key: "language",
+        // Provide context to Leptos discovering the initial language
+        // from the options above. By default, it is `false` and you need
+        // to call `ctx.provide_context(None)` manually to set the
+        provide_context: true,
     }};
-    ctx.provide_context(None);
 
-    // You can pass a `Some(&'static Language)` to `provide_context`
-    // to set the initial language manually.
+    // You can pass a `Some(&'static Language)` to the `provide_context`
+    // function of the context to set the initial language manually.
     let initial_language = move |ctx: &I18n| {
         // Get the initial language of the user from a server, for example.
         // ...

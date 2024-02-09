@@ -90,6 +90,8 @@ struct I18nLoader {
     initial_language_from_navigator_expr: Option<syn::Expr>,
     localstorage_key_str: Option<syn::LitStr>,
     localstorage_key_expr: Option<syn::Expr>,
+    provide_context_bool: Option<syn::LitBool>,
+    provide_context_expr: Option<syn::Expr>,
 }
 
 impl Parse for I18nLoader {
@@ -122,6 +124,8 @@ impl Parse for I18nLoader {
         let mut initial_language_from_navigator_expr: Option<syn::Expr> = None;
         let mut localstorage_key_str: Option<syn::LitStr> = None;
         let mut localstorage_key_expr: Option<syn::Expr> = None;
+        let mut provide_context_bool: Option<syn::LitBool> = None;
+        let mut provide_context_expr: Option<syn::Expr> = None;
 
         while !fields.is_empty() {
             let k = fields.parse::<Ident>()?;
@@ -187,6 +191,15 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
+            } else if k == "provide_context" {
+                if let Some(err) = parse_litbool_or_expr_param(
+                    &fields,
+                    &mut provide_context_bool,
+                    &mut provide_context_expr,
+                    "provide_context",
+                ) {
+                    return Err(err);
+                }
             } else {
                 return Err(syn::Error::new(
                     k.span(),
@@ -244,6 +257,8 @@ impl Parse for I18nLoader {
             initial_language_from_navigator_expr,
             localstorage_key_str,
             localstorage_key_expr,
+            provide_context_bool,
+            provide_context_expr,
         })
     }
 }
@@ -266,7 +281,7 @@ impl Parse for I18nLoader {
 ///
 /// #[component]
 /// pub fn App() -> impl IntoView {
-///     let ctx = leptos_fluent! {{
+///     leptos_fluent! {{
 ///         locales: LOCALES,
 ///         languages: "./locales/languages.json",
 ///         sync_html_tag_lang: true,
@@ -276,8 +291,8 @@ impl Parse for I18nLoader {
 ///         initial_language_from_localstorage: true,
 ///         initial_language_from_navigator: true,
 ///         localstorage_key: "language",
+///         provide_context: true,
 ///     }};
-///     ctx.provide_context(None);
 ///
 ///     view! {
 ///         ...
@@ -321,6 +336,10 @@ impl Parse for I18nLoader {
 ///   if not found in [local storage].
 /// - **`localstorage_key`** (_`"lang"`_): The [local storage] field to get and save the current language
 ///   of the user. Can be a literal string or an expression that will be evaluated at runtime.
+/// - **`provide_context`** (_`false`_): Either to provide the i18n context to Leptos. Can be a literal
+///   boolean or an expression that will be evaluated at runtime. If `true`, the i18n context will be
+///   provided to Leptos, otherwise it won't and you will have to provide it manually calling
+///   [`I18n::provide_context`].
 ///
 /// [`fluent_templates::static_loader!`]: https://docs.rs/fluent-templates/0.8.0/fluent_templates/macro.static_loader.html
 /// [`once_cell:sync::Lazy`]: https://docs.rs/once_cell/latest/once_cell/sync/struct.Lazy.html
@@ -349,6 +368,8 @@ pub fn leptos_fluent(
         initial_language_from_navigator_expr,
         localstorage_key_str,
         localstorage_key_expr,
+        provide_context_bool,
+        provide_context_expr,
     } = parse_macro_input!(input as I18nLoader);
 
     let languages = read_languages_file(&languages_file);
@@ -444,6 +465,23 @@ pub fn leptos_fluent(
         },
     };
 
+    let provide_context_quote = match provide_context_bool {
+        Some(lit) => match lit.value {
+            true => quote! {
+                i18n.provide_context(None);
+            },
+            false => quote! {},
+        },
+        None => match provide_context_expr {
+            Some(expr) => quote! {
+                if #expr {
+                    i18n.provide_context(None);
+                }
+            },
+            None => quote! {},
+        },
+    };
+
     let quote = quote! {
         {
             const LANGUAGES: [
@@ -460,6 +498,7 @@ pub fn leptos_fluent(
                 initial_language_from_navigator: #initial_language_from_navigator,
                 localstorage_key: #localstorage_key,
             };
+            #provide_context_quote;
             #sync_html_tag_lang_quote;
             i18n
         }
