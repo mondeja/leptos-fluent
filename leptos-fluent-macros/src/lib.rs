@@ -285,11 +285,7 @@ pub fn leptos_fluent(
                 &::leptos_fluent::Language; #n_languages
             ] = #languages_quote;
             let i18n = ::leptos_fluent::I18n {
-                language: ::std::rc::Rc::new(
-                    ::leptos_fluent::LanguageSignal(
-                        ::leptos::create_rw_signal(LANGUAGES[0])
-                    )
-                ),
+                language: ::std::rc::Rc::new(::leptos::create_rw_signal(LANGUAGES[0])),
                 languages: &LANGUAGES,
                 locales: &#locales_ident,
                 initial_language_from_url: #initial_language_from_url,

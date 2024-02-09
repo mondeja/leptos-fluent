@@ -24,8 +24,7 @@ use fluent_templates::{
     StaticLoader,
 };
 use leptos::{
-    expect_context, provide_context, window, RwSignal, SignalGet,
-    SignalGetUntracked, SignalSet,
+    expect_context, provide_context, window, RwSignal, SignalGet, SignalSet,
 };
 pub use leptos_fluent_macros::leptos_fluent;
 use once_cell::sync::Lazy;
@@ -53,52 +52,6 @@ impl PartialEq for Language {
     }
 }
 
-/// Signal for the current language
-#[derive(Copy, Clone)]
-pub struct LanguageSignal(pub RwSignal<&'static Language>);
-
-impl SignalGet for LanguageSignal {
-    type Value = &'static Language;
-
-    #[inline(always)]
-    fn get(&self) -> Self::Value {
-        self.0.get()
-    }
-
-    #[inline(always)]
-    fn try_get(&self) -> Option<Self::Value> {
-        self.0.try_get()
-    }
-}
-
-impl SignalGetUntracked for LanguageSignal {
-    type Value = &'static Language;
-
-    #[inline(always)]
-    fn get_untracked(&self) -> Self::Value {
-        self.0.get_untracked()
-    }
-
-    #[inline(always)]
-    fn try_get_untracked(&self) -> Option<Self::Value> {
-        self.0.try_get_untracked()
-    }
-}
-
-impl SignalSet for LanguageSignal {
-    type Value = &'static Language;
-
-    #[inline(always)]
-    fn set(&self, value: Self::Value) {
-        self.0.set(value);
-    }
-
-    #[inline(always)]
-    fn try_set(&self, value: Self::Value) -> Option<Self::Value> {
-        self.0.try_set(value)
-    }
-}
-
 /// Internationalization context.
 ///
 /// This context is used to provide the current language, the available languages
@@ -109,7 +62,7 @@ impl SignalSet for LanguageSignal {
 /// you can wrap this context in another struct and provide it to Leptos as a context.
 pub struct I18n {
     /// Signal that holds the current language
-    pub language: Rc<LanguageSignal>,
+    pub language: Rc<RwSignal<&'static Language>>,
     /// Available languages for the application
     pub languages: &'static [&'static Language],
     pub locales: &'static Lazy<StaticLoader>,
