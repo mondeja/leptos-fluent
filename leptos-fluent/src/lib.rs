@@ -1,3 +1,19 @@
+//! Internationalization framework for [Leptos] using [fluent-templates].
+//!
+//! ## Installation
+//!
+//! ```sh
+//! cargo add leptos leptos-fluent fluent-templates unic-langid
+//! ```
+//!
+//! [Leptos]: https://leptos.dev/
+//! [fluent-templates]: https://github.com/XAMPPRocky/fluent-templates
+//!
+//! ## Examples
+//!
+//! - [**Quickstart**](macro.leptos_fluent.html)
+//! - [**Complete example**](https://github.com/mondeja/leptos-fluent#quickstart)
+
 mod localstorage;
 mod url;
 
@@ -43,10 +59,12 @@ pub struct LanguageSignal(pub RwSignal<&'static Language>);
 impl SignalGet for LanguageSignal {
     type Value = &'static Language;
 
+    #[inline(always)]
     fn get(&self) -> Self::Value {
         self.0.get()
     }
 
+    #[inline(always)]
     fn try_get(&self) -> Option<Self::Value> {
         self.0.try_get()
     }
@@ -55,10 +73,12 @@ impl SignalGet for LanguageSignal {
 impl SignalGetUntracked for LanguageSignal {
     type Value = &'static Language;
 
+    #[inline(always)]
     fn get_untracked(&self) -> Self::Value {
         self.0.get_untracked()
     }
 
+    #[inline(always)]
     fn try_get_untracked(&self) -> Option<Self::Value> {
         self.0.try_get_untracked()
     }
@@ -67,16 +87,18 @@ impl SignalGetUntracked for LanguageSignal {
 impl SignalSet for LanguageSignal {
     type Value = &'static Language;
 
+    #[inline(always)]
     fn set(&self, value: Self::Value) {
         self.0.set(value);
     }
 
+    #[inline(always)]
     fn try_set(&self, value: Self::Value) -> Option<Self::Value> {
         self.0.try_set(value)
     }
 }
 
-/// Internationalization context
+/// Internationalization context.
 ///
 /// This context is used to provide the current language, the available languages
 /// and all the translations. It is capable of doing what is needed to translate
@@ -119,7 +141,11 @@ impl Clone for I18n {
 }
 
 impl I18n {
-    /// Provides to Leptos the internationalization context
+    /// Provides to Leptos the internationalization context.
+    ///
+    /// It also discovers the initial language if the options provided to
+    /// [`leptos_fluent!`] macro are enabled and `None` is passed as the
+    /// initial language.
     pub fn provide_context(&self, initial_language: Option<&'static Language>) {
         if let Some(lang) = initial_language {
             self.language.set(lang);
@@ -168,7 +194,13 @@ impl I18n {
         provide_context::<I18n>(self.clone());
     }
 
-    /// Translate a text identifier to the current language
+    /// Translate a text identifier to the current language.
+    ///
+    /// ```rust,ignore
+    /// use leptos_fluent::i18n;
+    ///
+    /// i18n().tr("hello-world")
+    /// ```
     pub fn tr(&self, text_id: &str) -> String {
         let lang_id = &self.language.get().id;
         self.locales.lookup(lang_id, text_id).unwrap_or_else(|| {
@@ -179,7 +211,19 @@ impl I18n {
         })
     }
 
-    /// Translate a text identifier to the current language with arguments
+    /// Translate a text identifier to the current language with arguments.
+    ///
+    /// ```rust,ignore
+    /// use leptos_fluent::i18n;
+    /// use std::collections::HashMap;
+    ///
+    /// i18n().trs("will-be-removed-at", &{
+    ///    let mut map = HashMap::new();
+    ///    map.insert("icon".to_string(), title().into());
+    ///    map.insert("version".to_string(), removal_at_version.into());
+    ///    map
+    /// })
+    /// ```
     pub fn trs(
         &self,
         text_id: &str,
@@ -196,14 +240,14 @@ impl I18n {
             })
     }
 
-    /// Get the default language
+    /// Get the default language.
     ///
     /// The default language is the first language in the list of available languages.
     pub fn default_language(&self) -> &'static Language {
         self.languages[0]
     }
 
-    /// Get the language from a language identifier
+    /// Get the language from a language identifier.
     ///
     /// This function will try to match the language identifier with the available
     /// languages. If it doesn't find an exact match, it will try to match the
@@ -232,14 +276,14 @@ impl I18n {
         }
     }
 
-    /// Set the current language in the signal of the context and in local storage
+    /// Set the current language in the signal of the context and in local storage.
     pub fn set_language_with_localstorage(&self, lang: &'static Language) {
         self.language.set(lang);
         localstorage::set(self.localstorage_key, &lang.id.to_string());
     }
 }
 
-/// Get the current context for internationalization
+/// Get the current context for internationalization.
 pub fn i18n() -> I18n {
     expect_context::<I18n>()
 }

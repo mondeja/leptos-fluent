@@ -146,7 +146,7 @@ impl Parse for I18nLoader {
     }
 }
 
-/// A macro to create the i18n context
+/// A macro to create the i18n context for internationalization.
 ///
 /// # Example
 ///
@@ -173,7 +173,7 @@ impl Parse for I18nLoader {
 ///         initial_language_from_url_to_localstorage: true,
 ///         initial_language_from_localstorage: true,
 ///         initial_language_from_navigator: true,
-///         localstorage_key: "lang",
+///         localstorage_key: "language",
 ///     }};
 ///     ctx.provide_context(None);
 ///
@@ -183,33 +183,48 @@ impl Parse for I18nLoader {
 /// }
 /// ```
 ///
-/// The `LOCALES` returned by `static_loader!` is injected into the `leptos_fluent!`
+/// The `LOCALES` returned by `static_loader!` is injected into the [`leptos_fluent!`]
 /// macro to provide the transations to the i18n context.
 ///
 /// ## Arguments
 ///
-/// - **`locales`\***: The locales to be used by the application. This should be the
-///   same identifier used in the `static_loader!` macro, which returns a
-///   `once_cell:sync::Lazy<StaticLoader>` instance.
-/// - **`languages`\***: The path to the languages file, which should be a JSON
+/// - **`locales` \***: The locales to be used by the application. This should be the
+///   same identifier used in the [`fluent_templates::static_loader!`] macro, which
+///   returns [`once_cell:sync::Lazy`]`<`[`StaticLoader`]`>`.
+/// - **`languages` \***: The path to the languages file, which should be a JSON
 ///   array of arrays, where each inner array contains the language identifier and
 ///   the language name, respectively. The language identifier should be a valid
 ///   language tag, such as `en-US`, `es-ES`, `en`, `es`, etc.
-/// - **`sync_html_tag_lang`**: Either to synchronize the `<html lang="...">` attribute
-///   with the current language using `leptos::create_effect`. By default, it is
-///   `false`.
-/// - **`initial_language_from_url`**: Either to load the initial language of the user
-///   from a URL parameter. By default, it is `false`.
-/// - **`initial_language_from_url_param`**: The parameter name to look for the initial
-///   language in the URL. By default, it is `"lang"`.
-/// - **`initial_language_from_url_to_localstorage`**: Either to save the initial language
-///   of the user from the URL to local storage. By default, it is `false`.
-/// - **`initial_language_from_localstorage`**: Either to load the initial language of the
-///   user from local storage if not found in the URL param. By default, it is `false`.
-/// - **`initial_language_from_navigator`**: Either to load the initial language of the user
-///   from `navigator.languages` if not found in local storage. By default, it is `false`.
-/// - **`localstorage_key`**: The local storage field to get and save the current language
-///   of the user. By default, it is `"lang"`.
+///   ```json
+///   [
+///     ["en-US", "English (United States)"],
+///     ["es-ES", "Español (España)"]
+///   ]
+///   ```
+/// - **`sync_html_tag_lang`** (_`false`_): Either to synchronize the
+///   [`<html lang="...">` attribute] with the current language using [`leptos::create_effect`].
+/// - **`initial_language_from_url`** (_`false`_): Either to load the initial language of the user
+///   from a URL parameter.
+/// - **`initial_language_from_url_param`** (_`"lang"`_): The parameter name to look for the initial
+///   language in the URL.
+/// - **`initial_language_from_url_to_localstorage`** (_`false`_): Either to save the initial language
+///   of the user from the URL to [local storage].
+/// - **`initial_language_from_localstorage`** (_`false`_): Either to load the initial language of the
+///   user from [local storage] if not found in the URL param.
+/// - **`initial_language_from_navigator`** (_`false`_): Either to load the initial language of the user
+///   from
+///   [`navigator.languages`]
+///   if not found in [local storage].
+/// - **`localstorage_key`** (_`"lang"`_): The [local storage] field to get and save the current language
+///   of the user.
+///
+/// [`fluent_templates::static_loader!`]: https://docs.rs/fluent-templates/0.8.0/fluent_templates/macro.static_loader.html
+/// [`once_cell:sync::Lazy`]: https://docs.rs/once_cell/latest/once_cell/sync/struct.Lazy.html
+/// [`StaticLoader`]: https://docs.rs/fluent-templates/0.8.0/fluent_templates/struct.StaticLoader.html
+/// [`<html lang="...">` attribute]: https://developer.mozilla.org/es/docs/Web/HTML/Global_attributes/lang
+/// [local storage]: https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
+/// [`navigator.languages`]: https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages
+/// [`leptos::create_effect`]: https://docs.rs/leptos/latest/leptos/fn.create_effect.html
 #[proc_macro]
 pub fn leptos_fluent(
     input: proc_macro::TokenStream,

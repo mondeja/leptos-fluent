@@ -2,6 +2,7 @@
 
 [![Crates.io](https://img.shields.io/crates/v/leptos-fluent)](https://crates.io/crates/leptos-fluent)
 [![License](https://img.shields.io/crates/l/leptos-fluent?logo=mit)](https://github.com/mondeja/leptos-fluent/blob/master/LICENSE.md)
+[![docs.rs](https://img.shields.io/docsrs/leptos-fluent?logo=docs.rs)](https://docs.rs/leptos-fluent)
 
 Internationalization framework for [Leptos] using [fluent-templates].
 
@@ -14,9 +15,10 @@ cargo add leptos leptos-fluent fluent-templates unic-langid
 ## Quickstart
 
 ````rust,ignore
-use leptos::*;
-use leptos_fluent::{leptos_fluent, I18n, i18n, Language};
 use fluent_templates::static_loader;
+use leptos::*;
+use leptos_fluent::{i18n, leptos_fluent, I18n, Language};
+use std::collections::HashMap;
 
 static_loader! {
     static LOCALES = {
@@ -81,7 +83,15 @@ pub fn App() -> impl IntoView {
 #[component]
 fn OtherComponent() -> impl IntoView {
     view! {
-        <p>{move || i18n().tr("hello-world")}</p>
+        <p>
+            <span>{move || i18n().tr("foo")}</span>
+            <span>{move || i18n().trs("bar-with-args"), &{
+                let mut map = HashMap::new();
+                map.insert("arg1".to_string(), "value1".into());
+                map.insert("arg2".to_string(), "value2".into());
+                map
+            }}</span>
+        </p>
     }
 }
 ````
