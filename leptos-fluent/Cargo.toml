@@ -2,14 +2,14 @@
 name = "leptos-fluent"
 description = "Fluent framework for internationalization of Leptos applications"
 edition = "2021"
-version = "0.0.6"
+version = "0.0.7"
 license = "MIT"
 documentation = "https://docs.rs/leptos-fluent"
 repository = "https://github.com/mondeja/leptos-fluent"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
-leptos-fluent-macros = "0.0.6"
+leptos-fluent-macros = "0.0.7"
 fluent-templates = "0"
 leptos = ">=0.1"
 leptos_router = ">=0.1"
