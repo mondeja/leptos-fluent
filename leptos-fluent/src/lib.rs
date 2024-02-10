@@ -238,6 +238,49 @@ impl I18n {
 }
 
 /// Get the current context for internationalization.
+#[inline(always)]
 pub fn i18n() -> I18n {
     expect_context::<I18n>()
+}
+
+/// Translate a text identifier to the current language.
+///
+/// ```rust,ignore
+/// tr!("hello-world")
+/// tr!("hello-world", { "name" => "John" })
+/// ```
+#[macro_export]
+macro_rules! tr {
+    ($text_id:expr$(,)?) => {
+        $crate::i18n().tr($text_id)
+    };
+    ($text_id:expr, {$($key:expr => $value:expr),*$(,)?}$(,)?) => {
+        $crate::i18n().trs($text_id, &{
+            let mut map = ::std::collections::HashMap::new();
+            $(
+                map.insert($key.to_string(), $value.into());
+            )*
+            map
+        })
+    }
+}
+
+/// Create a [`leptos::Signal`] that translates a text identifier to the current language.
+///
+/// ```rust,ignore
+/// move_tr!("hello-world")
+/// move_tr!("hello-world", { "name" => "John" })
+/// ```
+#[macro_export]
+macro_rules! move_tr {
+    ($text_id:expr$(,)?) => {
+        ::leptos::Signal::derive(move || $crate::tr!($text_id))
+    };
+    ($text_id:expr, {$($key:expr => $value:expr),*$(,)?}$(,)?) => {
+        ::leptos::Signal::derive(move || $crate::tr!($text_id, {
+            $(
+                $key => $value,
+            )*
+        }))
+    };
 }

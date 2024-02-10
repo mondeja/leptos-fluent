@@ -356,6 +356,7 @@ impl Parse for I18nLoader {
 /// [local storage]: https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
 /// [`navigator.languages`]: https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages
 /// [`leptos::create_effect`]: https://docs.rs/leptos/latest/leptos/fn.create_effect.html
+/// [`I18n::provide_context`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#method.provide_context
 #[proc_macro]
 pub fn leptos_fluent(
     input: proc_macro::TokenStream,
