@@ -324,6 +324,7 @@ impl Parse for I18nLoader {
 ///   ```
 /// - **`sync_html_tag_lang`** (_`false`_): Either to synchronize the
 ///   [`<html lang="...">` attribute] with the current language using [`leptos::create_effect`].
+///   Can be a literal boolean or an expression that will be evaluated at runtime.
 /// - **`initial_language_from_url`** (_`false`_): Either to load the initial language of the user
 ///   from a URL parameter. Can be a literal boolean or an expression that will be evaluated at
 ///   runtime.
