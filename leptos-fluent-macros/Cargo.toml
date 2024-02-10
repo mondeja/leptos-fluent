@@ -10,7 +10,6 @@ repository = "https://github.com/mondeja/leptos-fluent"
 [lib]
 proc-macro = true
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
 proc-macro2 = "1"
 quote = "1"

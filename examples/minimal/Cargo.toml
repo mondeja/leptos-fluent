@@ -3,7 +3,10 @@ name = "leptos-fluent-minimal-example"
 edition = "2021"
 version = "0.1.0"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+name = "leptos_fluent_minimal_example"
+path = "src/lib.rs"
+
 [dependencies]
 leptos = {version = "0.6.5", features = ["csr"]}
 leptos-fluent = { path = "../../leptos-fluent" }
@@ -12,3 +15,7 @@ log = "0"
 console_error_panic_hook = "0"
 console_log = "1"
 fluent-templates = "0"
+
+[[bin]]
+name = "main"
+path = "src/main.rs"

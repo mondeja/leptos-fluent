@@ -2,6 +2,7 @@
 members = [
     "leptos-fluent",
     "leptos-fluent-macros",
+    "tests",
     "examples/complete",
     "examples/minimal",
 ]

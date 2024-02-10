@@ -26,6 +26,47 @@ jobs:
       - name: Lint
         run: pre-commit run --all-files --show-diff-on-failure
 
+  test:
+    name: Test
+    runs-on: ${{ matrix.runs-on }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runs-on: ubuntu-latest
+            browser: firefox
+          - runs-on: ubuntu-latest
+            browser: chrome
+          - runs-on: macos-latest
+            browser: safari
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Rust
+        uses: hecrj/setup-rust-action@v2
+        with:
+          targets: wasm32-unknown-unknown
+          profile: minimal
+      - name: Install cargo binstall
+        uses: cargo-bins/cargo-binstall@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install wasm-pack
+        run: cargo binstall -y wasm-pack
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ matrix.browser }}-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/Cargo.lock') }}
+      - name: Run tests
+        run: |
+          cd tests
+          wasm-pack test --headless --${{ matrix.browser }}
+
   build-examples:
     name: Build examples
     runs-on: ubuntu-latest
@@ -51,7 +92,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Cache dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/registry

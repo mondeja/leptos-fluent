@@ -1,0 +1,13 @@
+[package]
+name = "leptos-fluent-tests"
+edition = "2021"
+version = "0.1.0"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+leptos-fluent-minimal-example = { path = "../examples/minimal" }
+leptos-fluent-complete-example = { path = "../examples/complete" }
+wasm-bindgen-test = "0.3"
+leptos = "0.6"
