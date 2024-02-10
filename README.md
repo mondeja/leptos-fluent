@@ -19,7 +19,6 @@ cargo add leptos leptos-fluent fluent-templates unic-langid
 use fluent_templates::static_loader;
 use leptos::*;
 use leptos_fluent::{leptos_fluent, tr, I18n};
-use std::collections::HashMap;
 
 static_loader! {
     static LOCALES = {
@@ -41,30 +40,31 @@ pub fn App() -> impl IntoView {
         // ]
         // ```
         languages: "./locales/languages.json",
-        // Synchronize `<html lang="...">` attribute with the current language
-        // using `leptos::create_effect`. By default, it is `false`.
+        // Synchronize `<html lang="...">` attribute with the current
+        // language using `leptos::create_effect`. By default, it is `false`.
         sync_html_tag_lang: true,
         // Discover the initial language of the user from the URL.
         // By default, it is `false`.
         initial_language_from_url: true,
-        // URL parameter name to use discovering the initial language of the user.
-        // By default is `"lang"`.
+        // URL parameter name to use discovering the initial language
+        // of the user. By default is `"lang"`.
         initial_language_from_url_param: "lang",
-        // Set the discovered initial language of the user from the URL in
-        // the local storage. By default, it is `false`.
+        // Set the discovered initial language of the user from
+        // the URL in local storage. By default, it is `false`.
         initial_language_from_url_to_localstorage: true,
-        // Get the initial language from the local storage if not found in an URL param.
-        // By default, it is `false`.
+        // Get the initial language from local storage if not found
+        // in an URL param. By default, it is `false`.
         initial_language_from_localstorage: true,
-        // Get the initial language from `navigator.languages` if not found in the local
-        // storage. By default, it is `false`.
+        // Get the initial language from `navigator.languages` if not
+        // found in the local storage. By default, it is `false`.
         initial_language_from_navigator: true,
-        // Name of the field in the local storage to get and set the current language
-        // of the user. By default, it is `"lang"`.
+        // Name of the field in local storage to get and set the
+        // current language of the user. By default, it is `"lang"`.
         localstorage_key: "language",
-        // Provide context to Leptos discovering the initial language from
-        // the options above. By default, it is `false` and you need to call
-        // `ctx.provide_context(None)` manually to set the initial language.
+        // Provide context to Leptos discovering the initial language
+        // from the options above. By default, it is `false` and you need
+        // to call `ctx.provide_context(None)` manually to set the
+        // initial language.
         provide_context: true,
     }};
 
