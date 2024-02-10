@@ -77,7 +77,8 @@ fn parse_litbool_or_expr_param(
 struct I18nLoader {
     locales_ident: syn::Ident,
     languages_file: PathBuf,
-    sync_html_tag_lang: bool,
+    sync_html_tag_lang_bool: Option<syn::LitBool>,
+    sync_html_tag_lang_expr: Option<syn::Expr>,
     initial_language_from_url_bool: Option<syn::LitBool>,
     initial_language_from_url_expr: Option<syn::Expr>,
     initial_language_from_url_param_str: Option<syn::LitStr>,
@@ -104,7 +105,8 @@ impl Parse for I18nLoader {
         braced!(fields in input);
         let mut locales_identifier: Option<syn::Ident> = None;
         let mut languages_path: Option<syn::LitStr> = None;
-        let mut sync_html_tag_lang_litbool: Option<syn::LitBool> = None;
+        let mut sync_html_tag_lang_bool: Option<syn::LitBool> = None;
+        let mut sync_html_tag_lang_expr: Option<syn::Expr> = None;
         let mut initial_language_from_url_bool: Option<syn::LitBool> = None;
         let mut initial_language_from_url_expr: Option<syn::Expr> = None;
         let mut initial_language_from_url_param_str: Option<syn::LitStr> = None;
@@ -136,7 +138,14 @@ impl Parse for I18nLoader {
             } else if k == "languages" {
                 languages_path = Some(fields.parse()?);
             } else if k == "sync_html_tag_lang" {
-                sync_html_tag_lang_litbool = Some(fields.parse()?);
+                if let Some(err) = parse_litbool_or_expr_param(
+                    &fields,
+                    &mut sync_html_tag_lang_bool,
+                    &mut sync_html_tag_lang_expr,
+                    "sync_html_tag_lang",
+                ) {
+                    return Err(err);
+                }
             } else if k == "initial_language_from_url" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
@@ -241,10 +250,8 @@ impl Parse for I18nLoader {
         Ok(Self {
             locales_ident,
             languages_file,
-            sync_html_tag_lang: match sync_html_tag_lang_litbool {
-                Some(lit) => lit.value,
-                None => false,
-            },
+            sync_html_tag_lang_bool,
+            sync_html_tag_lang_expr,
             initial_language_from_url_bool,
             initial_language_from_url_expr,
             initial_language_from_url_param_str,
@@ -317,6 +324,7 @@ impl Parse for I18nLoader {
 ///   ```
 /// - **`sync_html_tag_lang`** (_`false`_): Either to synchronize the
 ///   [`<html lang="...">` attribute] with the current language using [`leptos::create_effect`].
+///   Can be a literal boolean or an expression that will be evaluated at runtime.
 /// - **`initial_language_from_url`** (_`false`_): Either to load the initial language of the user
 ///   from a URL parameter. Can be a literal boolean or an expression that will be evaluated at
 ///   runtime.
@@ -355,7 +363,8 @@ pub fn leptos_fluent(
     let I18nLoader {
         locales_ident,
         languages_file,
-        sync_html_tag_lang,
+        sync_html_tag_lang_bool,
+        sync_html_tag_lang_expr,
         initial_language_from_url_bool,
         initial_language_from_url_expr,
         initial_language_from_url_param_str,
@@ -396,21 +405,39 @@ pub fn leptos_fluent(
     .parse::<TokenStream>()
     .unwrap();
 
-    let sync_html_tag_lang_quote = if sync_html_tag_lang {
-        quote! {
-            use leptos::wasm_bindgen::JsCast;
-            ::leptos::create_effect(move |_| ::leptos::document()
-                .document_element()
-                .unwrap()
-                .unchecked_into::<::leptos::web_sys::HtmlElement>()
-                .set_attribute(
-                    "lang",
-                    &::leptos::expect_context::<::leptos_fluent::I18n>().language.get().id.to_string()
-                )
-            );
-        }
-    } else {
-        quote! {}
+    let sync_html_tag_lang_quote = match sync_html_tag_lang_bool {
+        Some(lit) => match lit.value {
+            true => quote! {
+                use leptos::wasm_bindgen::JsCast;
+                ::leptos::create_effect(move |_| ::leptos::document()
+                    .document_element()
+                    .unwrap()
+                    .unchecked_into::<::leptos::web_sys::HtmlElement>()
+                    .set_attribute(
+                        "lang",
+                        &::leptos::expect_context::<::leptos_fluent::I18n>().language.get().id.to_string()
+                    )
+                );
+            },
+            false => quote! {},
+        },
+        None => match sync_html_tag_lang_expr {
+            Some(expr) => quote! {
+                use leptos::wasm_bindgen::JsCast;
+                if #expr {
+                    ::leptos::create_effect(move |_| ::leptos::document()
+                        .document_element()
+                        .unwrap()
+                        .unchecked_into::<::leptos::web_sys::HtmlElement>()
+                        .set_attribute(
+                            "lang",
+                            &::leptos::expect_context::<::leptos_fluent::I18n>().language.get().id.to_string()
+                        )
+                    );
+                }
+            },
+            None => quote! {},
+        },
     };
 
     let initial_language_from_url = match initial_language_from_url_bool {
