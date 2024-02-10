@@ -19,3 +19,9 @@ wasm-pack test --{browser} --headless
 Where `{browser}` is one of `firefox`, `chrome`, or `safari`. See `wasm-pack test --help` for more information.
 
 [!NOTE] Tests are located at _tests/src/web.rs_.
+
+## Documentation
+
+```sh
+cargo doc --open --no-deps
+```

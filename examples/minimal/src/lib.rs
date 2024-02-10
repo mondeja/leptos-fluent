@@ -1,6 +1,6 @@
 use fluent_templates::static_loader;
 use leptos::*;
-use leptos_fluent::{i18n, leptos_fluent, Language};
+use leptos_fluent::{i18n, leptos_fluent, tr, Language};
 
 static_loader! {
     static LOCALES = {
@@ -22,10 +22,8 @@ pub fn App() -> impl IntoView {
 
 #[component]
 fn OtherComponent() -> impl IntoView {
-    let i18n_ctx = i18n();
-
     view! {
-        <p>{move || i18n().tr("select-a-language")}</p>
+        <p>{move || tr!("select-a-language")}</p>
         <fieldset>
             <For
                 each=move || i18n().languages
@@ -38,7 +36,7 @@ fn OtherComponent() -> impl IntoView {
                                 id=lang.id.to_string()
                                 name="language"
                                 value=lang.id.to_string()
-                                checked=*lang == i18n_ctx.language.get()
+                                checked=*lang == i18n().language.get()
                                 on:click=move |_| i18n().language.set(lang)
                             />
                             <label for=lang.id.to_string()>{lang.name}</label>

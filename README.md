@@ -18,7 +18,7 @@ cargo add leptos leptos-fluent fluent-templates unic-langid
 ````rust,ignore
 use fluent_templates::static_loader;
 use leptos::*;
-use leptos_fluent::{i18n, leptos_fluent, I18n, Language};
+use leptos_fluent::{leptos_fluent, tr, I18n};
 use std::collections::HashMap;
 
 static_loader! {
@@ -87,12 +87,10 @@ pub fn App() -> impl IntoView {
 fn OtherComponent() -> impl IntoView {
     view! {
         <p>
-            <span>{move || i18n().tr("foo")}</span>
-            <span>{move || i18n().trs("bar-with-args", &{
-                let mut map = HashMap::new();
-                map.insert("arg1".to_string(), "value1".into());
-                map.insert("arg2".to_string(), "value2".into());
-                map
+            <span>{move || tr!("foo")}</span>
+            <span>{move || tr!("bar-with-args", {
+                "arg1" => "value1",
+                "arg2" => "value2",
             })}</span>
         </p>
     }
