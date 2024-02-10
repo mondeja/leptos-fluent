@@ -11,3 +11,6 @@ leptos-fluent-minimal-example = { path = "../examples/minimal" }
 leptos-fluent-complete-example = { path = "../examples/complete" }
 wasm-bindgen-test = "0.3"
 leptos = "0.6"
+js-sys = "0.3"
+web-sys = "0.3"
+wasm-bindgen-futures = "0.4"
