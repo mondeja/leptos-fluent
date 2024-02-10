@@ -41,8 +41,10 @@ jobs:
         with:
           targets: wasm32-unknown-unknown
           profile: minimal
+      - name: Install cargo binstall
+        uses: cargo-bins/cargo-binstall@main
       - name: Install trunk
-        run: cargo install trunk
+        run: cargo binstall trunk
       - name: Build with trunk
         run: |
           cd examples/${{ matrix.example }}
