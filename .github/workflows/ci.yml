@@ -30,6 +30,7 @@ jobs:
     name: Build examples
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         example:
           - minimal
@@ -46,7 +47,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install trunk
-        run: cargo binstall trunk
+        run: cargo binstall -y trunk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Build with trunk
