@@ -30,6 +30,7 @@ jobs:
     name: Build examples
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         example:
           - minimal
@@ -41,8 +42,22 @@ jobs:
         with:
           targets: wasm32-unknown-unknown
           profile: minimal
+      - name: Install cargo binstall
+        uses: cargo-bins/cargo-binstall@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install trunk
-        run: cargo install trunk
+        run: cargo binstall -y trunk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ matrix.example }}-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/Cargo.lock') }}
       - name: Build with trunk
         run: |
           cd examples/${{ matrix.example }}
