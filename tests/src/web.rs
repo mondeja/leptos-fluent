@@ -18,27 +18,12 @@ macro_rules! unmount {
             .unwrap()
             .remove_child(
                 document()
-                    .query_selector("#wrapper")
-                    .unwrap()
+                    .get_element_by_id("wrapper")
                     .unwrap()
                     .unchecked_ref(),
             )
             .unwrap();
     }};
-}
-
-async fn _sleep(delay: i32) {
-    let mut cb = |resolve: js_sys::Function, _reject: js_sys::Function| {
-        web_sys::window()
-            .unwrap()
-            .set_timeout_with_callback_and_timeout_and_arguments_0(
-                &resolve, delay,
-            )
-            .unwrap();
-    };
-
-    let p = js_sys::Promise::new(&mut cb);
-    wasm_bindgen_futures::JsFuture::from(p).await.unwrap();
 }
 
 #[wasm_bindgen_test]
@@ -55,8 +40,7 @@ fn minimal_example() {
     };
     let get_input = move |lang: &str| {
         document()
-            .query_selector(&format!("#{}", lang))
-            .unwrap()
+            .get_element_by_id(lang)
             .unwrap()
             .unchecked_into::<web_sys::HtmlInputElement>()
     };
@@ -84,8 +68,7 @@ fn complete_example() {
     };
     let get_input = move |lang: &str| {
         document()
-            .query_selector(&format!("#{}", lang))
-            .unwrap()
+            .get_element_by_id(lang)
             .unwrap()
             .unchecked_into::<web_sys::HtmlInputElement>()
     };
