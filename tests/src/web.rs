@@ -26,29 +26,30 @@ macro_rules! unmount {
     }};
 }
 
+fn p_text() -> String {
+    document()
+        .query_selector("p")
+        .unwrap()
+        .unwrap()
+        .text_content()
+        .unwrap()
+}
+
+fn input_by_id(id: &str) -> web_sys::HtmlInputElement {
+    document()
+        .get_element_by_id(id)
+        .unwrap()
+        .unchecked_into::<web_sys::HtmlInputElement>()
+}
+
 #[wasm_bindgen_test]
 fn minimal_example() {
     mount!(MinimalExampleApp);
 
-    let p_text = move || {
-        document()
-            .query_selector("p")
-            .unwrap()
-            .unwrap()
-            .text_content()
-            .unwrap()
-    };
-    let get_input = move |lang: &str| {
-        document()
-            .get_element_by_id(lang)
-            .unwrap()
-            .unchecked_into::<web_sys::HtmlInputElement>()
-    };
-
     assert_eq!(p_text(), "Select a language:");
-    get_input("es").click();
-    assert!(get_input("es").checked());
-    assert!(!get_input("en").checked());
+    input_by_id("es").click();
+    assert!(input_by_id("es").checked());
+    assert!(!input_by_id("en").checked());
     assert_eq!(p_text(), "Selecciona un idioma:");
 
     unmount!();
@@ -58,25 +59,10 @@ fn minimal_example() {
 fn complete_example() {
     mount!(CompleteExampleApp);
 
-    let p_text = move || {
-        document()
-            .query_selector("p")
-            .unwrap()
-            .unwrap()
-            .text_content()
-            .unwrap()
-    };
-    let get_input = move |lang: &str| {
-        document()
-            .get_element_by_id(lang)
-            .unwrap()
-            .unchecked_into::<web_sys::HtmlInputElement>()
-    };
-
     assert_eq!(p_text(), "Select a language:");
-    get_input("es").click();
-    assert!(get_input("es").checked());
-    assert!(!get_input("en").checked());
+    input_by_id("es").click();
+    assert!(input_by_id("es").checked());
+    assert!(!input_by_id("en").checked());
     assert_eq!(p_text(), "Selecciona un idioma:");
 
     unmount!();
