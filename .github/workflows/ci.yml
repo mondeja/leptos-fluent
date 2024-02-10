@@ -37,7 +37,7 @@ jobs:
             browser: firefox
           - runs-on: ubuntu-latest
             browser: chrome
-          - runs.on: macos-latest
+          - runs-on: macos-latest
             browser: safari
     steps:
       - uses: actions/checkout@v4
