@@ -47,6 +47,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install trunk
         run: cargo binstall trunk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Build with trunk
         run: |
           cd examples/${{ matrix.example }}
