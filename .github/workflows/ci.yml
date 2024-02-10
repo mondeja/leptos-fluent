@@ -43,6 +43,8 @@ jobs:
           profile: minimal
       - name: Install cargo binstall
         uses: cargo-bins/cargo-binstall@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install trunk
         run: cargo binstall trunk
       - name: Build with trunk
