@@ -271,6 +271,8 @@ macro_rules! tr {
 /// move_tr!("hello-world")
 /// move_tr!("hello-world", { "name" => "John" })
 /// ```
+///
+/// [`leptos::Signal`]: https://docs.rs/leptos/latest/leptos/struct.Signal.html
 #[macro_export]
 macro_rules! move_tr {
     ($text_id:expr$(,)?) => {
