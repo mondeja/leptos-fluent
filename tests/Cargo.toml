@@ -6,7 +6,11 @@ version = "0.1.0"
 [lib]
 crate-type = ["cdylib"]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
+leptos-fluent-minimal-example = { path = "../examples/minimal" }
+leptos-fluent-complete-example = { path = "../examples/complete" }
 wasm-bindgen-test = "0.3"
 leptos = "0.6"
+js-sys = "0.3"
+web-sys = "0.3"
+wasm-bindgen-futures = "0.4"
