@@ -1,0 +1,12 @@
+[package]
+name = "leptos-fluent-tests"
+edition = "2021"
+version = "0.1.0"
+
+[lib]
+crate-type = ["cdylib"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[dependencies]
+wasm-bindgen-test = "0.3"
+leptos = "0.6"

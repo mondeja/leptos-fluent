@@ -16,8 +16,6 @@
 //! - [**Examples**](https://github.com/mondeja/leptos-fluent/tree/master/examples)
 
 mod localstorage;
-#[cfg(feature = "tests")]
-pub mod tests;
 mod url;
 
 use core::str::FromStr;

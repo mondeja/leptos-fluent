@@ -6,7 +6,7 @@ on:
       - master
     tags:
       - v*
-  pull_request_target:
+  pull_request:
   workflow_dispatch:
 
 jobs:
@@ -64,8 +64,8 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ matrix.browser }}-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/Cargo.lock') }}
       - name: Run tests
         run: |
-          cd leptos-fluent
-          wasm-pack test --headless --${{ matrix.browser }} --features tests
+          cd tests
+          wasm-pack test --headless --${{ matrix.browser }}
 
   build-examples:
     name: Build examples
