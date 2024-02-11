@@ -15,13 +15,13 @@ cargo add leptos leptos-fluent fluent-templates unic-langid
 
 ## Usage
 
-````rust,ignore
+```rust,ignore
 use fluent_templates::static_loader;
 use leptos::*;
 use leptos_fluent::{leptos_fluent, tr};
 
 static_loader! {
-    static LOCALES = {
+    static TRANSLATIONS = {
         locales: "./locales",
         fallback_language: "en-US",
     };
@@ -30,16 +30,9 @@ static_loader! {
 #[component]
 pub fn App() -> impl IntoView {
     let ctx = leptos_fluent! {{
-        // Translations locales provided by fluent-templates.
-        locales: LOCALES,
-        // Path to the JSON file with the list of languages in the form:
-        // ```json
-        // [
-        //   ["en-US", "English"],
-        //   ["es-ES", "Español"]
-        // ]
-        // ```
-        languages: "./locales/languages.json",
+        locales: "./locales",
+        // Translations provided by fluent-templates.
+        translations: TRANSLATIONS,
         // Synchronize `<html lang="...">` attribute with the current
         // language using `leptos::create_effect`. By default, it is `false`.
         sync_html_tag_lang: true,
@@ -80,7 +73,7 @@ fn OtherComponent() -> impl IntoView {
         </p>
     }
 }
-````
+```
 
 ## Resources
 
