@@ -41,8 +41,12 @@ pub(crate) fn read_locales_folder(path: &PathBuf) -> Vec<(String, String)> {
             .to_str()
             .unwrap()
             .to_string();
-        let use_country_code =
-            iso639_language_codes.contains(&code_to_iso639(&lang_code));
+        let iso639_code = code_to_iso639(&lang_code);
+        let use_country_code = iso639_language_codes
+            .iter()
+            .filter(|&c| c == &iso639_code)
+            .count()
+            > 1;
         let lang_name = language_name_from_language_code(
             lang_code.as_str(),
             use_country_code,

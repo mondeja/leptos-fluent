@@ -77,9 +77,8 @@ fn parse_litbool_or_expr_param(
 }
 
 struct I18nLoader {
-    locales_folder: Option<PathBuf>,
+    languages: Vec<(String, String)>,
     translations_ident: syn::Ident,
-    languages_file: Option<PathBuf>,
     sync_html_tag_lang_bool: Option<syn::LitBool>,
     sync_html_tag_lang_expr: Option<syn::Expr>,
     initial_language_from_url_bool: Option<syn::LitBool>,
@@ -98,7 +97,7 @@ struct I18nLoader {
 
 impl Parse for I18nLoader {
     fn parse(input: ParseStream) -> Result<Self> {
-        let workspace_path = std::path::PathBuf::from(
+        let workspace_path = PathBuf::from(
             std::env::var("CARGO_MANIFEST_DIR").unwrap_or_else(|_| "./".into()),
         );
 
@@ -274,8 +273,10 @@ impl Parse for I18nLoader {
 
         Ok(Self {
             translations_ident,
-            languages_file,
-            locales_folder,
+            languages: match languages_file {
+                Some(languages_file) => read_languages_file(&languages_file),
+                None => read_locales_folder(&locales_folder.unwrap()),
+            },
             sync_html_tag_lang_bool,
             sync_html_tag_lang_expr,
             initial_language_from_url_bool,
@@ -386,8 +387,7 @@ pub fn leptos_fluent(
 ) -> proc_macro::TokenStream {
     let I18nLoader {
         translations_ident,
-        languages_file,
-        locales_folder,
+        languages,
         sync_html_tag_lang_bool,
         sync_html_tag_lang_expr,
         initial_language_from_url_bool,
@@ -404,10 +404,6 @@ pub fn leptos_fluent(
         localstorage_key_expr,
     } = parse_macro_input!(input as I18nLoader);
 
-    let languages = match languages_file {
-        Some(languages_file) => read_languages_file(&languages_file),
-        None => read_locales_folder(&locales_folder.unwrap()),
-    };
     let n_languages = languages.len();
 
     let languages_quote = format!(
