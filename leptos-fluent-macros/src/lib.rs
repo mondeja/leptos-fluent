@@ -430,6 +430,10 @@ pub fn leptos_fluent(
         },
     };
 
+    let initial_language_from_localstorage_bool_value =
+        initial_language_from_localstorage_bool
+            .as_ref()
+            .map(|lit| lit.clone().value);
     let initial_language_from_url_to_localstorage =
         match initial_language_from_url_to_localstorage_bool {
             Some(lit) => quote! { #lit },
@@ -448,6 +452,10 @@ pub fn leptos_fluent(
             },
         };
 
+    let initial_language_from_navigator_bool_value =
+        initial_language_from_navigator_bool
+            .as_ref()
+            .map(|lit| lit.clone().value);
     let initial_language_from_navigator =
         match initial_language_from_navigator_bool {
             Some(lit) => quote! { #lit },
@@ -511,32 +519,74 @@ pub fn leptos_fluent(
             },
         };
 
+    let initial_language_from_localstorage_quote =
+        match initial_language_from_localstorage_bool_value {
+            Some(value) => match value {
+                true => quote! {
+                    if lang.is_none() {
+                        if let Some(l) = ::leptos_fluent::localstorage::get(#localstorage_key)
+                        {
+                            lang = i18n.language_from_str(&l);
+                        }
+                    }
+                },
+                false => quote! {},
+            },
+            None => quote! {
+                if #initial_language_from_localstorage && lang.is_none() {
+                    if let Some(l) = ::leptos_fluent::localstorage::get(#localstorage_key)
+                    {
+                        lang = i18n.language_from_str(&l);
+                    }
+                }
+            },
+        };
+
+    let initial_language_from_navigator_quote =
+        match initial_language_from_navigator_bool_value {
+            Some(value) => match value {
+                true => quote! {
+                    if lang.is_none() {
+                        let languages = window().navigator().languages().to_vec();
+                        for raw_language in languages {
+                            let language = raw_language.as_string();
+                            if language.is_none() {
+                                continue;
+                            }
+                            if let Some(l) = i18n.language_from_str(&language.unwrap())
+                            {
+                                lang = Some(l);
+                                break;
+                            }
+                        }
+                    }
+                },
+                false => quote! {},
+            },
+            None => quote! {
+                if #initial_language_from_navigator && lang.is_none() {
+                    let languages = window().navigator().languages().to_vec();
+                    for raw_language in languages {
+                        let language = raw_language.as_string();
+                        if language.is_none() {
+                            continue;
+                        }
+                        if let Some(l) = i18n.language_from_str(&language.unwrap())
+                        {
+                            lang = Some(l);
+                            break;
+                        }
+                    }
+                }
+            },
+        };
+
     let initial_language_quote = quote! {
         let mut lang: Option<&'static ::leptos_fluent::Language> = None;
         let i18n = expect_context::<::leptos_fluent::I18n>();
         #initial_language_from_url_quote;
-
-        if #initial_language_from_localstorage && lang.is_none() {
-            if let Some(l) = ::leptos_fluent::localstorage::get(#localstorage_key) {
-                lang = i18n.language_from_str(&l);
-            }
-        }
-
-        if #initial_language_from_navigator && lang.is_none() {
-            let languages = window().navigator().languages().to_vec();
-            for raw_language in languages {
-                let language = raw_language.as_string();
-                if language.is_none() {
-                    continue;
-                }
-                if let Some(l) = i18n.language_from_str(&language.unwrap())
-                {
-                    lang = Some(l);
-                    break;
-                }
-            }
-        }
-
+        #initial_language_from_localstorage_quote;
+        #initial_language_from_navigator_quote;
         if let Some(l) = lang {
             i18n.language.set(l);
         }
