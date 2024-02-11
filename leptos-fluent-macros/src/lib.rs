@@ -2,7 +2,9 @@ extern crate proc_macro;
 
 mod languages;
 
-use languages::read_languages_file;
+use languages::{
+    generate_code_for_static_language, read_languages_file, read_locales_folder,
+};
 use proc_macro2::TokenStream;
 use quote::quote;
 use std::path::PathBuf;
@@ -75,8 +77,9 @@ fn parse_litbool_or_expr_param(
 }
 
 struct I18nLoader {
-    locales_ident: syn::Ident,
-    languages_file: PathBuf,
+    locales_folder: Option<PathBuf>,
+    translations_ident: syn::Ident,
+    languages_file: Option<PathBuf>,
     sync_html_tag_lang_bool: Option<syn::LitBool>,
     sync_html_tag_lang_expr: Option<syn::Expr>,
     initial_language_from_url_bool: Option<syn::LitBool>,
@@ -101,7 +104,8 @@ impl Parse for I18nLoader {
 
         let fields;
         braced!(fields in input);
-        let mut locales_identifier: Option<syn::Ident> = None;
+        let mut locales_path: Option<syn::LitStr> = None;
+        let mut translations_identifier: Option<syn::Ident> = None;
         let mut languages_path: Option<syn::LitStr> = None;
         let mut sync_html_tag_lang_bool: Option<syn::LitBool> = None;
         let mut sync_html_tag_lang_expr: Option<syn::Expr> = None;
@@ -129,8 +133,10 @@ impl Parse for I18nLoader {
             let k = fields.parse::<Ident>()?;
             fields.parse::<syn::Token![:]>()?;
 
-            if k == "locales" {
-                locales_identifier = Some(fields.parse()?);
+            if k == "translations" {
+                translations_identifier = Some(fields.parse()?);
+            } else if k == "locales" {
+                locales_path = Some(fields.parse()?);
             } else if k == "languages" {
                 languages_path = Some(fields.parse()?);
             } else if k == "sync_html_tag_lang" {
@@ -209,34 +215,67 @@ impl Parse for I18nLoader {
             fields.parse::<token::Comma>()?;
         }
 
-        // languages
-        let languages = languages_path.ok_or_else(|| {
-            syn::Error::new(input.span(), "Missing `languages` field")
+        // translations
+        let translations_ident = translations_identifier.ok_or_else(|| {
+            syn::Error::new(input.span(), "Missing `translations` field")
         })?;
 
-        let languages_file = workspace_path.join(languages.value());
-
-        if std::fs::metadata(&languages_file).is_err() {
+        // languages
+        if languages_path.is_none() && locales_path.is_none() {
             return Err(syn::Error::new(
-                languages.span(),
-                format!(
-                    concat!(
-                        "Couldn't read languages file, this path should",
-                        " be relative to your crate's `Cargo.toml`.",
-                        " Looking for: {:?}",
-                    ),
-                    languages_file,
+                input.span(),
+                concat!(
+                    "Either `languages` or `locales` field is required",
+                    " by leptos_fluent! macro.",
                 ),
             ));
         }
 
-        let locales_ident = locales_identifier.ok_or_else(|| {
-            syn::Error::new(input.span(), "Missing `locales` field")
-        })?;
+        let languages_path_copy = languages_path.clone();
+        let languages_file = languages_path
+            .map(|languages| workspace_path.join(languages.value()));
+
+        if let Some(ref file) = languages_file {
+            if std::fs::metadata(file).is_err() {
+                return Err(syn::Error::new(
+                    languages_path_copy.unwrap().span(),
+                    format!(
+                        concat!(
+                            "Couldn't read languages file, this path should",
+                            " be relative to your crate's `Cargo.toml`.",
+                            " Looking for: {:?}",
+                        ),
+                        file,
+                    ),
+                ));
+            }
+        }
+
+        // locales
+        let locales_path_copy = locales_path.clone();
+        let locales_folder =
+            locales_path.map(|locales| workspace_path.join(locales.value()));
+
+        if let Some(ref folder) = locales_folder {
+            if std::fs::metadata(folder).is_err() {
+                return Err(syn::Error::new(
+                    locales_path_copy.unwrap().span(),
+                    format!(
+                        concat!(
+                            "Couldn't read locales folder, this path should",
+                            " be relative to your crate's `Cargo.toml`.",
+                            " Looking for: {:?}",
+                        ),
+                        folder,
+                    ),
+                ));
+            }
+        }
 
         Ok(Self {
-            locales_ident,
+            translations_ident,
             languages_file,
+            locales_folder,
             sync_html_tag_lang_bool,
             sync_html_tag_lang_expr,
             initial_language_from_url_bool,
@@ -265,7 +304,7 @@ impl Parse for I18nLoader {
 /// use leptos_fluent::leptos_fluent;
 ///
 /// static_loader! {
-///     static LOCALES = {
+///     static TRANSLATIONS = {
 ///         locales: "./locales",
 ///         fallback_language: "en-US",
 ///     };
@@ -274,7 +313,7 @@ impl Parse for I18nLoader {
 /// #[component]
 /// pub fn App() -> impl IntoView {
 ///     leptos_fluent! {{
-///         locales: LOCALES,
+///         translations: TRANSLATIONS,
 ///         languages: "./locales/languages.json",
 ///         sync_html_tag_lang: true,
 ///         initial_language_from_url: true,
@@ -293,13 +332,18 @@ impl Parse for I18nLoader {
 ///
 /// ## Arguments
 ///
-/// - **`locales` \***: The locales to be used by the application. This should be the
-///   same identifier used in the [`fluent_templates::static_loader!`] macro, which
-///   returns [`once_cell:sync::Lazy`]`<`[`StaticLoader`]`>`.
-/// - **`languages` \***: The path to the languages file, which should be a JSON
+/// - **`translations` \***: Translations to be used by the application. This
+///   should be the same identifier used in the [`fluent_templates::static_loader!`]
+///   macro, which returns [`once_cell:sync::Lazy`]`<`[`StaticLoader`]`>`.
+/// - **`locales`**: Path to the locales folder, which should contain the
+///   translations for each language in the application. This path should be
+///   relative to your crate's `Cargo.toml`. Either `locales` or `languages` is
+///   required.
+/// - **`languages`**: ^ath to a languages file, which should be a JSON
 ///   array of arrays, where each inner array contains the language identifier and
 ///   the language name, respectively. The language identifier should be a valid
-///   language tag, such as `en-US`, `es-ES`, `en`, `es`, etc.
+///   language tag, such as `en-US`, `es-ES`, `en`, `es`, etc. This path should be
+///   relative to your crate's `Cargo.toml`. Either `locales` or `languages` is
 ///   ```json
 ///   [
 ///     ["en-US", "English (United States)"],
@@ -341,8 +385,9 @@ pub fn leptos_fluent(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
     let I18nLoader {
-        locales_ident,
+        translations_ident,
         languages_file,
+        locales_folder,
         sync_html_tag_lang_bool,
         sync_html_tag_lang_expr,
         initial_language_from_url_bool,
@@ -359,24 +404,17 @@ pub fn leptos_fluent(
         localstorage_key_expr,
     } = parse_macro_input!(input as I18nLoader);
 
-    let languages = read_languages_file(&languages_file);
+    let languages = match languages_file {
+        Some(languages_file) => read_languages_file(&languages_file),
+        None => read_locales_folder(&locales_folder.unwrap()),
+    };
     let n_languages = languages.len();
 
     let languages_quote = format!(
         "[{}]",
         languages
             .iter()
-            .map(|(id, name)| {
-                format!(
-                    concat!(
-                        "&::leptos_fluent::Language{{",
-                        " id: ::unic_langid::langid!(\"{}\"),",
-                        " name: \"{}\"",
-                        " }}",
-                    ),
-                    id, name
-                )
-            })
+            .map(|(id, name)| generate_code_for_static_language(id, name))
             .collect::<Vec<String>>()
             .join(",")
     )
@@ -600,7 +638,7 @@ pub fn leptos_fluent(
             let i18n = ::leptos_fluent::I18n {
                 language: ::std::rc::Rc::new(::leptos::create_rw_signal(LANGUAGES[0])),
                 languages: &LANGUAGES,
-                locales: &#locales_ident,
+                translations: &#translations_ident,
                 localstorage_key: #localstorage_key,
             };
             provide_context::<::leptos_fluent::I18n>(i18n);

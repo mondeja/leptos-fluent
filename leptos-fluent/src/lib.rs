@@ -65,7 +65,7 @@ pub struct I18n {
     pub language: Rc<RwSignal<&'static Language>>,
     /// Available languages for the application
     pub languages: &'static [&'static Language],
-    pub locales: &'static Lazy<StaticLoader>,
+    pub translations: &'static Lazy<StaticLoader>,
     pub localstorage_key: &'static str,
 }
 
@@ -74,7 +74,7 @@ impl Clone for I18n {
         Self {
             language: Rc::clone(&self.language),
             languages: self.languages,
-            locales: self.locales,
+            translations: self.translations,
             localstorage_key: self.localstorage_key,
         }
     }
@@ -90,12 +90,14 @@ impl I18n {
     /// ```
     pub fn tr(&self, text_id: &str) -> String {
         let lang_id = &self.language.get().id;
-        self.locales.lookup(lang_id, text_id).unwrap_or_else(|| {
-            panic!(
-                "Translation for '{}' not found in locale '{}'",
-                text_id, lang_id
-            )
-        })
+        self.translations
+            .lookup(lang_id, text_id)
+            .unwrap_or_else(|| {
+                panic!(
+                    "Translation for '{}' not found in locale '{}'",
+                    text_id, lang_id
+                )
+            })
     }
 
     /// Translate a text identifier to the current language with arguments.
@@ -117,7 +119,7 @@ impl I18n {
         args: &HashMap<String, FluentValue<'_>>,
     ) -> String {
         let lang_id = &self.language.get().id;
-        self.locales
+        self.translations
             .lookup_with_args(lang_id, text_id, args)
             .unwrap_or_else(|| {
                 panic!(
