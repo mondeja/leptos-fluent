@@ -91,8 +91,6 @@ struct I18nLoader {
     initial_language_from_navigator_expr: Option<syn::Expr>,
     localstorage_key_str: Option<syn::LitStr>,
     localstorage_key_expr: Option<syn::Expr>,
-    provide_context_bool: Option<syn::LitBool>,
-    provide_context_expr: Option<syn::Expr>,
 }
 
 impl Parse for I18nLoader {
@@ -126,8 +124,6 @@ impl Parse for I18nLoader {
         let mut initial_language_from_navigator_expr: Option<syn::Expr> = None;
         let mut localstorage_key_str: Option<syn::LitStr> = None;
         let mut localstorage_key_expr: Option<syn::Expr> = None;
-        let mut provide_context_bool: Option<syn::LitBool> = None;
-        let mut provide_context_expr: Option<syn::Expr> = None;
 
         while !fields.is_empty() {
             let k = fields.parse::<Ident>()?;
@@ -200,15 +196,6 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
-            } else if k == "provide_context" {
-                if let Some(err) = parse_litbool_or_expr_param(
-                    &fields,
-                    &mut provide_context_bool,
-                    &mut provide_context_expr,
-                    "provide_context",
-                ) {
-                    return Err(err);
-                }
             } else {
                 return Err(syn::Error::new(
                     k.span(),
@@ -264,8 +251,6 @@ impl Parse for I18nLoader {
             initial_language_from_navigator_expr,
             localstorage_key_str,
             localstorage_key_expr,
-            provide_context_bool,
-            provide_context_expr,
         })
     }
 }
@@ -298,7 +283,6 @@ impl Parse for I18nLoader {
 ///         initial_language_from_localstorage: true,
 ///         initial_language_from_navigator: true,
 ///         localstorage_key: "language",
-///         provide_context: true,
 ///     }};
 ///
 ///     view! {
@@ -344,10 +328,6 @@ impl Parse for I18nLoader {
 ///   if not found in [local storage].
 /// - **`localstorage_key`** (_`"lang"`_): The [local storage] field to get and save the current language
 ///   of the user. Can be a literal string or an expression that will be evaluated at runtime.
-/// - **`provide_context`** (_`false`_): Either to provide the i18n context to Leptos. Can be a literal
-///   boolean or an expression that will be evaluated at runtime. If `true`, the i18n context will be
-///   provided to Leptos, otherwise it won't and you will have to provide it manually calling
-///   [`I18n::provide_context`].
 ///
 /// [`fluent_templates::static_loader!`]: https://docs.rs/fluent-templates/0.8.0/fluent_templates/macro.static_loader.html
 /// [`once_cell:sync::Lazy`]: https://docs.rs/once_cell/latest/once_cell/sync/struct.Lazy.html
@@ -356,7 +336,6 @@ impl Parse for I18nLoader {
 /// [local storage]: https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
 /// [`navigator.languages`]: https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages
 /// [`leptos::create_effect`]: https://docs.rs/leptos/latest/leptos/fn.create_effect.html
-/// [`I18n::provide_context`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#method.provide_context
 #[proc_macro]
 pub fn leptos_fluent(
     input: proc_macro::TokenStream,
@@ -378,8 +357,6 @@ pub fn leptos_fluent(
         initial_language_from_navigator_expr,
         localstorage_key_str,
         localstorage_key_expr,
-        provide_context_bool,
-        provide_context_expr,
     } = parse_macro_input!(input as I18nLoader);
 
     let languages = read_languages_file(&languages_file);
@@ -441,6 +418,10 @@ pub fn leptos_fluent(
         },
     };
 
+    let initial_language_from_url_bool_value = initial_language_from_url_bool
+        .as_ref()
+        .map(|lit| lit.clone().value);
+
     let initial_language_from_url = match initial_language_from_url_bool {
         Some(lit) => quote! { #lit },
         None => match initial_language_from_url_expr {
@@ -449,6 +430,10 @@ pub fn leptos_fluent(
         },
     };
 
+    let initial_language_from_localstorage_bool_value =
+        initial_language_from_localstorage_bool
+            .as_ref()
+            .map(|lit| lit.clone().value);
     let initial_language_from_url_to_localstorage =
         match initial_language_from_url_to_localstorage_bool {
             Some(lit) => quote! { #lit },
@@ -467,6 +452,10 @@ pub fn leptos_fluent(
             },
         };
 
+    let initial_language_from_navigator_bool_value =
+        initial_language_from_navigator_bool
+            .as_ref()
+            .map(|lit| lit.clone().value);
     let initial_language_from_navigator =
         match initial_language_from_navigator_bool {
             Some(lit) => quote! { #lit },
@@ -493,21 +482,114 @@ pub fn leptos_fluent(
         },
     };
 
-    let provide_context_quote = match provide_context_bool {
-        Some(lit) => match lit.value {
-            true => quote! {
-                i18n.provide_context(None);
+    let initial_language_from_url_quote =
+        match initial_language_from_url_bool_value {
+            Some(value) => match value {
+                true => quote! {
+                    if let Some(l) = ::leptos_fluent::url::get(#initial_language_from_url_param)
+                    {
+                        lang = i18n.language_from_str(&l);
+                        if let Some(l) = lang {
+                            if #initial_language_from_url_to_localstorage {
+                                ::leptos_fluent::localstorage::set(
+                                    #localstorage_key,
+                                    &l.id.to_string(),
+                                );
+                            }
+                        }
+                    }
+                },
+                false => quote! {},
             },
-            false => quote! {},
-        },
-        None => match provide_context_expr {
-            Some(expr) => quote! {
-                if #expr {
-                    i18n.provide_context(None);
+            None => quote! {
+                if #initial_language_from_url {
+                    if let Some(l) = ::leptos_fluent::url::get(#initial_language_from_url_param)
+                    {
+                        lang = i18n.language_from_str(&l);
+                        if let Some(l) = lang {
+                            if #initial_language_from_url_to_localstorage {
+                                ::leptos_fluent::localstorage::set(
+                                    #localstorage_key,
+                                    &l.id.to_string(),
+                                );
+                            }
+                        }
+                    }
                 }
             },
-            None => quote! {},
-        },
+        };
+
+    let initial_language_from_localstorage_quote =
+        match initial_language_from_localstorage_bool_value {
+            Some(value) => match value {
+                true => quote! {
+                    if lang.is_none() {
+                        if let Some(l) = ::leptos_fluent::localstorage::get(#localstorage_key)
+                        {
+                            lang = i18n.language_from_str(&l);
+                        }
+                    }
+                },
+                false => quote! {},
+            },
+            None => quote! {
+                if #initial_language_from_localstorage && lang.is_none() {
+                    if let Some(l) = ::leptos_fluent::localstorage::get(#localstorage_key)
+                    {
+                        lang = i18n.language_from_str(&l);
+                    }
+                }
+            },
+        };
+
+    let initial_language_from_navigator_quote =
+        match initial_language_from_navigator_bool_value {
+            Some(value) => match value {
+                true => quote! {
+                    if lang.is_none() {
+                        let languages = window().navigator().languages().to_vec();
+                        for raw_language in languages {
+                            let language = raw_language.as_string();
+                            if language.is_none() {
+                                continue;
+                            }
+                            if let Some(l) = i18n.language_from_str(&language.unwrap())
+                            {
+                                lang = Some(l);
+                                break;
+                            }
+                        }
+                    }
+                },
+                false => quote! {},
+            },
+            None => quote! {
+                if #initial_language_from_navigator && lang.is_none() {
+                    let languages = window().navigator().languages().to_vec();
+                    for raw_language in languages {
+                        let language = raw_language.as_string();
+                        if language.is_none() {
+                            continue;
+                        }
+                        if let Some(l) = i18n.language_from_str(&language.unwrap())
+                        {
+                            lang = Some(l);
+                            break;
+                        }
+                    }
+                }
+            },
+        };
+
+    let initial_language_quote = quote! {
+        let mut lang: Option<&'static ::leptos_fluent::Language> = None;
+        let i18n = expect_context::<::leptos_fluent::I18n>();
+        #initial_language_from_url_quote;
+        #initial_language_from_localstorage_quote;
+        #initial_language_from_navigator_quote;
+        if let Some(l) = lang {
+            i18n.language.set(l);
+        }
     };
 
     let quote = quote! {
@@ -519,14 +601,10 @@ pub fn leptos_fluent(
                 language: ::std::rc::Rc::new(::leptos::create_rw_signal(LANGUAGES[0])),
                 languages: &LANGUAGES,
                 locales: &#locales_ident,
-                initial_language_from_url: #initial_language_from_url,
-                initial_language_from_url_param: #initial_language_from_url_param,
-                initial_language_from_url_to_localstorage: #initial_language_from_url_to_localstorage,
-                initial_language_from_localstorage: #initial_language_from_localstorage,
-                initial_language_from_navigator: #initial_language_from_navigator,
                 localstorage_key: #localstorage_key,
             };
-            #provide_context_quote;
+            provide_context::<::leptos_fluent::I18n>(i18n);
+            #initial_language_quote;
             #sync_html_tag_lang_quote;
             i18n
         }

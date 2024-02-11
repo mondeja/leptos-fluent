@@ -18,7 +18,7 @@ cargo add leptos leptos-fluent fluent-templates unic-langid
 ````rust,ignore
 use fluent_templates::static_loader;
 use leptos::*;
-use leptos_fluent::{leptos_fluent, tr, I18n};
+use leptos_fluent::{leptos_fluent, tr};
 
 static_loader! {
     static LOCALES = {
@@ -61,22 +61,7 @@ pub fn App() -> impl IntoView {
         // Name of the field in local storage to get and set the
         // current language of the user. By default, it is `"lang"`.
         localstorage_key: "language",
-        // Provide context to Leptos discovering the initial language
-        // from the options above. By default, it is `false` and you need
-        // to call `ctx.provide_context(None)` manually to set the
-        // initial language.
-        provide_context: true,
     }};
-
-    // You can pass a `Some(&'static Language)` to the `provide_context`
-    // function of the context to set the initial language manually.
-    let initial_language = move |ctx: &I18n| {
-        // Get the initial language of the user from a server, for example.
-        // ...
-        ctx.default_language()
-    };
-
-    // ctx.provide_context(Some(initial_language(&ctx)));
 
     view! {
         <OtherComponent />

@@ -19,3 +19,4 @@ fluent-templates = "0"
 [[bin]]
 name = "main"
 path = "src/main.rs"
+doc = false
