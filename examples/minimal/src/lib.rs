@@ -14,7 +14,6 @@ pub fn App() -> impl IntoView {
     leptos_fluent! {{
         locales: LOCALES,
         languages: "./locales/languages.json",
-        provide_context: true,
     }};
 
     view! { <OtherComponent/> }

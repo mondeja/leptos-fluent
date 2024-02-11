@@ -1,4 +1,4 @@
-pub(crate) fn get(key: &str) -> Option<String> {
+pub fn get(key: &str) -> Option<String> {
     ::leptos::window()
         .local_storage()
         .unwrap()
@@ -7,7 +7,7 @@ pub(crate) fn get(key: &str) -> Option<String> {
         .unwrap()
 }
 
-pub(crate) fn set(key: &str, value: &str) {
+pub fn set(key: &str, value: &str) {
     ::leptos::window()
         .local_storage()
         .unwrap()
