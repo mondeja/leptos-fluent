@@ -53,6 +53,7 @@ pub(crate) fn read_locales_folder(path: &PathBuf) -> Vec<(String, String)> {
         );
         locales.push((lang_code, lang_name.to_string()));
     }
+    locales.sort_by(|a, b| a.1.cmp(&b.1));
     locales
 }
 
