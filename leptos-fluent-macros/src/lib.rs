@@ -340,7 +340,7 @@ impl Parse for I18nLoader {
 ///   translations for each language in the application. This path should be
 ///   relative to your crate's `Cargo.toml`. Either `locales` or `languages` is
 ///   required.
-/// - **`languages`**: ^ath to a languages file, which should be a JSON
+/// - **`languages`**: Path to a languages file, which should be a JSON
 ///   array of arrays, where each inner array contains the language identifier and
 ///   the language name, respectively. The language identifier should be a valid
 ///   language tag, such as `en-US`, `es-ES`, `en`, `es`, etc. This path should be
