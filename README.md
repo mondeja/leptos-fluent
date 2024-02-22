@@ -29,7 +29,7 @@ static_loader! {
 
 #[component]
 pub fn App() -> impl IntoView {
-    let ctx = leptos_fluent! {{
+    leptos_fluent! {{
         locales: "./locales",
         // Translations provided by fluent-templates.
         translations: TRANSLATIONS,
