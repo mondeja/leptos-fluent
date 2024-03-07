@@ -626,7 +626,6 @@ pub fn leptos_fluent(
 
     let quote = quote! {
         {
-            use core::str::FromStr;
             const LANGUAGES: [&::leptos_fluent::Language; #n_languages] = #languages_quote;
             let i18n = ::leptos_fluent::I18n {
                 language: ::std::rc::Rc::new(::leptos::create_rw_signal(LANGUAGES[0])),
