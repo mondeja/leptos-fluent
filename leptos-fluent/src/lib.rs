@@ -3,7 +3,7 @@
 //! ## Installation
 //!
 //! ```sh
-//! cargo add leptos leptos-fluent fluent-templates unic-langid
+//! cargo add leptos leptos-fluent fluent-templates
 //! ```
 //!
 //! [Leptos]: https://leptos.dev/
