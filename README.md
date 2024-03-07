@@ -10,7 +10,7 @@ Internationalization framework for [Leptos] using [fluent-templates].
 ## Installation
 
 ```sh
-cargo add leptos-fluent
+cargo add leptos leptos-fluent fluent-templates unic-langid
 ```
 
 ## Usage
