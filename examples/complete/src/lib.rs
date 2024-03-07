@@ -23,11 +23,11 @@ pub fn App() -> impl IntoView {
         localstorage_key: "language",
     }};
 
-    view! { <OtherComponent/> }
+    view! { <ChildComponent/> }
 }
 
 #[component]
-fn OtherComponent() -> impl IntoView {
+fn ChildComponent() -> impl IntoView {
     view! {
         <p>{move || tr!("select-a-language")}</p>
         <fieldset>
