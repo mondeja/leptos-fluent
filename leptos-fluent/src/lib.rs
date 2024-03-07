@@ -25,7 +25,7 @@ use fluent_templates::{
     fluent_bundle::FluentValue, loader::Loader, LanguageIdentifier,
     StaticLoader,
 };
-use leptos::{expect_context, RwSignal, SignalGet, SignalSet};
+use leptos::{use_context, RwSignal, SignalGet, SignalSet};
 pub use leptos_fluent_macros::leptos_fluent;
 use once_cell::sync::Lazy;
 use std::collections::HashMap;
@@ -160,7 +160,9 @@ impl I18n {
 /// Get the current context for internationalization.
 #[inline(always)]
 pub fn i18n() -> I18n {
-    expect_context::<I18n>()
+    use_context::<I18n>().expect(
+        "I18n context is missing, use leptos_fluent!{} macro to provide it.",
+    )
 }
 
 /// Translate a text identifier to the current language.

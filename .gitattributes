@@ -1,2 +1,5 @@
 * text=auto
 Cargo.lock -diff
+
+# Don't export/archive these files
+.github            export-ignore
