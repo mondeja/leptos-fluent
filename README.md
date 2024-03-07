@@ -31,13 +31,13 @@ Giving the following directory structure:
 With Fluent files _en.ftl_ and _es.ftl_:
 
 ```ftl
-foo = "Hello, world!"
-bar-with-args = "Hello, { $arg1 } and { $arg2 }!"
+foo = Hello, world!
+bar-with-args = Hello, { $arg1 } and { $arg2 }!
 ```
 
 ```ftl
-foo = "¡Hola, mundo!"
-bar-with-args = "¡Hola, { $arg1 } y { $arg2 }!"
+foo = ¡Hola, mundo!
+bar-with-args = ¡Hola, { $arg1 } y { $arg2 }!
 ```
 
 You can use `leptos-fluent` as follows:
