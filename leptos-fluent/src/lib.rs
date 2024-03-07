@@ -31,7 +31,7 @@ use once_cell::sync::Lazy;
 use std::collections::HashMap;
 use std::rc::Rc;
 
-/// Languages supported by the application
+/// Each language supported by your application.
 #[derive(Clone, Debug)]
 pub struct Language {
     /// Language identifier
@@ -41,8 +41,7 @@ pub struct Language {
     /// Language name
     ///
     /// The name of the language, such as `English`, `Español`, etc.
-    /// This name will be intended to be displayed in the language selector,
-    /// but can also be used to translate it itself to other languages.
+    /// This name will be intended to be displayed in the language selector.
     pub name: &'static str,
 }
 
@@ -200,7 +199,7 @@ macro_rules! tr {
     }
 }
 
-/// Create a [`leptos::Signal`] that translates a text identifier to the current language.
+/// [`leptos::Signal`] that translates a text identifier to the current language.
 ///
 /// ```rust,ignore
 /// move_tr!("hello-world")

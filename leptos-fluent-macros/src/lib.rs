@@ -295,7 +295,7 @@ impl Parse for I18nLoader {
     }
 }
 
-/// A macro to create the i18n context for internationalization.
+/// Create the i18n context for internationalization.
 ///
 /// # Example
 ///
@@ -333,44 +333,42 @@ impl Parse for I18nLoader {
 ///
 /// ## Arguments
 ///
-/// - **`translations` \***: Translations to be used by the application. This
-///   should be the same identifier used in the [`fluent_templates::static_loader!`]
-///   macro, which returns [`once_cell:sync::Lazy`]`<`[`StaticLoader`]`>`.
-/// - **`locales`**: Path to the locales folder, which should contain the
-///   translations for each language in the application. This path should be
-///   relative to your crate's `Cargo.toml`. Either `locales` or `languages` is
-///   required.
+/// - **`translations` \***: Translations to be used by your application. This
+///   must be the same identifier used in the [`fluent_templates::static_loader!`]
+///   macro, which returns [`once_cell:sync::Lazy`]`<[`StaticLoader`]>`.
+/// - **`locales`**: Path to the locales folder, which must contain the translations
+///   for each language in your application. Is expected to be a path relative from
+///   `Cargo.toml` file. Either `locales` or `languages` is required.
 /// - **`languages`**: Path to a languages file, which should be a JSON
-///   array of arrays, where each inner array contains the language identifier and
-///   the language name, respectively. The language identifier should be a valid
-///   language tag, such as `en-US`, `es-ES`, `en`, `es`, etc. This path should be
-///   relative to your crate's `Cargo.toml`. Either `locales` or `languages` is
+///   array of arrays, where each inner array contains a language identifier and
+///   a language name, respectively. The language identifier should be a valid
+///   language tag, such as `en-US`, `en`, `es-ES`, etc. Is expected to be a path
+///   relative from `Cargo.toml` file. Either `locales` or `languages` is required.
+///   For example:
 ///   ```json
 ///   [
 ///     ["en-US", "English (United States)"],
 ///     ["es-ES", "Español (España)"]
 ///   ]
 ///   ```
-/// - **`sync_html_tag_lang`** (_`false`_): Either to synchronize the
-///   [`<html lang="...">` attribute] with the current language using [`leptos::create_effect`].
-///   Can be a literal boolean or an expression that will be evaluated at runtime.
-/// - **`initial_language_from_url`** (_`false`_): Either to load the initial language of the user
+/// - **`sync_html_tag_lang`** (_`false`_): Synchronize the global [`<html lang="...">` attribute]
+///   with current language using [`leptos::create_effect`]. Can be a literal boolean or an
+///   expression that will be evaluated at runtime.
+/// - **`initial_language_from_url`** (_`false`_): Load the initial language of the user
 ///   from a URL parameter. Can be a literal boolean or an expression that will be evaluated at
 ///   runtime.
 /// - **`initial_language_from_url_param`** (_`"lang"`_): The parameter name to look for the initial
 ///   language in the URL. Can be a literal string or an expression that will be evaluated at
 ///   runtime.
-/// - **`initial_language_from_url_to_localstorage`** (_`false`_): Either to save the initial language
+/// - **`initial_language_from_url_to_localstorage`** (_`false`_): Save the initial language
 ///   of the user from the URL to [local storage]. Can be a literal boolean or an expression that will
 ///   be evaluated at runtime.
-/// - **`initial_language_from_localstorage`** (_`false`_): Either to load the initial language of the
+/// - **`initial_language_from_localstorage`** (_`false`_): Load the initial language of the
 ///   user from [local storage] if not found in the URL param. Can be a literal boolean or an expression
 ///   that will be evaluated at runtime.
-/// - **`initial_language_from_navigator`** (_`false`_): Either to load the initial language of the user
-///   from Can be a literal boolean or an expression that will be evaluated at
+/// - **`initial_language_from_navigator`** (_`false`_): Load the initial language of the user
+///   from [`navigator.languages`] if not found in [local storage]. Can be a literal boolean or an expression that will be evaluated at
 ///   runtime.
-///   [`navigator.languages`]
-///   if not found in [local storage].
 /// - **`localstorage_key`** (_`"lang"`_): The [local storage] field to get and save the current language
 ///   of the user. Can be a literal string or an expression that will be evaluated at runtime.
 ///
@@ -628,9 +626,7 @@ pub fn leptos_fluent(
 
     let quote = quote! {
         {
-            const LANGUAGES: [
-                &::leptos_fluent::Language; #n_languages
-            ] = #languages_quote;
+            const LANGUAGES: [&::leptos_fluent::Language; #n_languages] = #languages_quote;
             let i18n = ::leptos_fluent::I18n {
                 language: ::std::rc::Rc::new(::leptos::create_rw_signal(LANGUAGES[0])),
                 languages: &LANGUAGES,
