@@ -81,6 +81,11 @@ fn OtherComponent() -> impl IntoView {
 - [Examples]
 - [Documentation]
 
+## Current state
+
+Leptos-fluent is currently ready to use for most use cases. However, it is still in an early stage of development and the API may contain breaking changes in v0.0.X releases. I'm trying to release
+the API at v0.1.0 as stable as possible.
+
 [leptos]: https://leptos.dev/
 [fluent-templates]: https://github.com/XAMPPRocky/fluent-templates
 [quickstart]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.leptos_fluent.html

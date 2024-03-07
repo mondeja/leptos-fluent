@@ -1124,10 +1124,21 @@ fn language_name_from_language_code(
             "zh-sgp" => return "中文 (新加坡)",
             "zu-zaf" => return "isiZulu (South Africa)",
 
+            // lang (3 letter) -> country (2 letter)
+            //   Cabilian language, a Berber language spoken in Algeria
+            "kab-dz" => return "θɐqβæjlɪθ (Asenǧaq n Dzayer)",
+            //   Chakma language, an Indo-Aryan language spoken in Bangladesh
+            //   TODO: How is written "Bangladesh" in Chakma language?
+            "cpp-bd" => return "𑄌𑄋𑄴𑄟𑄳𑄦 𑄞𑄌𑄴 (Bangladesh)",
+
+            // lang (3 letter) -> country (3 letter)
+            "kab-dza" => return "θɐqβæjlɪθ (Asenǧaq n Dzayer)",
+            "cpp-bgd" => return "𑄌𑄋𑄴𑄟𑄳𑄦 𑄞𑄌𑄴 (Bangladesh)",
+
+            // Followed this table: https://www.fincher.org/Utilities/CountryLanguageList.shtml
+            //
             // TODO:
-            // - Next dialects are not iso639-1 or iso639-2 codes. Investigate them:
-            //    + 'kab-DZ' and 'kab-DZA'
-            //    + 'ccp-BD' and 'ccp-BGD'
+            // - Next dialects are iso639-3 codes. Investigate them:
             //    + 'agq-CM' and 'agq-CMR'
             //    + 'ksf-CM' and 'ksf-CMR'
             //    + 'bas-CM' and 'bas-CMR'
@@ -1232,9 +1243,6 @@ fn language_name_from_language_code(
             //    + 'lkt-US' and 'lkt-USA'
             //    + 'jbo-001'
             //    + 'bem-ZM' and 'bem-ZMB'
-
-            // - Follow this table: https://www.fincher.org/Utilities/CountryLanguageList.shtml
-            //    + Next: lg-UG
             _ => {}
         }
     }

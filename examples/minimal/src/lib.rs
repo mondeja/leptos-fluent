@@ -5,7 +5,7 @@ use leptos_fluent::{i18n, leptos_fluent, tr, Language};
 static_loader! {
     static TRANSLATIONS = {
         locales: "./locales",
-        fallback_language: "en-US",
+        fallback_language: "en",
     };
 }
 

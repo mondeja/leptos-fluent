@@ -31,7 +31,7 @@ use once_cell::sync::Lazy;
 use std::collections::HashMap;
 use std::rc::Rc;
 
-/// Languages supported by the application
+/// Each language supported by your application.
 #[derive(Clone, Debug)]
 pub struct Language {
     /// Language identifier
@@ -41,8 +41,7 @@ pub struct Language {
     /// Language name
     ///
     /// The name of the language, such as `English`, `Español`, etc.
-    /// This name will be intended to be displayed in the language selector,
-    /// but can also be used to translate it itself to other languages.
+    /// This name will be intended to be displayed in the language selector.
     pub name: &'static str,
 }
 
@@ -90,14 +89,7 @@ impl I18n {
     /// ```
     pub fn tr(&self, text_id: &str) -> String {
         let lang_id = &self.language.get().id;
-        self.translations
-            .lookup(lang_id, text_id)
-            .unwrap_or_else(|| {
-                panic!(
-                    "Translation for '{}' not found in locale '{}'",
-                    text_id, lang_id
-                )
-            })
+        self.translations.lookup(lang_id, text_id)
     }
 
     /// Translate a text identifier to the current language with arguments.
@@ -119,14 +111,7 @@ impl I18n {
         args: &HashMap<String, FluentValue<'_>>,
     ) -> String {
         let lang_id = &self.language.get().id;
-        self.translations
-            .lookup_with_args(lang_id, text_id, args)
-            .unwrap_or_else(|| {
-                panic!(
-                    "Translation for '{}' not found in locale '{}'",
-                    text_id, lang_id
-                )
-            })
+        self.translations.lookup_with_args(lang_id, text_id, args)
     }
 
     /// Get the default language.
@@ -200,7 +185,7 @@ macro_rules! tr {
     }
 }
 
-/// Create a [`leptos::Signal`] that translates a text identifier to the current language.
+/// [`leptos::Signal`] that translates a text identifier to the current language.
 ///
 /// ```rust,ignore
 /// move_tr!("hello-world")
