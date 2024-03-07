@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2024-03-07 - v0.0.17
+
+- Don't require to install `unic_langid`.
+
 ## 2024-03-07 - v0.0.16
 
 - Needs `fluent-templates` >= v0.9.0.
