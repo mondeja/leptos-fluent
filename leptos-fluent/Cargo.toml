@@ -9,9 +9,9 @@ repository = "https://github.com/mondeja/leptos-fluent"
 
 [dependencies]
 leptos-fluent-macros = "0.0.15"
-fluent-templates = "0"
+fluent-templates = "0.9"
 leptos = ">=0.1"
 leptos_router = ">=0.1"
-unic-langid-impl = "0"
+unic-langid-impl = "0.9"
 once_cell = "1"
 web-sys = { version = ">=0.1", features = ["Storage", "Navigator"] }

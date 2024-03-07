@@ -4,6 +4,8 @@
 
 - Fixed errors in documentation.
 - Added `kab` and `cpp` dialects.
+- Constricted ranges of dependencies.
+- Added support for `fluent-templates` v0.9.0.
 
 ## 2024-03-02 - v0.0.15
 

@@ -10,11 +10,11 @@ path = "src/lib.rs"
 [dependencies]
 leptos = {version = "0.6.5", features = ["csr"]}
 leptos-fluent = { path = "../../leptos-fluent" }
-unic-langid = "0"
+fluent-templates = "0.9"
+unic-langid = "0.9"
 log = "0"
 console_error_panic_hook = "0"
 console_log = "1"
-fluent-templates = "0"
 
 [[bin]]
 name = "main"
