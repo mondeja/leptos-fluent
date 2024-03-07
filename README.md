@@ -57,8 +57,9 @@ static_loader! {
 #[component]
 pub fn App() -> impl IntoView {
     leptos_fluent! {{
+        // Path to the locales directory, relative to Cargo.toml file.
         locales: "./locales",
-        // Translations provided by fluent-templates.
+        // Static translations struct provided by fluent-templates.
         translations: TRANSLATIONS,
         // Synchronize `<html lang="...">` attribute with the current
         // language using `leptos::create_effect`. By default, it is `false`.
