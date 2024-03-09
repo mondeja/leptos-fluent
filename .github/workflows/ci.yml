@@ -144,3 +144,27 @@ jobs:
         run: |
           cargo login ${{ secrets.CRATES_TOKEN }}
           cargo publish -v -p leptos-fluent
+
+  create-release:
+    if: startsWith(github.ref, 'refs/tags/')
+    name: Create release
+    needs:
+      - release-leptos-fluent
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get tag metadata
+        id: tag
+        run: |
+          TAG_TITLE=${GITHUB_REF#refs/*/}
+          echo "title=$TAG_TITLE" >> $GITHUB_OUTPUT
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        id: create-release
+        with:
+          name: ${{ steps.tag.outputs.title }}
+          tag_name: ${{ steps.tag.outputs.title }}
+          body: |
+            See [CHANGELOG](https://github.com/mondeja/leptos-fluent/blob/master/CHANGELOG.md).
+          draft: false
+          prerelease: false
