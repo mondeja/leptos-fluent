@@ -3,6 +3,9 @@ repos:
     rev: v4.0.0-alpha.8
     hooks:
       - id: prettier
+        args:
+          - --cache
+          - --cache-location=.prettier-cache
   - repo: meta
     hooks:
       - id: check-hooks-apply
