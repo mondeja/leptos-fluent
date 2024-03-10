@@ -23,6 +23,14 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install pre-commit
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/Cargo.lock') }}
       - name: Lint
         run: pre-commit run --all-files --show-diff-on-failure
 
