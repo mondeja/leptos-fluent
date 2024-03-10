@@ -86,8 +86,8 @@ pub fn App() -> impl IntoView {
         // Static translations struct provided by fluent-templates.
         translations: TRANSLATIONS,
 
-        // Client side options (only for CSR and Hydrate)
-        // ----------------------------------------------
+        // Client side options (for `csr` and `hydrate`)
+        // ---------------------------------------------
         // Synchronize `<html lang="...">` attribute with the current
         // language using `leptos::create_effect`. By default, it is `false`.
         sync_html_tag_lang: true,
