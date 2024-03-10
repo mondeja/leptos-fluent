@@ -1,6 +1,4 @@
 use leptos::{wasm_bindgen::JsCast, *};
-use leptos_fluent_complete_example::App as CompleteExampleApp;
-use leptos_fluent_minimal_example::App as MinimalExampleApp;
 use wasm_bindgen_test::*;
 
 wasm_bindgen_test_configure!(run_in_browser);
@@ -40,9 +38,9 @@ async fn sleep(delay: i32) {
     wasm_bindgen_futures::JsFuture::from(p).await.unwrap();
 }
 
-fn p_text() -> String {
+fn element_text(selector: &str) -> String {
     document()
-        .query_selector("p")
+        .query_selector(selector)
         .unwrap()
         .unwrap()
         .text_content()
@@ -69,16 +67,17 @@ fn html_lang() -> String {
 
 #[wasm_bindgen_test]
 async fn minimal_example() {
+    use leptos_fluent_minimal_example::App as MinimalExampleApp;
     mount!(MinimalExampleApp);
     let es = input_by_id("es");
     let en = input_by_id("en");
 
     // translations working
-    assert_eq!(p_text(), "Select a language:");
+    assert_eq!(element_text("p"), "Select a language:");
     es.click();
     assert!(es.checked());
     assert!(!en.checked());
-    assert_eq!(p_text(), "Selecciona un idioma:");
+    assert_eq!(element_text("p"), "Selecciona un idioma:");
 
     // language change not reflected in html tag
     sleep(30).await;
@@ -96,20 +95,21 @@ async fn minimal_example() {
 
 #[wasm_bindgen_test]
 async fn complete_example() {
+    use leptos_fluent_complete_example::App as CompleteExampleApp;
     mount!(CompleteExampleApp);
     let es = input_by_id("es");
     let en = input_by_id("en");
 
     // translations working
-    assert_eq!(p_text(), "Select a language:");
+    assert_eq!(element_text("p"), "Select a language:");
     es.click();
     assert!(es.checked());
     assert!(!en.checked());
-    assert_eq!(p_text(), "Selecciona un idioma:");
+    assert_eq!(element_text("p"), "Selecciona un idioma:");
     en.click();
     assert!(en.checked());
     assert!(!es.checked());
-    assert_eq!(p_text(), "Select a language:");
+    assert_eq!(element_text("p"), "Select a language:");
 
     // language change reflected in html tag
     sleep(30).await;

@@ -2,7 +2,7 @@
 name = "leptos-fluent"
 description = "Fluent framework for internationalization of Leptos applications"
 edition = "2021"
-version = "0.0.17"
+version = "0.0.18"
 license = "MIT"
 documentation = "https://docs.rs/leptos-fluent"
 repository = "https://github.com/mondeja/leptos-fluent"
@@ -11,6 +11,20 @@ repository = "https://github.com/mondeja/leptos-fluent"
 leptos-fluent-macros = { path = "../leptos-fluent-macros" }
 fluent-templates = "0.9"
 leptos = ">=0.1"
-leptos_router = ">=0.1"
+leptos_router = { version = ">=0.1", optional = true }
 once_cell = "1"
-web-sys = { version = ">=0.1", features = ["Storage", "Navigator"] }
+cfg-if = "1"
+web-sys = { version = ">=0.1", features = [
+  "Storage",
+  "Navigator"
+], optional = true }
+
+[features]
+csr = [
+  "dep:web-sys",
+  "dep:leptos_router",
+  "leptos_router/csr",
+  "leptos/csr",
+  "leptos-fluent-macros/csr"
+]
+ssr = ["leptos_router/ssr", "leptos/ssr", "leptos-fluent-macros/ssr"]

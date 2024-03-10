@@ -9,9 +9,18 @@ Internationalization framework for [Leptos] using [fluent-templates].
 
 ## Installation
 
-```sh
-cargo add leptos leptos-fluent fluent-templates
+Add the following dependencies to your `Cargo.toml` file:
+
+```toml
+[dependencies]
+leptos-fluent = {version = "0.0.18", features = ["csr"]}
+fluent-templates = "0.9"
 ```
+
+You must select between the next features:
+
+- `csr`: Enable client-side rendering (CSR) support.
+- `ssr`: Enable server-side rendering (SSR) support.
 
 ## Usage
 
@@ -32,12 +41,12 @@ With Fluent files _en.ftl_ and _es.ftl_:
 
 ```ftl
 foo = Hello, world!
-bar-with-args = Hello, { $arg1 } and { $arg2 }!
+bar = Hello, { $arg1 } and { $arg2 }!
 ```
 
 ```ftl
 foo = ¡Hola, mundo!
-bar-with-args = ¡Hola, { $arg1 } y { $arg2 }!
+bar = ¡Hola, { $arg1 } y { $arg2 }!
 ```
 
 You can use `leptos-fluent` as follows:
@@ -45,7 +54,7 @@ You can use `leptos-fluent` as follows:
 ```rust,ignore
 use fluent_templates::static_loader;
 use leptos::*;
-use leptos_fluent::{leptos_fluent, tr};
+use leptos_fluent::{leptos_fluent, tr, move_tr};
 
 static_loader! {
     static TRANSLATIONS = {
@@ -61,6 +70,9 @@ pub fn App() -> impl IntoView {
         locales: "./locales",
         // Static translations struct provided by fluent-templates.
         translations: TRANSLATIONS,
+        //
+        // CSR options
+        //
         // Synchronize `<html lang="...">` attribute with the current
         // language using `leptos::create_effect`. By default, it is `false`.
         sync_html_tag_lang: true,
@@ -91,10 +103,11 @@ pub fn App() -> impl IntoView {
 
 #[component]
 fn ChildComponent() -> impl IntoView {
+    // Use `tr!` and `move_tr!` macros to translate strings.
     view! {
         <p>
             <span>{move || tr!("foo")}</span>
-            <span>{move || tr!("bar-with-args", {
+            <span>{move_tr!("bar", {
                 "arg1" => "value1",
                 "arg2" => "value2",
             })}</span>
@@ -112,8 +125,8 @@ fn ChildComponent() -> impl IntoView {
 ## Roadmap
 
 Leptos-fluent is currently ready for most use cases. However, it is still in an
-early stage of development and the API may contain breaking changes in v0.0.X
-releases. I'm trying to release the API at v0.1.0 as stable as possible.
+early stage of development and the API may contain breaking changes through
+v0.0.X releases. I'm trying to release the API at v0.1.0 as stable as possible.
 
 [leptos]: https://leptos.dev/
 [fluent-templates]: https://github.com/XAMPPRocky/fluent-templates

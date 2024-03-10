@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 2024-03-10 - v0.0.18
+
+### New features
+
+- Add SSR support.
+- Added features `csr` and `ssr` for client-side rendering (CSR) and
+  server-side rendering (SSR).
+
+### Breaking changes
+
+- One of the features `csr` or `ssr` must be explicitly enabled.
+
 ## 2024-03-07 - v0.0.17
 
 - Don't require to install `unic_langid`.
