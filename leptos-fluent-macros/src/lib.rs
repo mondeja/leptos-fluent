@@ -1,3 +1,9 @@
+//! Macros for the leptos-fluent crate.
+//!
+//! See [leptos-fluent] for more information.
+//!
+//! [leptos-fluent]: https://crates.io/crates/leptos-fluent
+
 extern crate proc_macro;
 
 mod languages;

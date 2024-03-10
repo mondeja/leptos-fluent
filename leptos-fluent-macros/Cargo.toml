@@ -6,9 +6,11 @@ version = "0.0.19"
 license = "MIT"
 documentation = "https://docs.rs/leptos-fluent"
 repository = "https://github.com/mondeja/leptos-fluent"
+readme = "README.md"
 
 [lib]
 proc-macro = true
+path = "src/lib.rs"
 
 [dependencies]
 proc-macro2 = "1"

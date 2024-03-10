@@ -1,26 +1,21 @@
 # CHANGELOG
 
-## 2024-03-10 - v0.0.19
+## 2024-03-10 - v0.0.20
 
-### New features
+### Breaking changes
 
-- Add hydration support with `hydrate` feature.
-
-### Changes
-
-- `I18n` context is now `Copy`able.
-
-## 2024-03-10 - v0.0.18
+- One of the features `csr`, `hydrate` or `ssr` must be enabled.
 
 ### New features
 
 - Add SSR support.
-- Added features `csr` and `ssr` for client-side rendering (CSR) and
-  server-side rendering (SSR).
+- Add hydration support.
+- Added features `csr`, `hydrate` and `ssr`.
 
-### Breaking changes
+### Changes
 
-- One of the features `csr` or `ssr` must be explicitly enabled.
+- `I18n` context is now `Copy`able.
+- Crates now offers READMEs.
 
 ## 2024-03-07 - v0.0.17
 

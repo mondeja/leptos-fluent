@@ -1328,7 +1328,7 @@ dependencies = [
 
 [[package]]
 name = "leptos-fluent"
-version = "0.0.19"
+version = "0.0.20"
 dependencies = [
  "cfg-if",
  "fluent-templates",
