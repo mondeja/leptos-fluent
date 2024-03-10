@@ -2,7 +2,7 @@
 name = "leptos-fluent-macros"
 description = "Macros for leptos-fluent"
 edition = "2021"
-version = "0.0.17"
+version = "0.0.18"
 license = "MIT"
 documentation = "https://docs.rs/leptos-fluent"
 repository = "https://github.com/mondeja/leptos-fluent"
@@ -15,4 +15,9 @@ proc-macro2 = "1"
 quote = "1"
 syn = "2"
 serde_json = "1"
-web-sys = { version = ">=0.1", features = ["Storage", "Navigator"] }
+cfg-if = "1"
+web-sys = { version = ">=0.1", features = ["Storage", "Navigator"], optional = true }
+
+[features]
+csr = ["dep:web-sys"]
+ssr = []

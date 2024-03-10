@@ -2,8 +2,10 @@
 //!
 //! ## Installation
 //!
-//! ```sh
-//! cargo add leptos leptos-fluent fluent-templates
+//! ```toml
+//! [dependencies]
+//! leptos-fluent = {version = "0.0.18", features = ["csr"]}
+//! fluent-templates = "0.9
 //! ```
 //!
 //! [Leptos]: https://leptos.dev/
@@ -14,6 +16,12 @@
 //! - [**Quickstart**](macro.leptos_fluent.html)
 //! - [**Usage**](https://github.com/mondeja/leptos-fluent#usage)
 //! - [**Examples**](https://github.com/mondeja/leptos-fluent/tree/master/examples)
+
+#[cfg(all(feature = "csr", feature = "ssr"))]
+compile_error!("Features `leptos-fluent/csr` and `leptos-fluent/ssr` are mutually exclusive. Choose one of them.");
+
+#[cfg(not(any(feature = "csr", feature = "ssr")))]
+compile_error!("At least one of the features `leptos-fluent/csr` or `leptos-fluent/ssr` are required.");
 
 #[doc(hidden)]
 pub mod localstorage;

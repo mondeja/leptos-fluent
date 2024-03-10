@@ -29,8 +29,21 @@ repos:
     hooks:
       - id: fmt
       - id: cargo-check
+        name: cargo-check-csr
+        alias: cargo-check-csr
+        args: [--features=csr]
+      - id: cargo-check
+        name: cargo-check-ssr
+        alias: cargo-check-ssr
+        args: [--features=ssr]
       - id: clippy
-        args: [--, -A, clippy::comparison-chain, -Dwarnings]
+        alias: clippy-csr
+        name: clippy-csr
+        args: [--features=csr, --, -A, clippy::comparison-chain, -Dwarnings]
+      - id: clippy
+        alias: clippy-ssr
+        name: clippy-ssr
+        args: [--features=ssr, --, -A, clippy::comparison-chain, -Dwarnings]
   - repo: https://github.com/tcort/markdown-link-check
     rev: v3.11.2
     hooks:

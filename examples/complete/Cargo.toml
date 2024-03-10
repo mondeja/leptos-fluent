@@ -8,7 +8,7 @@ name = "leptos_fluent_complete_example"
 path = "src/lib.rs"
 
 [dependencies]
-leptos = {version = "0.6.5", features = ["csr"]}
+leptos = {version = "0.6.9", features = ["csr"]}
 leptos-fluent = { path = "../../leptos-fluent" }
 fluent-templates = "0.9"
 log = "0"

@@ -1,6 +1,6 @@
 use fluent_templates::static_loader;
 use leptos::*;
-use leptos_fluent::{i18n, leptos_fluent, tr, Language};
+use leptos_fluent::{i18n, leptos_fluent, move_tr, Language};
 
 static_loader! {
     static TRANSLATIONS = {
@@ -22,7 +22,7 @@ pub fn App() -> impl IntoView {
 #[component]
 fn ChildComponent() -> impl IntoView {
     view! {
-        <p>{move || tr!("select-a-language")}</p>
+        <p>{move_tr!("select-a-language")}</p>
         <fieldset>
             <For
                 each=move || i18n().languages

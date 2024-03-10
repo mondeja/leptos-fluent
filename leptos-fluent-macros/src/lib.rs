@@ -2,6 +2,7 @@ extern crate proc_macro;
 
 mod languages;
 
+use cfg_if::cfg_if;
 use languages::{
     generate_code_for_static_language, read_languages_file, read_locales_folder,
 };
@@ -367,8 +368,8 @@ impl Parse for I18nLoader {
 ///   user from [local storage] if not found in the URL param. Can be a literal boolean or an expression
 ///   that will be evaluated at runtime.
 /// - **`initial_language_from_navigator`** (_`false`_): Load the initial language of the user
-///   from [`navigator.languages`] if not found in [local storage]. Can be a literal boolean or an expression that will be evaluated at
-///   runtime.
+///   from [`navigator.languages`] if not found in [local storage]. Can be a literal boolean or an
+///   expression that will be evaluated at runtime.
 /// - **`localstorage_key`** (_`"lang"`_): The [local storage] field to get and save the current language
 ///   of the user. Can be a literal string or an expression that will be evaluated at runtime.
 ///
@@ -383,6 +384,7 @@ impl Parse for I18nLoader {
 pub fn leptos_fluent(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
+    #[cfg_attr(not(feature = "csr"), allow(unused_variables))]
     let I18nLoader {
         translations_ident,
         languages,
@@ -415,26 +417,11 @@ pub fn leptos_fluent(
     .parse::<TokenStream>()
     .unwrap();
 
-    let sync_html_tag_lang_quote = match sync_html_tag_lang_bool {
-        Some(lit) => match lit.value {
-            true => quote! {
-                use leptos::wasm_bindgen::JsCast;
-                ::leptos::create_effect(move |_| ::leptos::document()
-                    .document_element()
-                    .unwrap()
-                    .unchecked_into::<::leptos::web_sys::HtmlElement>()
-                    .set_attribute(
-                        "lang",
-                        &::leptos::expect_context::<::leptos_fluent::I18n>().language.get().id.to_string()
-                    )
-                );
-            },
-            false => quote! {},
-        },
-        None => match sync_html_tag_lang_expr {
-            Some(expr) => quote! {
-                use leptos::wasm_bindgen::JsCast;
-                if #expr {
+    cfg_if! { if #[cfg(feature = "csr")] {
+        let sync_html_tag_lang_quote = match sync_html_tag_lang_bool {
+            Some(lit) => match lit.value {
+                true => quote! {
+                    use leptos::wasm_bindgen::JsCast;
                     ::leptos::create_effect(move |_| ::leptos::document()
                         .document_element()
                         .unwrap()
@@ -444,11 +431,30 @@ pub fn leptos_fluent(
                             &::leptos::expect_context::<::leptos_fluent::I18n>().language.get().id.to_string()
                         )
                     );
-                }
+                },
+                false => quote! {},
             },
-            None => quote! {},
-        },
-    };
+            None => match sync_html_tag_lang_expr {
+                Some(expr) => quote! {
+                    use leptos::wasm_bindgen::JsCast;
+                    if #expr {
+                        ::leptos::create_effect(move |_| ::leptos::document()
+                            .document_element()
+                            .unwrap()
+                            .unchecked_into::<::leptos::web_sys::HtmlElement>()
+                            .set_attribute(
+                                "lang",
+                                &::leptos::expect_context::<::leptos_fluent::I18n>().language.get().id.to_string()
+                            )
+                        );
+                    }
+                },
+                None => quote! {},
+            },
+        };
+    } else {
+        let sync_html_tag_lang_quote = quote! {};
+    }};
 
     let initial_language_from_url_bool_value = initial_language_from_url_bool
         .as_ref()
@@ -514,6 +520,7 @@ pub fn leptos_fluent(
         },
     };
 
+    #[cfg_attr(not(feature = "csr"), allow(unused_variables))]
     let initial_language_from_url_quote =
         match initial_language_from_url_bool_value {
             Some(value) => match value {
@@ -551,6 +558,7 @@ pub fn leptos_fluent(
             },
         };
 
+    #[cfg_attr(not(feature = "csr"), allow(unused_variables))]
     let initial_language_from_localstorage_quote =
         match initial_language_from_localstorage_bool_value {
             Some(value) => match value {
@@ -574,6 +582,7 @@ pub fn leptos_fluent(
             },
         };
 
+    #[cfg_attr(not(feature = "csr"), allow(unused_variables))]
     let initial_language_from_navigator_quote =
         match initial_language_from_navigator_bool_value {
             Some(value) => match value {
@@ -613,16 +622,22 @@ pub fn leptos_fluent(
             },
         };
 
-    let initial_language_quote = quote! {
-        let mut lang: Option<&'static ::leptos_fluent::Language> = None;
-        let i18n = expect_context::<::leptos_fluent::I18n>();
-        #initial_language_from_url_quote;
-        #initial_language_from_localstorage_quote;
-        #initial_language_from_navigator_quote;
-        if let Some(l) = lang {
-            i18n.language.set(l);
-        }
-    };
+    cfg_if! { if #[cfg(feature = "csr")] {
+        let initial_language_quote = quote! {
+            let i18n = expect_context::<::leptos_fluent::I18n>();
+            let mut lang: Option<&'static ::leptos_fluent::Language> = None;
+            #initial_language_from_url_quote;
+            #initial_language_from_localstorage_quote;
+            #initial_language_from_navigator_quote;
+            if let Some(l) = lang {
+                i18n.language.set(l);
+            }
+        };
+    } else {
+        let initial_language_quote = quote! {
+            let i18n = expect_context::<::leptos_fluent::I18n>();
+        };
+    }};
 
     let quote = quote! {
         {
