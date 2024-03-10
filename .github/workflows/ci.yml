@@ -130,6 +130,10 @@ jobs:
 
   test-release-leptos-fluent-macros:
     if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master'
+    needs:
+      - lint
+      - test
+      - build-examples
     name: Test leptos-fluent-macros release
     runs-on: ubuntu-latest
     steps:
