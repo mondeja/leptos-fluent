@@ -8,7 +8,7 @@ documentation = "https://docs.rs/leptos-fluent"
 repository = "https://github.com/mondeja/leptos-fluent"
 
 [dependencies]
-leptos-fluent-macros = "0.0.19"
+leptos-fluent-macros = { path = "../leptos-fluent-macros" }
 fluent-templates = "0.9"
 leptos = ">=0.1"
 leptos_router = { version = ">=0.1", optional = true }
