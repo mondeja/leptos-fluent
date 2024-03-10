@@ -59,6 +59,32 @@ repos:
         alias: clippy-hydrate
         name: clippy-hydrate
         args: [--features=hydrate, --, -A, clippy::comparison-chain, -Dwarnings]
+  - repo: https://github.com/mondeja/cargo-readme
+    # TODO: Use upstream after https://github.com/webern/cargo-readme/pull/104 is released
+    rev: add-pre-commit-hook
+    hooks:
+      - id: cargo-readme
+        alias: cargo-readme-workspace
+        name: cargo-readme-workspace
+        args:
+          [
+            --project-root=leptos-fluent,
+            --output=../README.md,
+            --template=../README.tpl,
+          ]
+      - id: cargo-readme
+        alias: cargo-readme-leptos-fluent
+        name: cargo-readme-leptos-fluent
+        args:
+          [
+            --project-root=leptos-fluent,
+            --output=README.md,
+            --template=../README.tpl,
+          ]
+      - id: cargo-readme
+        alias: cargo-readme-leptos-fluent-macros
+        name: cargo-readme-leptos-fluent-macros
+        args: [--project-root=leptos-fluent-macros, --output=README.md]
   - repo: https://github.com/tcort/markdown-link-check
     rev: v3.11.2
     hooks:
