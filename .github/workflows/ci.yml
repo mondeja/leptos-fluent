@@ -100,7 +100,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install trunk
-        if: ${{ matrix.feature == 'csr' }}
+        if: ${{ contains(matrix.feature, 'csr') }}
         run: cargo binstall -y trunk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
