@@ -44,11 +44,13 @@ pub fn App() -> impl IntoView {
 /// Renders the home page of your application.
 #[component]
 fn HomePage() -> impl IntoView {
+    let i18n = i18n();
+
     view! {
         <h1>{move_tr!("welcome-to-leptos")}</h1>
         <fieldset>
             <For
-                each=move || i18n().languages
+                each=move || i18n.languages
                 key=move |lang| lang.id.to_string()
                 children=move |lang: &&Language| {
                     view! {
@@ -58,8 +60,8 @@ fn HomePage() -> impl IntoView {
                                 id=lang.id.to_string()
                                 name="language"
                                 value=lang.id.to_string()
-                                checked=*lang == i18n().language.get()
-                                on:click=move |_| i18n().set_language_with_localstorage(lang)
+                                checked=*lang == i18n.language.get()
+                                on:click=move |_| i18n.set_language_with_localstorage(lang)
                             />
                             <label for=lang.id.to_string()>{lang.name}</label>
                         </div>

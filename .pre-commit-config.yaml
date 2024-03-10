@@ -36,6 +36,10 @@ repos:
         name: cargo-check-ssr
         alias: cargo-check-ssr
         args: [--features=ssr]
+      - id: cargo-check
+        name: cargo-check-hydrate
+        alias: cargo-check-hydrate
+        args: [--features=hydrate]
       - id: clippy
         alias: clippy-csr
         name: clippy-csr
@@ -44,6 +48,10 @@ repos:
         alias: clippy-ssr
         name: clippy-ssr
         args: [--features=ssr, --, -A, clippy::comparison-chain, -Dwarnings]
+      - id: clippy
+        alias: clippy-hydrate
+        name: clippy-hydrate
+        args: [--features=hydrate, --, -A, clippy::comparison-chain, -Dwarnings]
   - repo: https://github.com/tcort/markdown-link-check
     rev: v3.11.2
     hooks:

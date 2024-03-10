@@ -1,12 +1,38 @@
 //! Internationalization framework for [Leptos] using [fluent-templates].
 //!
-//! ## Installation
+//! Add the following to your `Cargo.toml` file:
 //!
 //! ```toml
 //! [dependencies]
-//! leptos-fluent = {version = "0.0.18", features = ["csr"]}
+//! leptos-fluent = "0.0.19"
 //! fluent-templates = "0.9"
+//!
+//! [features]
+//! csr = [
+//!     ...
+//!     "leptos/csr",
+//!     ...
+//!     "leptos-fluent/csr"
+//! ]
+//! hydrate = [
+//!     ...
+//!     "leptos/hydrate",
+//!     ...
+//!     "leptos-fluent/hydrate"
+//! ]
+//! ssr = [
+//!     ...
+//!     "leptos/ssr",
+//!     ...
+//!     "leptos-fluent/ssr"
+//! ]
 //! ```
+//!
+//! ## Features
+//!
+//! - **`csr`**: Enable client-side rendering (CSR) support.
+//! - **`hydrate`**: Enable hydration support.
+//! - **`ssr`**: Enable server-side rendering (SSR) support.
 //!
 //! [Leptos]: https://leptos.dev/
 //! [fluent-templates]: https://github.com/XAMPPRocky/fluent-templates
@@ -31,7 +57,6 @@ use leptos::{use_context, RwSignal, SignalGet, SignalSet};
 pub use leptos_fluent_macros::leptos_fluent;
 use once_cell::sync::Lazy;
 use std::collections::HashMap;
-use std::rc::Rc;
 
 /// Each language supported by your application.
 #[derive(Clone, Debug)]
@@ -61,24 +86,14 @@ impl PartialEq for Language {
 ///
 /// If you need to separate the translations of different parts of the application,
 /// you can wrap this context in another struct and provide it to Leptos as a context.
+#[derive(Clone, Copy)]
 pub struct I18n {
     /// Signal that holds the current language
-    pub language: Rc<RwSignal<&'static Language>>,
+    pub language: RwSignal<&'static Language>,
     /// Available languages for the application
     pub languages: &'static [&'static Language],
     pub translations: &'static Lazy<StaticLoader>,
     pub localstorage_key: &'static str,
-}
-
-impl Clone for I18n {
-    fn clone(&self) -> Self {
-        Self {
-            language: Rc::clone(&self.language),
-            languages: self.languages,
-            translations: self.translations,
-            localstorage_key: self.localstorage_key,
-        }
-    }
 }
 
 impl I18n {

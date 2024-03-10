@@ -1,9 +1,9 @@
 use cfg_if::cfg_if;
 
 pub fn get(
-    #[cfg_attr(not(feature = "csr"), allow(unused_variables))] k: &str,
+    #[cfg_attr(feature = "ssr", allow(unused_variables))] k: &str,
 ) -> Option<String> {
-    cfg_if! { if #[cfg(feature = "csr")] {
+    cfg_if! { if #[cfg(not(feature = "ssr"))] {
         use leptos_router::Url;
 
         let query = ::leptos::window().location().search().unwrap();

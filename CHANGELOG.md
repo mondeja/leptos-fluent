@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2024-03-10 - v0.0.19
+
+### New features
+
+- Add hydration support with `hydrate` feature.
+
 ## 2024-03-10 - v0.0.18
 
 ### New features
