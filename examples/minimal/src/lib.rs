@@ -21,11 +21,13 @@ pub fn App() -> impl IntoView {
 
 #[component]
 fn ChildComponent() -> impl IntoView {
+    let i18n = i18n();
+
     view! {
         <p>{move_tr!("select-a-language")}</p>
         <fieldset>
             <For
-                each=move || i18n().languages
+                each=move || i18n.languages
                 key=move |lang| lang.id.to_string()
                 children=move |lang: &&Language| {
                     view! {
@@ -35,8 +37,8 @@ fn ChildComponent() -> impl IntoView {
                                 id=lang.id.to_string()
                                 name="language"
                                 value=lang.id.to_string()
-                                checked=*lang == i18n().language.get()
-                                on:click=move |_| i18n().language.set(lang)
+                                checked=*lang == i18n.language.get()
+                                on:click=move |_| i18n.language.set(lang)
                             />
                             <label for=lang.id.to_string()>{lang.name}</label>
                         </div>

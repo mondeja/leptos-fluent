@@ -5,7 +5,7 @@ members = [
     "tests",
     "examples/complete",
     "examples/minimal",
-    "examples/ssr-actix",
+    "examples/ssr-hydrate-actix",
 ]
 resolver = "2"
 

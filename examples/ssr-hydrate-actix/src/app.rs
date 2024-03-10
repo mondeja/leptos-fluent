@@ -14,7 +14,6 @@ static_loader! {
 #[component]
 pub fn App() -> impl IntoView {
     provide_meta_context();
-
     leptos_fluent! {{
         translations: TRANSLATIONS,
         locales: "./locales",
@@ -44,12 +43,14 @@ pub fn App() -> impl IntoView {
 /// Renders the home page of your application.
 #[component]
 fn HomePage() -> impl IntoView {
+    let i18n = i18n();
+
     view! {
         <h1>{move_tr!("welcome-to-leptos")}</h1>
         <fieldset>
             <For
-                each=move || i18n().languages
-                key=move |lang| lang.id.to_string()
+                each=move || i18n.languages
+                key=move |lang| format!("{}-{}", lang.id, **lang == i18n.language.get())
                 children=move |lang: &&Language| {
                     view! {
                         <div>
@@ -58,8 +59,8 @@ fn HomePage() -> impl IntoView {
                                 id=lang.id.to_string()
                                 name="language"
                                 value=lang.id.to_string()
-                                checked=*lang == i18n().language.get()
-                                on:click=move |_| i18n().set_language_with_localstorage(lang)
+                                checked=*lang == i18n.language.get()
+                                on:click=move |_| i18n.set_language_with_localstorage(lang)
                             />
                             <label for=lang.id.to_string()>{lang.name}</label>
                         </div>

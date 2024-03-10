@@ -9,18 +9,33 @@ Internationalization framework for [Leptos] using [fluent-templates].
 
 ## Installation
 
-Add the following dependencies to your `Cargo.toml` file:
+Add the following to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-leptos-fluent = {version = "0.0.18", features = ["csr"]}
+leptos-fluent = "0.0.19"
 fluent-templates = "0.9"
+
+[features]
+csr = [
+    ...
+    "leptos/csr",
+    ...
+    "leptos-fluent/csr"
+]
+hydrate = [
+    ...
+    "leptos/hydrate",
+    ...
+    "leptos-fluent/hydrate"
+]
+ssr = [
+    ...
+    "leptos/ssr",
+    ...
+    "leptos-fluent/ssr"
+]
 ```
-
-You must select between the next features:
-
-- `csr`: Enable client-side rendering (CSR) support.
-- `ssr`: Enable server-side rendering (SSR) support.
 
 ## Usage
 
@@ -70,9 +85,9 @@ pub fn App() -> impl IntoView {
         locales: "./locales",
         // Static translations struct provided by fluent-templates.
         translations: TRANSLATIONS,
-        //
-        // CSR options
-        //
+
+        // Client side options (for `csr` and `hydrate`)
+        // ---------------------------------------------
         // Synchronize `<html lang="...">` attribute with the current
         // language using `leptos::create_effect`. By default, it is `false`.
         sync_html_tag_lang: true,

@@ -1,5 +1,5 @@
 [package]
-name = "leptos-fluent-ssr-actix-example"
+name = "leptos-fluent-ssr-hydrate-actix-example"
 version = "0.1.0"
 edition = "2021"
 
@@ -15,13 +15,23 @@ leptos = "0.6"
 leptos_meta = "0.6.9"
 leptos_actix = { version = "0.6.9", optional = true }
 leptos_router = "0.6.9"
-leptos-fluent = { path = "../../leptos-fluent"}
+leptos-fluent = { path = "../../leptos-fluent" }
 fluent-templates = "0.9"
 wasm-bindgen = "=0.2.92"
 
 [features]
-csr = ["leptos/csr", "leptos_meta/csr", "leptos_router/csr", "leptos-fluent/csr"]
-hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]
+csr = [
+  "leptos/csr",
+  "leptos_meta/csr",
+  "leptos_router/csr",
+  "leptos-fluent/csr"
+]
+hydrate = [
+  "leptos/hydrate",
+  "leptos_meta/hydrate",
+  "leptos_router/hydrate",
+  "leptos-fluent/hydrate"
+]
 ssr = [
   "dep:actix-files",
   "dep:actix-web",
@@ -48,12 +58,10 @@ reload-port = 3001
 #
 # Optional. Can be over-ridden with the command line parameter --bin-features
 bin-features = ["ssr"]
-
 # The features to use when compiling the lib target
 #
 # Optional. Can be over-ridden with the command line parameter --lib-features
 lib-features = ["hydrate"]
-
 # The profile to use for the lib target when compiling for release
 #
 # Optional. Defaults to "release".

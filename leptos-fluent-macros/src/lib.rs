@@ -384,7 +384,7 @@ impl Parse for I18nLoader {
 pub fn leptos_fluent(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
-    #[cfg_attr(not(feature = "csr"), allow(unused_variables))]
+    #[cfg_attr(feature = "ssr", allow(unused_variables))]
     let I18nLoader {
         translations_ident,
         languages,
@@ -417,7 +417,7 @@ pub fn leptos_fluent(
     .parse::<TokenStream>()
     .unwrap();
 
-    cfg_if! { if #[cfg(feature = "csr")] {
+    cfg_if! { if #[cfg(not(feature = "ssr"))] {
         let sync_html_tag_lang_quote = match sync_html_tag_lang_bool {
             Some(lit) => match lit.value {
                 true => quote! {
@@ -520,7 +520,6 @@ pub fn leptos_fluent(
         },
     };
 
-    #[cfg_attr(not(feature = "csr"), allow(unused_variables))]
     let initial_language_from_url_quote =
         match initial_language_from_url_bool_value {
             Some(value) => match value {
@@ -558,7 +557,6 @@ pub fn leptos_fluent(
             },
         };
 
-    #[cfg_attr(not(feature = "csr"), allow(unused_variables))]
     let initial_language_from_localstorage_quote =
         match initial_language_from_localstorage_bool_value {
             Some(value) => match value {
@@ -582,48 +580,45 @@ pub fn leptos_fluent(
             },
         };
 
-    #[cfg_attr(not(feature = "csr"), allow(unused_variables))]
+    cfg_if! { if #[cfg(not(feature = "ssr"))] {
+        let window_navigator_languages_quote = quote! {
+            let languages = window().navigator().languages().to_vec();
+            for raw_language in languages {
+                let language = raw_language.as_string();
+                if language.is_none() {
+                    continue;
+                }
+                if let Some(l) = i18n.language_from_str(&language.unwrap())
+                {
+                    lang = Some(l);
+                    break;
+                }
+            }
+        };
+    } else {
+        let window_navigator_languages_quote = quote! {};
+    }};
+
     let initial_language_from_navigator_quote =
         match initial_language_from_navigator_bool_value {
             Some(value) => match value {
                 true => quote! {
                     if lang.is_none() {
-                        let languages = window().navigator().languages().to_vec();
-                        for raw_language in languages {
-                            let language = raw_language.as_string();
-                            if language.is_none() {
-                                continue;
-                            }
-                            if let Some(l) = i18n.language_from_str(&language.unwrap())
-                            {
-                                lang = Some(l);
-                                break;
-                            }
-                        }
+                        #window_navigator_languages_quote;
                     }
                 },
                 false => quote! {},
             },
             None => quote! {
                 if #initial_language_from_navigator && lang.is_none() {
-                    let languages = window().navigator().languages().to_vec();
-                    for raw_language in languages {
-                        let language = raw_language.as_string();
-                        if language.is_none() {
-                            continue;
-                        }
-                        if let Some(l) = i18n.language_from_str(&language.unwrap())
-                        {
-                            lang = Some(l);
-                            break;
-                        }
-                    }
+                    #window_navigator_languages_quote;
                 }
             },
         };
 
-    cfg_if! { if #[cfg(feature = "csr")] {
-        let initial_language_quote = quote! {
+    // create_effect only runs on the client
+    let initial_language_quote = quote! {
+        create_effect(move |prev| {
             let i18n = expect_context::<::leptos_fluent::I18n>();
             let mut lang: Option<&'static ::leptos_fluent::Language> = None;
             #initial_language_from_url_quote;
@@ -632,18 +627,14 @@ pub fn leptos_fluent(
             if let Some(l) = lang {
                 i18n.language.set(l);
             }
-        };
-    } else {
-        let initial_language_quote = quote! {
-            let i18n = expect_context::<::leptos_fluent::I18n>();
-        };
-    }};
+        });
+    };
 
     let quote = quote! {
         {
             const LANGUAGES: [&::leptos_fluent::Language; #n_languages] = #languages_quote;
             let i18n = ::leptos_fluent::I18n {
-                language: ::std::rc::Rc::new(::leptos::create_rw_signal(LANGUAGES[0])),
+                language: ::leptos::create_rw_signal(LANGUAGES[0]),
                 languages: &LANGUAGES,
                 translations: &#translations_ident,
                 localstorage_key: #localstorage_key,
@@ -651,7 +642,7 @@ pub fn leptos_fluent(
             provide_context::<::leptos_fluent::I18n>(i18n);
             #initial_language_quote;
             #sync_html_tag_lang_quote;
-            i18n
+            expect_context::<::leptos_fluent::I18n>()
         }
     };
 
