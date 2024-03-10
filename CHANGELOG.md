@@ -10,7 +10,7 @@
 
 ### Breaking changes
 
-- Either the feature `csr` or `ssr` must be enabled.
+- One of the features `csr` or `ssr` must be explicitly enabled.
 
 ## 2024-03-07 - v0.0.17
 
