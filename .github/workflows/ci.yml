@@ -87,7 +87,7 @@ jobs:
           - example: ssr-actix
             feature: ssr
           - example: ssr-actix
-            feature: csr
+            feature: csr-feature
     steps:
       - uses: actions/checkout@v4
       - name: Setup Rust
@@ -122,6 +122,11 @@ jobs:
         run: |
           cd examples/${{ matrix.example }}
           trunk build --release
+      - name: Build with trunk
+        if: ${{ matrix.feature == 'csr-feature' }}
+        run: |
+          cd examples/${{ matrix.example }}
+          trunk build --release --features csr
       - name: Build with cargo-leptos
         if: ${{ matrix.feature == 'ssr' }}
         run: |
