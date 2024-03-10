@@ -29,6 +29,9 @@ repos:
     hooks:
       - id: fmt
       - id: cargo-check
+        name: cargo-check-no-features
+        alias: cargo-check-no-features
+      - id: cargo-check
         name: cargo-check-csr
         alias: cargo-check-csr
         args: [--features=csr]
@@ -40,6 +43,10 @@ repos:
         name: cargo-check-hydrate
         alias: cargo-check-hydrate
         args: [--features=hydrate]
+      - id: clippy
+        alias: clippy-no-features
+        name: clippy-no-features
+        args: [--, -A, clippy::comparison-chain, -Dwarnings]
       - id: clippy
         alias: clippy-csr
         name: clippy-csr

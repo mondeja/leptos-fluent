@@ -1,9 +1,7 @@
 use cfg_if::cfg_if;
 
-pub fn get(
-    #[cfg_attr(feature = "ssr", allow(unused_variables))] key: &str,
-) -> Option<String> {
-    cfg_if! { if #[cfg(not(feature = "ssr"))] {
+pub fn get(#[allow(unused_variables)] key: &str) -> Option<String> {
+    cfg_if! { if #[cfg(all(not(feature = "ssr"), feature = "csr", feature = "hydrate"))] {
         ::leptos::window()
             .local_storage()
             .unwrap()
@@ -16,8 +14,8 @@ pub fn get(
 }
 
 pub fn set(
-    #[cfg_attr(feature = "ssr", allow(unused_variables))] key: &str,
-    #[cfg_attr(feature = "ssr", allow(unused_variables))] value: &str,
+    #[allow(unused_variables)] key: &str,
+    #[allow(unused_variables)] value: &str,
 ) {
     cfg_if! { if #[cfg(any(feature = "csr", feature = "hydrate"))] {
         ::leptos::window()
