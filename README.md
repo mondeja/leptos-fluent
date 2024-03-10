@@ -17,24 +17,9 @@ leptos-fluent = "0.0.19"
 fluent-templates = "0.9"
 
 [features]
-csr = [
-    ...
-    "leptos/csr",
-    ...
-    "leptos-fluent/csr"
-]
-hydrate = [
-    ...
-    "leptos/hydrate",
-    ...
-    "leptos-fluent/hydrate"
-]
-ssr = [
-    ...
-    "leptos/ssr",
-    ...
-    "leptos-fluent/ssr"
-]
+csr = ["leptos-fluent/csr"]
+hydrate = ["leptos-fluent/hydrate"]
+ssr = ["leptos-fluent/ssr"]
 ```
 
 ## Usage
