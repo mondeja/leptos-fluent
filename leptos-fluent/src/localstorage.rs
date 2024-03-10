@@ -19,7 +19,7 @@ pub fn set(
     #[cfg_attr(feature = "ssr", allow(unused_variables))] key: &str,
     #[cfg_attr(feature = "ssr", allow(unused_variables))] value: &str,
 ) {
-    cfg_if! { if #[cfg(not(feature = "ssr"))] {
+    cfg_if! { if #[cfg(any(feature = "csr", feature = "hydrate"))] {
         ::leptos::window()
             .local_storage()
             .unwrap()

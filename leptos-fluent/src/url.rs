@@ -20,6 +20,6 @@ pub fn get(
                 return Some(value);
             }
         }
-    }}
+    }};
     None
 }

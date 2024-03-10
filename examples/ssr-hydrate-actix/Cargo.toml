@@ -1,5 +1,5 @@
 [package]
-name = "leptos-fluent-hydrate-actix-example"
+name = "leptos-fluent-ssr-hydrate-actix-example"
 version = "0.1.0"
 edition = "2021"
 

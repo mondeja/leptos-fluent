@@ -92,9 +92,7 @@ jobs:
             feature: csr
           - example: complete
             feature: csr
-          - example: ssr-actix
-            feature: ssr
-          - example: hydrate-actix
+          - example: ssr-hydrate-actix
             feature: ssr
     steps:
       - uses: actions/checkout@v4
