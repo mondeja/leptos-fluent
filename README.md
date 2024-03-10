@@ -14,7 +14,7 @@ Add the following dependencies to your `Cargo.toml` file:
 ```toml
 [dependencies]
 leptos-fluent = {version = "0.0.18", features = ["csr"]}
-fluent-templates = "0.9
+fluent-templates = "0.9"
 ```
 
 You must select between the next features:

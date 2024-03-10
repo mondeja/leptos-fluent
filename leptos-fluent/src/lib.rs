@@ -5,7 +5,7 @@
 //! ```toml
 //! [dependencies]
 //! leptos-fluent = {version = "0.0.18", features = ["csr"]}
-//! fluent-templates = "0.9
+//! fluent-templates = "0.9"
 //! ```
 //!
 //! [Leptos]: https://leptos.dev/
