@@ -6,6 +6,7 @@ repos:
         args:
           - --cache
           - --cache-location=.prettier-cache
+          - --ignore-path=.gitignore
   - repo: meta
     hooks:
       - id: check-hooks-apply
@@ -67,20 +68,16 @@ repos:
         alias: cargo-readme-workspace
         name: cargo-readme-workspace
         args:
-          [
-            --project-root=leptos-fluent,
-            --output=../README.md,
-            --template=../README.tpl,
-          ]
+          - --project-root=leptos-fluent
+          - --output=../README.md
+          - --template=../README.tpl
       - id: cargo-readme
         alias: cargo-readme-leptos-fluent
         name: cargo-readme-leptos-fluent
         args:
-          [
-            --project-root=leptos-fluent,
-            --output=README.md,
-            --template=../README.tpl,
-          ]
+          - --project-root=leptos-fluent
+          - --output=README.md
+          - --template=../README.tpl
       - id: cargo-readme
         alias: cargo-readme-leptos-fluent-macros
         name: cargo-readme-leptos-fluent-macros
