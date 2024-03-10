@@ -134,7 +134,7 @@ jobs:
         if: ${{ matrix.feature == 'csr-feature' }}
         run: |
           cd examples/${{ matrix.example }}
-          trunk build --release --features csr
+          trunk build --features csr
       - name: Build with cargo-leptos
         if: ${{ matrix.feature == 'ssr' }}
         run: |
