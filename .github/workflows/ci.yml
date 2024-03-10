@@ -37,6 +37,14 @@ jobs:
             browser: firefox
           - runs-on: ubuntu-latest
             browser: chrome
+          - runs-on: macos-latest
+            browser: firefox
+          - runs-on: macos-latest
+            browser: chrome
+          - runs-on: windows-latest
+            browser: firefox
+          - runs-on: windows-latest
+            browser: chrome
     steps:
       - uses: actions/checkout@v4
       - name: Setup Rust
