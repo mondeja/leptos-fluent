@@ -15,7 +15,6 @@ pub fn get(
     }}
 }
 
-#[cfg_attr(feature = "ssr", allow(unused_variables))]
 pub fn set(
     #[cfg_attr(not(feature = "csr"), allow(unused_variables))] key: &str,
     #[cfg_attr(not(feature = "csr"), allow(unused_variables))] value: &str,
