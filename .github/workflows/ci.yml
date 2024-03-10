@@ -79,9 +79,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        example:
-          - minimal
-          - complete
+        include:
+          - example: minimal
+            feature: csr
+          - example: complete
+            feature: csr
+          - example: ssr-actix
+            feature: ssr
+          - example: ssr-actix
+            feature: csr
     steps:
       - uses: actions/checkout@v4
       - name: Setup Rust
@@ -94,7 +100,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install trunk
+        if: ${{ matrix.feature == 'csr' }}
         run: cargo binstall -y trunk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install cargo-leptos
+        if: ${{ matrix.feature == 'ssr' }}
+        run: cargo binstall -y cargo-leptos
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Cache dependencies
@@ -106,9 +118,15 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-${{ matrix.example }}-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/Cargo.lock') }}
       - name: Build with trunk
+        if: ${{ matrix.feature == 'csr' }}
         run: |
           cd examples/${{ matrix.example }}
           trunk build --release
+      - name: Build with cargo-leptos
+        if: ${{ matrix.feature == 'ssr' }}
+        run: |
+          cd examples/${{ matrix.example }}
+          cargo leptos build --release
 
   test-release-leptos-fluent-macros:
     if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master'
