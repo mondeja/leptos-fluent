@@ -1,6 +1,8 @@
 # CHANGELOG
 
-## 2024-03-10 - v0.0.20
+## Unreleased
+
+## 2024-03-10 - [0.0.20]
 
 ### Breaking changes
 
@@ -12,26 +14,23 @@
 - Add hydration support.
 - Added features `csr`, `hydrate` and `ssr`.
 
-### Changes
+### Enhancements
 
 - `I18n` context is now `Copy`able.
 - Crates now offers READMEs.
 
-## 2024-03-07 - v0.0.17
+## 2024-03-07 - [0.0.17]
 
 - Don't require to install `unic_langid`.
-
-## 2024-03-07 - v0.0.16
-
 - Needs `fluent-templates` >= v0.9.0.
 - Constricted ranges of dependencies.
 - Fixed errors in documentation.
 - Added `kab` and `cpp` dialects.
 
-## 2024-03-02 - v0.0.15
+## 2024-03-02 - [0.0.15]
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
-## 2024-02-09 - v0.0.X
-
-Previous alpha releases.
+[0.0.20]: https://github.com/mondeja/leptos-fluent/compare/v0.0.17...v0.0.20
+[0.0.17]: https://github.com/mondeja/leptos-fluent/compare/v0.0.15...v0.0.17
+[0.0.15]: https://github.com/mondeja/leptos-fluent/compare/v0.0.1...v0.0.15
