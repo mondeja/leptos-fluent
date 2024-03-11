@@ -31,6 +31,6 @@
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
-[0.0.20]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.17...v0.0.20
-[0.0.17]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.15...v0.0.17
-[0.0.15]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.1...v0.0.15
+[0.0.20]: https://github.com/mondeja/leptos-fluent/compare/v0.0.17...v0.0.20
+[0.0.17]: https://github.com/mondeja/leptos-fluent/compare/v0.0.15...v0.0.17
+[0.0.15]: https://github.com/mondeja/leptos-fluent/compare/v0.0.1...v0.0.15
