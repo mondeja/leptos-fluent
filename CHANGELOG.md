@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Leptos version has been setted to `>=0.6`.
+
 ## 2024-03-10 - [0.0.20]
 
 ### Breaking changes
