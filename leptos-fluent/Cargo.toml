@@ -11,7 +11,7 @@ readme = "README.md"
 [dependencies]
 leptos-fluent-macros = { path = "../leptos-fluent-macros" }
 fluent-templates = "0.9"
-leptos = ">=0.1"
+leptos = ">=0.6"
 leptos_router = { version = ">=0.1", optional = true }
 once_cell = "1"
 cfg-if = "1"
