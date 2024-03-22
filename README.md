@@ -130,18 +130,18 @@ fn ChildComponent() -> impl IntoView {
 }
 ```
 
-## Resources
-
-- [Quickstart]
-- [Examples]
-- [Documentation]
-
 ### Features
 
 - **Client side rendering (CSR)**: Use `leptos-fluent/csr` feature.
 - **Server side rendering (SSR)**: Use `leptos-fluent/ssr` feature.
 - **Hydration**: Use `leptos-fluent/hydrate` feature.
 - **Actix web integration**: Use `leptos-fluent/actix` feature.
+
+## Resources
+
+- [Quickstart]
+- [Examples]
+- [Documentation]
 
 ## Roadmap
 
