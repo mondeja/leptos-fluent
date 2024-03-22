@@ -26,7 +26,7 @@ csr = ["leptos-fluent/csr"]
 hydrate = ["leptos-fluent/hydrate"]
 ssr = [
   "leptos-fluent/ssr",
-  "leptos-fluent/actix",  # Select actix or axum
+  "leptos-fluent/actix",  # Currently only actix is supported
 ]
 ```
 
