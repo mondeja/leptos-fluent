@@ -18,19 +18,22 @@ leptos_router = "0.6"
 leptos-fluent = { path = "../../leptos-fluent" }
 fluent-templates = "0.9"
 wasm-bindgen = "=0.2.92"
+log = {version = "0.4", optional = true }
 
 [features]
 csr = [
   "leptos/csr",
   "leptos_meta/csr",
   "leptos_router/csr",
-  "leptos-fluent/csr"
+  "leptos-fluent/csr",
+  "dep:log",
 ]
 hydrate = [
   "leptos/hydrate",
   "leptos_meta/hydrate",
   "leptos_router/hydrate",
-  "leptos-fluent/hydrate"
+  "leptos-fluent/hydrate",
+  "dep:log",
 ]
 ssr = [
   "dep:actix-files",
@@ -39,7 +42,8 @@ ssr = [
   "leptos/ssr",
   "leptos_meta/ssr",
   "leptos_router/ssr",
-  "leptos-fluent/ssr"
+  "leptos-fluent/ssr",
+  "leptos-fluent/actix"
 ]
 
 [package.metadata.leptos]

@@ -11,13 +11,16 @@
 //!
 //! ```toml
 //! [dependencies]
-//! leptos-fluent = "0.0.20"
+//! leptos-fluent = "0.0.21"
 //! fluent-templates = "0.9"
 //!
 //! [features]
 //! csr = ["leptos-fluent/csr"]
 //! hydrate = ["leptos-fluent/hydrate"]
-//! ssr = ["leptos-fluent/ssr"]
+//! ssr = [
+//!   "leptos-fluent/ssr",
+//!   "leptos-fluent/actix",  # Select actix or axum
+//! ]
 //! ```
 //!
 //! # Usage
@@ -92,6 +95,12 @@
 //!         // Name of the field in local storage to get and set the
 //!         // current language of the user. By default, it is `"lang"`.
 //!         localstorage_key: "language",
+//!
+//!         // Server side options (for `ssr`)
+//!         // -------------------------------
+//!         // Set the initial language from the Accept-Language header of the
+//!         // request. By default, it is `false`.
+//!         initial_language_from_accept_language_header: true,
 //!     }};
 //!
 //!     view! {
@@ -120,6 +129,13 @@
 //! - [Examples]
 //! - [Documentation]
 //!
+//! ## Features
+//!
+//! - **Client side rendering (CSR)**: Use `leptos-fluent/csr` feature.
+//! - **Server side rendering (SSR)**: Use `leptos-fluent/ssr` feature.
+//! - **Hydration**: Use `leptos-fluent/hydrate` feature.
+//! - **Actix web integration**: Use `leptos-fluent/actix` feature.
+//!
 //! # Roadmap
 //!
 //! Leptos-fluent is currently ready for most use cases. However, it is still in an
@@ -132,6 +148,8 @@
 //! [examples]: https://github.com/mondeja/leptos-fluent/tree/master/examples
 //! [documentation]: https://docs.rs/leptos-fluent
 
+#[doc(hidden)]
+pub mod http_header;
 #[doc(hidden)]
 pub mod localstorage;
 #[doc(hidden)]
@@ -234,26 +252,7 @@ impl I18n {
     /// language identifier without the region. If it doesn't find a match, it will
     /// return `None`.
     pub fn language_from_str(&self, code: &str) -> Option<&'static Language> {
-        match LanguageIdentifier::from_str(code) {
-            Ok(target_lang) => match self
-                .languages
-                .iter()
-                .find(|lang| lang.id.matches(&target_lang, false, false))
-            {
-                Some(lang) => Some(lang),
-                None => {
-                    let mut lazy_target_lang = target_lang.clone();
-                    lazy_target_lang.region = None;
-                    match self.languages.iter().find(|lang| {
-                        lang.id.matches(&lazy_target_lang, true, true)
-                    }) {
-                        Some(lang) => Some(lang),
-                        None => None,
-                    }
-                }
-            },
-            Err(_) => None,
-        }
+        language_from_str_between_languages(code, self.languages)
     }
 
     /// Set the current language in the signal of the context and in local storage.
@@ -313,4 +312,30 @@ macro_rules! move_tr {
             )*
         }))
     };
+}
+
+pub fn language_from_str_between_languages(
+    code: &str,
+    languages: &'static [&Language],
+) -> Option<&'static Language> {
+    match LanguageIdentifier::from_str(code) {
+        Ok(target_lang) => match languages
+            .iter()
+            .find(|lang| lang.id.matches(&target_lang, false, false))
+        {
+            Some(lang) => Some(lang),
+            None => {
+                let mut lazy_target_lang = target_lang.clone();
+                lazy_target_lang.region = None;
+                match languages
+                    .iter()
+                    .find(|lang| lang.id.matches(&lazy_target_lang, true, true))
+                {
+                    Some(lang) => Some(lang),
+                    None => None,
+                }
+            }
+        },
+        Err(_) => None,
+    }
 }

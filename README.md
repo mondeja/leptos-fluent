@@ -18,13 +18,16 @@ Add the following to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-leptos-fluent = "0.0.20"
+leptos-fluent = "0.0.21"
 fluent-templates = "0.9"
 
 [features]
 csr = ["leptos-fluent/csr"]
 hydrate = ["leptos-fluent/hydrate"]
-ssr = ["leptos-fluent/ssr"]
+ssr = [
+  "leptos-fluent/ssr",
+  "leptos-fluent/actix",  # Select actix or axum
+]
 ```
 
 ## Usage
@@ -99,6 +102,12 @@ pub fn App() -> impl IntoView {
         // Name of the field in local storage to get and set the
         // current language of the user. By default, it is `"lang"`.
         localstorage_key: "language",
+
+        // Server side options (for `ssr`)
+        // -------------------------------
+        // Set the initial language from the Accept-Language header of the
+        // request. By default, it is `false`.
+        initial_language_from_accept_language_header: true,
     }};
 
     view! {
@@ -126,6 +135,13 @@ fn ChildComponent() -> impl IntoView {
 - [Quickstart]
 - [Examples]
 - [Documentation]
+
+### Features
+
+- **Client side rendering (CSR)**: Use `leptos-fluent/csr` feature.
+- **Server side rendering (SSR)**: Use `leptos-fluent/ssr` feature.
+- **Hydration**: Use `leptos-fluent/hydrate` feature.
+- **Actix web integration**: Use `leptos-fluent/actix` feature.
 
 ## Roadmap
 
