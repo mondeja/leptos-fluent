@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 2024-03-24 - [0.0.21]
+## 2024-03-23 - [0.0.21]
 
 - Minimum Leptos version set to `0.6`.
 - Fix hydration mode.
