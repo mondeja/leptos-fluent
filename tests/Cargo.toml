@@ -7,8 +7,8 @@ version = "0.1.0"
 crate-type = ["cdylib"]
 
 [dependencies]
-leptos-fluent-minimal-example = { path = "../examples/minimal" }
-leptos-fluent-complete-example = { path = "../examples/complete" }
+leptos-fluent-csr-minimal-example = { path = "../examples/csr-minimal" }
+leptos-fluent-csr-complete-example = { path = "../examples/csr-complete" }
 wasm-bindgen-test = "0.3"
 leptos = "0.6"
 js-sys = "0.3"

@@ -1,8 +1,11 @@
 # CHANGELOG
 
-## Unreleased
+## 2024-03-24 - [0.0.21]
 
 - Minimum Leptos version set to `0.6`.
+- Fix hydration mode.
+- Allow to get the initial language on SSR from the `Accept-Language` header.
+- Added `actix` feature to integrate with Actix Web framework.
 
 ## 2024-03-10 - [0.0.20]
 
@@ -33,6 +36,7 @@
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.0.21]: https://github.com/mondeja/leptos-fluent/compare/v0.0.20...v0.0.21
 [0.0.20]: https://github.com/mondeja/leptos-fluent/compare/v0.0.17...v0.0.20
 [0.0.17]: https://github.com/mondeja/leptos-fluent/compare/v0.0.15...v0.0.17
 [0.0.15]: https://github.com/mondeja/leptos-fluent/compare/v0.0.1...v0.0.15

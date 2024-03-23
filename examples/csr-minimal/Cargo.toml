@@ -1,10 +1,10 @@
 [package]
-name = "leptos-fluent-minimal-example"
+name = "leptos-fluent-csr-minimal-example"
 edition = "2021"
 version = "0.1.0"
 
 [lib]
-name = "leptos_fluent_minimal_example"
+name = "leptos_fluent_csr_minimal_example"
 path = "src/lib.rs"
 
 [dependencies]

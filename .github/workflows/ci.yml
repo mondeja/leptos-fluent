@@ -88,9 +88,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - example: minimal
+          - example: csr-minimal
             feature: csr
-          - example: complete
+          - example: csr-complete
             feature: csr
           - example: ssr-hydrate-actix
             feature: ssr

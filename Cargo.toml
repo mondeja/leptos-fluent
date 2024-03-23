@@ -3,8 +3,8 @@ members = [
     "leptos-fluent",
     "leptos-fluent-macros",
     "tests",
-    "examples/complete",
-    "examples/minimal",
+    "examples/csr-complete",
+    "examples/csr-minimal",
     "examples/ssr-hydrate-actix",
 ]
 resolver = "2"

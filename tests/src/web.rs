@@ -67,7 +67,7 @@ fn html_lang() -> String {
 
 #[wasm_bindgen_test]
 async fn minimal_example() {
-    use leptos_fluent_minimal_example::App as MinimalExampleApp;
+    use leptos_fluent_csr_minimal_example::App as MinimalExampleApp;
     mount!(MinimalExampleApp);
     let es = input_by_id("es");
     let en = input_by_id("en");
@@ -95,7 +95,7 @@ async fn minimal_example() {
 
 #[wasm_bindgen_test]
 async fn complete_example() {
-    use leptos_fluent_complete_example::App as CompleteExampleApp;
+    use leptos_fluent_csr_complete_example::App as CompleteExampleApp;
     mount!(CompleteExampleApp);
     let es = input_by_id("es");
     let en = input_by_id("en");

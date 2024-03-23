@@ -1,6 +1,6 @@
 use fluent_templates::static_loader;
 use leptos::*;
-use leptos_fluent::{i18n, leptos_fluent, move_tr, Language};
+use leptos_fluent::{i18n, leptos_fluent, move_tr, tr, Language};
 use leptos_meta::*;
 use leptos_router::*;
 
@@ -17,16 +17,18 @@ pub fn App() -> impl IntoView {
     leptos_fluent! {{
         translations: TRANSLATIONS,
         locales: "./locales",
-        sync_html_tag_lang: true,
         initial_language_from_url: true,
+        initial_language_from_url_param: "lang",
         initial_language_from_url_to_localstorage: true,
         initial_language_from_localstorage: true,
         initial_language_from_navigator: true,
+        localstorage_key: "language",
+        initial_language_from_accept_language_header: true,
     }};
 
     view! {
         // sets the document title
-        <Title text="Welcome to Leptos"/>
+        <Title text=move || tr!("welcome-to-leptos")/>
 
         // content for this welcome page
         <Router>

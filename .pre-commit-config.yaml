@@ -57,6 +57,11 @@ repos:
         name: clippy-ssr
         args: [--features=ssr, --, -A, clippy::comparison-chain, -Dwarnings]
       - id: clippy
+        alias: clippy-ssr-actix
+        name: clippy-ssr-actix
+        args:
+          ["--features=ssr,actix", --, -A, clippy::comparison-chain, -Dwarnings]
+      - id: clippy
         alias: clippy-hydrate
         name: clippy-hydrate
         args: [--features=hydrate, --, -A, clippy::comparison-chain, -Dwarnings]
