@@ -212,7 +212,8 @@ impl I18n {
     /// i18n().tr("hello-world")
     /// ```
     pub fn tr(&self, text_id: &str) -> String {
-        let lang_id = &self.language.get().id;
+        use leptos::SignalGetUntracked;
+        let lang_id = &self.language.get_untracked().id;
         self.translations.lookup(lang_id, text_id)
     }
 
