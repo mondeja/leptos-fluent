@@ -38,8 +38,10 @@ Giving the following directory structure:
 .
 ├── 📄 Cargo.toml
 ├── 📁 locales
-│   ├── 📄 en.ftl
-│   └── 📄 es.ftl
+│   ├── 📁 en
+│   │   └── 📄 main.ftl
+│   └── 📁 es
+│       └── 📄 main.ftl
 └── 📁 src
     ├── 📄 main.rs
     └── 📄 lib.rs
