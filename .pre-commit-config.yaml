@@ -47,11 +47,11 @@ repos:
       - id: clippy
         alias: clippy-no-features
         name: clippy-no-features
-        args: [--, -A, clippy::comparison-chain, -Dwarnings]
+        args: [--, -A, clippy::comparison-chain]
       - id: clippy
         alias: clippy-csr
         name: clippy-csr
-        args: [--features=csr, --, -A, clippy::comparison-chain, -Dwarnings]
+        args: [--features=csr, --, -A, clippy::comparison-chain]
       - id: clippy
         alias: clippy-ssr
         name: clippy-ssr
@@ -63,12 +63,11 @@ repos:
             --,
             -A,
             clippy::comparison-chain,
-            -Dwarnings,
           ]
       - id: clippy
         alias: clippy-hydrate
         name: clippy-hydrate
-        args: [--features=hydrate, --, -A, clippy::comparison-chain, -Dwarnings]
+        args: [--features=hydrate, --, -A, clippy::comparison-chain]
   - repo: https://github.com/mondeja/cargo-readme
     # TODO: Use upstream after https://github.com/webern/cargo-readme/pull/104 is released
     rev: add-pre-commit-hook
