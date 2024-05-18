@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2024-05-18 - [0.0.23]
+
+- Add `axum` feature to integrate with Axum web framework.
+
 ## 2024-05-01 - [0.0.22]
 
 - Fix error about required translation tree files in main example of documentation.
@@ -40,6 +44,7 @@
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.0.23]: https://github.com/mondeja/leptos-fluent/compare/v0.0.22...v0.0.23
 [0.0.22]: https://github.com/mondeja/leptos-fluent/compare/v0.0.21...v0.0.22
 [0.0.21]: https://github.com/mondeja/leptos-fluent/compare/v0.0.20...v0.0.21
 [0.0.20]: https://github.com/mondeja/leptos-fluent/compare/v0.0.17...v0.0.20

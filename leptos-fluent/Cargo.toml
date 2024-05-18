@@ -2,7 +2,7 @@
 name = "leptos-fluent"
 description = "Fluent framework for internationalization of Leptos applications"
 edition = "2021"
-version = "0.0.22"
+version = "0.0.23"
 license = "MIT"
 documentation = "https://docs.rs/leptos-fluent"
 repository = "https://github.com/mondeja/leptos-fluent"
