@@ -706,10 +706,45 @@ pub fn leptos_fluent(
                     None => quote! {},
                 },
             };
+    } else if #[cfg(feature = "axum")] {
+        // Axum
+        let parse_axum_header_quote = quote! {
+            if let Some(req) = leptos::use_context::<axum::http::request::Parts>() {
+                let maybe_header = req
+                    .headers
+                    .get(axum::http::header::ACCEPT_LANGUAGE)
+                    .and_then(|header| header.to_str().ok());
+
+                if let Some(header) = maybe_header {
+                    let langs = ::leptos_fluent::http_header::parse(header);
+                    for l in langs {
+                        if let Some(l) = ::leptos_fluent::language_from_str_between_languages(&l, &LANGUAGES) {
+                            lang = Some(l);
+
+                            break;
+                        }
+                    }
+                }
+            }
+        };
+
+        let initial_language_from_accept_language_header_quote =
+            match initial_language_from_accept_language_header_bool {
+                Some(lit) => match lit.value {
+                    true => parse_axum_header_quote,
+                    false => quote! {},
+                },
+                None => match initial_language_from_accept_language_header_expr {
+                    Some(expr) => quote! {
+                        if #expr {
+                            #parse_axum_header_quote;
+                        }
+                    },
+                    None => quote! {},
+                },
+            };
     } else {
-        // Other SSR frameworks
-        //
-        // TODO: compilation error because is not implemented for this framework
+        // Other SSR frameworks or the user is not using any
         let initial_language_from_accept_language_header_quote = quote! {};
     }};
 

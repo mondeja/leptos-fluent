@@ -2,7 +2,7 @@
 name = "leptos-fluent-macros"
 description = "Macros for leptos-fluent"
 edition = "2021"
-version = "0.0.22"
+version = "0.0.23"
 license = "MIT"
 documentation = "https://docs.rs/leptos-fluent"
 repository = "https://github.com/mondeja/leptos-fluent"
@@ -25,3 +25,4 @@ csr = ["web-sys/Storage", "web-sys/Navigator"]
 hydrate = ["web-sys/Storage", "web-sys/Navigator"]
 ssr = []
 actix = []
+axum = []

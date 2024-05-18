@@ -14,14 +14,14 @@ repos:
       - id: check-useless-excludes
         name: check-useless-excludes
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v4.6.0
     hooks:
       - id: trailing-whitespace
         name: trailing-whitespace
       - id: end-of-file-fixer
         name: end-of-file-fixer
   - repo: https://github.com/DavidAnson/markdownlint-cli2
-    rev: v0.12.1
+    rev: v0.13.0
     hooks:
       - id: markdownlint-cli2
         exclude: ^LICENSE\.md$
@@ -39,7 +39,7 @@ repos:
       - id: cargo-check
         name: cargo-check-ssr
         alias: cargo-check-ssr
-        args: [--features=ssr]
+        args: [--features=ssr, -p=leptos, -p=leptos-fluent]
       - id: cargo-check
         name: cargo-check-hydrate
         alias: cargo-check-hydrate
@@ -47,24 +47,27 @@ repos:
       - id: clippy
         alias: clippy-no-features
         name: clippy-no-features
-        args: [--, -A, clippy::comparison-chain, -Dwarnings]
+        args: [--, -A, clippy::comparison-chain]
       - id: clippy
         alias: clippy-csr
         name: clippy-csr
-        args: [--features=csr, --, -A, clippy::comparison-chain, -Dwarnings]
+        args: [--features=csr, --, -A, clippy::comparison-chain]
       - id: clippy
         alias: clippy-ssr
         name: clippy-ssr
-        args: [--features=ssr, --, -A, clippy::comparison-chain, -Dwarnings]
-      - id: clippy
-        alias: clippy-ssr-actix
-        name: clippy-ssr-actix
         args:
-          ["--features=ssr,actix", --, -A, clippy::comparison-chain, -Dwarnings]
+          [
+            --features=ssr,
+            -p=leptos,
+            -p=leptos-fluent,
+            --,
+            -A,
+            clippy::comparison-chain,
+          ]
       - id: clippy
         alias: clippy-hydrate
         name: clippy-hydrate
-        args: [--features=hydrate, --, -A, clippy::comparison-chain, -Dwarnings]
+        args: [--features=hydrate, --, -A, clippy::comparison-chain]
   - repo: https://github.com/mondeja/cargo-readme
     # TODO: Use upstream after https://github.com/webern/cargo-readme/pull/104 is released
     rev: add-pre-commit-hook
@@ -88,7 +91,7 @@ repos:
         name: cargo-readme-leptos-fluent-macros
         args: [--project-root=leptos-fluent-macros, --output=README.md]
   - repo: https://github.com/tcort/markdown-link-check
-    rev: v3.11.2
+    rev: v3.12.1
     hooks:
       - id: markdown-link-check
         name: markdown-link-check

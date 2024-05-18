@@ -92,6 +92,8 @@ jobs:
             feature: csr
           - example: ssr-hydrate-actix
             feature: ssr
+          - example: ssr-hydrate-axum
+            feature: ssr
     steps:
       - uses: actions/checkout@v4
       - name: Setup Rust

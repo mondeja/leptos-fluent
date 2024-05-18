@@ -26,7 +26,7 @@ csr = ["leptos-fluent/csr"]
 hydrate = ["leptos-fluent/hydrate"]
 ssr = [
   "leptos-fluent/ssr",
-  "leptos-fluent/actix",  # Currently only actix is supported
+  "leptos-fluent/actix",  # actix and axum are supported
 ]
 ```
 
@@ -134,10 +134,11 @@ fn ChildComponent() -> impl IntoView {
 
 ### Features
 
-- **Client side rendering (CSR)**: Use `leptos-fluent/csr` feature.
-- **Server side rendering (SSR)**: Use `leptos-fluent/ssr` feature.
-- **Hydration**: Use `leptos-fluent/hydrate` feature.
-- **Actix web integration**: Use `leptos-fluent/actix` feature.
+- **Client side rendering (CSR)**: Use the `leptos-fluent/csr` feature.
+- **Server side rendering (SSR)**: Use the `leptos-fluent/ssr` feature.
+- **Hydration**: Use the `leptos-fluent/hydrate` feature.
+- **Actix Web integration**: Use the `leptos-fluent/actix` feature.
+- **Axum integration**: Use the `leptos-fluent/axum` feature.
 
 ## Resources
 
