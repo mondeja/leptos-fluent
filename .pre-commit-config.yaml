@@ -39,7 +39,7 @@ repos:
       - id: cargo-check
         name: cargo-check-ssr
         alias: cargo-check-ssr
-        args: [--features=ssr]
+        args: [--features=ssr, -p=leptos, -p=leptos-fluent]
       - id: cargo-check
         name: cargo-check-hydrate
         alias: cargo-check-hydrate
@@ -55,12 +55,16 @@ repos:
       - id: clippy
         alias: clippy-ssr
         name: clippy-ssr
-        args: [--features=ssr, --, -A, clippy::comparison-chain, -Dwarnings]
-      - id: clippy
-        alias: clippy-ssr-actix
-        name: clippy-ssr-actix
         args:
-          ["--features=ssr,actix", --, -A, clippy::comparison-chain, -Dwarnings]
+          [
+            --features=ssr,
+            -p=leptos,
+            -p=leptos-fluent,
+            --,
+            -A,
+            clippy::comparison-chain,
+            -Dwarnings,
+          ]
       - id: clippy
         alias: clippy-hydrate
         name: clippy-hydrate

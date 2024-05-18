@@ -30,10 +30,3 @@ wasm-pack test --firefox --headless
 ```sh
 cargo doc --open --no-deps
 ```
-
-## Run example
-
-```sh
-cd examples/minimal
-trunk serve --open
-```

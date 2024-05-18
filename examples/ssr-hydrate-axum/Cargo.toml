@@ -1,5 +1,5 @@
 [package]
-name = "leptos-fluent-ssr-hydrate-actix-example"
+name = "leptos-fluent-ssr-hydrate-axum-example"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,12 +7,16 @@ edition = "2021"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-actix-files = { version = "0.6", optional = true }
-actix-web = { version = "4", optional = true }
+axum = { version = "0.7", optional = true }
 console_error_panic_hook = "0.1"
+tower = { version = "0.4", optional = true }
+tower-http = { version = "0.5", features = ["fs"], optional = true }
+http = "1"
+thiserror = "1"
+tokio = { version = "1", features = ["rt-multi-thread"], optional = true }
 leptos = "0.6"
 leptos_meta = "0.6"
-leptos_actix = { version = "0.6", optional = true }
+leptos_axum = { version = "0.6", optional = true }
 leptos_router = "0.6"
 leptos-fluent = { path = "../../leptos-fluent" }
 fluent-templates = "0.9"
@@ -32,21 +36,23 @@ hydrate = [
   "leptos-fluent/hydrate",
 ]
 ssr = [
-  "dep:actix-files",
-  "dep:actix-web",
-  "dep:leptos_actix",
+  "dep:axum",
+  "dep:tokio",
+  "dep:leptos_axum",
+  "dep:tower",
+  "dep:tower-http",
   "leptos/ssr",
   "leptos_meta/ssr",
   "leptos_router/ssr",
   "leptos-fluent/ssr",
-  "leptos-fluent/actix"
+  "leptos-fluent/axum",
 ]
 
 [package.metadata.leptos]
 # The name used by wasm-bindgen/cargo-leptos for the JS/WASM bundle. Defaults to the crate name
-output-name = "ssr-actix"
+output-name = "ssr-axum"
 # The site root folder is where cargo-leptos generate all output. WARNING: all content of this folder will be erased on a rebuild. Use it in your server setup.
-site-root = "target/site-actix"
+site-root = "target/site-axum"
 # The site-root relative folder where all compiled output (JS, WASM and CSS) is written
 # Defaults to pkg
 site-pkg-dir = "pkg"

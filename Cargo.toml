@@ -6,6 +6,7 @@ members = [
     "examples/csr-complete",
     "examples/csr-minimal",
     "examples/ssr-hydrate-actix",
+    "examples/ssr-hydrate-axum",
 ]
 resolver = "2"
 
