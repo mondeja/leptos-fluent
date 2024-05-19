@@ -23,7 +23,6 @@ csr = [
   "leptos/csr",
   "leptos_meta/csr",
   "leptos_router/csr",
-  "leptos-fluent/csr",
 ]
 hydrate = [
   "leptos/hydrate",

@@ -11,12 +11,13 @@
 //!
 //! ```toml
 //! [dependencies]
-//! leptos-fluent = "0.0.21"
+//! leptos-fluent = "0.0.24"
 //! fluent-templates = "0.9"
 //!
 //! [features]
-//! csr = ["leptos-fluent/csr"]
-//! hydrate = ["leptos-fluent/hydrate"]
+//! hydrate = [
+//!   "leptos-fluent/hydrate"
+//! ]
 //! ssr = [
 //!   "leptos-fluent/ssr",
 //!   "leptos-fluent/actix",  # actix and axum are supported
@@ -94,6 +95,9 @@
 //!         // Get the initial language from `navigator.languages` if not
 //!         // found in the local storage. By default, it is `false`.
 //!         initial_language_from_navigator: true,
+//!         // Set the language to local storage when the user changes it.
+//!         // By default, it is `false`.
+//!         set_to_localstorage: true,
 //!         // Name of the field in local storage to get and set the
 //!         // current language of the user. By default, it is `"lang"`.
 //!         localstorage_key: "language",
@@ -127,8 +131,7 @@
 //!
 //! ## Features
 //!
-//! - **Client side rendering (CSR)**: Use the `leptos-fluent/csr` feature.
-//! - **Server side rendering (SSR)**: Use the `leptos-fluent/ssr` feature.
+//! - **Server Side Rendering**: Use the `leptos-fluent/ssr` feature.
 //! - **Hydration**: Use the `leptos-fluent/hydrate` feature.
 //! - **Actix Web integration**: Use the `leptos-fluent/actix` feature.
 //! - **Axum integration**: Use the `leptos-fluent/axum` feature.
@@ -198,12 +201,17 @@ impl PartialEq for Language {
 /// you can wrap this context in another struct and provide it to Leptos as a context.
 #[derive(Clone, Copy)]
 pub struct I18n {
-    /// Signal that holds the current language
+    /// Signal that holds the current language.
     pub language: RwSignal<&'static Language>,
-    /// Available languages for the application
+    /// Available languages for the application.
     pub languages: &'static [&'static Language],
+    /// leptos-fluent translations loader.
     pub translations: &'static Lazy<StaticLoader>,
+    /// Local storage key to store the current language.
     pub localstorage_key: &'static str,
+    /// Whether to use local storage to store the current language
+    /// when the user changes it.
+    pub use_localstorage: bool,
 }
 
 impl I18n {
@@ -258,20 +266,51 @@ impl I18n {
         language_from_str_between_languages(code, self.languages)
     }
 
-    /// Set the current language in the signal of the context and in local storage.
-    pub fn set_language_with_localstorage(&self, lang: &'static Language) {
+    /// Set the current language in the signal of the context and in local storage
+    /// (if using local storage).
+    pub fn set_language(&self, lang: &'static Language) {
         self.language.set(lang);
-        localstorage::set(self.localstorage_key, &lang.id.to_string());
+        if self.use_localstorage {
+            localstorage::set(self.localstorage_key, &lang.id.to_string());
+        }
+    }
+
+    /// Get a hash for a language including their active status.
+    pub fn language_key(&self, lang: &'static Language) -> String {
+        format!(
+            "{}{}",
+            lang.id,
+            if lang == self.language.get() {
+                "1"
+            } else {
+                "0"
+            }
+        )
+    }
+
+    /// Get wether a language is the active language.
+    pub fn is_active_language(&self, lang: &'static Language) -> bool {
+        lang == self.language.get()
     }
 }
 
-/// Get the current context for internationalization.
+/// Get the current context for localization.
 #[inline(always)]
-pub fn i18n() -> I18n {
+pub fn use_i18n() -> Option<I18n> {
+    use_context::<I18n>()
+}
+
+/// Expect the current context for localization.
+#[inline(always)]
+pub fn expect_i18n() -> I18n {
     use_context::<I18n>().expect(
         "I18n context is missing, use leptos_fluent!{} macro to provide it.",
     )
 }
+
+#[allow(non_upper_case_globals)]
+/// Expect the current context for localization.
+pub const i18n: fn() -> I18n = expect_i18n;
 
 /// Translate a text identifier to the current language.
 ///
@@ -282,10 +321,10 @@ pub fn i18n() -> I18n {
 #[macro_export]
 macro_rules! tr {
     ($text_id:expr$(,)?) => {
-        $crate::i18n().tr($text_id)
+        $crate::expect_i18n().tr($text_id)
     };
     ($text_id:expr, {$($key:expr => $value:expr),*$(,)?}$(,)?) => {
-        $crate::i18n().trs($text_id, &{
+        $crate::expect_i18n().trs($text_id, &{
             let mut map = ::std::collections::HashMap::new();
             $(
                 map.insert($key.to_string(), $value.into());

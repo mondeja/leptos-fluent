@@ -3,14 +3,9 @@ name = "leptos-fluent-tests"
 edition = "2021"
 version = "0.1.0"
 
-[lib]
-crate-type = ["cdylib"]
-
 [dependencies]
+tests-helpers = { path = "./tests-helpers" }
 leptos-fluent-csr-minimal-example = { path = "../examples/csr-minimal" }
 leptos-fluent-csr-complete-example = { path = "../examples/csr-complete" }
 wasm-bindgen-test = "0.3"
 leptos = "0.6"
-js-sys = "0.3"
-web-sys = "0.3"
-wasm-bindgen-futures = "0.4"

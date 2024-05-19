@@ -1,7 +1,7 @@
 use cfg_if::cfg_if;
 
 pub fn get(#[allow(unused_variables)] k: &str) -> Option<String> {
-    cfg_if! { if #[cfg(all(not(feature = "ssr"), feature = "csr", feature = "hydrate"))] {
+    cfg_if! { if #[cfg(not(feature = "ssr"))] {
         use leptos_router::Url;
 
         let query = ::leptos::window().location().search().unwrap();

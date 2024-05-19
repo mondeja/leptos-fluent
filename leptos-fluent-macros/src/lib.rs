@@ -98,6 +98,8 @@ struct I18nLoader {
     initial_language_from_localstorage_expr: Option<syn::Expr>,
     initial_language_from_navigator_bool: Option<syn::LitBool>,
     initial_language_from_navigator_expr: Option<syn::Expr>,
+    set_to_localstorage_bool: Option<syn::LitBool>,
+    set_to_localstorage_expr: Option<syn::Expr>,
     localstorage_key_str: Option<syn::LitStr>,
     localstorage_key_expr: Option<syn::Expr>,
     initial_language_from_accept_language_header_bool: Option<syn::LitBool>,
@@ -134,6 +136,8 @@ impl Parse for I18nLoader {
         let mut initial_language_from_navigator_bool: Option<syn::LitBool> =
             None;
         let mut initial_language_from_navigator_expr: Option<syn::Expr> = None;
+        let mut set_to_localstorage_bool: Option<syn::LitBool> = None;
+        let mut set_to_localstorage_expr: Option<syn::Expr> = None;
         let mut localstorage_key_str: Option<syn::LitStr> = None;
         let mut localstorage_key_expr: Option<syn::Expr> = None;
         let mut initial_language_from_accept_language_header_bool: Option<
@@ -207,6 +211,15 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
+            } else if k == "set_to_localstorage" {
+                if let Some(err) = parse_litbool_or_expr_param(
+                    &fields,
+                    &mut set_to_localstorage_bool,
+                    &mut set_to_localstorage_expr,
+                    "set_to_localstorage",
+                ) {
+                    return Err(err);
+                }
             } else if k == "localstorage_key" {
                 if let Some(err) = parse_litstr_or_expr_param(
                     &fields,
@@ -254,6 +267,8 @@ impl Parse for I18nLoader {
             ));
         }
 
+        let mut languages = Vec::new();
+
         let languages_path_copy = languages_path.clone();
         let languages_file = languages_path
             .map(|languages| workspace_path.join(languages.value()));
@@ -271,36 +286,51 @@ impl Parse for I18nLoader {
                         file,
                     ),
                 ));
+            } else {
+                languages = read_languages_file(&languages_file.unwrap());
+
+                if languages.len() < 2 {
+                    return Err(syn::Error::new(
+                        languages_path_copy.unwrap().span(),
+                        "Languages file must contain at least two languages.",
+                    ));
+                }
             }
-        }
+        } else {
+            // locales
+            let locales_path_copy = locales_path.clone();
+            let locales_folder = locales_path
+                .map(|locales| workspace_path.join(locales.value()));
 
-        // locales
-        let locales_path_copy = locales_path.clone();
-        let locales_folder =
-            locales_path.map(|locales| workspace_path.join(locales.value()));
-
-        if let Some(ref folder) = locales_folder {
-            if std::fs::metadata(folder).is_err() {
-                return Err(syn::Error::new(
-                    locales_path_copy.unwrap().span(),
-                    format!(
-                        concat!(
-                            "Couldn't read locales folder, this path should",
-                            " be relative to your crate's `Cargo.toml`.",
-                            " Looking for: {:?}",
+            if let Some(ref folder) = locales_folder {
+                if std::fs::metadata(folder).is_err() {
+                    return Err(syn::Error::new(
+                        locales_path_copy.unwrap().span(),
+                        format!(
+                            concat!(
+                                "Couldn't read locales folder, this path should",
+                                " be relative to your crate's `Cargo.toml`.",
+                                " Looking for: {:?}",
+                            ),
+                            folder,
                         ),
-                        folder,
-                    ),
-                ));
+                    ));
+                } else {
+                    languages = read_locales_folder(&locales_folder.unwrap());
+
+                    if languages.len() < 2 {
+                        return Err(syn::Error::new(
+                            locales_path_copy.unwrap().span(),
+                            "Locales folder must contain at least two languages.",
+                        ));
+                    }
+                }
             }
         }
 
         Ok(Self {
             translations_ident,
-            languages: match languages_file {
-                Some(languages_file) => read_languages_file(&languages_file),
-                None => read_locales_folder(&locales_folder.unwrap()),
-            },
+            languages,
             sync_html_tag_lang_bool,
             sync_html_tag_lang_expr,
             initial_language_from_url_bool,
@@ -313,6 +343,8 @@ impl Parse for I18nLoader {
             initial_language_from_localstorage_expr,
             initial_language_from_navigator_bool,
             initial_language_from_navigator_expr,
+            set_to_localstorage_bool,
+            set_to_localstorage_expr,
             localstorage_key_str,
             localstorage_key_expr,
             initial_language_from_accept_language_header_bool,
@@ -395,6 +427,9 @@ impl Parse for I18nLoader {
 /// - **`initial_language_from_navigator`** (_`false`_): Load the initial language of the user
 ///   from [`navigator.languages`] if not found in [local storage]. Can be a literal boolean or an
 ///   expression that will be evaluated at runtime. It will only take effect on client-side.
+///   **`set_to_localstorage`** (_`false`_): Save the language of the user to [local storage] if
+///   when setting the language. Can be a literal boolean or an expression that will be evaluated at
+///   runtime. It will only take effect on client-side.
 /// - **`localstorage_key`** (_`"lang"`_): The [local storage] field to get and save the current language
 ///   of the user. Can be a literal string or an expression that will be evaluated at runtime.
 ///   It will only take effect on client-side.
@@ -431,6 +466,8 @@ pub fn leptos_fluent(
         initial_language_from_navigator_expr,
         localstorage_key_str,
         localstorage_key_expr,
+        set_to_localstorage_bool,
+        set_to_localstorage_expr,
         initial_language_from_accept_language_header_bool,
         initial_language_from_accept_language_header_expr,
     } = parse_macro_input!(input as I18nLoader);
@@ -550,6 +587,14 @@ pub fn leptos_fluent(
         None => match localstorage_key_expr {
             Some(expr) => quote! { #expr },
             None => quote! { "lang" },
+        },
+    };
+
+    let set_to_localstorage = match set_to_localstorage_bool {
+        Some(lit) => quote! { #lit },
+        None => match set_to_localstorage_expr {
+            Some(expr) => quote! { #expr },
+            None => quote! { false },
         },
     };
 
@@ -778,10 +823,25 @@ pub fn leptos_fluent(
                 languages: &LANGUAGES,
                 translations: &#translations_ident,
                 localstorage_key: #localstorage_key,
+                use_localstorage: #set_to_localstorage,
             };
-            let ctx = provide_context::<::leptos_fluent::I18n>(i18n);
+            provide_context::<::leptos_fluent::I18n>(i18n);
             #sync_html_tag_lang_quote
-            ctx
+
+            // When hydrating, it could be the case where the language
+            // has been setted in the server and the language selector
+            // has been rendered yet, but the client set that to another
+            // language, using for example the local storage. In that case,
+            // we need to trigger a rerender. The next code creates a
+            // rerender. Seems like a hack but I've not found another solution
+            // to this problem yet.
+            #[cfg(feature = "hydrate")]
+            ::leptos::create_effect(move |_| {
+                i18n.set_language(LANGUAGES[1]);
+                i18n.set_language(initial_lang);
+            });
+
+            i18n
         }
     };
 
