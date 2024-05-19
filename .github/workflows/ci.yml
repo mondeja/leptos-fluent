@@ -74,9 +74,9 @@ jobs:
             ~/.cargo/git
             target
           key: ${{ runner.os }}-cargo-${{ matrix.browser }}-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/Cargo.lock') }}
-      - name: Run tests
+      - name: Run end to end tests
         run: |
-          cd tests
+          cd end2end
           wasm-pack test --headless --${{ matrix.browser }}
 
   build-example:

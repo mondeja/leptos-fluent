@@ -32,6 +32,7 @@ hydrate = [
   "leptos/hydrate",
   "leptos_meta/hydrate",
   "leptos_router/hydrate",
+  "leptos-fluent/hydrate",
 ]
 ssr = [
   "dep:axum",

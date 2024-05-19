@@ -803,7 +803,7 @@ pub fn leptos_fluent(
             let mut lang: Option<&'static ::leptos_fluent::Language> = None;
             #initial_language_quote;
 
-            let initial_lang = if let Some(l) = lang.as_mut() {
+            let initial_lang = if let Some(l) = lang {
                 l
             } else {
                 LANGUAGES[0]
