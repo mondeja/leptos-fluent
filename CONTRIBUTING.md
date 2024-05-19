@@ -9,7 +9,9 @@ pre-commit install
 
 ## Tests
 
-[!NOTE] Tests are located at _tests/src/web.rs_.
+[!NOTE] End to end tests are located at _end2end/_.
+
+### End to end tests
 
 You need to install a browser and run:
 
@@ -30,6 +32,12 @@ If you want to run a test suite:
 ```sh
 cd end2end
 wasm-pack test --firefox --headless --test csr_minimal
+```
+
+### Unit tests
+
+```sh
+cargo test
 ```
 
 ## Documentation
