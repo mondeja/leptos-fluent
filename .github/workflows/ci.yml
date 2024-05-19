@@ -64,7 +64,7 @@ jobs:
         run: cargo test
 
   end2end-tests:
-    name: End to end tests
+    name: End to end tests (${{ matrix.browser }}, ${{ matrix.runs-on }})
     runs-on: ${{ matrix.runs-on }}
     strategy:
       fail-fast: false
