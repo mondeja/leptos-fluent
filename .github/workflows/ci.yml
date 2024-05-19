@@ -35,7 +35,7 @@ jobs:
         run: pre-commit run --all-files --show-diff-on-failure
 
   test:
-    name: Test
+    name: ${{ matrix.tests }} tests
     runs-on: ${{ matrix.runs-on }}
     strategy:
       fail-fast: false
@@ -43,14 +43,21 @@ jobs:
         include:
           - runs-on: ubuntu-latest
             browser: firefox
+            tests: End to end
           - runs-on: ubuntu-latest
             browser: chrome
+            tests: End to end
           - runs-on: macos-latest
             browser: chrome
+            tests: End to end
           - runs-on: windows-latest
             browser: firefox
+            tests: End to end
           - runs-on: windows-latest
             browser: chrome
+            tests: End to end
+          - runs-on: ubuntu-latest
+            tests: Unit
     steps:
       - uses: actions/checkout@v4
       - name: Setup Rust
@@ -60,9 +67,11 @@ jobs:
           profile: minimal
       - name: Install cargo binstall
         uses: cargo-bins/cargo-binstall@main
+        if: ${{ matrix.tests == 'End to end' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install wasm-pack
+        if: ${{ matrix.tests == 'End to end' }}
         run: cargo binstall -y wasm-pack
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -73,11 +82,15 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: ${{ runner.os }}-cargo-${{ matrix.browser }}-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-${{ matrix.tests }}-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/Cargo.lock') }}
       - name: Run end to end tests
+        if: ${{ matrix.tests == 'End to end' }}
         run: |
           cd end2end
           wasm-pack test --headless --${{ matrix.browser }}
+      - name: Run unit tests
+        if: ${{ matrix.tests == 'Unit' }}
+        run: cargo test
 
   build-example:
     name: Build example

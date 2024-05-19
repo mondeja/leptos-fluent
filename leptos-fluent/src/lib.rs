@@ -11,7 +11,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! leptos-fluent = "0.0.24"
+//! leptos-fluent = "0.0.23"
 //! fluent-templates = "0.9"
 //!
 //! [features]
@@ -379,5 +379,39 @@ pub fn language_from_str_between_languages(
             }
         },
         Err(_) => None,
+    }
+}
+
+#[cfg(test)]
+mod test {
+    #[test]
+    fn test_readme_leptos_fluent_version_is_updated() {
+        let this_file = include_str!("./lib.rs");
+        let mut version = "";
+        for line in this_file.lines() {
+            if line.starts_with("//! leptos-fluent = ") {
+                version = line
+                    .split("leptos-fluent = \"")
+                    .nth(1)
+                    .unwrap()
+                    .split('"')
+                    .next()
+                    .unwrap();
+                break;
+            }
+        }
+
+        assert!(
+            !version.is_empty(),
+            "leptos-fluent = \"{version}\" not found in leptos-fluent/src/lib.rs"
+        );
+        assert_eq!(
+            version,
+            env!("CARGO_PKG_VERSION"),
+            concat!(
+                "The version of leptos-fluent shown in the README at",
+                " 'Installation' section is not updated."
+            ),
+        );
     }
 }
