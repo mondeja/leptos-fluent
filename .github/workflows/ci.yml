@@ -34,30 +34,9 @@ jobs:
       - name: Lint
         run: pre-commit run --all-files --show-diff-on-failure
 
-  test:
-    name: ${{ matrix.tests }} tests
-    runs-on: ${{ matrix.runs-on }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - runs-on: ubuntu-latest
-            browser: firefox
-            tests: End to end
-          - runs-on: ubuntu-latest
-            browser: chrome
-            tests: End to end
-          - runs-on: macos-latest
-            browser: chrome
-            tests: End to end
-          - runs-on: windows-latest
-            browser: firefox
-            tests: End to end
-          - runs-on: windows-latest
-            browser: chrome
-            tests: End to end
-          - runs-on: ubuntu-latest
-            tests: Unit
+  unit-tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Setup Rust
@@ -67,11 +46,9 @@ jobs:
           profile: minimal
       - name: Install cargo binstall
         uses: cargo-bins/cargo-binstall@main
-        if: ${{ matrix.tests == 'End to end' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install wasm-pack
-        if: ${{ matrix.tests == 'End to end' }}
         run: cargo binstall -y wasm-pack
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -82,15 +59,54 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: ${{ runner.os }}-cargo-${{ matrix.tests }}-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-unit-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/Cargo.lock') }}
+      - name: Run unit tests
+        run: cargo test
+
+  end2end-tests:
+    name: End to end tests
+    runs-on: ${{ matrix.runs-on }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runs-on: ubuntu-latest
+            browser: firefox
+          - runs-on: ubuntu-latest
+            browser: chrome
+          - runs-on: macos-latest
+            browser: chrome
+          - runs-on: windows-latest
+            browser: firefox
+          - runs-on: windows-latest
+            browser: chrome
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Rust
+        uses: hecrj/setup-rust-action@v2
+        with:
+          targets: wasm32-unknown-unknown
+          profile: minimal
+      - name: Install cargo binstall
+        uses: cargo-bins/cargo-binstall@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install wasm-pack
+        run: cargo binstall -y wasm-pack
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-end2end-${{ matrix.browser }}-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/Cargo.lock') }}
       - name: Run end to end tests
-        if: ${{ matrix.tests == 'End to end' }}
         run: |
           cd end2end
           wasm-pack test --headless --${{ matrix.browser }}
-      - name: Run unit tests
-        if: ${{ matrix.tests == 'Unit' }}
-        run: cargo test
 
   build-example:
     name: Build example
@@ -147,7 +163,8 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master'
     needs:
       - lint
-      - test
+      - unit-tests
+      - end2end-tests
       - build-example
     name: Test leptos-fluent-macros release
     runs-on: ubuntu-latest
