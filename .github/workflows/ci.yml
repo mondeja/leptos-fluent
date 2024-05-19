@@ -85,15 +85,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - example: csr-minimal
-            feature: csr
-          - example: csr-complete
-            feature: csr
-          - example: ssr-hydrate-actix
-            feature: ssr
-          - example: ssr-hydrate-axum
-            feature: ssr
+        example:
+          - csr-minimal
+          - csr-complete
+          - ssr-hydrate-actix
+          - ssr-hydrate-axum
     steps:
       - uses: actions/checkout@v4
       - name: Setup Rust
@@ -106,12 +102,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install trunk
-        if: ${{ contains(matrix.feature, 'csr') }}
         run: cargo binstall -y trunk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install cargo-leptos
-        if: ${{ matrix.feature == 'ssr' }}
+        if: ${{ startsWith(matrix.example, 'ssr') }}
         run: cargo binstall -y cargo-leptos
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -124,12 +119,11 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-${{ matrix.example }}-${{ matrix.feature }}-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/Cargo.lock') }}
       - name: Build with trunk
-        if: ${{ matrix.feature == 'csr' }}
         run: |
           cd examples/${{ matrix.example }}
           trunk build --release
       - name: Build with cargo-leptos
-        if: ${{ matrix.feature == 'ssr' }}
+        if: ${{ startsWith(matrix.example, 'ssr') }}
         run: |
           cd examples/${{ matrix.example }}
           cargo leptos build --release
