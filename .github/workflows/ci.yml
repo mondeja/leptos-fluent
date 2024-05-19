@@ -102,6 +102,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install trunk
+        if: ${{ startsWith(matrix.example, 'csr') }}
         run: cargo binstall -y trunk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
