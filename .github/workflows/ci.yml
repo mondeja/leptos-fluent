@@ -119,9 +119,16 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-${{ matrix.example }}-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/Cargo.lock') }}
       - name: Build with trunk
+        if: ${{ startsWith(matrix.example, 'csr') }}
         run: |
           cd examples/${{ matrix.example }}
           trunk build --release
+          cd ../..
+      - name: Build with trunk
+        if: ${{ startsWith(matrix.example, 'ssr') }}
+        run: |
+          cd examples/${{ matrix.example }}
+          trunk build --release --features csr
           cd ../..
       - name: Build with cargo-leptos
         if: ${{ startsWith(matrix.example, 'ssr') }}
