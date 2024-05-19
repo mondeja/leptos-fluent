@@ -2,7 +2,8 @@
 members = [
     "leptos-fluent",
     "leptos-fluent-macros",
-    "tests",
+    "end2end",
+    "end2end/tests-helpers",
     "examples/csr-complete",
     "examples/csr-minimal",
     "examples/ssr-hydrate-actix",

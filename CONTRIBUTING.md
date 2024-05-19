@@ -21,8 +21,15 @@ wasm-pack test --{browser} --headless
 Where `{browser}` is one of `firefox`, `chrome`, or `safari`. For example:
 
 ```sh
-cd tests
+cd end2end
 wasm-pack test --firefox --headless
+```
+
+If you want to run a test suite:
+
+```sh
+cd end2end
+wasm-pack test --firefox --headless --test csr_minimal
 ```
 
 ## Documentation

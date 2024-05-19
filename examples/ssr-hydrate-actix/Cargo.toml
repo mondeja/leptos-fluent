@@ -23,13 +23,11 @@ csr = [
   "leptos/csr",
   "leptos_meta/csr",
   "leptos_router/csr",
-  "leptos-fluent/csr",
 ]
 hydrate = [
   "leptos/hydrate",
   "leptos_meta/hydrate",
   "leptos_router/hydrate",
-  "leptos-fluent/hydrate",
 ]
 ssr = [
   "dep:actix-files",

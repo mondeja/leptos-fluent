@@ -1,5 +1,26 @@
 # CHANGELOG
 
+## Unreleased
+
+### Enhancements
+
+- Add `I18n.is_active_language` method.
+- Add `I18n.language_key` method to return a hash for the current
+  language with their active status for usage in `For` components.
+- Add `set_to_localstorage` parameter to `leptos_fluent!` macro.
+- Add `use_i18n` and `expect_i18n` function.
+
+### Breaking changes
+
+- Replace `I18n.set_language_with_localstorage` method with
+  `I18n.set_language`. Use `set_to_localstorage` macro parameter
+  and `I18n.set_language` instead.
+- Remove `csr` feature.
+
+### Bug fixes
+
+- Fix errors getting initial language from URL parameter and local storage.
+
 ## 2024-05-18 - [0.0.23]
 
 - Add `axum` feature to integrate with Axum web framework.

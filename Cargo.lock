@@ -1428,10 +1428,8 @@ dependencies = [
 
 [[package]]
 name = "leptos-fluent"
-version = "0.0.23"
+version = "0.0.24"
 dependencies = [
- "actix-web",
- "axum",
  "cfg-if",
  "fluent-templates",
  "leptos",
@@ -1464,14 +1462,13 @@ dependencies = [
 
 [[package]]
 name = "leptos-fluent-macros"
-version = "0.0.23"
+version = "0.0.24"
 dependencies = [
  "cfg-if",
  "proc-macro2",
  "quote",
  "serde_json",
  "syn 2.0.64",
- "web-sys",
 ]
 
 [[package]]
@@ -1514,13 +1511,11 @@ dependencies = [
 name = "leptos-fluent-tests"
 version = "0.1.0"
 dependencies = [
- "js-sys",
  "leptos",
  "leptos-fluent-csr-complete-example",
  "leptos-fluent-csr-minimal-example",
- "wasm-bindgen-futures",
+ "tests-helpers",
  "wasm-bindgen-test",
- "web-sys",
 ]
 
 [[package]]
@@ -2585,6 +2580,16 @@ name = "sync_wrapper"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a7065abeca94b6a8a577f9bd45aa0867a2238b74e8eb67cf10d492bc39351394"
+
+[[package]]
+name = "tests-helpers"
+version = "0.1.0"
+dependencies = [
+ "js-sys",
+ "leptos",
+ "wasm-bindgen-futures",
+ "web-sys",
+]
 
 [[package]]
 name = "thiserror"

@@ -1,0 +1,10 @@
+[package]
+name = "tests-helpers"
+edition = "2021"
+version = "0.1.0"
+
+[dependencies]
+leptos = "0.6"
+web-sys = { version = "0.3", features = ["Navigator", "Storage"] }
+js-sys = "0.3"
+wasm-bindgen-futures = "0.4"
