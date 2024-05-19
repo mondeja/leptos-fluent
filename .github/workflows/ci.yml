@@ -122,11 +122,13 @@ jobs:
         run: |
           cd examples/${{ matrix.example }}
           trunk build --release
+          cd ../..
       - name: Build with cargo-leptos
         if: ${{ startsWith(matrix.example, 'ssr') }}
         run: |
           cd examples/${{ matrix.example }}
           cargo leptos build --release
+          cd ../..
 
   test-release-leptos-fluent-macros:
     if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master'
