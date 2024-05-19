@@ -267,6 +267,8 @@ impl Parse for I18nLoader {
             ));
         }
 
+        let mut languages = Vec::new();
+
         let languages_path_copy = languages_path.clone();
         let languages_file = languages_path
             .map(|languages| workspace_path.join(languages.value()));
@@ -284,36 +286,51 @@ impl Parse for I18nLoader {
                         file,
                     ),
                 ));
+            } else {
+                languages = read_languages_file(&languages_file.unwrap());
+
+                if languages.len() < 2 {
+                    return Err(syn::Error::new(
+                        languages_path_copy.unwrap().span(),
+                        "Languages file must contain at least two languages.",
+                    ));
+                }
             }
-        }
+        } else {
+            // locales
+            let locales_path_copy = locales_path.clone();
+            let locales_folder = locales_path
+                .map(|locales| workspace_path.join(locales.value()));
 
-        // locales
-        let locales_path_copy = locales_path.clone();
-        let locales_folder =
-            locales_path.map(|locales| workspace_path.join(locales.value()));
-
-        if let Some(ref folder) = locales_folder {
-            if std::fs::metadata(folder).is_err() {
-                return Err(syn::Error::new(
-                    locales_path_copy.unwrap().span(),
-                    format!(
-                        concat!(
-                            "Couldn't read locales folder, this path should",
-                            " be relative to your crate's `Cargo.toml`.",
-                            " Looking for: {:?}",
+            if let Some(ref folder) = locales_folder {
+                if std::fs::metadata(folder).is_err() {
+                    return Err(syn::Error::new(
+                        locales_path_copy.unwrap().span(),
+                        format!(
+                            concat!(
+                                "Couldn't read locales folder, this path should",
+                                " be relative to your crate's `Cargo.toml`.",
+                                " Looking for: {:?}",
+                            ),
+                            folder,
                         ),
-                        folder,
-                    ),
-                ));
+                    ));
+                } else {
+                    languages = read_locales_folder(&locales_folder.unwrap());
+
+                    if languages.len() < 2 {
+                        return Err(syn::Error::new(
+                            locales_path_copy.unwrap().span(),
+                            "Locales folder must contain at least two languages.",
+                        ));
+                    }
+                }
             }
         }
 
         Ok(Self {
             translations_ident,
-            languages: match languages_file {
-                Some(languages_file) => read_languages_file(&languages_file),
-                None => read_locales_folder(&locales_folder.unwrap()),
-            },
+            languages,
             sync_html_tag_lang_bool,
             sync_html_tag_lang_expr,
             initial_language_from_url_bool,
@@ -456,14 +473,6 @@ pub fn leptos_fluent(
     } = parse_macro_input!(input as I18nLoader);
 
     let n_languages = languages.len();
-    if n_languages < 2 {
-        return syn::Error::new(
-            proc_macro2::Span::call_site(),
-            "At least two languages are required.",
-        )
-        .to_compile_error()
-        .into();
-    }
 
     let languages_quote = format!(
         "[{}]",
