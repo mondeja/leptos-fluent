@@ -1,0 +1,35 @@
+name: pre-commit autoupdate
+
+permissions:
+  pull-requests: write
+  contents: write
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: 0 3 1 1/6 *
+
+jobs:
+  autoupdate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install pre-commit
+        run: pip install pre-commit
+      - name: Run pre-commit autoupdate
+        run: |
+          pre-commit autoupdate
+          pre-commit autoupdate --config end2end/.pre-commit-config.yaml
+      - name: Open pull request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          branch: pre-commit-autoupdate
+          title: Upgrade pre-commit hooks revisions
+          commit-message: Upgrade pre-commit hooks revisions
+          body: "Upgrades revisions of pre-commit hooks tools to latest versions :hammer_and_wrench:"
+          labels: dependencies
+          delete-branch: true

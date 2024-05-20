@@ -22,3 +22,15 @@ hydrate = ["leptos-fluent-macros/hydrate"]
 ssr = ["leptos-fluent-macros/ssr"]
 actix = ["leptos-fluent-macros/actix"]
 axum = ["leptos-fluent-macros/axum"]
+
+[package.metadata.cargo-all-features]
+skip_feature_sets = [
+  ["csr", "ssr"],
+  ["csr", "hydrate"],
+  ["ssr", "hydrate"],
+  ["actix", "axum"],
+  ["actix", "csr"],
+  ["actix", "hydrate"],
+  ["axum", "csr"],
+  ["axum", "hydrate"],
+]

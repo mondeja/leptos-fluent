@@ -24,3 +24,15 @@ hydrate = []
 ssr = []
 actix = []
 axum = []
+
+[package.metadata.cargo-all-features]
+skip_feature_sets = [
+  ["csr", "ssr"],
+  ["csr", "hydrate"],
+  ["ssr", "hydrate"],
+  ["actix", "axum"],
+  ["actix", "csr"],
+  ["actix", "hydrate"],
+  ["axum", "csr"],
+  ["axum", "hydrate"],
+]

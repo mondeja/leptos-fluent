@@ -1,0 +1,6 @@
+repos:
+  - repo: https://github.com/mondeja/rust-pc-hooks
+    rev: v1.0.0
+    hooks:
+      - id: cargo-check-all-features
+      - id: cargo-build-all-features

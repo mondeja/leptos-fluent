@@ -10,7 +10,7 @@ macro_rules! mount {
 #[macro_export]
 macro_rules! unmount {
     () => {{
-        use leptos::wasm_bindgen::JsCast;
+        use wasm_bindgen::JsCast;
         ::leptos::document()
             .body()
             .unwrap()
@@ -48,7 +48,7 @@ pub fn element_text(selector: &str) -> String {
 }
 
 pub fn input_by_id(id: &str) -> web_sys::HtmlInputElement {
-    use leptos::wasm_bindgen::JsCast;
+    use wasm_bindgen::JsCast;
     ::leptos::document()
         .get_element_by_id(id)
         .unwrap()
@@ -56,7 +56,7 @@ pub fn input_by_id(id: &str) -> web_sys::HtmlInputElement {
 }
 
 pub fn html() -> web_sys::HtmlHtmlElement {
-    use leptos::wasm_bindgen::JsCast;
+    use wasm_bindgen::JsCast;
     ::leptos::document()
         .document_element()
         .unwrap()
