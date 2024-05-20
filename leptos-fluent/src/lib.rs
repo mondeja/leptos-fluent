@@ -404,7 +404,7 @@ mod test {
 
         assert!(
             version.is_some(),
-            r#"leptos-fluent = "<version>" not found in leptos-fluent/src/lib.rs"#tes
+            r#"leptos-fluent = "<version>" not found in leptos-fluent/src/lib.rs"#
         );
         assert_eq!(
             version.unwrap(),
