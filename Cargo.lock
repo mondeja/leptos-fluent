@@ -1515,6 +1515,7 @@ dependencies = [
  "leptos-fluent-csr-complete-example",
  "leptos-fluent-csr-minimal-example",
  "tests-helpers",
+ "wasm-bindgen",
  "wasm-bindgen-test",
 ]
 
