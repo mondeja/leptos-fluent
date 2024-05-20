@@ -1428,7 +1428,7 @@ dependencies = [
 
 [[package]]
 name = "leptos-fluent"
-version = "0.0.24"
+version = "0.0.25"
 dependencies = [
  "cfg-if",
  "fluent-templates",
@@ -1462,7 +1462,7 @@ dependencies = [
 
 [[package]]
 name = "leptos-fluent-macros"
-version = "0.0.24"
+version = "0.0.25"
 dependencies = [
  "cfg-if",
  "proc-macro2",

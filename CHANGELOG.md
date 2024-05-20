@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## Unreleased - 0.0.25
+
+### Breaking changes
+
+- Rename `set_to_localstorage` macro parameter as
+  `set_language_to_localstorage`.
+
 ## 2024-05-20 - [0.0.24]
 
 ### Enhancements

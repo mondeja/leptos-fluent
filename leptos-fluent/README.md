@@ -18,7 +18,7 @@ Add the following to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-leptos-fluent = "0.0.24"
+leptos-fluent = "0.0.25"
 fluent-templates = "0.9"
 
 [features]
@@ -102,9 +102,9 @@ pub fn App() -> impl IntoView {
         // Get the initial language from `navigator.languages` if not
         // found in the local storage. By default, it is `false`.
         initial_language_from_navigator: true,
-        // Set the language to local storage when the user changes it.
-        // By default, it is `false`.
-        set_to_localstorage: true,
+        // Update the language on local storage when using the method
+        // `I18n.set_language`. By default, it is `false`.
+        set_language_to_localstorage: true,
         // Name of the field in local storage to get and set the
         // current language of the user. By default, it is `"lang"`.
         localstorage_key: "language",
