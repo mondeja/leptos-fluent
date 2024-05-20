@@ -17,11 +17,13 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.12"
       - name: Install pre-commit
         run: pip install pre-commit
       - name: Run pre-commit autoupdate
-        run: pre-commit autoupdate
+        run: |
+          pre-commit autoupdate
+          pre-commit autoupdate --config end2end/.pre-commit-config.yaml
       - name: Open pull request
         uses: peter-evans/create-pull-request@v5
         with:
