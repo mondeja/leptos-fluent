@@ -10,13 +10,13 @@ on:
   workflow_dispatch:
 
 jobs:
-  lint:
-    name: Lint
+  qa:
+    name: QA
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        linting:
-          - main
+        process:
+          - lint
           - check-all-features
           - build-all-features
     steps:
@@ -38,16 +38,16 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/Cargo.lock') }}
       - name: Lint
-        if: matrix.linting == 'main'
+        if: matrix.process == 'lint'
         run: pre-commit run --all-files --show-diff-on-failure
       - name: Check all features
-        if: matrix.linting == 'check-all-features'
+        if: matrix.process == 'check-all-features'
         run: |
           pre-commit run --all-files --show-diff-on-failure \
             --config end2end/.pre-commit-config.yaml \
             cargo-check-all-features
       - name: Build all features
-        if: matrix.linting == 'build-all-features'
+        if: matrix.process == 'build-all-features'
         run: |
           pre-commit run --all-files --show-diff-on-failure \
             --config end2end/.pre-commit-config.yaml \
@@ -181,7 +181,7 @@ jobs:
   test-release-leptos-fluent-macros:
     if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master'
     needs:
-      - lint
+      - qa
       - unit-tests
       - end2end-tests
       - build-example
