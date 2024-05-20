@@ -13,6 +13,12 @@ jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        linting:
+          - main
+          - check-all-features
+          - build-all-features
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
@@ -32,7 +38,20 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/Cargo.lock') }}
       - name: Lint
+        if: matrix.linting == 'main'
         run: pre-commit run --all-files --show-diff-on-failure
+      - name: Check all features
+        if: matrix.linting == 'check-all-features'
+        run: |
+          pre-commit run --all-files --show-diff-on-failure \
+            --config end2end/.pre-commit-config.yaml \
+            cargo-check-all-features
+      - name: Build all features
+        if: matrix.linting == 'build-all-features'
+        run: |
+          pre-commit run --all-files --show-diff-on-failure \
+            --config end2end/.pre-commit-config.yaml \
+            cargo-build-all-features
 
   unit-tests:
     name: Unit tests
@@ -131,12 +150,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install trunk
-        if: ${{ startsWith(matrix.example, 'csr') }}
+        if: startsWith(matrix.example, 'csr')
         run: cargo binstall -y trunk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install cargo-leptos
-        if: ${{ startsWith(matrix.example, 'ssr') }}
+        if: startsWith(matrix.example, 'ssr')
         run: cargo binstall -y cargo-leptos
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -149,12 +168,12 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-${{ matrix.example }}-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/Cargo.lock') }}
       - name: Build with trunk
-        if: ${{ startsWith(matrix.example, 'csr') }}
+        if: startsWith(matrix.example, 'csr')
         run: |
           cd examples/${{ matrix.example }}
           trunk build --release
       - name: Build with cargo-leptos
-        if: ${{ startsWith(matrix.example, 'ssr') }}
+        if: startsWith(matrix.example, 'ssr')
         run: |
           cd examples/${{ matrix.example }}
           cargo leptos build --release
