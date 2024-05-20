@@ -1511,12 +1511,15 @@ dependencies = [
 name = "leptos-fluent-tests"
 version = "0.1.0"
 dependencies = [
+ "fluent-templates",
  "leptos",
+ "leptos-fluent",
  "leptos-fluent-csr-complete-example",
  "leptos-fluent-csr-minimal-example",
  "tests-helpers",
  "wasm-bindgen",
  "wasm-bindgen-test",
+ "web-sys",
 ]
 
 [[package]]
