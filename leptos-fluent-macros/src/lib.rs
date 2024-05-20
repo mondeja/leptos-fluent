@@ -98,8 +98,8 @@ struct I18nLoader {
     initial_language_from_localstorage_expr: Option<syn::Expr>,
     initial_language_from_navigator_bool: Option<syn::LitBool>,
     initial_language_from_navigator_expr: Option<syn::Expr>,
-    set_to_localstorage_bool: Option<syn::LitBool>,
-    set_to_localstorage_expr: Option<syn::Expr>,
+    set_language_to_localstorage_bool: Option<syn::LitBool>,
+    set_language_to_localstorage_expr: Option<syn::Expr>,
     localstorage_key_str: Option<syn::LitStr>,
     localstorage_key_expr: Option<syn::Expr>,
     initial_language_from_accept_language_header_bool: Option<syn::LitBool>,
@@ -136,8 +136,8 @@ impl Parse for I18nLoader {
         let mut initial_language_from_navigator_bool: Option<syn::LitBool> =
             None;
         let mut initial_language_from_navigator_expr: Option<syn::Expr> = None;
-        let mut set_to_localstorage_bool: Option<syn::LitBool> = None;
-        let mut set_to_localstorage_expr: Option<syn::Expr> = None;
+        let mut set_language_to_localstorage_bool: Option<syn::LitBool> = None;
+        let mut set_language_to_localstorage_expr: Option<syn::Expr> = None;
         let mut localstorage_key_str: Option<syn::LitStr> = None;
         let mut localstorage_key_expr: Option<syn::Expr> = None;
         let mut initial_language_from_accept_language_header_bool: Option<
@@ -211,12 +211,12 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
-            } else if k == "set_to_localstorage" {
+            } else if k == "set_language_to_localstorage" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
-                    &mut set_to_localstorage_bool,
-                    &mut set_to_localstorage_expr,
-                    "set_to_localstorage",
+                    &mut set_language_to_localstorage_bool,
+                    &mut set_language_to_localstorage_expr,
+                    "set_language_to_localstorage",
                 ) {
                     return Err(err);
                 }
@@ -343,8 +343,8 @@ impl Parse for I18nLoader {
             initial_language_from_localstorage_expr,
             initial_language_from_navigator_bool,
             initial_language_from_navigator_expr,
-            set_to_localstorage_bool,
-            set_to_localstorage_expr,
+            set_language_to_localstorage_bool,
+            set_language_to_localstorage_expr,
             localstorage_key_str,
             localstorage_key_expr,
             initial_language_from_accept_language_header_bool,
@@ -427,7 +427,7 @@ impl Parse for I18nLoader {
 /// - **`initial_language_from_navigator`** (_`false`_): Load the initial language of the user
 ///   from [`navigator.languages`] if not found in [local storage]. Can be a literal boolean or an
 ///   expression that will be evaluated at runtime. It will only take effect on client-side.
-///   **`set_to_localstorage`** (_`false`_): Save the language of the user to [local storage] if
+///   **`set_language_to_localstorage`** (_`false`_): Save the language of the user to [local storage] if
 ///   when setting the language. Can be a literal boolean or an expression that will be evaluated at
 ///   runtime. It will only take effect on client-side.
 /// - **`localstorage_key`** (_`"lang"`_): The [local storage] field to get and save the current language
@@ -466,8 +466,8 @@ pub fn leptos_fluent(
         initial_language_from_navigator_expr,
         localstorage_key_str,
         localstorage_key_expr,
-        set_to_localstorage_bool,
-        set_to_localstorage_expr,
+        set_language_to_localstorage_bool,
+        set_language_to_localstorage_expr,
         initial_language_from_accept_language_header_bool,
         initial_language_from_accept_language_header_expr,
     } = parse_macro_input!(input as I18nLoader);
@@ -590,9 +590,9 @@ pub fn leptos_fluent(
         },
     };
 
-    let set_to_localstorage = match set_to_localstorage_bool {
+    let set_language_to_localstorage = match set_language_to_localstorage_bool {
         Some(lit) => quote! { #lit },
-        None => match set_to_localstorage_expr {
+        None => match set_language_to_localstorage_expr {
             Some(expr) => quote! { #expr },
             None => quote! { false },
         },
@@ -823,7 +823,7 @@ pub fn leptos_fluent(
                 languages: &LANGUAGES,
                 translations: &#translations_ident,
                 localstorage_key: #localstorage_key,
-                use_localstorage: #set_to_localstorage,
+                use_localstorage: #set_language_to_localstorage,
             };
             provide_context::<::leptos_fluent::I18n>(i18n);
             #sync_html_tag_lang_quote
@@ -847,4 +847,48 @@ pub fn leptos_fluent(
 
     //println!("{}", quote);
     proc_macro::TokenStream::from(quote)
+}
+
+#[cfg(test)]
+mod test {
+    #[test]
+    fn test_main_and_macros_package_versions_match() {
+        let macros_cargo_toml = include_str!("../Cargo.toml");
+        let main_cargo_toml = include_str!("../../leptos-fluent/Cargo.toml");
+
+        let get_version = move |content: &str| -> Option<String> {
+            let mut version = None;
+            for line in content.lines() {
+                if line.starts_with("version = ") {
+                    version = Some(
+                        line.split("version = \"")
+                            .nth(1)
+                            .unwrap()
+                            .split('"')
+                            .next()
+                            .unwrap()
+                            .to_string(),
+                    );
+                    break;
+                }
+            }
+            version
+        };
+
+        let macros_version = get_version(macros_cargo_toml);
+        let main_version = get_version(main_cargo_toml);
+        assert!(
+            macros_version.is_some(),
+            "leptos-fluent-macros version not found in Cargo.toml"
+        );
+        assert!(
+            main_version.is_some(),
+            "leptos-fluent version not found in Cargo.toml"
+        );
+        assert_eq!(
+            macros_version.unwrap(),
+            main_version.unwrap(),
+            "leptos-fluent-macros and leptos-fluent versions do not match"
+        );
+    }
 }
