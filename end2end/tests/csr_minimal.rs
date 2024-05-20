@@ -1,3 +1,4 @@
+use leptos_fluent_csr_minimal_example::App as MinimalExampleApp;
 use tests_helpers::{
     element_text, html, input_by_id, localstorage, mount, sleep, unmount,
 };
@@ -7,7 +8,6 @@ wasm_bindgen_test_configure!(run_in_browser);
 
 #[wasm_bindgen_test]
 async fn csr_minimal_example() {
-    use leptos_fluent_csr_minimal_example::App as MinimalExampleApp;
     mount!(MinimalExampleApp);
     let es = move || input_by_id("es");
     let en = move || input_by_id("en");
@@ -22,7 +22,15 @@ async fn csr_minimal_example() {
     assert!(!en().checked());
     assert_eq!(element_text("p"), "Selecciona un idioma:");
 
-    // language change not reflected in html tag
+    // set_language_to_localstorage not activated
+    localstorage::delete("language");
+    assert_eq!(localstorage::get("language"), None);
+    en().click();
+    assert_eq!(localstorage::get("language"), None);
+    es().click();
+    assert_eq!(localstorage::get("language"), None);
+
+    // sync_html_tag_lang not activated
     sleep(30).await;
     html().remove_attribute("lang").unwrap();
     assert_eq!(html().lang(), "".to_string());

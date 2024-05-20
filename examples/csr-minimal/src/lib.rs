@@ -3,7 +3,7 @@ use leptos::*;
 use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, Language};
 
 static_loader! {
-    static TRANSLATIONS = {
+    pub static TRANSLATIONS = {
         locales: "./locales",
         fallback_language: "en",
     };
@@ -20,7 +20,7 @@ pub fn App() -> impl IntoView {
 }
 
 #[component]
-fn ChildComponent() -> impl IntoView {
+pub fn ChildComponent() -> impl IntoView {
     let i18n = expect_i18n();
 
     view! {
