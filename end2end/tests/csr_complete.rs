@@ -1,4 +1,4 @@
-use leptos_fluent_csr_complete_example::App as CompleteExampleApp;
+use leptos_fluent_csr_complete_example::App;
 use tests_helpers::{
     element_text, html, input_by_id, localstorage, mount, sleep, unmount,
 };
@@ -10,7 +10,7 @@ wasm_bindgen_test_configure!(run_in_browser);
 async fn csr_complete_example() {
     localstorage::delete("language");
 
-    mount!(CompleteExampleApp);
+    mount!(App);
     let es = move || input_by_id("es");
     let en = move || input_by_id("en");
 

@@ -1,4 +1,4 @@
-use leptos_fluent_csr_minimal_example::App as MinimalExampleApp;
+use leptos_fluent_csr_minimal_example::App;
 use tests_helpers::{
     element_text, html, input_by_id, localstorage, mount, sleep, unmount,
 };
@@ -8,7 +8,7 @@ wasm_bindgen_test_configure!(run_in_browser);
 
 #[wasm_bindgen_test]
 async fn csr_minimal_example() {
-    mount!(MinimalExampleApp);
+    mount!(App);
     let es = move || input_by_id("es");
     let en = move || input_by_id("en");
 
