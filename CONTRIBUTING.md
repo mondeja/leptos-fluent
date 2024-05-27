@@ -27,11 +27,12 @@ cd end2end
 wasm-pack test --firefox --headless
 ```
 
-If you want to run a test suite:
+If you want to run a test suite pass it in the `--test` flag.
+For example, to run the `csr_complete` test suite run:
 
 ```sh
 cd end2end
-wasm-pack test --firefox --headless --test csr_minimal
+wasm-pack test --firefox --headless --test csr_complete
 ```
 
 ### Unit tests
