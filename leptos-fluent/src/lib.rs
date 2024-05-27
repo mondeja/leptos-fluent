@@ -44,13 +44,13 @@
 //! With Fluent files _en.ftl_ and _es.ftl_:
 //!
 //! ```ftl
-//! foo = Hello, world!
-//! bar = Hello, { $arg1 } and { $arg2 }!
+//! hello-world = Hello, world!
+//! hello-args = Hello, { $arg1 } and { $arg2 }!
 //! ```
 //!
 //! ```ftl
-//! foo = ¡Hola, mundo!
-//! bar = ¡Hola, { $arg1 } y { $arg2 }!
+//! hello-world = ¡Hola, mundo!
+//! hello-args = ¡Hola, { $arg1 } y { $arg2 }!
 //! ```
 //!
 //! You can use `leptos-fluent` as follows:
@@ -58,7 +58,7 @@
 //! ```rust,ignore
 //! use fluent_templates::static_loader;
 //! use leptos::*;
-//! use leptos_fluent::{leptos_fluent, tr, move_tr};
+//! use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, tr, Language};
 //!
 //! static_loader! {
 //!     static TRANSLATIONS = {
@@ -68,15 +68,15 @@
 //! }
 //!
 //! #[component]
-//! pub fn App() -> impl IntoView {
+//! fn App() -> impl IntoView {
 //!     leptos_fluent! {{
 //!         // Path to the locales directory, relative to Cargo.toml file.
 //!         locales: "./locales",
 //!         // Static translations struct provided by fluent-templates.
 //!         translations: TRANSLATIONS,
 //!
-//!         // Client side options (for `csr` and `hydrate`)
-//!         // ---------------------------------------------
+//!         // Client side options
+//!         // -------------------
 //!         // Synchronize `<html lang="...">` attribute with the current
 //!         // language using `leptos::create_effect`. By default, it is `false`.
 //!         sync_html_tag_lang: true,
@@ -105,8 +105,8 @@
 //!         // found in the local storage. By default, it is `false`.
 //!         initial_language_from_navigator: true,
 //!
-//!         // Server side options (for `ssr`)
-//!         // -------------------------------
+//!         // Server side options
+//!         // -------------------
 //!         // Set the initial language from the Accept-Language header of the
 //!         // request. By default, it is `false`.
 //!         initial_language_from_accept_language_header: true,
@@ -114,30 +114,72 @@
 //!
 //!     view! {
 //!         <ChildComponent />
+//!         <LanguageSelector />
 //!     }
 //! }
 //!
 //! #[component]
 //! fn ChildComponent() -> impl IntoView {
-//!     // Use `tr!` and `move_tr!` macros to translate strings.
+//!     // Use `tr!` and `move_tr!` macros to translate strings:
 //!     view! {
 //!         <p>
-//!             <span>{move || tr!("foo")}</span>
-//!             <span>{move_tr!("bar", {
+//!             <span>{move || tr!("hello-world")}</span>
+//!             <span>{move_tr!("hello-args", {
 //!                 "arg1" => "value1",
 //!                 "arg2" => "value2",
 //!             })}</span>
 //!         </p>
+//!     }
+//!
+//!     // You must use `tr!` inside a reactive context or the translation
+//!     // will not be updated on the fly when the current language changes.
+//! }
+//!
+//! #[component]
+//! fn LanguageSelector() -> impl IntoView {
+//!     // Use `expect_i18n` to get the current i18n context:
+//!     let i18n = expect_i18n();
+//!
+//!     // `i18n.languages` is a static array with the available languages
+//!     // `i18n.language` is a signal with the current language
+//!     // `i18n.set_language(lang)` is a method to set the current language
+//!     // `i18n.is_active_language(lang)` is a method to check if a language is active
+//!     // `i18n.language_key(lang)` is a method to get a hash for a language
+//!
+//!     view! {
+//!         <fieldset>
+//!             <For
+//!                 each=move || i18n.languages
+//!                 key=move |lang| i18n.language_key(lang)
+//!                 children=move |lang: &&Language| {
+//!                     view! {
+//!                         <div>
+//!                             <input
+//!                                 type="radio"
+//!                                 id=lang.id.to_string()
+//!                                 name="language"
+//!                                 value=lang.id.to_string()
+//!                                 checked=i18n.is_active_language(lang)
+//!                                 on:click=move |_| i18n.set_language(lang)
+//!                             />
+//!                             <label for=lang.id.to_string()>{lang.name}</label>
+//!                         </div>
+//!                     }
+//!                 }
+//!             />
+//!         </fieldset>
 //!     }
 //! }
 //! ```
 //!
 //! ## Features
 //!
-//! - **Server Side Rendering**: Use the `leptos-fluent/ssr` feature.
-//! - **Hydration**: Use the `leptos-fluent/hydrate` feature.
-//! - **Actix Web integration**: Use the `leptos-fluent/actix` feature.
-//! - **Axum integration**: Use the `leptos-fluent/axum` feature.
+//! - **Server Side Rendering**: `ssr`
+//! - **Hydration**: `hydrate`
+//! - **Actix Web integration**: `actix`
+//! - **Axum integration**: `axum`
+//! - **JSON languages file**: `json` (enabled by default)
+//! - **YAML languages file**: `yaml`
 //!
 //! # Resources
 //!
@@ -149,7 +191,7 @@
 //!
 //! Leptos-fluent is currently ready for most use cases. However, it is still in an
 //! early stage of development and the API may contain breaking changes through
-//! v0.0.X releases. I'm trying to release the API at v0.1.0 as stable as possible.
+//! v0.0.X releases.
 //!
 //! [leptos]: https://leptos.dev/
 //! [fluent-templates]: https://github.com/XAMPPRocky/fluent-templates

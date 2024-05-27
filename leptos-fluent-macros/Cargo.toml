@@ -16,14 +16,17 @@ path = "src/lib.rs"
 proc-macro2 = "1"
 quote = "1"
 syn = "2"
-serde_json = "1"
+serde_json = { version = "1", optional = true }
 cfg-if = "1"
+serde_yaml = { version = ">=0.7", optional = true }
 
 [features]
 hydrate = []
 ssr = []
 actix = []
 axum = []
+json = ["dep:serde_json"]
+yaml = ["dep:serde_yaml"]
 
 [package.metadata.cargo-all-features]
 skip_feature_sets = [
@@ -34,5 +37,7 @@ skip_feature_sets = [
   ["actix", "csr"],
   ["actix", "hydrate"],
   ["axum", "csr"],
-  ["axum", "hydrate"],
+  ["axum", "hydrate"]
 ]
+always_include_features = ["json"]
+denylist = ["yaml"]
