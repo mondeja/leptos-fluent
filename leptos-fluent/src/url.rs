@@ -27,7 +27,7 @@ pub(crate) fn set(
         leptos::window()
             .history()
             .expect("Failed to get the history from the browser")
-            .replace_state_with_url(&leptos::wasm_bindgen::JsValue::NULL, "", Some(&url.href()))
+            .replace_state_with_url(&wasm_bindgen::JsValue::NULL, "", Some(&url.href()))
             .expect("Failed to replace the history state");
     }};
 }

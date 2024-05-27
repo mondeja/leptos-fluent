@@ -1435,6 +1435,7 @@ dependencies = [
  "leptos",
  "leptos-fluent-macros",
  "once_cell",
+ "wasm-bindgen",
  "web-sys",
 ]
 
