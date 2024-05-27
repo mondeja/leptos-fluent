@@ -18,7 +18,7 @@ leptos = "0.6"
 leptos_meta = "0.6"
 leptos_axum = { version = "0.6", optional = true }
 leptos_router = "0.6"
-leptos-fluent = { path = "../../leptos-fluent", features = ["yaml"] }
+leptos-fluent = { path = "../../leptos-fluent", features = ["yaml"], default-features = false}
 fluent-templates = "0.9"
 wasm-bindgen = "=0.2.92"
 

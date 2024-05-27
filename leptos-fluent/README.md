@@ -181,10 +181,12 @@ fn LanguageSelector() -> impl IntoView {
 
 ### Features
 
-- **Server Side Rendering**: Use the `leptos-fluent/ssr` feature.
-- **Hydration**: Use the `leptos-fluent/hydrate` feature.
-- **Actix Web integration**: Use the `leptos-fluent/actix` feature.
-- **Axum integration**: Use the `leptos-fluent/axum` feature.
+- **Server Side Rendering**: `ssr`
+- **Hydration**: `hydrate`
+- **Actix Web integration**: `actix`
+- **Axum integration**: `axum`
+- **JSON languages file**: `json` (enabled by default)
+- **YAML languages file**: `yaml`
 
 ## Resources
 
@@ -196,7 +198,7 @@ fn LanguageSelector() -> impl IntoView {
 
 Leptos-fluent is currently ready for most use cases. However, it is still in an
 early stage of development and the API may contain breaking changes through
-v0.0.X releases. I'm trying to release the API at v0.1.0 as stable as possible.
+v0.0.X releases.
 
 [leptos]: https://leptos.dev/
 [fluent-templates]: https://github.com/XAMPPRocky/fluent-templates

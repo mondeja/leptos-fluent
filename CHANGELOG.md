@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## Unreleased - [0.0.27]
+
+### New features
+
+- Add `yaml` feature to read languages from a YAML file.
+- Add `json` feature to read languages from a JSON file (enabled by default).
+
 ## 2024-05-28 - [0.0.26]
 
 ### Breaking changes

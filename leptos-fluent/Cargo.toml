@@ -23,10 +23,12 @@ web-sys = { version = ">=0.1", features = [
 wasm-bindgen = ">=0.1"
 
 [features]
+default = ["json"]
 hydrate = ["leptos-fluent-macros/hydrate"]
 ssr = ["leptos-fluent-macros/ssr"]
 actix = ["leptos-fluent-macros/actix"]
 axum = ["leptos-fluent-macros/axum"]
+json = ["leptos-fluent-macros/json"]
 yaml = ["leptos-fluent-macros/yaml"]
 
 [package.metadata.cargo-all-features]

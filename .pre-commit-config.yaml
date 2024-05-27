@@ -32,15 +32,26 @@ repos:
       - id: clippy
         alias: clippy-no-features
         name: clippy-no-features
-        args: [--, -D, clippy::print_stdout]
-      - id: clippy
-        alias: clippy-csr
-        name: clippy-csr
-        args: [--features=csr, --, -D, clippy::print_stdout]
+        args:
+          [
+            --exclude=leptos-fluent-ssr-hydrate-axum-example,
+            --workspace,
+            --,
+            -D,
+            clippy::print_stdout,
+          ]
       - id: clippy
         alias: clippy-hydrate
         name: clippy-hydrate
-        args: [--features=hydrate, --, -D, clippy::print_stdout]
+        args:
+          [
+            --features=hydrate,
+            --exclude=leptos-fluent-ssr-hydrate-axum-example,
+            --workspace,
+            --,
+            -D,
+            clippy::print_stdout,
+          ]
       - id: clippy
         alias: clippy-ssr-actix
         name: clippy-ssr-actix
@@ -49,7 +60,7 @@ repos:
             "--features=ssr,actix",
             --exclude=leptos-fluent-ssr-hydrate-axum-example,
             --exclude=leptos-fluent-ssr-hydrate-actix-example,
-            "--workspace",
+            --workspace,
             --,
             -D,
             clippy::print_stdout,
@@ -59,10 +70,10 @@ repos:
         name: clippy-ssr-axum
         args:
           [
-            "--features=ssr,axum",
+            "--features=ssr,axum,yaml",
             --exclude=leptos-fluent-ssr-hydrate-axum-example,
             --exclude=leptos-fluent-ssr-hydrate-actix-example,
-            "--workspace",
+            --workspace,
             --,
             -D,
             clippy::print_stdout,
