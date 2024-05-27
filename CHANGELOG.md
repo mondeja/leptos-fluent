@@ -4,15 +4,16 @@
 
 ### Breaking changes
 
-- Rename `initial_language_from_url` macro parameter as
+- Rename `initial_language_from_url` parameter of `leptos_fluent!` macro as
   `initial_language_from_url_param`.
-- Rename `initial_language_from_url_param` macro parameter as `url_param`.
-- Rename `initial_language_from_url_to_localstorage` macro parameter as
-  `initial_language_from_url_param_to_localstorage`.
+- Rename `initial_language_from_url_param` parameter of `leptos_fluent!` macro
+  as `url_param`.
+- Rename `initial_language_from_url_to_localstorage` parameter of
+  `leptos_fluent!` macro as `initial_language_from_url_param_to_localstorage`.
 
 ### New features
 
-- Add `set_language_to_url_param` macro parameter.
+- Add `set_language_to_url_param` macro parameter to `leptos_fluent!` macro.
 
 ### Enhancements
 
@@ -22,7 +23,7 @@
 
 ### Breaking changes
 
-- Rename `set_to_localstorage` macro parameter as
+- Rename `set_to_localstorage` parameter of `leptos_fluent!` macro as
   `set_language_to_localstorage`.
 
 ## 2024-05-20 - [0.0.24]
@@ -39,7 +40,7 @@
 
 - Replace `I18n.set_language_with_localstorage` method with
   `I18n.set_language`. Use `set_to_localstorage` macro parameter
-  and `I18n.set_language` instead.
+  and `I18n.set_language` method instead.
 - Remove `csr` feature.
 
 ### Bug fixes
