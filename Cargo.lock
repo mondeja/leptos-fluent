@@ -1434,7 +1434,6 @@ dependencies = [
  "fluent-templates",
  "leptos",
  "leptos-fluent-macros",
- "leptos_router",
  "once_cell",
  "web-sys",
 ]
