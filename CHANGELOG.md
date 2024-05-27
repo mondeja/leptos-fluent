@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## Unreleased - 0.0.25
+## 2024-05-27 - [0.0.25]
 
 ### Breaking changes
 
@@ -72,6 +72,7 @@
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.0.25]: https://github.com/mondeja/leptos-fluent/compare/v0.0.24...v0.0.25
 [0.0.24]: https://github.com/mondeja/leptos-fluent/compare/v0.0.23...v0.0.24
 [0.0.23]: https://github.com/mondeja/leptos-fluent/compare/v0.0.22...v0.0.23
 [0.0.22]: https://github.com/mondeja/leptos-fluent/compare/v0.0.21...v0.0.22
