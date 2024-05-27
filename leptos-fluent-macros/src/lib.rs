@@ -297,6 +297,9 @@ impl Parse for I18nLoader {
                             " be relative to your crate's `Cargo.toml`.",
                             " Looking for: {:?}",
                         ),
+                        // TODO: Use std::path::absolute from
+                        // #![feature(absolute_path)] when stable,
+                        // see https://github.com/rust-lang/rust/issues/92750
                         file,
                     ),
                 ));
@@ -326,6 +329,9 @@ impl Parse for I18nLoader {
                                 " be relative to your crate's `Cargo.toml`.",
                                 " Looking for: {:?}",
                             ),
+                            // TODO: Use std::path::absolute from
+                            // #![feature(absolute_path)] when stable,
+                            // see https://github.com/rust-lang/rust/issues/92750
                             folder,
                         ),
                     ));

@@ -17,7 +17,7 @@ pub fn App() -> impl IntoView {
     provide_meta_context();
     leptos_fluent! {{
         translations: TRANSLATIONS,
-        locales: "./locales",
+        languages: "./locales/languages.yaml",
         url_param: "lang",
         initial_language_from_url_param: true,
         initial_language_from_url_param_to_localstorage: true,

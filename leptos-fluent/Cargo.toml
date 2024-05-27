@@ -27,6 +27,7 @@ hydrate = ["leptos-fluent-macros/hydrate"]
 ssr = ["leptos-fluent-macros/ssr"]
 actix = ["leptos-fluent-macros/actix"]
 axum = ["leptos-fluent-macros/axum"]
+yaml = ["leptos-fluent-macros/yaml"]
 
 [package.metadata.cargo-all-features]
 skip_feature_sets = [

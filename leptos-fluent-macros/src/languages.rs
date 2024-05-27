@@ -14,6 +14,26 @@ pub(crate) fn read_languages_file(path: &PathBuf) -> Vec<(String, String)> {
         .map(|lang| (lang[0].clone(), lang[1].clone()))
         .collect::<Vec<(String, String)>>()
     } else {
+        #[cfg(feature = "yaml")]
+        {
+            if file_extension == "yaml" || file_extension == "yml" {
+                serde_yaml::from_str::<Vec<Vec<String>>>(
+                    fs::read_to_string(path)
+                        .expect("Couldn't read languages file")
+                        .as_str(),
+                )
+                .expect("Invalid YAML languages file")
+                .iter()
+                .map(|lang| (lang[0].clone(), lang[1].clone()))
+                .collect::<Vec<(String, String)>>()
+            } else {
+                panic!(
+                    "The languages file should be a JSON or YAML file. Found file extension {:?}",
+                    file_extension
+                );
+            }
+        }
+        #[cfg(not(feature = "yaml"))]
         panic!("The languages file should be a JSON file. Found file extension {:?}", file_extension);
     }
 }
