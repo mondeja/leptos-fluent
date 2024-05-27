@@ -17,18 +17,18 @@ pub fn App() -> impl IntoView {
     leptos_fluent! {{
         translations: TRANSLATIONS,
         locales: "./locales",
-        initial_language_from_url: true,
-        initial_language_from_url_param: "lang",
-        initial_language_from_url_to_localstorage: true,
-        initial_language_from_localstorage: true,
-        initial_language_from_navigator: true,
-        set_language_to_localstorage: true,
+        url_param: "lang",
+        initial_language_from_url_param: true,
+        initial_language_from_url_param_to_localstorage: true,
+        set_language_to_url_param: true,
         localstorage_key: "language",
+        initial_language_from_localstorage: true,
+        set_language_to_localstorage: true,
+        initial_language_from_navigator: true,
         initial_language_from_accept_language_header: true,
     }};
 
     view! {
-        // sets the document title
         <Title text=move || tr!("welcome-to-leptos")/>
 
         // content for this welcome page
@@ -70,6 +70,7 @@ fn HomePage() -> impl IntoView {
                     }
                 }
             />
+
         </fieldset>
     }
 }
@@ -91,7 +92,5 @@ fn NotFound() -> impl IntoView {
         resp.set_status(actix_web::http::StatusCode::NOT_FOUND);
     }
 
-    view! {
-        <h1>{move_tr!("not-found")}</h1>
-    }
+    view! { <h1>{move_tr!("not-found")}</h1> }
 }
