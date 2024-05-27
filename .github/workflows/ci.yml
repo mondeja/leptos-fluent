@@ -179,7 +179,6 @@ jobs:
           cargo leptos build --release
 
   test-release-leptos-fluent-macros:
-    if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master'
     needs:
       - qa
       - unit-tests
@@ -194,7 +193,7 @@ jobs:
       - name: Publish
         run: |
           cargo login ${{ secrets.CRATES_TOKEN }}
-          cargo publish -v --dry-run -p leptos-fluent-macros
+          cargo publish -v --dry-run --features=json -p leptos-fluent-macros
 
   release-leptos-fluent-macros:
     if: startsWith(github.ref, 'refs/tags/')
