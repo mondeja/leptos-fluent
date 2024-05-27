@@ -1428,13 +1428,14 @@ dependencies = [
 
 [[package]]
 name = "leptos-fluent"
-version = "0.0.25"
+version = "0.0.26"
 dependencies = [
  "cfg-if",
  "fluent-templates",
  "leptos",
  "leptos-fluent-macros",
  "once_cell",
+ "wasm-bindgen",
  "web-sys",
 ]
 
@@ -1461,7 +1462,7 @@ dependencies = [
 
 [[package]]
 name = "leptos-fluent-macros"
-version = "0.0.25"
+version = "0.0.26"
 dependencies = [
  "cfg-if",
  "proc-macro2",

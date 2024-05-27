@@ -1,6 +1,21 @@
 # CHANGELOG
 
-## Unreleased - [0.0.26]
+## 2024-05-28 - [0.0.26]
+
+### Breaking changes
+
+- Rename `initial_language_from_url` parameter of `leptos_fluent!` macro as
+  `initial_language_from_url_param`.
+- Rename `initial_language_from_url_param` parameter of `leptos_fluent!` macro
+  as `url_param`.
+- Rename `initial_language_from_url_to_localstorage` parameter of
+  `leptos_fluent!` macro as `initial_language_from_url_param_to_localstorage`.
+
+### New features
+
+- Add `set_language_to_url_param` macro parameter to `leptos_fluent!` macro.
+
+### Enhancements
 
 - Drop `leptos_router` as a dependency.
 
@@ -8,7 +23,7 @@
 
 ### Breaking changes
 
-- Rename `set_to_localstorage` macro parameter as
+- Rename `set_to_localstorage` parameter of `leptos_fluent!` macro as
   `set_language_to_localstorage`.
 
 ## 2024-05-20 - [0.0.24]
@@ -25,7 +40,7 @@
 
 - Replace `I18n.set_language_with_localstorage` method with
   `I18n.set_language`. Use `set_to_localstorage` macro parameter
-  and `I18n.set_language` instead.
+  and `I18n.set_language` method instead.
 - Remove `csr` feature.
 
 ### Bug fixes
@@ -76,7 +91,7 @@
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
-[0.0.26]: https://github.com/mondeja/leptos-fluent/compare/v0.0.25...master
+[0.0.26]: https://github.com/mondeja/leptos-fluent/compare/v0.0.25...v0.0.26
 [0.0.25]: https://github.com/mondeja/leptos-fluent/compare/v0.0.24...v0.0.25
 [0.0.24]: https://github.com/mondeja/leptos-fluent/compare/v0.0.23...v0.0.24
 [0.0.23]: https://github.com/mondeja/leptos-fluent/compare/v0.0.22...v0.0.23

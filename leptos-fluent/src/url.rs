@@ -10,3 +10,24 @@ pub fn get(#[allow(unused_variables)] k: &str) -> Option<String> {
     }};
     None
 }
+
+pub(crate) fn set(
+    #[allow(unused_variables)] k: &str,
+    #[allow(unused_variables)] v: &str,
+) {
+    cfg_if! { if #[cfg(not(feature = "ssr"))] {
+        let url = web_sys::Url::new(
+            &leptos::window()
+                .location()
+                .href()
+                .expect("Failed to get location.href from the browser"),
+        )
+        .expect("Failed to parse location.href from the browser");
+        url.search_params().set(k, v);
+        leptos::window()
+            .history()
+            .expect("Failed to get the history from the browser")
+            .replace_state_with_url(&wasm_bindgen::JsValue::NULL, "", Some(&url.href()))
+            .expect("Failed to replace the history state");
+    }};
+}

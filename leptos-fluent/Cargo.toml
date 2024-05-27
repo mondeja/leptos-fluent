@@ -2,7 +2,7 @@
 name = "leptos-fluent"
 description = "Fluent framework for internationalization of Leptos applications"
 edition = "2021"
-version = "0.0.25"
+version = "0.0.26"
 license = "MIT"
 documentation = "https://docs.rs/leptos-fluent"
 repository = "https://github.com/mondeja/leptos-fluent"
@@ -20,6 +20,7 @@ web-sys = { version = ">=0.1", features = [
   "Location",
   "UrlSearchParams"
 ] }
+wasm-bindgen = ">=0.1"
 
 [features]
 hydrate = ["leptos-fluent-macros/hydrate"]

@@ -14,6 +14,15 @@ async fn csr_complete_example() {
     let es = move || input_by_id("es");
     let en = move || input_by_id("en");
 
+    // set_language_to_url_param
+    assert_eq!(leptos::window().location().search().unwrap(), "");
+    es().click();
+    sleep(30).await;
+    assert_eq!(leptos::window().location().search().unwrap(), "?lang=es");
+    en().click();
+    sleep(30).await;
+    assert_eq!(leptos::window().location().search().unwrap(), "?lang=en");
+
     // translations working
     en().click();
     assert_eq!(element_text("p"), "Select a language:");

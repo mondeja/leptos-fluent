@@ -11,7 +11,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! leptos-fluent = "0.0.25"
+//! leptos-fluent = "0.0.26"
 //! fluent-templates = "0.9"
 //!
 //! [features]
@@ -80,27 +80,30 @@
 //!         // Synchronize `<html lang="...">` attribute with the current
 //!         // language using `leptos::create_effect`. By default, it is `false`.
 //!         sync_html_tag_lang: true,
-//!         // Discover the initial language of the user from the URL.
-//!         // By default, it is `false`.
-//!         initial_language_from_url: true,
 //!         // URL parameter name to use discovering the initial language
 //!         // of the user. By default is `"lang"`.
-//!         initial_language_from_url_param: "lang",
+//!         url_param: "lang",
+//!         // Discover the initial language of the user from the URL.
+//!         // By default, it is `false`.
+//!         initial_language_from_url_param: true,
 //!         // Set the discovered initial language of the user from
 //!         // the URL in local storage. By default, it is `false`.
-//!         initial_language_from_url_to_localstorage: true,
-//!         // Get the initial language from local storage if not found
-//!         // in an URL param. By default, it is `false`.
-//!         initial_language_from_localstorage: true,
-//!         // Get the initial language from `navigator.languages` if not
-//!         // found in the local storage. By default, it is `false`.
-//!         initial_language_from_navigator: true,
-//!         // Update the language on local storage when using the method
+//!         initial_language_from_url_param_to_localstorage: true,
+//!         // Update the language on URL parameter when using the method
 //!         // `I18n.set_language`. By default, it is `false`.
-//!         set_language_to_localstorage: true,
+//!         set_language_to_url_param: true,
 //!         // Name of the field in local storage to get and set the
 //!         // current language of the user. By default, it is `"lang"`.
 //!         localstorage_key: "language",
+//!         // Get the initial language from local storage if not found
+//!         // in an URL param. By default, it is `false`.
+//!         initial_language_from_localstorage: true,
+//!         // Update the language on local storage when using the method
+//!         // `I18n.set_language`. By default, it is `false`.
+//!         set_language_to_localstorage: true,
+//!         // Get the initial language from `navigator.languages` if not
+//!         // found in the local storage. By default, it is `false`.
+//!         initial_language_from_navigator: true,
 //!
 //!         // Server side options (for `ssr`)
 //!         // -------------------------------
@@ -212,6 +215,8 @@ pub struct I18n {
     /// Whether to use local storage to store the current language
     /// when the user changes it.
     pub use_localstorage: bool,
+    /// URL parameter to use to store the current language.
+    pub use_url_param: Option<&'static str>,
 }
 
 impl I18n {
@@ -266,12 +271,21 @@ impl I18n {
         language_from_str_between_languages(code, self.languages)
     }
 
-    /// Set the current language in the signal of the context and in local storage
-    /// (if using local storage).
-    pub fn set_language(&self, lang: &'static Language) {
+    #[doc(hidden)]
+    #[inline(always)]
+    pub fn set_language_not_use_url_param(&self, lang: &'static Language) {
         self.language.set(lang);
         if self.use_localstorage {
             localstorage::set(self.localstorage_key, &lang.id.to_string());
+        }
+    }
+
+    /// Set the current language in the signal of the context and in local storage
+    /// (if using local storage).
+    pub fn set_language(&self, lang: &'static Language) {
+        self.set_language_not_use_url_param(lang);
+        if let Some(use_url_param) = self.use_url_param {
+            url::set(use_url_param, &lang.id.to_string());
         }
     }
 

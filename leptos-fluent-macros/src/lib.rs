@@ -88,20 +88,22 @@ struct I18nLoader {
     translations_ident: syn::Ident,
     sync_html_tag_lang_bool: Option<syn::LitBool>,
     sync_html_tag_lang_expr: Option<syn::Expr>,
-    initial_language_from_url_bool: Option<syn::LitBool>,
-    initial_language_from_url_expr: Option<syn::Expr>,
-    initial_language_from_url_param_str: Option<syn::LitStr>,
+    url_param_str: Option<syn::LitStr>,
+    url_param_expr: Option<syn::Expr>,
+    initial_language_from_url_param_bool: Option<syn::LitBool>,
     initial_language_from_url_param_expr: Option<syn::Expr>,
-    initial_language_from_url_to_localstorage_bool: Option<syn::LitBool>,
-    initial_language_from_url_to_localstorage_expr: Option<syn::Expr>,
-    initial_language_from_localstorage_bool: Option<syn::LitBool>,
-    initial_language_from_localstorage_expr: Option<syn::Expr>,
-    initial_language_from_navigator_bool: Option<syn::LitBool>,
-    initial_language_from_navigator_expr: Option<syn::Expr>,
-    set_language_to_localstorage_bool: Option<syn::LitBool>,
-    set_language_to_localstorage_expr: Option<syn::Expr>,
+    initial_language_from_url_param_to_localstorage_bool: Option<syn::LitBool>,
+    initial_language_from_url_param_to_localstorage_expr: Option<syn::Expr>,
+    set_language_to_url_param_bool: Option<syn::LitBool>,
+    set_language_to_url_param_expr: Option<syn::Expr>,
     localstorage_key_str: Option<syn::LitStr>,
     localstorage_key_expr: Option<syn::Expr>,
+    initial_language_from_localstorage_bool: Option<syn::LitBool>,
+    initial_language_from_localstorage_expr: Option<syn::Expr>,
+    set_language_to_localstorage_bool: Option<syn::LitBool>,
+    set_language_to_localstorage_expr: Option<syn::Expr>,
+    initial_language_from_navigator_bool: Option<syn::LitBool>,
+    initial_language_from_navigator_expr: Option<syn::Expr>,
     initial_language_from_accept_language_header_bool: Option<syn::LitBool>,
     initial_language_from_accept_language_header_expr: Option<syn::Expr>,
 }
@@ -119,27 +121,30 @@ impl Parse for I18nLoader {
         let mut languages_path: Option<syn::LitStr> = None;
         let mut sync_html_tag_lang_bool: Option<syn::LitBool> = None;
         let mut sync_html_tag_lang_expr: Option<syn::Expr> = None;
-        let mut initial_language_from_url_bool: Option<syn::LitBool> = None;
-        let mut initial_language_from_url_expr: Option<syn::Expr> = None;
-        let mut initial_language_from_url_param_str: Option<syn::LitStr> = None;
+        let mut url_param_str: Option<syn::LitStr> = None;
+        let mut url_param_expr: Option<syn::Expr> = None;
+        let mut initial_language_from_url_param_bool: Option<syn::LitBool> =
+            None;
         let mut initial_language_from_url_param_expr: Option<syn::Expr> = None;
-        let mut initial_language_from_url_to_localstorage_bool: Option<
+        let mut initial_language_from_url_param_to_localstorage_bool: Option<
             syn::LitBool,
         > = None;
-        let mut initial_language_from_url_to_localstorage_expr: Option<
+        let mut initial_language_from_url_param_to_localstorage_expr: Option<
             syn::Expr,
         > = None;
+        let mut set_language_to_url_param_bool: Option<syn::LitBool> = None;
+        let mut set_language_to_url_param_expr: Option<syn::Expr> = None;
+        let mut localstorage_key_str: Option<syn::LitStr> = None;
+        let mut localstorage_key_expr: Option<syn::Expr> = None;
         let mut initial_language_from_localstorage_bool: Option<syn::LitBool> =
             None;
         let mut initial_language_from_localstorage_expr: Option<syn::Expr> =
             None;
+        let mut set_language_to_localstorage_bool: Option<syn::LitBool> = None;
+        let mut set_language_to_localstorage_expr: Option<syn::Expr> = None;
         let mut initial_language_from_navigator_bool: Option<syn::LitBool> =
             None;
         let mut initial_language_from_navigator_expr: Option<syn::Expr> = None;
-        let mut set_language_to_localstorage_bool: Option<syn::LitBool> = None;
-        let mut set_language_to_localstorage_expr: Option<syn::Expr> = None;
-        let mut localstorage_key_str: Option<syn::LitStr> = None;
-        let mut localstorage_key_expr: Option<syn::Expr> = None;
         let mut initial_language_from_accept_language_header_bool: Option<
             syn::LitBool,
         > = None;
@@ -166,30 +171,48 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
-            } else if k == "initial_language_from_url" {
-                if let Some(err) = parse_litbool_or_expr_param(
+            } else if k == "url_param" {
+                if let Some(err) = parse_litstr_or_expr_param(
                     &fields,
-                    &mut initial_language_from_url_bool,
-                    &mut initial_language_from_url_expr,
-                    "initial_language_from_url",
+                    &mut url_param_str,
+                    &mut url_param_expr,
+                    "url_param",
                 ) {
                     return Err(err);
                 }
             } else if k == "initial_language_from_url_param" {
-                if let Some(err) = parse_litstr_or_expr_param(
+                if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
-                    &mut initial_language_from_url_param_str,
+                    &mut initial_language_from_url_param_bool,
                     &mut initial_language_from_url_param_expr,
                     "initial_language_from_url_param",
                 ) {
                     return Err(err);
                 }
-            } else if k == "initial_language_from_url_to_localstorage" {
+            } else if k == "initial_language_from_url_param_to_localstorage" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
-                    &mut initial_language_from_url_to_localstorage_bool,
-                    &mut initial_language_from_url_to_localstorage_expr,
-                    "initial_language_from_url_to_localstorage",
+                    &mut initial_language_from_url_param_to_localstorage_bool,
+                    &mut initial_language_from_url_param_to_localstorage_expr,
+                    "initial_language_from_url_param_to_localstorage",
+                ) {
+                    return Err(err);
+                }
+            } else if k == "set_language_to_url_param" {
+                if let Some(err) = parse_litbool_or_expr_param(
+                    &fields,
+                    &mut set_language_to_url_param_bool,
+                    &mut set_language_to_url_param_expr,
+                    "set_language_to_url_param",
+                ) {
+                    return Err(err);
+                }
+            } else if k == "localstorage_key" {
+                if let Some(err) = parse_litstr_or_expr_param(
+                    &fields,
+                    &mut localstorage_key_str,
+                    &mut localstorage_key_expr,
+                    "localstorage_key",
                 ) {
                     return Err(err);
                 }
@@ -202,15 +225,6 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
-            } else if k == "initial_language_from_navigator" {
-                if let Some(err) = parse_litbool_or_expr_param(
-                    &fields,
-                    &mut initial_language_from_navigator_bool,
-                    &mut initial_language_from_navigator_expr,
-                    "initial_language_from_navigator",
-                ) {
-                    return Err(err);
-                }
             } else if k == "set_language_to_localstorage" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
@@ -220,12 +234,12 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
-            } else if k == "localstorage_key" {
-                if let Some(err) = parse_litstr_or_expr_param(
+            } else if k == "initial_language_from_navigator" {
+                if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
-                    &mut localstorage_key_str,
-                    &mut localstorage_key_expr,
-                    "localstorage_key",
+                    &mut initial_language_from_navigator_bool,
+                    &mut initial_language_from_navigator_expr,
+                    "initial_language_from_navigator",
                 ) {
                     return Err(err);
                 }
@@ -333,20 +347,22 @@ impl Parse for I18nLoader {
             languages,
             sync_html_tag_lang_bool,
             sync_html_tag_lang_expr,
-            initial_language_from_url_bool,
-            initial_language_from_url_expr,
-            initial_language_from_url_param_str,
+            url_param_str,
+            url_param_expr,
+            initial_language_from_url_param_bool,
             initial_language_from_url_param_expr,
-            initial_language_from_url_to_localstorage_bool,
-            initial_language_from_url_to_localstorage_expr,
-            initial_language_from_localstorage_bool,
-            initial_language_from_localstorage_expr,
-            initial_language_from_navigator_bool,
-            initial_language_from_navigator_expr,
-            set_language_to_localstorage_bool,
-            set_language_to_localstorage_expr,
+            initial_language_from_url_param_to_localstorage_bool,
+            initial_language_from_url_param_to_localstorage_expr,
+            set_language_to_url_param_bool,
+            set_language_to_url_param_expr,
             localstorage_key_str,
             localstorage_key_expr,
+            initial_language_from_localstorage_bool,
+            initial_language_from_localstorage_expr,
+            set_language_to_localstorage_bool,
+            set_language_to_localstorage_expr,
+            initial_language_from_navigator_bool,
+            initial_language_from_navigator_expr,
             initial_language_from_accept_language_header_bool,
             initial_language_from_accept_language_header_expr,
         })
@@ -375,13 +391,14 @@ impl Parse for I18nLoader {
 ///         translations: TRANSLATIONS,
 ///         languages: "./locales/languages.json",
 ///         sync_html_tag_lang: true,
-///         initial_language_from_url: true,
-///         initial_language_from_url_param: "lang",
-///         initial_language_from_url_to_localstorage: true,
-///         initial_language_from_localstorage: true,
-///         initial_language_from_navigator: true,
-///         set_language_to_localstorage: true,
+///         url_param: "lang",
+///         initial_language_from_url_param: true,
+///         initial_language_from_url_param_to_localstorage: true,
+///         set_language_to_url_param: true,
 ///         localstorage_key: "language",
+///         initial_language_from_localstorage: true,
+///         set_language_to_localstorage: true,
+///         initial_language_from_navigator: true,
 ///     }};
 ///
 ///     view! {
@@ -413,13 +430,13 @@ impl Parse for I18nLoader {
 /// - **`sync_html_tag_lang`** (_`false`_): Synchronize the global [`<html lang="...">` attribute]
 ///   with current language using [`leptos::create_effect`]. Can be a literal boolean or an
 ///   expression that will be evaluated at runtime.
-/// - **`initial_language_from_url`** (_`false`_): Load the initial language of the user
+/// - **`initial_language_from_url_param`** (_`false`_): Load the initial language of the user
 ///   from a URL parameter. Can be a literal boolean or an expression that will be evaluated at
 ///   runtime. It will only take effect on client-side.
-/// - **`initial_language_from_url_param`** (_`"lang"`_): The parameter name to look for the initial
+/// - **`url_param`** (_`"lang"`_): The parameter name to look for the initial
 ///   language in the URL. Can be a literal string or an expression that will be evaluated at
 ///   runtime. It will only take effect on client-side.
-/// - **`initial_language_from_url_to_localstorage`** (_`false`_): Save the initial language
+/// - **`initial_language_from_url_param_to_localstorage`** (_`false`_): Save the initial language
 ///   of the user from the URL to [local storage]. Can be a literal boolean or an expression that will
 ///   be evaluated at runtime. It will only take effect on client-side.
 /// - **`initial_language_from_localstorage`** (_`false`_): Load the initial language of the
@@ -455,20 +472,22 @@ pub fn leptos_fluent(
         languages,
         sync_html_tag_lang_bool,
         sync_html_tag_lang_expr,
-        initial_language_from_url_bool,
-        initial_language_from_url_expr,
-        initial_language_from_url_param_str,
+        initial_language_from_url_param_bool,
         initial_language_from_url_param_expr,
-        initial_language_from_url_to_localstorage_bool,
-        initial_language_from_url_to_localstorage_expr,
-        initial_language_from_localstorage_bool,
-        initial_language_from_localstorage_expr,
-        initial_language_from_navigator_bool,
-        initial_language_from_navigator_expr,
+        url_param_str,
+        url_param_expr,
+        initial_language_from_url_param_to_localstorage_bool,
+        initial_language_from_url_param_to_localstorage_expr,
+        set_language_to_url_param_bool,
+        set_language_to_url_param_expr,
         localstorage_key_str,
         localstorage_key_expr,
+        initial_language_from_localstorage_bool,
+        initial_language_from_localstorage_expr,
         set_language_to_localstorage_bool,
         set_language_to_localstorage_expr,
+        initial_language_from_navigator_bool,
+        initial_language_from_navigator_expr,
         initial_language_from_accept_language_header_bool,
         initial_language_from_accept_language_header_expr,
     } = parse_macro_input!(input as I18nLoader);
@@ -526,13 +545,13 @@ pub fn leptos_fluent(
     }};
 
     cfg_if! { if #[cfg(not(feature = "ssr"))] {
-        let initial_language_from_url_bool_value = initial_language_from_url_bool
+        let initial_language_from_url_param_bool_value = initial_language_from_url_param_bool
             .as_ref()
             .map(|lit| lit.clone().value);
 
-        let initial_language_from_url = match initial_language_from_url_bool {
+        let initial_language_from_url_param = match initial_language_from_url_param_bool {
             Some(lit) => quote! { #lit },
-            None => match initial_language_from_url_expr {
+            None => match initial_language_from_url_param_expr {
                 Some(expr) => quote! { #expr },
                 None => quote! { false },
             },
@@ -542,10 +561,10 @@ pub fn leptos_fluent(
             initial_language_from_localstorage_bool
                 .as_ref()
                 .map(|lit| lit.clone().value);
-        let initial_language_from_url_to_localstorage =
-            match initial_language_from_url_to_localstorage_bool {
+        let initial_language_from_url_param_to_localstorage =
+            match initial_language_from_url_param_to_localstorage_bool {
                 Some(lit) => quote! { #lit },
-                None => match initial_language_from_url_to_localstorage_expr {
+                None => match initial_language_from_url_param_to_localstorage_expr {
                     Some(expr) => quote! { #expr },
                     None => quote! { false },
                 },
@@ -573,10 +592,10 @@ pub fn leptos_fluent(
                 },
             };
 
-        let initial_language_from_url_param =
-            match initial_language_from_url_param_str {
+        let url_param =
+            match url_param_str {
                 Some(lit) => quote! { #lit },
-                None => match initial_language_from_url_param_expr {
+                None => match url_param_expr {
                     Some(expr) => quote! { #expr },
                     None => quote! { "lang" },
                 },
@@ -600,19 +619,19 @@ pub fn leptos_fluent(
     };
 
     cfg_if! { if #[cfg(not(feature = "ssr"))] {
-        let initial_language_from_url_quote =
-            match initial_language_from_url_bool_value {
+        let initial_language_from_url_param_quote =
+            match initial_language_from_url_param_bool_value {
                 Some(value) => match value {
                     true => quote! {
                         if let Some(l) = ::leptos_fluent::url::get(
-                            #initial_language_from_url_param
+                            #url_param
                         ) {
                             lang = ::leptos_fluent::language_from_str_between_languages(
                                 &l,
                                 &LANGUAGES
                             );
                             if let Some(l) = lang {
-                                if #initial_language_from_url_to_localstorage {
+                                if #initial_language_from_url_param_to_localstorage {
                                     ::leptos_fluent::localstorage::set(
                                         #localstorage_key,
                                         &l.id.to_string(),
@@ -624,16 +643,16 @@ pub fn leptos_fluent(
                     false => quote! {},
                 },
                 None => quote! {
-                    if #initial_language_from_url {
+                    if #initial_language_from_url_param {
                         if let Some(l) = ::leptos_fluent::url::get(
-                            #initial_language_from_url_param
+                            #url_param
                         ) {
                             lang = ::leptos_fluent::language_from_str_between_languages(
                                 &l,
                                 &LANGUAGES
                             );
                             if let Some(l) = lang {
-                                if #initial_language_from_url_to_localstorage {
+                                if #initial_language_from_url_param_to_localstorage {
                                     ::leptos_fluent::localstorage::set(
                                         #localstorage_key,
                                         &l.id.to_string(),
@@ -675,6 +694,21 @@ pub fn leptos_fluent(
                     }
                 },
             };
+    }};
+
+    cfg_if! { if #[cfg(not(feature = "ssr"))] {
+        let use_url_param = match set_language_to_url_param_bool {
+            Some(lit) => match lit.value {
+                true => quote! { Some(#url_param) },
+                false => quote! { None },
+            },
+            None => match set_language_to_url_param_expr {
+                Some(expr) => quote! { if #expr { Some(#url_param) } else { None } },
+                None => quote! { None },
+            },
+        };
+    } else {
+        let use_url_param = quote! { None };
     }};
 
     cfg_if! { if #[cfg(not(feature = "ssr"))] {
@@ -796,7 +830,7 @@ pub fn leptos_fluent(
 
     cfg_if! { if #[cfg(not(feature = "ssr"))] {
         let initial_language_quote = quote! {
-            #initial_language_from_url_quote
+            #initial_language_from_url_param_quote
             #initial_language_from_localstorage_quote
             #initial_language_from_navigator_quote
         };
@@ -819,12 +853,13 @@ pub fn leptos_fluent(
                 LANGUAGES[0]
             };
 
-            let i18n = ::leptos_fluent::I18n {
+            let mut i18n = ::leptos_fluent::I18n {
                 language: ::leptos::create_rw_signal(initial_lang),
                 languages: &LANGUAGES,
                 translations: &#translations_ident,
                 localstorage_key: #localstorage_key,
                 use_localstorage: #set_language_to_localstorage,
+                use_url_param: #use_url_param,
             };
             provide_context::<::leptos_fluent::I18n>(i18n);
             #sync_html_tag_lang_quote
@@ -838,8 +873,8 @@ pub fn leptos_fluent(
             // to this problem yet.
             #[cfg(feature = "hydrate")]
             ::leptos::create_effect(move |_| {
-                i18n.set_language(LANGUAGES[1]);
-                i18n.set_language(initial_lang);
+                i18n.set_language_not_use_url_param(LANGUAGES[1]);
+                i18n.set_language_not_use_url_param(initial_lang);
             });
 
             i18n
