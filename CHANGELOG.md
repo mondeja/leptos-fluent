@@ -2,6 +2,10 @@
 
 ## Unreleased - [0.0.26]
 
+### Enhancements
+
+- Drop `leptos_router` as a dependency.
+
 ## 2024-05-27 - [0.0.25]
 
 ### Breaking changes
