@@ -42,3 +42,5 @@ skip_feature_sets = [
   ["axum", "csr"],
   ["axum", "hydrate"],
 ]
+always_include_features = ["json"]
+denylist = ["yaml"]

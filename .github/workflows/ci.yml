@@ -43,13 +43,13 @@ jobs:
       - name: Check all features
         if: matrix.process == 'check-all-features'
         run: |
-          pre-commit run --all-files --verbose --show-diff-on-failure \
+          pre-commit run --all-files --verbose \
             --config end2end/.pre-commit-config.yaml \
             cargo-check-all-features
       - name: Build all features
         if: matrix.process == 'build-all-features'
         run: |
-          pre-commit run --all-files --verbose --show-diff-on-failure \
+          pre-commit run --all-files --verbose \
             --config end2end/.pre-commit-config.yaml \
             cargo-build-all-features
 
