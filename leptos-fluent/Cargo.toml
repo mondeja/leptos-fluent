@@ -20,7 +20,7 @@ web-sys = { version = ">=0.1", features = [
   "Location",
   "UrlSearchParams"
 ] }
-wasm-bindgen = "0.2"
+wasm-bindgen = ">=0.1"
 
 [features]
 hydrate = ["leptos-fluent-macros/hydrate"]
