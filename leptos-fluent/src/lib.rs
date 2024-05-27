@@ -304,13 +304,17 @@ pub fn use_i18n() -> Option<I18n> {
 #[inline(always)]
 pub fn expect_i18n() -> I18n {
     use_context::<I18n>().expect(
-        "I18n context is missing, use leptos_fluent!{} macro to provide it.",
+        "I18n context is missing, use the leptos_fluent!{} macro to provide it.",
     )
 }
 
-#[allow(non_upper_case_globals)]
 /// Expect the current context for localization.
-pub const i18n: fn() -> I18n = expect_i18n;
+#[inline(always)]
+pub fn i18n() -> I18n {
+    use_context::<I18n>().expect(
+        "I18n context is missing, use the leptos_fluent!{} macro to provide it.",
+    )
+}
 
 /// Translate a text identifier to the current language.
 ///
@@ -356,6 +360,7 @@ macro_rules! move_tr {
     };
 }
 
+#[doc(hidden)]
 pub fn language_from_str_between_languages(
     code: &str,
     languages: &'static [&Language],
