@@ -65,10 +65,12 @@ pub fn ErrorTemplate(
     }
 
     view! {
-        <h1>{if errors.len() > 1 {tr!("some-errors-happened")} else {tr!("an-error-happened")}}</h1>
+        <h1>
+            {if errors.len() > 1 { tr!("some-errors-happened") } else { tr!("an-error-happened") }}
+        </h1>
         <For
             // a function that returns the items we're iterating over; a signal is fine
-            each= move || {errors.clone().into_iter().enumerate()}
+            each=move || { errors.clone().into_iter().enumerate() }
             // a unique key for each item as a reference
             key=|(index, _error)| *index
             // renders each item to a view
@@ -76,8 +78,8 @@ pub fn ErrorTemplate(
                 let error_string = error.1.to_string();
                 let error_code = error.1.status_code().to_string();
                 view! {
-                    <p>{move_tr!("error-msg", {"msg" => *error_string})}</p>
-                    <p>{move_tr!("error-code", {"code" => error_code.clone()})}</p>
+                    <p>{move_tr!("error-msg", { "msg" => * error_string })}</p>
+                    <p>{move_tr!("error-code", { "code" => error_code.clone() })}</p>
                 }
             }
         />
