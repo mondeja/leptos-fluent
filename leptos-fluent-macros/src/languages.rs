@@ -2,9 +2,9 @@ use std::fs;
 use std::path::PathBuf;
 
 pub(crate) fn read_languages_file(path: &PathBuf) -> Vec<(String, String)> {
-    let file_extension = path.extension().unwrap_or_default();
     #[cfg(feature = "json")]
     {
+        let file_extension = path.extension().unwrap_or_default();
         if file_extension == "json" {
             return serde_json::from_str::<Vec<Vec<String>>>(
                 fs::read_to_string(path)
@@ -25,6 +25,7 @@ pub(crate) fn read_languages_file(path: &PathBuf) -> Vec<(String, String)> {
 
     #[cfg(feature = "yaml")]
     {
+        let file_extension = path.extension().unwrap_or_default();
         if file_extension == "yaml" || file_extension == "yml" {
             return serde_yaml::from_str::<Vec<Vec<String>>>(
                 fs::read_to_string(path)
@@ -51,6 +52,12 @@ pub(crate) fn read_languages_file(path: &PathBuf) -> Vec<(String, String)> {
                 );
             }
         }
+    }
+
+    #[cfg(not(any(feature = "json", feature = "yaml")))]
+    {
+        _ = path;
+        panic!("No feature enabled to read languages file. Enable either the 'json' or 'yaml' feature.");
     }
 }
 

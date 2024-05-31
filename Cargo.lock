@@ -1430,7 +1430,6 @@ dependencies = [
 name = "leptos-fluent"
 version = "0.0.26"
 dependencies = [
- "cfg-if",
  "fluent-templates",
  "leptos",
  "leptos-fluent-macros",

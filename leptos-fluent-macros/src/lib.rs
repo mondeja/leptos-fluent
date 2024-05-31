@@ -1,3 +1,5 @@
+#![deny(missing_docs)]
+#![forbid(unsafe_code)]
 //! Macros for the leptos-fluent crate.
 //!
 //! See [leptos-fluent] for more information.
@@ -512,35 +514,28 @@ pub fn leptos_fluent(
     .unwrap();
 
     cfg_if! { if #[cfg(not(feature = "ssr"))] {
+        let effect_quote = quote! {
+            use wasm_bindgen::JsCast;
+            ::leptos::create_effect(move |_| ::leptos::document()
+                .document_element()
+                .unwrap()
+                .unchecked_into::<::leptos::web_sys::HtmlElement>()
+                .set_attribute(
+                    "lang",
+                    &::leptos::expect_context::<::leptos_fluent::I18n>().language.get().id.to_string()
+                )
+            );
+        };
+
         let sync_html_tag_lang_quote = match sync_html_tag_lang_bool {
             Some(lit) => match lit.value {
-                true => quote! {
-                    use leptos::wasm_bindgen::JsCast;
-                    ::leptos::create_effect(move |_| ::leptos::document()
-                        .document_element()
-                        .unwrap()
-                        .unchecked_into::<::leptos::web_sys::HtmlElement>()
-                        .set_attribute(
-                            "lang",
-                            &::leptos::expect_context::<::leptos_fluent::I18n>().language.get().id.to_string()
-                        )
-                    );
-                },
+                true => effect_quote,
                 false => quote! {},
             },
             None => match sync_html_tag_lang_expr {
                 Some(expr) => quote! {
-                    use leptos::wasm_bindgen::JsCast;
                     if #expr {
-                        ::leptos::create_effect(move |_| ::leptos::document()
-                            .document_element()
-                            .unwrap()
-                            .unchecked_into::<::leptos::web_sys::HtmlElement>()
-                            .set_attribute(
-                                "lang",
-                                &::leptos::expect_context::<::leptos_fluent::I18n>().language.get().id.to_string()
-                            )
-                        );
+                        #effect_quote
                     }
                 },
                 None => quote! {},

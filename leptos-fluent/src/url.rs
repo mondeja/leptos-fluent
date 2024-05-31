@@ -1,13 +1,12 @@
-use cfg_if::cfg_if;
-
 pub fn get(#[allow(unused_variables)] k: &str) -> Option<String> {
-    cfg_if! { if #[cfg(not(feature = "ssr"))] {
-        if let Ok(search) = leptos::window().location().search() {
-            if let Ok(search_params) = web_sys::UrlSearchParams::new_with_str(&search) {
-                return search_params.get(k);
-            }
+    #[cfg(not(feature = "ssr"))]
+    if let Ok(search) = leptos::window().location().search() {
+        if let Ok(search_params) =
+            web_sys::UrlSearchParams::new_with_str(&search)
+        {
+            return search_params.get(k);
         }
-    }};
+    }
     None
 }
 
@@ -15,7 +14,8 @@ pub(crate) fn set(
     #[allow(unused_variables)] k: &str,
     #[allow(unused_variables)] v: &str,
 ) {
-    cfg_if! { if #[cfg(not(feature = "ssr"))] {
+    #[cfg(not(feature = "ssr"))]
+    {
         let url = web_sys::Url::new(
             &leptos::window()
                 .location()
@@ -27,7 +27,11 @@ pub(crate) fn set(
         leptos::window()
             .history()
             .expect("Failed to get the history from the browser")
-            .replace_state_with_url(&wasm_bindgen::JsValue::NULL, "", Some(&url.href()))
+            .replace_state_with_url(
+                &wasm_bindgen::JsValue::NULL,
+                "",
+                Some(&url.href()),
+            )
             .expect("Failed to replace the history state");
-    }};
+    };
 }
