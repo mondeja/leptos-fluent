@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## Unreleased - [0.0.27]
+## 2024-05-31 - [0.0.27]
 
 ### New features
 
