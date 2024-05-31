@@ -15,7 +15,7 @@
   Use `<For ... key=move |lang| *lang ... />` instead of
   `<For ... key=move |lang| i18n.language_key(lang)  ... />`.
 - The method `I18n.language_from_str` has been removed.
-  Use `leptos_fluent::Language::from_str` instead of `I18n.language_from_str`.
+  Use `Language::from_str` instead of `I18n.language_from_str`.
 
 ### Enhancements
 
