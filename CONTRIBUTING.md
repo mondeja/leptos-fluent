@@ -38,7 +38,7 @@ wasm-pack test --firefox --headless --test csr_complete
 ### Unit tests
 
 ```sh
-cargo test --p leptos-fluent -p leptos-fluent-macros
+cargo test -p leptos-fluent -p leptos-fluent-macros
 ```
 
 ## Documentation

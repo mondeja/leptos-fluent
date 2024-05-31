@@ -515,7 +515,7 @@ pub fn leptos_fluent(
 
     cfg_if! { if #[cfg(not(feature = "ssr"))] {
         let effect_quote = quote! {
-            use leptos::wasm_bindgen::JsCast;
+            use wasm_bindgen::JsCast;
             ::leptos::create_effect(move |_| ::leptos::document()
                 .document_element()
                 .unwrap()

@@ -10,7 +10,7 @@ macro_rules! mount {
 #[macro_export]
 macro_rules! unmount {
     () => {{
-        use leptos::wasm_bindgen::JsCast;
+        use wasm_bindgen::JsCast;
         ::leptos::document()
             .body()
             .unwrap()
@@ -46,20 +46,20 @@ pub fn element_text(selector: &str) -> String {
         .unwrap()
 }
 
-pub fn input_by_id(id: &str) -> leptos::web_sys::HtmlInputElement {
-    use leptos::wasm_bindgen::JsCast;
+pub fn input_by_id(id: &str) -> web_sys::HtmlInputElement {
+    use wasm_bindgen::JsCast;
     leptos::document()
         .get_element_by_id(id)
         .unwrap()
-        .unchecked_into::<leptos::web_sys::HtmlInputElement>()
+        .unchecked_into::<web_sys::HtmlInputElement>()
 }
 
-pub fn html() -> leptos::web_sys::HtmlHtmlElement {
-    use leptos::wasm_bindgen::JsCast;
+pub fn html() -> web_sys::HtmlHtmlElement {
+    use wasm_bindgen::JsCast;
     leptos::document()
         .document_element()
         .unwrap()
-        .unchecked_into::<leptos::web_sys::HtmlHtmlElement>()
+        .unchecked_into::<web_sys::HtmlHtmlElement>()
 }
 
 pub mod localstorage {

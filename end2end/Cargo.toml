@@ -9,6 +9,11 @@ leptos-fluent = { path = "../leptos-fluent" }
 fluent-templates = "0.9"
 leptos-fluent-csr-minimal-example = { path = "../examples/csr-minimal" }
 leptos-fluent-csr-complete-example = { path = "../examples/csr-complete" }
-wasm-bindgen = "0.2"
+web-sys = { version = "0.3", features = [
+  "Location",
+  "Storage",
+  "UrlSearchParams"
+] }
+wasm-bindgen = ">=0.1"
 wasm-bindgen-test = "0.3"
 leptos = "0.6"

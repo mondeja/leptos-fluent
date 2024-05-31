@@ -2,12 +2,12 @@ pub fn get(#[allow(unused_variables)] k: &str) -> Option<String> {
     #[cfg(not(feature = "ssr"))]
     if let Ok(search) = leptos::window().location().search() {
         if let Ok(search_params) =
-            leptos::web_sys::UrlSearchParams::new_with_str(&search)
+            web_sys::UrlSearchParams::new_with_str(&search)
         {
             return search_params.get(k);
         }
     }
-    return None;
+    None
 }
 
 pub(crate) fn set(
@@ -16,7 +16,7 @@ pub(crate) fn set(
 ) {
     #[cfg(not(feature = "ssr"))]
     {
-        let url = leptos::web_sys::Url::new(
+        let url = web_sys::Url::new(
             &leptos::window()
                 .location()
                 .href()
@@ -28,7 +28,7 @@ pub(crate) fn set(
             .history()
             .expect("Failed to get the history from the browser")
             .replace_state_with_url(
-                &leptos::wasm_bindgen::JsValue::NULL,
+                &wasm_bindgen::JsValue::NULL,
                 "",
                 Some(&url.href()),
             )
