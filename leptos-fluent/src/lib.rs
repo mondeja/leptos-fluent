@@ -144,27 +144,27 @@
 //!
 //!     // `i18n.languages` is a static array with the available languages
 //!     // `i18n.language` is a signal with the current language
-//!     // `i18n.set_language(lang)` is a method to set the current language
-//!     // `i18n.is_active_language(lang)` is a method to check if a language is active
-//!     // `i18n.language_key(lang)` is a method to get a hash for a language
+//!     // `i18n.language.get()` to get the current language
+//!     // `i18n.language.set(lang)` to set the current language
+//!     // `i18n.is_active_language(lang)` to check if a language is active
 //!
 //!     view! {
 //!         <fieldset>
 //!             <For
 //!                 each=move || i18n.languages
-//!                 key=move |lang| i18n.language_key(lang)
+//!                 key=move |lang| *lang
 //!                 children=move |lang: &&Language| {
 //!                     view! {
 //!                         <div>
 //!                             <input
 //!                                 type="radio"
-//!                                 id=lang.id.to_string()
+//!                                 id=lang
 //!                                 name="language"
-//!                                 value=lang.id.to_string()
+//!                                 value=lang
 //!                                 checked=i18n.is_active_language(lang)
-//!                                 on:click=move |_| i18n.set_language(lang)
+//!                                 on:click=move |_| i18n.language.set(lang)
 //!                             />
-//!                             <label for=lang.id.to_string()>{lang.name}</label>
+//!                             <label for=lang>{lang.name}</label>
 //!                         </div>
 //!                     }
 //!                 }
@@ -208,12 +208,13 @@ pub mod localstorage;
 #[doc(hidden)]
 pub mod url;
 
+use core::hash::{Hash, Hasher};
 use core::str::FromStr;
 use fluent_templates::{
     fluent_bundle::FluentValue, loader::Loader, LanguageIdentifier,
     StaticLoader,
 };
-use leptos::{use_context, RwSignal, SignalGet, SignalSet};
+use leptos::{use_context, Attribute, IntoAttribute, Oco, RwSignal, SignalGet};
 pub use leptos_fluent_macros::leptos_fluent;
 use once_cell::sync::Lazy;
 use std::collections::HashMap;
@@ -238,6 +239,54 @@ impl PartialEq for Language {
     }
 }
 
+impl Eq for Language {}
+
+impl Hash for Language {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        let current_lang = leptos::expect_context::<I18n>().language.get();
+        let key = format!(
+            "{}{}",
+            self.id,
+            if self == current_lang { "1" } else { "0" }
+        );
+        state.write(key.as_bytes());
+    }
+}
+
+impl FromStr for Language {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        language_from_str_between_languages(
+            s,
+            leptos::expect_context::<I18n>().languages,
+        )
+        .ok_or(())
+        .map(|lang| lang.clone())
+    }
+}
+
+macro_rules! impl_into_attr_for_language {
+    () => {
+        fn into_attribute(self) -> Attribute {
+            Attribute::String(Oco::Owned(self.id.to_string()))
+        }
+
+        #[inline(always)]
+        fn into_attribute_boxed(self: Box<Self>) -> Attribute {
+            self.into_attribute()
+        }
+    };
+}
+
+impl IntoAttribute for &'static Language {
+    impl_into_attr_for_language!();
+}
+
+impl IntoAttribute for &&'static Language {
+    impl_into_attr_for_language!();
+}
+
 /// Internationalization context.
 ///
 /// This context is used to provide the current language, the available languages
@@ -254,13 +303,6 @@ pub struct I18n {
     pub languages: &'static [&'static Language],
     /// leptos-fluent translations loader.
     pub translations: &'static Lazy<StaticLoader>,
-    /// Local storage key to store the current language.
-    pub localstorage_key: &'static str,
-    /// Whether to use local storage to store the current language
-    /// when the user changes it.
-    pub use_localstorage: bool,
-    /// URL parameter to use to store the current language.
-    pub use_url_param: Option<&'static str>,
 }
 
 impl I18n {
@@ -303,47 +345,6 @@ impl I18n {
     /// The default language is the first language in the list of available languages.
     pub fn default_language(&self) -> &'static Language {
         self.languages[0]
-    }
-
-    /// Get the language from a language identifier.
-    ///
-    /// This function will try to match the language identifier with the available
-    /// languages. If it doesn't find an exact match, it will try to match the
-    /// language identifier without the region. If it doesn't find a match, it will
-    /// return `None`.
-    pub fn language_from_str(&self, code: &str) -> Option<&'static Language> {
-        language_from_str_between_languages(code, self.languages)
-    }
-
-    #[doc(hidden)]
-    #[inline(always)]
-    pub fn set_language_not_use_url_param(&self, lang: &'static Language) {
-        self.language.set(lang);
-        if self.use_localstorage {
-            localstorage::set(self.localstorage_key, &lang.id.to_string());
-        }
-    }
-
-    /// Set the current language in the signal of the context and in local storage
-    /// (if using local storage).
-    pub fn set_language(&self, lang: &'static Language) {
-        self.set_language_not_use_url_param(lang);
-        if let Some(use_url_param) = self.use_url_param {
-            url::set(use_url_param, &lang.id.to_string());
-        }
-    }
-
-    /// Get a hash for a language including their active status.
-    pub fn language_key(&self, lang: &'static Language) -> String {
-        format!(
-            "{}{}",
-            lang.id,
-            if lang == self.language.get() {
-                "1"
-            } else {
-                "0"
-            }
-        )
     }
 
     /// Get wether a language is the active language.

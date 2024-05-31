@@ -57,19 +57,19 @@ fn HomePage() -> impl IntoView {
         <fieldset>
             <For
                 each=move || i18n.languages
-                key=move |lang| i18n.language_key(lang)
+                key=move |lang| *lang
                 children=move |lang: &&Language| {
                     view! {
                         <div>
                             <input
                                 type="radio"
-                                id=lang.id.to_string()
+                                id=lang
                                 name="language"
-                                value=lang.id.to_string()
+                                value=lang
                                 checked=i18n.is_active_language(lang)
-                                on:click=move |_| i18n.set_language(lang)
+                                on:click=move |_| i18n.language.set(lang)
                             />
-                            <label for=lang.id.to_string()>{lang.name}</label>
+                            <label for=lang>{lang.name}</label>
                         </div>
                     }
                 }

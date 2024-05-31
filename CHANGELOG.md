@@ -7,6 +7,23 @@
 - Add `yaml` feature to read languages from a YAML file.
 - Add `json` feature to read languages from a JSON file (enabled by default).
 
+### Breaking changes
+
+- The method `I18n.set_language` has been removed.
+  Use `i18n.language.set(lang)` instead of `i18n.set_language(lang)`.
+- The method `I18n.language_key` has been removed.
+  Use `<For ... key=move |lang| *lang ... />` instead of
+  `<For ... key=move |lang| i18n.language_key(lang)  ... />`.
+- The method `I18n.language_from_str` has been removed.
+  Use `leptos_fluent::Language::from_str` instead of `I18n.language_from_str`.
+
+### Enhancements
+
+- Add `impl Hash` for `Language` struct.
+- Add `impl IntoAttribute` for `Language` struct.
+  Use `<input ... id=lang />` instead of
+  `<input ... id=lang.id.to_string() />`.
+
 ## 2024-05-28 - [0.0.26]
 
 ### Breaking changes
