@@ -1430,12 +1430,10 @@ dependencies = [
 name = "leptos-fluent"
 version = "0.0.26"
 dependencies = [
- "cfg-if",
  "fluent-templates",
  "leptos",
  "leptos-fluent-macros",
  "once_cell",
- "wasm-bindgen",
  "web-sys",
 ]
 
@@ -1520,7 +1518,6 @@ dependencies = [
  "tests-helpers",
  "wasm-bindgen",
  "wasm-bindgen-test",
- "web-sys",
 ]
 
 [[package]]
@@ -2605,9 +2602,7 @@ version = "0.1.0"
 dependencies = [
  "js-sys",
  "leptos",
- "wasm-bindgen",
  "wasm-bindgen-futures",
- "web-sys",
 ]
 
 [[package]]

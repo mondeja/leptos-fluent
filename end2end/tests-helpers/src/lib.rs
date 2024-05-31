@@ -10,7 +10,7 @@ macro_rules! mount {
 #[macro_export]
 macro_rules! unmount {
     () => {{
-        use wasm_bindgen::JsCast;
+        use leptos::wasm_bindgen::JsCast;
         ::leptos::document()
             .body()
             .unwrap()
@@ -26,8 +26,7 @@ macro_rules! unmount {
 
 pub async fn sleep(delay: i32) {
     let mut cb = |resolve: js_sys::Function, _reject: js_sys::Function| {
-        ::web_sys::window()
-            .unwrap()
+        ::leptos::window()
             .set_timeout_with_callback_and_timeout_and_arguments_0(
                 &resolve, delay,
             )
@@ -47,20 +46,20 @@ pub fn element_text(selector: &str) -> String {
         .unwrap()
 }
 
-pub fn input_by_id(id: &str) -> web_sys::HtmlInputElement {
-    use wasm_bindgen::JsCast;
-    ::leptos::document()
+pub fn input_by_id(id: &str) -> leptos::web_sys::HtmlInputElement {
+    use leptos::wasm_bindgen::JsCast;
+    leptos::document()
         .get_element_by_id(id)
         .unwrap()
-        .unchecked_into::<web_sys::HtmlInputElement>()
+        .unchecked_into::<leptos::web_sys::HtmlInputElement>()
 }
 
-pub fn html() -> web_sys::HtmlHtmlElement {
-    use wasm_bindgen::JsCast;
-    ::leptos::document()
+pub fn html() -> leptos::web_sys::HtmlHtmlElement {
+    use leptos::wasm_bindgen::JsCast;
+    leptos::document()
         .document_element()
         .unwrap()
-        .unchecked_into::<web_sys::HtmlHtmlElement>()
+        .unchecked_into::<leptos::web_sys::HtmlHtmlElement>()
 }
 
 pub mod localstorage {
