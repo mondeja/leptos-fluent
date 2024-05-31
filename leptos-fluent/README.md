@@ -18,7 +18,7 @@ Add the following to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-leptos-fluent = "0.0.26"
+leptos-fluent = "0.0.27"
 fluent-templates = "0.9"
 
 [features]
@@ -149,27 +149,27 @@ fn LanguageSelector() -> impl IntoView {
 
     // `i18n.languages` is a static array with the available languages
     // `i18n.language` is a signal with the current language
-    // `i18n.set_language(lang)` is a method to set the current language
-    // `i18n.is_active_language(lang)` is a method to check if a language is active
-    // `i18n.language_key(lang)` is a method to get a hash for a language
+    // `i18n.language.get()` to get the current language
+    // `i18n.language.set(lang)` to set the current language
+    // `i18n.is_active_language(lang)` to check if a language is active
 
     view! {
         <fieldset>
             <For
                 each=move || i18n.languages
-                key=move |lang| i18n.language_key(lang)
+                key=move |lang| *lang
                 children=move |lang: &&Language| {
                     view! {
                         <div>
                             <input
                                 type="radio"
-                                id=lang.id.to_string()
+                                id=lang
                                 name="language"
-                                value=lang.id.to_string()
+                                value=lang
                                 checked=i18n.is_active_language(lang)
-                                on:click=move |_| i18n.set_language(lang)
+                                on:click=move |_| i18n.language.set(lang)
                             />
-                            <label for=lang.id.to_string()>{lang.name}</label>
+                            <label for=lang>{lang.name}</label>
                         </div>
                     }
                 }

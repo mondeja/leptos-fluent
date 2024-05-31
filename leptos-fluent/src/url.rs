@@ -10,7 +10,7 @@ pub fn get(#[allow(unused_variables)] k: &str) -> Option<String> {
     None
 }
 
-pub(crate) fn set(
+pub fn set(
     #[allow(unused_variables)] k: &str,
     #[allow(unused_variables)] v: &str,
 ) {

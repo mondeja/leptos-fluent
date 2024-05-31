@@ -514,36 +514,46 @@ pub fn leptos_fluent(
     .unwrap();
 
     cfg_if! { if #[cfg(not(feature = "ssr"))] {
-        let effect_quote = quote! {
-            use wasm_bindgen::JsCast;
-            ::leptos::create_effect(move |_| ::leptos::document()
-                .document_element()
-                .unwrap()
-                .unchecked_into::<::leptos::web_sys::HtmlElement>()
-                .set_attribute(
-                    "lang",
-                    &::leptos::expect_context::<::leptos_fluent::I18n>().language.get().id.to_string()
-                )
-            );
-        };
+        let sync_html_tag_lang_quote = {
+            let effect_quote = quote! {
+                use wasm_bindgen::JsCast;
+                ::leptos::create_effect(move |_| ::leptos::document()
+                    .document_element()
+                    .unwrap()
+                    .unchecked_into::<::leptos::web_sys::HtmlElement>()
+                    .set_attribute(
+                        "lang",
+                        &::leptos::expect_context::<::leptos_fluent::I18n>().language.get().id.to_string()
+                    )
+                );
+            };
 
-        let sync_html_tag_lang_quote = match sync_html_tag_lang_bool {
-            Some(lit) => match lit.value {
-                true => effect_quote,
-                false => quote! {},
-            },
-            None => match sync_html_tag_lang_expr {
-                Some(expr) => quote! {
-                    if #expr {
-                        #effect_quote
-                    }
+            match sync_html_tag_lang_bool {
+                Some(lit) => match lit.value {
+                    true => effect_quote,
+                    false => quote! {},
                 },
-                None => quote! {},
-            },
+                None => match sync_html_tag_lang_expr {
+                    Some(expr) => quote! {
+                        if #expr {
+                            #effect_quote
+                        }
+                    },
+                    None => quote! {},
+                },
+            }
         };
     } else {
         let sync_html_tag_lang_quote = quote! {};
     }};
+
+    let url_param = match url_param_str {
+        Some(lit) => quote! { #lit },
+        None => match url_param_expr {
+            Some(expr) => quote! { #expr },
+            None => quote! { "lang" },
+        },
+    };
 
     cfg_if! { if #[cfg(not(feature = "ssr"))] {
         let initial_language_from_url_param_bool_value = initial_language_from_url_param_bool
@@ -592,15 +602,6 @@ pub fn leptos_fluent(
                     None => quote! { false },
                 },
             };
-
-        let url_param =
-            match url_param_str {
-                Some(lit) => quote! { #lit },
-                None => match url_param_expr {
-                    Some(expr) => quote! { #expr },
-                    None => quote! { "lang" },
-                },
-            };
     }};
 
     let localstorage_key = match localstorage_key_str {
@@ -611,12 +612,30 @@ pub fn leptos_fluent(
         },
     };
 
-    let set_language_to_localstorage = match set_language_to_localstorage_bool {
-        Some(lit) => quote! { #lit },
-        None => match set_language_to_localstorage_expr {
-            Some(expr) => quote! { #expr },
-            None => quote! { false },
-        },
+    let sync_language_with_localstorage_quote = {
+        let effect_quote = quote! {
+            ::leptos::create_effect(move |_| {
+                ::leptos_fluent::localstorage::set(
+                    #localstorage_key,
+                    &::leptos::expect_context::<::leptos_fluent::I18n>().language.get().id.to_string(),
+                );
+            });
+        };
+
+        match set_language_to_localstorage_bool {
+            Some(lit) => match lit.value {
+                true => effect_quote,
+                false => quote! {},
+            },
+            None => match set_language_to_localstorage_expr {
+                Some(expr) => quote! {
+                    if #expr {
+                        #effect_quote
+                    }
+                },
+                None => quote! {},
+            },
+        }
     };
 
     cfg_if! { if #[cfg(not(feature = "ssr"))] {
@@ -697,20 +716,31 @@ pub fn leptos_fluent(
             };
     }};
 
-    cfg_if! { if #[cfg(not(feature = "ssr"))] {
-        let use_url_param = match set_language_to_url_param_bool {
+    let sync_language_with_url_param_quote = {
+        let effect_quote = quote! {
+            ::leptos::create_effect(move |_| {
+                ::leptos_fluent::url::set(
+                    #url_param,
+                    &::leptos::expect_context::<::leptos_fluent::I18n>().language.get().id.to_string(),
+                );
+            });
+        };
+
+        match set_language_to_url_param_bool {
             Some(lit) => match lit.value {
-                true => quote! { Some(#url_param) },
-                false => quote! { None },
+                true => effect_quote,
+                false => quote! {},
             },
             None => match set_language_to_url_param_expr {
-                Some(expr) => quote! { if #expr { Some(#url_param) } else { None } },
-                None => quote! { None },
+                Some(expr) => quote! {
+                    if #expr {
+                        #effect_quote
+                    }
+                },
+                None => quote! {},
             },
-        };
-    } else {
-        let use_url_param = quote! { None };
-    }};
+        }
+    };
 
     cfg_if! { if #[cfg(not(feature = "ssr"))] {
         let window_navigator_languages_quote = quote! {
@@ -858,25 +888,11 @@ pub fn leptos_fluent(
                 language: ::leptos::create_rw_signal(initial_lang),
                 languages: &LANGUAGES,
                 translations: &#translations_ident,
-                localstorage_key: #localstorage_key,
-                use_localstorage: #set_language_to_localstorage,
-                use_url_param: #use_url_param,
             };
             provide_context::<::leptos_fluent::I18n>(i18n);
             #sync_html_tag_lang_quote
-
-            // When hydrating, it could be the case where the language
-            // has been setted in the server and the language selector
-            // has been rendered yet, but the client set that to another
-            // language, using for example the local storage. In that case,
-            // we need to trigger a rerender. The next code creates a
-            // rerender. Seems like a hack but I've not found another solution
-            // to this problem yet.
-            #[cfg(feature = "hydrate")]
-            ::leptos::create_effect(move |_| {
-                i18n.set_language_not_use_url_param(LANGUAGES[1]);
-                i18n.set_language_not_use_url_param(initial_lang);
-            });
+            #sync_language_with_localstorage_quote
+            #sync_language_with_url_param_quote
 
             i18n
         }
