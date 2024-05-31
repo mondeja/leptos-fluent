@@ -243,7 +243,7 @@ impl Eq for Language {}
 
 impl Hash for Language {
     fn hash<H: Hasher>(&self, state: &mut H) {
-        let current_lang = leptos::expect_context::<I18n>().language.get();
+        let current_lang = expect_i18n().language.get();
         let key = format!(
             "{}{}",
             self.id,
@@ -257,12 +257,9 @@ impl FromStr for Language {
     type Err = ();
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        language_from_str_between_languages(
-            s,
-            leptos::expect_context::<I18n>().languages,
-        )
-        .ok_or(())
-        .map(|lang| lang.clone())
+        language_from_str_between_languages(s, expect_i18n().languages)
+            .ok_or(())
+            .map(|lang| lang.clone())
     }
 }
 
