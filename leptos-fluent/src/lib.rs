@@ -315,7 +315,7 @@ pub struct I18n {
     pub language: RwSignal<&'static Language>,
     /// Available languages for the application.
     pub languages: &'static [&'static Language],
-    /// leptos-fluent translations loader.
+    /// Static translations loader of fluent-templates.
     pub translations: &'static Lazy<StaticLoader>,
 }
 
