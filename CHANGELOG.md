@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2024-06-01 - [0.0.28]
+
+### New features
+
+- Add `cookie_name`, `initial_language_from_cookie` and
+  `set_language_to_cookie` parameters to `leptos_fluent!` macro.
+
 ## 2024-05-31 - [0.0.27]
 
 ### New features

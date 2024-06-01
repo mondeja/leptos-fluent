@@ -2,7 +2,7 @@
 name = "leptos-fluent-macros"
 description = "Macros for leptos-fluent"
 edition = "2021"
-version = "0.0.27"
+version = "0.0.28"
 license = "MIT"
 documentation = "https://docs.rs/leptos-fluent"
 repository = "https://github.com/mondeja/leptos-fluent"

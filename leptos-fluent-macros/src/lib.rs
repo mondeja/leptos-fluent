@@ -108,6 +108,12 @@ struct I18nLoader {
     initial_language_from_navigator_expr: Option<syn::Expr>,
     initial_language_from_accept_language_header_bool: Option<syn::LitBool>,
     initial_language_from_accept_language_header_expr: Option<syn::Expr>,
+    cookie_name_str: Option<syn::LitStr>,
+    cookie_name_expr: Option<syn::Expr>,
+    initial_language_from_cookie_bool: Option<syn::LitBool>,
+    initial_language_from_cookie_expr: Option<syn::Expr>,
+    set_language_to_cookie_bool: Option<syn::LitBool>,
+    set_language_to_cookie_expr: Option<syn::Expr>,
 }
 
 impl Parse for I18nLoader {
@@ -153,6 +159,12 @@ impl Parse for I18nLoader {
         let mut initial_language_from_accept_language_header_expr: Option<
             syn::Expr,
         > = None;
+        let mut cookie_name_str: Option<syn::LitStr> = None;
+        let mut cookie_name_expr: Option<syn::Expr> = None;
+        let mut initial_language_from_cookie_bool: Option<syn::LitBool> = None;
+        let mut initial_language_from_cookie_expr: Option<syn::Expr> = None;
+        let mut set_language_to_cookie_bool: Option<syn::LitBool> = None;
+        let mut set_language_to_cookie_expr: Option<syn::Expr> = None;
 
         while !fields.is_empty() {
             let k = fields.parse::<Ident>()?;
@@ -251,6 +263,33 @@ impl Parse for I18nLoader {
                     &mut initial_language_from_accept_language_header_bool,
                     &mut initial_language_from_accept_language_header_expr,
                     "initial_language_from_accept_language_header",
+                ) {
+                    return Err(err);
+                }
+            } else if k == "cookie_name" {
+                if let Some(err) = parse_litstr_or_expr_param(
+                    &fields,
+                    &mut cookie_name_str,
+                    &mut cookie_name_expr,
+                    "cookie_name",
+                ) {
+                    return Err(err);
+                }
+            } else if k == "initial_language_from_cookie" {
+                if let Some(err) = parse_litbool_or_expr_param(
+                    &fields,
+                    &mut initial_language_from_cookie_bool,
+                    &mut initial_language_from_cookie_expr,
+                    "initial_language_from_cookie",
+                ) {
+                    return Err(err);
+                }
+            } else if k == "set_language_to_cookie" {
+                if let Some(err) = parse_litbool_or_expr_param(
+                    &fields,
+                    &mut set_language_to_cookie_bool,
+                    &mut set_language_to_cookie_expr,
+                    "set_language_to_cookie",
                 ) {
                     return Err(err);
                 }
@@ -373,6 +412,12 @@ impl Parse for I18nLoader {
             initial_language_from_navigator_expr,
             initial_language_from_accept_language_header_bool,
             initial_language_from_accept_language_header_expr,
+            cookie_name_str,
+            cookie_name_expr,
+            initial_language_from_cookie_bool,
+            initial_language_from_cookie_expr,
+            set_language_to_cookie_bool,
+            set_language_to_cookie_expr,
         })
     }
 }
@@ -462,6 +507,13 @@ impl Parse for I18nLoader {
 /// - **`initial_language_from_accept_language_header`** (_`false`_): Load the initial language of the user
 ///   from the `Accept-Language` header. Can be a literal boolean or an expression that will be evaluated at
 ///   runtime. It will only take effect on server-side.
+/// - **`cookie_name`** (_`"lf-lang"`_): The cookie name to manage language in a cookie. Can be a literal string or an
+///   expression that will be evaluated at runtime. It will take effect on client-side and server side.
+/// - **`initial_language_from_cookie`** (_`false`_): Load the initial language of the user from a cookie.
+///   Can be a literal boolean or an expression that will be evaluated at runtime. It will take effect on client-side
+///   and server side.
+/// - **`set_language_to_cookie`** (_`false`_): Save the language of the user to a cookie when setting the language.
+///   Can be a literal boolean or an expression that will be evaluated at runtime. It will only take effect on client-side.
 ///
 /// [`fluent_templates::static_loader!`]: https://docs.rs/fluent-templates/0.8.0/fluent_templates/macro.static_loader.html
 /// [`once_cell:sync::Lazy`]: https://docs.rs/once_cell/latest/once_cell/sync/struct.Lazy.html
@@ -498,6 +550,12 @@ pub fn leptos_fluent(
         initial_language_from_navigator_expr,
         initial_language_from_accept_language_header_bool,
         initial_language_from_accept_language_header_expr,
+        cookie_name_str,
+        cookie_name_expr,
+        initial_language_from_cookie_bool,
+        initial_language_from_cookie_expr,
+        set_language_to_cookie_bool,
+        set_language_to_cookie_expr,
     } = parse_macro_input!(input as I18nLoader);
 
     let n_languages = languages.len();
@@ -523,7 +581,7 @@ pub fn leptos_fluent(
                     .unchecked_into::<::leptos::web_sys::HtmlElement>()
                     .set_attribute(
                         "lang",
-                        &::leptos::expect_context::<::leptos_fluent::I18n>().language.get().id.to_string()
+                        &::leptos_fluent::expect_i18n().language.get().id.to_string()
                     )
                 );
             };
@@ -617,7 +675,7 @@ pub fn leptos_fluent(
             ::leptos::create_effect(move |_| {
                 ::leptos_fluent::localstorage::set(
                     #localstorage_key,
-                    &::leptos::expect_context::<::leptos_fluent::I18n>().language.get().id.to_string(),
+                    &::leptos_fluent::expect_i18n().language.get().id.to_string(),
                 );
             });
         };
@@ -638,52 +696,53 @@ pub fn leptos_fluent(
         }
     };
 
-    cfg_if! { if #[cfg(not(feature = "ssr"))] {
-        let initial_language_from_url_param_quote =
-            match initial_language_from_url_param_bool_value {
-                Some(value) => match value {
-                    true => quote! {
-                        if let Some(l) = ::leptos_fluent::url::get(
-                            #url_param
-                        ) {
-                            lang = ::leptos_fluent::language_from_str_between_languages(
-                                &l,
-                                &LANGUAGES
-                            );
-                            if let Some(l) = lang {
-                                if #initial_language_from_url_param_to_localstorage {
-                                    ::leptos_fluent::localstorage::set(
-                                        #localstorage_key,
-                                        &l.id.to_string(),
-                                    );
-                                }
-                            }
-                        }
-                    },
-                    false => quote! {},
-                },
-                None => quote! {
-                    if #initial_language_from_url_param {
-                        if let Some(l) = ::leptos_fluent::url::get(
-                            #url_param
-                        ) {
-                            lang = ::leptos_fluent::language_from_str_between_languages(
-                                &l,
-                                &LANGUAGES
-                            );
-                            if let Some(l) = lang {
-                                if #initial_language_from_url_param_to_localstorage {
-                                    ::leptos_fluent::localstorage::set(
-                                        #localstorage_key,
-                                        &l.id.to_string(),
-                                    );
-                                }
-                            }
-                        }
+    #[cfg(not(feature = "ssr"))]
+    let initial_language_from_url_param_quote = {
+        #[cfg(feature = "hydrate")]
+        let hydrate_rerender_quote = quote! {
+            ::leptos::create_effect(move |prev| {
+                if prev.is_none() {
+                    ::leptos_fluent::expect_i18n().language.set(l);
+                }
+            });
+        };
+
+        #[cfg(not(feature = "hydrate"))]
+        let hydrate_rerender_quote = quote! {};
+
+        let parse_language_from_url_quote = quote! {
+            if let Some(l) = ::leptos_fluent::url::get(
+                #url_param
+            ) {
+                lang = ::leptos_fluent::language_from_str_between_languages(
+                    &l,
+                    &LANGUAGES
+                );
+                if let Some(l) = lang {
+                    #hydrate_rerender_quote;
+
+                    if #initial_language_from_url_param_to_localstorage {
+                        ::leptos_fluent::localstorage::set(
+                            #localstorage_key,
+                            &l.id.to_string(),
+                        );
                     }
-                },
-            };
-    }};
+                }
+            }
+        };
+
+        match initial_language_from_url_param_bool_value {
+            Some(value) => match value {
+                true => parse_language_from_url_quote,
+                false => quote! {},
+            },
+            None => quote! {
+                if #initial_language_from_url_param {
+                    #parse_language_from_url_quote
+                }
+            },
+        }
+    };
 
     cfg_if! { if #[cfg(not(feature = "ssr"))] {
         let initial_language_from_localstorage_quote =
@@ -721,7 +780,7 @@ pub fn leptos_fluent(
             ::leptos::create_effect(move |_| {
                 ::leptos_fluent::url::set(
                     #url_param,
-                    &::leptos::expect_context::<::leptos_fluent::I18n>().language.get().id.to_string(),
+                    &::leptos_fluent::expect_i18n().language.get().id.to_string(),
                 );
             });
         };
@@ -805,12 +864,16 @@ pub fn leptos_fluent(
         let initial_language_from_accept_language_header_quote =
             match initial_language_from_accept_language_header_bool {
                 Some(lit) => match lit.value {
-                    true => parse_actix_header_quote,
+                    true => quote! {
+                        if lang.is_none() {
+                            #parse_actix_header_quote
+                        }
+                    },
                     false => quote! {},
                 },
                 None => match initial_language_from_accept_language_header_expr {
                     Some(expr) => quote! {
-                        if #expr {
+                        if #expr && lang.is_none() {
                             #parse_actix_header_quote;
                         }
                     },
@@ -842,12 +905,16 @@ pub fn leptos_fluent(
         let initial_language_from_accept_language_header_quote =
             match initial_language_from_accept_language_header_bool {
                 Some(lit) => match lit.value {
-                    true => parse_axum_header_quote,
+                    true => quote! {
+                        if lang.is_none() {
+                            #parse_axum_header_quote
+                        }
+                    },
                     false => quote! {},
                 },
                 None => match initial_language_from_accept_language_header_expr {
                     Some(expr) => quote! {
-                        if #expr {
+                        if #expr && lang.is_none() {
                             #parse_axum_header_quote;
                         }
                     },
@@ -859,17 +926,164 @@ pub fn leptos_fluent(
         let initial_language_from_accept_language_header_quote = quote! {};
     }};
 
+    // Cookie
+    let cookie_name = match cookie_name_str {
+        Some(lit) => quote! { #lit },
+        None => match cookie_name_expr {
+            Some(expr) => quote! { #expr },
+            None => quote! { "lf-lang" },
+        },
+    };
+
     cfg_if! { if #[cfg(not(feature = "ssr"))] {
-        let initial_language_quote = quote! {
+        let parse_client_cookie_quote = quote! {
+            if let Some(cookie) = ::leptos_fluent::cookie::get(#cookie_name) {
+                if let Some(l) = ::leptos_fluent::language_from_str_between_languages(&cookie, &LANGUAGES) {
+                    lang = Some(l);
+                }
+            }
+        };
+
+        let initial_language_from_cookie_quote = match initial_language_from_cookie_bool {
+            Some(lit) => match lit.value {
+                true => quote! {
+                    if lang.is_none() {
+                        #parse_client_cookie_quote;
+                    }
+                },
+                false => quote! {},
+            },
+            None => match initial_language_from_cookie_expr {
+                Some(expr) => quote! {
+                    if #expr && lang.is_none() {
+                        #parse_client_cookie_quote;
+                    }
+                },
+                None => quote! {},
+            },
+        };
+
+        let sync_language_with_cookie_quote = {
+            let effect_quote = quote! {
+                ::leptos::create_effect(move |_| {
+                    ::leptos_fluent::cookie::set(
+                        #cookie_name,
+                        &::leptos_fluent::expect_i18n().language.get().id.to_string(),
+                    );
+                });
+            };
+
+            match set_language_to_cookie_bool {
+                Some(lit) => match lit.value {
+                    true => effect_quote,
+                    false => quote! {},
+                },
+                None => match set_language_to_cookie_expr {
+                    Some(expr) => quote! {
+                        if #expr {
+                            #effect_quote
+                        }
+                    },
+                    None => quote! {},
+                },
+            }
+        };
+    } else if #[cfg(feature = "actix")] {
+        let parse_actix_cookie_quote = quote! {
+            if let Some(req) = leptos::use_context::<actix_web::HttpRequest>() {
+                let maybe_cookie = req
+                    .cookie(#cookie_name)
+                    .and_then(|cookie| Some(cookie.value().to_string()));
+
+                if let Some(cookie) = maybe_cookie {
+                    if let Some(l) = ::leptos_fluent::language_from_str_between_languages(&cookie, &LANGUAGES) {
+                        lang = Some(l);
+                    }
+                }
+            }
+        };
+
+        let initial_language_from_cookie_quote = match initial_language_from_cookie_bool {
+            Some(lit) => match lit.value {
+                true => quote! {
+                    if lang.is_none() {
+                        #parse_actix_cookie_quote;
+                    }
+                },
+                false => quote! {},
+            },
+            None => match initial_language_from_cookie_expr {
+                Some(expr) => quote! {
+                    if #expr && lang.is_none() {
+                        #parse_actix_cookie_quote;
+                    }
+                },
+                None => quote! {},
+            },
+        };
+
+        let sync_language_with_cookie_quote = quote! {};
+    } else if #[cfg(feature = "axum")] {
+        let parse_axum_cookie_quote = quote! {
+            if let Some(req) = leptos::use_context::<axum::http::request::Parts>() {
+                let maybe_cookie = req
+                    .headers
+                    .get(axum::http::header::COOKIE)
+                    .and_then(|header| header.to_str().ok())
+                    .and_then(|cookie| {
+                        let cookie = cookie.split(';').find(|c| c.starts_with(#cookie_name));
+                        cookie.map(|c| c.split('=').nth(1).unwrap().to_string())
+                    });
+
+                if let Some(cookie) = maybe_cookie {
+                    if let Some(l) = ::leptos_fluent::language_from_str_between_languages(&cookie, &LANGUAGES) {
+                        lang = Some(l);
+                    }
+                }
+            }
+        };
+
+        let initial_language_from_cookie_quote = match initial_language_from_cookie_bool {
+            Some(lit) => match lit.value {
+                true => quote! {
+                    if lang.is_none() {
+                        #parse_axum_cookie_quote;
+                    }
+                },
+                false => quote! {},
+            },
+            None => match initial_language_from_cookie_expr {
+                Some(expr) => quote! {
+                    if #expr && lang.is_none() {
+                        #parse_axum_cookie_quote;
+                    }
+                },
+                None => quote! {},
+            },
+        };
+
+        let sync_language_with_cookie_quote = quote! {};
+    } else {
+        // Other SSR frameworks or the user is not using any
+        let initial_language_from_cookie_quote = quote! {};
+        let sync_language_with_cookie_quote = quote! {};
+    }};
+
+    let initial_language_quote = {
+        #[cfg(not(feature = "ssr"))]
+        quote! {
             #initial_language_from_url_param_quote
+            #initial_language_from_cookie_quote
             #initial_language_from_localstorage_quote
             #initial_language_from_navigator_quote
-        };
-    } else {
-        let initial_language_quote = quote! {
+        }
+
+        #[cfg(feature = "ssr")]
+        quote! {
+            #initial_language_from_cookie_quote
             #initial_language_from_accept_language_header_quote
-        };
-    }};
+        }
+    };
 
     let quote = quote! {
         {
@@ -893,6 +1107,7 @@ pub fn leptos_fluent(
             #sync_html_tag_lang_quote
             #sync_language_with_localstorage_quote
             #sync_language_with_url_param_quote
+            #sync_language_with_cookie_quote
 
             i18n
         }

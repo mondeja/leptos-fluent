@@ -1,6 +1,6 @@
 use fluent_templates::static_loader;
 use leptos::*;
-use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, tr, Language};
+use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, tr};
 use leptos_meta::*;
 use leptos_router::*;
 
@@ -17,6 +17,9 @@ pub fn App() -> impl IntoView {
     leptos_fluent! {{
         translations: TRANSLATIONS,
         locales: "./locales",
+        cookie_name: "lang",
+        initial_language_from_cookie: true,
+        set_language_to_cookie: true,
         url_param: "lang",
         initial_language_from_url_param: true,
         initial_language_from_url_param_to_localstorage: true,
@@ -51,25 +54,27 @@ fn HomePage() -> impl IntoView {
     view! {
         <h1>{move_tr!("welcome-to-leptos")}</h1>
         <fieldset>
-            <For
-                each=move || i18n.languages
-                key=move |lang| *lang
-                children=move |lang: &&Language| {
-                    view! {
-                        <div>
-                            <input
-                                type="radio"
-                                id=lang
-                                name="language"
-                                value=lang
-                                checked=i18n.is_active_language(lang)
-                                on:click=move |_| i18n.language.set(lang)
-                            />
-                            <label for=lang>{lang.name}</label>
-                        </div>
-                    }
-                }
-            />
+
+            {move || {
+                i18n.languages
+                    .iter()
+                    .map(|lang| {
+                        view! {
+                            <div>
+                                <input
+                                    type="radio"
+                                    id=lang
+                                    name="language"
+                                    value=lang
+                                    checked=i18n.is_active_language(lang)
+                                    on:click=move |_| i18n.language.set(lang)
+                                />
+                                <label for=lang>{lang.name}</label>
+                            </div>
+                        }
+                    })
+                    .collect::<Vec<_>>()
+            }}
 
         </fieldset>
     }
