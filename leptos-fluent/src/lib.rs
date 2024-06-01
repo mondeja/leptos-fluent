@@ -150,7 +150,7 @@
 //!
 //! #[component]
 //! fn LanguageSelector() -> impl IntoView {
-//!     // Use `expect_i18n` to get the current i18n context:
+//!     // Use `expect_i18n()` to get the current i18n context:
 //!     let i18n = expect_i18n();
 //!
 //!     // `i18n.languages` is a static array with the available languages
