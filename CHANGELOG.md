@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## Unreleased - [0.0.29]
+
+### Breaking changes
+
+- Replace `I18n.is_active_language(lang)` method by `Language.is_active()`.
+  Use `<input ... checked=lang.is_active() ... />` instead of
+  `<input ... checked=i18n.is_active_language(lang) ... />`.
+- Removed `I18n.default_language()` method. Use `i18n.languages[0]`.
+- Removed `I18n.tr()` and `I18n.trs` methods. Use `tr!` macro.
+
 ## 2024-06-01 - [0.0.28]
 
 ### New features
