@@ -1,9 +1,10 @@
 #![deny(missing_docs)]
 #![forbid(unsafe_code)]
-//! [![Crates.io](https://img.shields.io/crates/v/leptos-fluent)](https://crates.io/crates/leptos-fluent)
+//! [![Crates.io](https://img.shields.io/crates/v/leptos-fluent?logo=rust)](https://crates.io/crates/leptos-fluent)
 //! [![License](https://img.shields.io/crates/l/leptos-fluent?logo=mit)](https://github.com/mondeja/leptos-fluent/blob/master/LICENSE.md)
 //! [![Tests](https://img.shields.io/github/actions/workflow/status/mondeja/leptos-fluent/ci.yml?label=tests&logo=github)](https://github.com/mondeja/leptos-fluent/actions)
 //! [![docs.rs](https://img.shields.io/docsrs/leptos-fluent?logo=docs.rs)][documentation]
+//! ![Crates.io downloads](https://img.shields.io/crates/d/leptos-fluent)
 //!
 //! Internationalization framework for [Leptos] using [fluent-templates].
 //!
