@@ -240,11 +240,6 @@ pub struct Language {
 }
 
 impl Language {
-    /// Create a new language from an identifier and a name.
-    pub fn new(id: LanguageIdentifier, name: &'static str) -> Self {
-        Self { id, name }
-    }
-
     /// Check if the language is the active language.
     pub fn is_active(&self) -> bool {
         self == expect_i18n().language.get()
