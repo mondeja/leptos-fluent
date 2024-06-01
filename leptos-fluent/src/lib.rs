@@ -156,7 +156,7 @@
 //!     // `i18n.languages` is a static array with the available languages
 //!     // `i18n.language.get()` to get the current language
 //!     // `i18n.language.set(lang)` to set the current language
-//!     // `i18n.is_active_language(lang)` to check if a language is active
+//!     // `lang.is_active()` to check if a language is the current selected one
 //!
 //!     view! {
 //!         <fieldset>
@@ -169,7 +169,7 @@
 //!                                 id=lang
 //!                                 name="language"
 //!                                 value=lang
-//!                                 checked=i18n.is_active_language(lang)
+//!                                 checked=lang.is_active()
 //!                                 on:click=move |_| i18n.language.set(lang)
 //!                             />
 //!                             <label for=lang>{lang.name}</label>
@@ -220,14 +220,10 @@ pub mod url;
 
 use core::hash::{Hash, Hasher};
 use core::str::FromStr;
-use fluent_templates::{
-    fluent_bundle::FluentValue, loader::Loader, LanguageIdentifier,
-    StaticLoader,
-};
+use fluent_templates::{LanguageIdentifier, StaticLoader};
 use leptos::{use_context, Attribute, IntoAttribute, Oco, RwSignal, SignalGet};
 pub use leptos_fluent_macros::leptos_fluent;
 use once_cell::sync::Lazy;
-use std::collections::HashMap;
 
 /// Each language supported by your application.
 #[derive(Clone, Debug)]
@@ -241,6 +237,13 @@ pub struct Language {
     /// The name of the language, such as `English`, `Español`, etc.
     /// This name will be intended to be displayed in the language selector.
     pub name: &'static str,
+}
+
+impl Language {
+    /// Check if the language is the active language.
+    pub fn is_active(&self) -> bool {
+        self == expect_i18n().language.get()
+    }
 }
 
 impl PartialEq for Language {
@@ -312,56 +315,8 @@ pub struct I18n {
     pub language: RwSignal<&'static Language>,
     /// Available languages for the application.
     pub languages: &'static [&'static Language],
-    /// leptos-fluent translations loader.
+    /// Static translations loader of fluent-templates.
     pub translations: &'static Lazy<StaticLoader>,
-}
-
-impl I18n {
-    /// Translate a text identifier to the current language.
-    ///
-    /// ```rust,ignore
-    /// use leptos_fluent::i18n;
-    ///
-    /// i18n().tr("hello-world")
-    /// ```
-    pub fn tr(&self, text_id: &str) -> String {
-        let lang_id = &self.language.get().id;
-        self.translations.lookup(lang_id, text_id)
-    }
-
-    /// Translate a text identifier to the current language with arguments.
-    ///
-    /// ```rust,ignore
-    /// use leptos_fluent::i18n;
-    /// use std::collections::HashMap;
-    ///
-    /// i18n().trs("will-be-removed-at", &{
-    ///    let mut map = HashMap::new();
-    ///    map.insert("icon".to_string(), title().into());
-    ///    map.insert("version".to_string(), removal_at_version.into());
-    ///    map
-    /// })
-    /// ```
-    pub fn trs(
-        &self,
-        text_id: &str,
-        args: &HashMap<String, FluentValue<'_>>,
-    ) -> String {
-        let lang_id = &self.language.get().id;
-        self.translations.lookup_with_args(lang_id, text_id, args)
-    }
-
-    /// Get the default language.
-    ///
-    /// The default language is the first language in the list of available languages.
-    pub fn default_language(&self) -> &'static Language {
-        self.languages[0]
-    }
-
-    /// Get wether a language is the active language.
-    pub fn is_active_language(&self, lang: &'static Language) -> bool {
-        lang == self.language.get()
-    }
 }
 
 /// Get the current context for localization.
@@ -394,18 +349,23 @@ pub fn i18n() -> I18n {
 /// ```
 #[macro_export]
 macro_rules! tr {
-    ($text_id:expr$(,)?) => {
-        $crate::expect_i18n().tr($text_id)
-    };
-    ($text_id:expr, {$($key:expr => $value:expr),*$(,)?}$(,)?) => {
-        $crate::expect_i18n().trs($text_id, &{
+    ($text_id:expr$(,)?) => {{
+        use fluent_templates::loader::Loader;
+        let i18n = $crate::expect_i18n();
+        i18n.translations.lookup(&i18n.language.get().id, $text_id)
+    }};
+    ($text_id:expr, {$($key:expr => $value:expr),*$(,)?}$(,)?) => {{
+        use fluent_templates::loader::Loader;
+        let i18n = $crate::expect_i18n();
+        let args = &{
             let mut map = ::std::collections::HashMap::new();
             $(
                 map.insert($key.to_string(), $value.into());
             )*
             map
-        })
-    }
+        };
+        i18n.translations.lookup_with_args(&i18n.language.get().id, $text_id, args)
+    }}
 }
 
 /// [`leptos::Signal`] that translates a text identifier to the current language.

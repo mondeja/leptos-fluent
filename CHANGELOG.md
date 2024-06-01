@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## Unreleased - [0.0.29]
+
+### Breaking changes
+
+- Replace `I18n.is_active_language(lang)` method by `Language.is_active()`.
+  Use `<input ... checked=lang.is_active() ... />` instead of
+  `<input ... checked=i18n.is_active_language(lang) ... />`.
+- Removed `I18n.default_language()` method. Use `i18n.languages[0]`.
+- Removed `I18n.tr()` and `I18n.trs()` methods. Use `tr!` macro.
+
 ## 2024-06-01 - [0.0.28]
 
 ### New features
@@ -122,6 +132,7 @@
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.0.29]: https://github.com/mondeja/leptos-fluent/compare/v0.0.28...master
 [0.0.28]: https://github.com/mondeja/leptos-fluent/compare/v0.0.27...v0.0.28
 [0.0.27]: https://github.com/mondeja/leptos-fluent/compare/v0.0.26...v0.0.27
 [0.0.26]: https://github.com/mondeja/leptos-fluent/compare/v0.0.25...v0.0.26
