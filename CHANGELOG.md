@@ -132,6 +132,7 @@
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.0.29]: https://github.com/mondeja/leptos-fluent/compare/v0.0.28...master
 [0.0.28]: https://github.com/mondeja/leptos-fluent/compare/v0.0.27...v0.0.28
 [0.0.27]: https://github.com/mondeja/leptos-fluent/compare/v0.0.26...v0.0.27
 [0.0.26]: https://github.com/mondeja/leptos-fluent/compare/v0.0.25...v0.0.26
