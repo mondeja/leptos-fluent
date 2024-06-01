@@ -18,7 +18,7 @@ Add the following to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-leptos-fluent = "0.0.27"
+leptos-fluent = "0.0.28"
 fluent-templates = "0.9"
 
 [features]
@@ -65,7 +65,7 @@ You can use `leptos-fluent` as follows:
 ```rust
 use fluent_templates::static_loader;
 use leptos::*;
-use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, tr, Language};
+use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, tr};
 
 static_loader! {
     static TRANSLATIONS = {
@@ -117,6 +117,17 @@ fn App() -> impl IntoView {
         // Set the initial language from the Accept-Language header of the
         // request. By default, it is `false`.
         initial_language_from_accept_language_header: true,
+
+        // Server and client side options
+        // ------------------------------
+        // Name of the cookie to get and set the current language of the user.
+        // By default, it is `"lf-lang"`.
+        cookie_name: "lang",
+        // Get the initial language from cookie. By default, it is `false`.
+        initial_language_from_cookie: true,
+        // Update the language on cookie when using the method `I18n.set_language`.
+        // By default, it is `false`.
+        set_language_to_cookie: true,
     }};
 
     view! {
@@ -144,21 +155,18 @@ fn ChildComponent() -> impl IntoView {
 
 #[component]
 fn LanguageSelector() -> impl IntoView {
-    // Use `expect_i18n` to get the current i18n context:
+    // Use `expect_i18n()` to get the current i18n context:
     let i18n = expect_i18n();
 
     // `i18n.languages` is a static array with the available languages
-    // `i18n.language` is a signal with the current language
     // `i18n.language.get()` to get the current language
     // `i18n.language.set(lang)` to set the current language
     // `i18n.is_active_language(lang)` to check if a language is active
 
     view! {
         <fieldset>
-            <For
-                each=move || i18n.languages
-                key=move |lang| *lang
-                children=move |lang: &&Language| {
+            {
+                move || i18n.languages.iter().map(|lang| {
                     view! {
                         <div>
                             <input
@@ -172,8 +180,8 @@ fn LanguageSelector() -> impl IntoView {
                             <label for=lang>{lang.name}</label>
                         </div>
                     }
-                }
-            />
+                }).collect::<Vec<_>>()
+            }
         </fieldset>
     }
 }

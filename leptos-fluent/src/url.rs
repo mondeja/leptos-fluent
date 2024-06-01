@@ -1,4 +1,4 @@
-pub fn get(#[allow(unused_variables)] k: &str) -> Option<String> {
+pub fn get(k: &str) -> Option<String> {
     #[cfg(not(feature = "ssr"))]
     if let Ok(search) = leptos::window().location().search() {
         if let Ok(search_params) =
@@ -7,13 +7,16 @@ pub fn get(#[allow(unused_variables)] k: &str) -> Option<String> {
             return search_params.get(k);
         }
     }
+
+    #[cfg(feature = "ssr")]
+    {
+        _ = k;
+    }
+
     None
 }
 
-pub fn set(
-    #[allow(unused_variables)] k: &str,
-    #[allow(unused_variables)] v: &str,
-) {
+pub fn set(k: &str, v: &str) {
     #[cfg(not(feature = "ssr"))]
     {
         let url = web_sys::Url::new(
@@ -33,5 +36,11 @@ pub fn set(
                 Some(&url.href()),
             )
             .expect("Failed to replace the history state");
+    };
+
+    #[cfg(feature = "ssr")]
+    {
+        _ = k;
+        _ = v;
     };
 }
