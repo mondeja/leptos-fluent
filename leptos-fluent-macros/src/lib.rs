@@ -1,5 +1,6 @@
 #![deny(missing_docs)]
 #![forbid(unsafe_code)]
+
 //! Macros for the leptos-fluent crate.
 //!
 //! See [leptos-fluent] for more information.
@@ -10,6 +11,7 @@ extern crate proc_macro;
 
 mod languages;
 mod loader;
+#[cfg(not(feature = "ssr"))]
 mod translations_checker;
 
 use languages::generate_code_for_static_language;
@@ -66,6 +68,10 @@ use quote::quote;
 /// - **`locales`**: Path to the locales folder, which must contain the translations
 ///   for each language in your application. Is expected to be a path relative from
 ///   `Cargo.toml` file. Either `locales` or `languages` is required.
+/// - **`check_translations`**: Path to the files to check if all translations are
+///   being used and their placeholders are correct. Is expected to be a glob
+///   pattern relative from `Cargo.toml` file. Tipically, you should use
+///   `./src/**/*.rs`. If defined, `locales` is required.
 /// - **`languages`**: Path to a languages file, which should an array of arrays
 ///   where each inner array contains a language identifier and a language name,
 ///   respectively. The language identifier should be a valid language tag, such as

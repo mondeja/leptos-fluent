@@ -13,10 +13,12 @@ resolver = "2"
 
 [workspace.package]
 edition = "2021"
-version = "0.1.0"
 license = "MIT"
 documentation = "https://docs.rs/leptos-fluent"
 repository = "https://github.com/mondeja/leptos-fluent"
+
+[workspace.dependencies]
+fluent-templates = "0.9"
 
 [profile.wasm-release]
 inherits = "release"

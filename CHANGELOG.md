@@ -9,6 +9,13 @@
   `<input ... checked=i18n.is_active_language(lang) ... />`.
 - Removed `I18n.default_language()` method. Use `i18n.languages[0]`.
 - Removed `I18n.tr()` and `I18n.trs()` methods. Use `tr!` macro.
+- `tr!` and `move_tr!` macros only accepts literal strings as the message
+  name (first argument) and in the keys of translations arguments.
+
+### New features
+
+- Add `check_translations` argument to `leptos_fluent!` macro to check
+  translations at compile time.
 
 ## 2024-06-01 - [0.0.28]
 

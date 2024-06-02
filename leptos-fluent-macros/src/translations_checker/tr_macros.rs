@@ -1,3 +1,4 @@
+use pathdiff::diff_paths;
 use quote::ToTokens;
 use std::path::PathBuf;
 use syn::{
@@ -5,21 +6,9 @@ use syn::{
     Macro,
 };
 
-pub(crate) fn run(
-    check_translations_globstr: &str,
-    locales_path: &str,
-    workspace_path: &PathBuf,
-) -> Result<(), syn::Error> {
-    let tr_macros = gather_tr_macro_defs_from_rs_files(
-        &workspace_path.join(check_translations_globstr),
-    )?;
-
-    // TODO: include the core.ftl file in the check
-    Ok(())
-}
-
-fn gather_tr_macro_defs_from_rs_files(
+pub(crate) fn gather_tr_macro_defs_from_rs_files(
     check_translations_globstr: &PathBuf,
+    workspace_path: &PathBuf,
 ) -> Result<Vec<TranslationMacro>, syn::Error> {
     // TODO: handle errors
     let glob_pattern =
@@ -28,67 +17,80 @@ fn gather_tr_macro_defs_from_rs_files(
 
     let mut tr_macros = Vec::new();
     for path in glob_pattern.flatten() {
-        tr_macros.extend(tr_macros_from_file_path(&path));
+        tr_macros.extend(tr_macros_from_file_path(
+            &path,
+            &workspace_path.to_str().unwrap(),
+        ));
     }
 
     Ok(tr_macros)
 }
 
 #[derive(Debug)]
-struct TranslationMacro {
-    name: String,
-    fluent_ident: String,
-    args: Vec<String>,
-    span: (proc_macro2::LineColumn, proc_macro2::LineColumn),
+pub(crate) struct TranslationMacro {
+    pub(crate) name: String,
+    pub(crate) message_name: String,
+    pub(crate) placeables: Vec<String>,
 
-    file_path: Option<PathBuf>,
+    // On tests is easier to not use file paths
+    #[cfg(not(test))]
+    pub(crate) file_path: String,
 }
 
 impl PartialEq for TranslationMacro {
     fn eq(&self, other: &Self) -> bool {
-        self.name == other.name
-            && self.fluent_ident == other.fluent_ident
-            && self.args == other.args
-            && self.file_path == other.file_path
+        let equal = self.name == other.name
+            && self.message_name == other.message_name
+            && self.placeables == other.placeables;
+        #[cfg(not(test))]
+        return equal && self.file_path == other.file_path;
+        #[cfg(test)]
+        return equal;
     }
 }
 
-struct TranslationsMacrosVisitor {
+pub(crate) struct TranslationsMacrosVisitor {
     pub(crate) tr_macros: Vec<TranslationMacro>,
     current_tr_macro: Option<String>,
-    current_fluent_ident: Option<String>,
-    current_args: Vec<String>,
-    current_span_start: Option<proc_macro2::LineColumn>,
-    current_span_end: Option<proc_macro2::LineColumn>,
+    current_message_name: Option<String>,
+    current_placeables: Vec<String>,
 
-    file_path: Option<PathBuf>,
+    #[cfg(not(test))]
+    file_path: PathBuf,
+    #[cfg(not(test))]
+    workspace_path: String,
 }
 
 impl TranslationsMacrosVisitor {
-    fn new(file_path: Option<PathBuf>) -> Self {
+    fn new(
+        #[cfg(not(test))] file_path: PathBuf,
+        #[cfg(not(test))] workspace_path: &str,
+    ) -> Self {
         Self {
             tr_macros: Vec::new(),
             current_tr_macro: None,
-            current_fluent_ident: None,
-            current_args: Vec::new(),
-            current_span_start: None,
-            current_span_end: None,
+            current_message_name: None,
+            current_placeables: Vec::new(),
+            #[cfg(not(test))]
             file_path,
+            #[cfg(not(test))]
+            workspace_path: workspace_path.to_string(),
         }
     }
 }
 
-fn tr_macros_from_file_path(file_path: &PathBuf) -> Vec<TranslationMacro> {
+fn tr_macros_from_file_path(
+    file_path: &PathBuf,
+    workspace_path: &str,
+) -> Vec<TranslationMacro> {
     let file_content = std::fs::read_to_string(file_path).unwrap();
     let ast = syn::parse_file(&file_content).unwrap();
-    let mut visitor = TranslationsMacrosVisitor::new(Some(file_path.clone()));
-    visitor.visit_file(&ast);
-    visitor.tr_macros
-}
-
-fn tr_macros_from_file_content(file_content: &str) -> Vec<TranslationMacro> {
-    let ast = syn::parse_file(file_content).unwrap();
-    let mut visitor = TranslationsMacrosVisitor::new(None);
+    let mut visitor = TranslationsMacrosVisitor::new(
+        #[cfg(not(test))]
+        file_path.clone(),
+        #[cfg(not(test))]
+        workspace_path,
+    );
     visitor.visit_file(&ast);
     visitor.tr_macros
 }
@@ -104,7 +106,6 @@ impl<'ast> TranslationsMacrosVisitor {
                 let ident_str = ident.to_string();
                 if ident_str == "move_tr" || ident_str == "tr" {
                     self.current_tr_macro = Some(ident.to_string());
-                    self.current_span_start = Some(ident.span().start());
                 }
             } else if let proc_macro2::TokenTree::Group(group) = token {
                 if let Some(ref tr_macro) = &self.current_tr_macro {
@@ -112,7 +113,7 @@ impl<'ast> TranslationsMacrosVisitor {
                         if let proc_macro2::TokenTree::Literal(literal) =
                             tr_token
                         {
-                            self.current_fluent_ident = Some(
+                            self.current_message_name = Some(
                                 literal
                                     .to_string()
                                     .strip_prefix('"')
@@ -121,19 +122,18 @@ impl<'ast> TranslationsMacrosVisitor {
                                     .unwrap()
                                     .to_string(),
                             );
-                            self.current_span_end = Some(literal.span().end());
                         } else if let proc_macro2::TokenTree::Group(
-                            args_group,
+                            placeables_group,
                         ) = tr_token
                         {
                             let mut after_comma_punct = true;
-                            for arg_token in args_group.stream() {
+                            for arg_token in placeables_group.stream() {
                                 if let proc_macro2::TokenTree::Literal(
                                     arg_literal,
                                 ) = arg_token
                                 {
                                     if after_comma_punct {
-                                        self.current_args.push(
+                                        self.current_placeables.push(
                                             arg_literal
                                                 .to_string()
                                                 .strip_prefix('"')
@@ -142,8 +142,6 @@ impl<'ast> TranslationsMacrosVisitor {
                                                 .unwrap()
                                                 .to_string(),
                                         );
-                                        self.current_span_end =
-                                            Some(arg_literal.span().end());
                                         after_comma_punct = false;
                                     }
                                 } else if let proc_macro2::TokenTree::Punct(
@@ -157,24 +155,40 @@ impl<'ast> TranslationsMacrosVisitor {
                             }
                         }
                     }
-                    self.tr_macros.push(TranslationMacro {
+
+                    let new_tr_macro = TranslationMacro {
                         name: tr_macro.clone(),
-                        fluent_ident: self
-                            .current_fluent_ident
+                        message_name: self
+                            .current_message_name
                             .clone()
                             .unwrap(),
-                        args: self.current_args.clone(),
-                        file_path: self.file_path.clone(),
-                        span: (
-                            self.current_span_start.unwrap(),
-                            self.current_span_end.unwrap(),
-                        ),
-                    });
+                        placeables: self.current_placeables.clone(),
+                        #[cfg(not(test))]
+                        file_path: diff_paths(
+                            self.file_path
+                                .as_path()
+                                .to_str()
+                                .unwrap()
+                                .to_string(),
+                            &self.workspace_path,
+                        )
+                        .unwrap()
+                        .as_path()
+                        .to_str()
+                        .unwrap()
+                        .to_string(),
+                    };
+                    // TODO: this is expensive because we're executing
+                    // it recursively for each group
+                    if !self.tr_macros.contains(&new_tr_macro) {
+                        self.tr_macros.push(new_tr_macro);
+                    }
                     self.current_tr_macro = None;
-                    self.current_fluent_ident = None;
-                    self.current_args = Vec::new();
-                    self.current_span_start = None;
-                    self.current_span_end = None;
+                    self.current_message_name = None;
+                    self.current_placeables = Vec::new();
+                    break;
+                } else {
+                    self.visit_maybe_macro_tokens_stream(&group.stream());
                 }
             }
         }
@@ -213,21 +227,25 @@ impl<'ast> Visit<'ast> for TranslationsMacrosVisitor {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::{TranslationMacro, TranslationsMacrosVisitor};
     use quote::quote;
+    use syn::visit::{self, Visit};
+
+    fn tr_macros_from_file_content(
+        file_content: &str,
+    ) -> Vec<TranslationMacro> {
+        let ast = syn::parse_file(file_content).unwrap();
+        let mut visitor = TranslationsMacrosVisitor::new();
+        visitor.visit_file(&ast);
+        visitor.tr_macros
+    }
 
     macro_rules! tr_macro {
-        ($name:literal, $fluent_ident:literal, $args:expr) => {
+        ($name:literal, $message_name:literal, $placeables:expr) => {
             TranslationMacro {
                 name: $name.to_string(),
-                fluent_ident: $fluent_ident.to_string(),
-                args: $args,
-                span: (
-                    // not important for tests, not implemented on `PartialEq`
-                    proc_macro2::LineColumn { line: 0, column: 0 },
-                    proc_macro2::LineColumn { line: 0, column: 0 },
-                ),
-                file_path: None,
+                message_name: $message_name.to_string(),
+                placeables: $placeables,
             }
         };
     }
@@ -335,6 +353,34 @@ mod tests {
                     "html-tag-lang-is",
                     vec!["foo".to_string(), "bar".to_string(),]
                 ),
+            ]
+        );
+    }
+
+    #[test]
+    fn tr_macros_from_if_inside_view_macro() {
+        let content = quote! {
+            fn App() -> impl IntoView {
+                view! {
+                    <h1>
+                        {
+                            if errors.len() > 1 {
+                                move_tr!("some-errors-happened")
+                            } else {
+                                move_tr!("an-error-happened")
+                            }
+                        }
+                    </h1>
+                }
+            }
+        };
+        let tr_macros = tr_macros_from_file_content(&content.to_string());
+
+        assert_eq!(
+            tr_macros,
+            vec![
+                tr_macro!("move_tr", "some-errors-happened", Vec::new()),
+                tr_macro!("move_tr", "an-error-happened", Vec::new()),
             ]
         );
     }

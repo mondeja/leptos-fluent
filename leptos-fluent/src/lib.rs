@@ -351,12 +351,12 @@ pub fn i18n() -> I18n {
 /// ```
 #[macro_export]
 macro_rules! tr {
-    ($text_id:expr$(,)?) => {{
+    ($text_id:literal$(,)?) => {{
         use fluent_templates::loader::Loader;
         let i18n = $crate::expect_i18n();
         i18n.translations.lookup(&i18n.language.get().id, $text_id)
     }};
-    ($text_id:expr, {$($key:expr => $value:expr),*$(,)?}$(,)?) => {{
+    ($text_id:literal, {$($key:literal => $value:expr),*$(,)?}$(,)?) => {{
         use fluent_templates::loader::Loader;
         let i18n = $crate::expect_i18n();
         let args = &{
@@ -380,10 +380,10 @@ macro_rules! tr {
 /// [`leptos::Signal`]: https://docs.rs/leptos/latest/leptos/struct.Signal.html
 #[macro_export]
 macro_rules! move_tr {
-    ($text_id:expr$(,)?) => {
+    ($text_id:literal$(,)?) => {
         ::leptos::Signal::derive(move || $crate::tr!($text_id))
     };
-    ($text_id:expr, {$($key:expr => $value:expr),*$(,)?}$(,)?) => {
+    ($text_id:literal, {$($key:literal => $value:expr),*$(,)?}$(,)?) => {
         ::leptos::Signal::derive(move || $crate::tr!($text_id, {
             $(
                 $key => $value,

@@ -1,5 +1,4 @@
 use crate::languages::{read_languages_file, read_locales_folder};
-use crate::translations_checker;
 use std::path::PathBuf;
 use syn::{
     braced,
@@ -392,13 +391,23 @@ impl Parse for I18nLoader {
                 ));
             }
 
-            let translations_check_result = translations_checker::run(
-                &check_translations_globstr.value(),
-                &locales_path.unwrap().value(),
-                &workspace_path,
-            );
-            if let Err(err) = translations_check_result {
-                return Err(err);
+            #[cfg(not(feature = "ssr"))]
+            {
+                let translations_error_messages =
+                    crate::translations_checker::run(
+                        &check_translations_globstr.value(),
+                        &locales_path.unwrap().value(),
+                        &workspace_path,
+                    )?;
+                if !translations_error_messages.is_empty() {
+                    return Err(syn::Error::new(
+                        check_translations_globstr.span(),
+                        format!(
+                            "Translations check failed:\n- {}",
+                            translations_error_messages.join("\n- "),
+                        ),
+                    ));
+                }
             }
         }
 

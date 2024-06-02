@@ -17,6 +17,7 @@ pub fn App() -> impl IntoView {
     leptos_fluent! {{
         translations: TRANSLATIONS,
         locales: "./locales",
+        check_translations: "./src/**/*.rs",
         cookie_name: "lang",
         initial_language_from_cookie: true,
         set_language_to_cookie: true,

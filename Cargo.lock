@@ -1464,9 +1464,15 @@ dependencies = [
 name = "leptos-fluent-macros"
 version = "0.0.28"
 dependencies = [
+ "fluent-syntax",
+ "fluent-templates",
+ "flume",
  "glob",
+ "ignore",
+ "pathdiff",
  "proc-macro2",
  "quote",
+ "rustc_version",
  "serde_json",
  "serde_yaml",
  "syn 2.0.66",
