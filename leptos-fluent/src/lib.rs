@@ -278,7 +278,7 @@ impl FromStr for Language {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         language_from_str_between_languages(s, expect_i18n().languages)
             .ok_or(())
-            .map(|lang| lang.clone())
+            .cloned()
     }
 }
 
