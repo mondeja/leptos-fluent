@@ -10,7 +10,7 @@
 - Removed `I18n.default_language()` method. Use `i18n.languages[0]`.
 - Removed `I18n.tr()` and `I18n.trs()` methods. Use `tr!` macro.
 - `tr!` and `move_tr!` macros only accepts literal strings as the message
-  name (first argument) and in the keys of translations arguments.
+  name (first argument) and in the keys of translation arguments.
 
 ### New features
 

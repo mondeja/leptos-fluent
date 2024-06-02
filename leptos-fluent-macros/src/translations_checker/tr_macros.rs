@@ -1,25 +1,24 @@
 use pathdiff::diff_paths;
 use quote::ToTokens;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use syn::{
     visit::{self, Visit},
     Macro,
 };
 
 pub(crate) fn gather_tr_macro_defs_from_rs_files(
-    check_translations_globstr: &PathBuf,
-    workspace_path: &PathBuf,
+    check_translations_globstr: &Path,
+    workspace_path: &Path,
 ) -> Result<Vec<TranslationMacro>, syn::Error> {
     // TODO: handle errors
     let glob_pattern =
-        glob::glob(check_translations_globstr.as_path().to_str().unwrap())
-            .unwrap();
+        glob::glob(check_translations_globstr.to_str().unwrap()).unwrap();
 
     let mut tr_macros = Vec::new();
     for path in glob_pattern.flatten() {
         tr_macros.extend(tr_macros_from_file_path(
             &path,
-            &workspace_path.to_str().unwrap(),
+            workspace_path.to_str().unwrap(),
         ));
     }
 
@@ -165,11 +164,7 @@ impl<'ast> TranslationsMacrosVisitor {
                         placeables: self.current_placeables.clone(),
                         #[cfg(not(test))]
                         file_path: diff_paths(
-                            self.file_path
-                                .as_path()
-                                .to_str()
-                                .unwrap()
-                                .to_string(),
+                            self.file_path.as_path().to_str().unwrap(),
                             &self.workspace_path,
                         )
                         .unwrap()

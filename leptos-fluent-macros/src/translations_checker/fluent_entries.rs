@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 #[derive(Debug)]
 pub(crate) struct FluentEntry {
@@ -8,7 +8,7 @@ pub(crate) struct FluentEntry {
 }
 
 pub(crate) fn gather_fluent_entries_from_locales_path(
-    workspace_path: &PathBuf,
+    workspace_path: &Path,
     locales_path: &str,
 ) -> HashMap<String, Vec<FluentEntry>> {
     let mut fluent_entries: HashMap<String, Vec<FluentEntry>> = HashMap::new();
@@ -29,13 +29,13 @@ pub(crate) fn gather_fluent_entries_from_locales_path(
                         let mut placeables = Vec::new();
                         for element in &value.elements {
                             if let fluent_syntax::ast::PatternElement::Placeable {
-                                expression
-                            } = element {
-                                if let fluent_syntax::ast::Expression::Inline(inline_expr) = expression {
-                                    if let fluent_syntax::ast::InlineExpression::VariableReference { id } = inline_expr {
-                                        placeables.push(id.name.to_string());
+                                expression: fluent_syntax::ast::Expression::Inline(
+                                    fluent_syntax::ast::InlineExpression::VariableReference {
+                                        id
                                     }
-                                }
+                                )
+                            } = element {
+                                placeables.push(id.name.to_string());
                             }
                         }
                         fluent_entries.get_mut(lang).unwrap().push(

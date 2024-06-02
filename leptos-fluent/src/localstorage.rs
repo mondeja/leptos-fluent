@@ -10,7 +10,7 @@ pub fn get(key: &str) -> Option<String> {
     #[cfg(feature = "ssr")]
     {
         _ = key;
-        return None;
+        None
     }
 }
 

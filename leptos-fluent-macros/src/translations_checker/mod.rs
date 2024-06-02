@@ -3,13 +3,13 @@ mod tr_macros;
 
 use fluent_entries::{gather_fluent_entries_from_locales_path, FluentEntry};
 use std::collections::HashMap;
-use std::path::PathBuf;
+use std::path::Path;
 use tr_macros::{gather_tr_macro_defs_from_rs_files, TranslationMacro};
 
 pub(crate) fn run(
     check_translations_globstr: &str,
     locales_path: &str,
-    workspace_path: &PathBuf,
+    workspace_path: &Path,
 ) -> Result<Vec<String>, syn::Error> {
     let tr_macros: Vec<TranslationMacro> = gather_tr_macro_defs_from_rs_files(
         &workspace_path.join(check_translations_globstr),
@@ -59,7 +59,7 @@ fn check_tr_macros_against_fluent_entries(
 
                     // Check if all variables in the tr macro are present in the fluent entry
                     for placeable in &tr_macro.placeables {
-                        if !entry.placeables.contains(&placeable) {
+                        if !entry.placeables.contains(placeable) {
                             let file_path = {
                                 #[cfg(not(test))]
                                 {
@@ -141,9 +141,9 @@ fn check_fluent_entries_against_tr_macros(
                 if tr_macro.message_name == entry.message_name {
                     message_name_found = true;
 
-                    // Check if all variables in the tr macro are present in the fluent entry
+                    // Check if all variables in the entry are present in the tr macro
                     for placeable in &entry.placeables {
-                        if !tr_macro.placeables.contains(&placeable) {
+                        if !tr_macro.placeables.contains(placeable) {
                             let file_path = {
                                 #[cfg(not(test))]
                                 {
