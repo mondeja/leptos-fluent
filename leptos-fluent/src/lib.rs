@@ -221,10 +221,11 @@ pub mod url;
 
 use core::hash::{Hash, Hasher};
 use core::str::FromStr;
-use fluent_templates::{LanguageIdentifier, StaticLoader};
+use fluent_templates::{
+    once_cell::sync::Lazy, LanguageIdentifier, StaticLoader,
+};
 use leptos::{use_context, Attribute, IntoAttribute, Oco, RwSignal, SignalGet};
 pub use leptos_fluent_macros::leptos_fluent;
-use once_cell::sync::Lazy;
 
 /// Each language supported by your application.
 #[derive(Clone, Debug)]
