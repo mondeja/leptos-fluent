@@ -1,14 +1,12 @@
+#[cfg(not(test))]
 use pathdiff::diff_paths;
 use quote::ToTokens;
 use std::path::{Path, PathBuf};
-use syn::{
-    visit::{self, Visit},
-    Macro,
-};
+use syn::visit::Visit;
 
 pub(crate) fn gather_tr_macro_defs_from_rs_files(
     check_translations_globstr: &Path,
-    workspace_path: &Path,
+    #[cfg(not(test))] workspace_path: &Path,
 ) -> Result<Vec<TranslationMacro>, syn::Error> {
     // TODO: handle errors
     let glob_pattern =
@@ -18,6 +16,7 @@ pub(crate) fn gather_tr_macro_defs_from_rs_files(
     for path in glob_pattern.flatten() {
         tr_macros.extend(tr_macros_from_file_path(
             &path,
+            #[cfg(not(test))]
             workspace_path.to_str().unwrap(),
         ));
     }
@@ -80,7 +79,7 @@ impl TranslationsMacrosVisitor {
 
 fn tr_macros_from_file_path(
     file_path: &PathBuf,
-    workspace_path: &str,
+    #[cfg(not(test))] workspace_path: &str,
 ) -> Vec<TranslationMacro> {
     let file_content = std::fs::read_to_string(file_path).unwrap();
     let ast = syn::parse_file(&file_content).unwrap();
@@ -191,21 +190,21 @@ impl<'ast> TranslationsMacrosVisitor {
 }
 
 impl<'ast> Visit<'ast> for TranslationsMacrosVisitor {
-    fn visit_macro(&mut self, node: &'ast Macro) {
+    fn visit_macro(&mut self, node: &'ast syn::Macro) {
         for token in node.tokens.clone() {
             if let proc_macro2::TokenTree::Group(group) = token {
                 self.visit_maybe_macro_tokens_stream(&group.stream());
             }
         }
 
-        visit::visit_macro(self, node);
+        syn::visit::visit_macro(self, node);
     }
 
     fn visit_stmt_macro(&mut self, node: &'ast syn::StmtMacro) {
         let stream = node.to_token_stream();
         self.visit_maybe_macro_tokens_stream(&stream);
 
-        visit::visit_stmt_macro(self, node);
+        syn::visit::visit_stmt_macro(self, node);
     }
 
     fn visit_stmt(&mut self, node: &'ast syn::Stmt) {
@@ -216,7 +215,7 @@ impl<'ast> Visit<'ast> for TranslationsMacrosVisitor {
             .collect::<proc_macro2::TokenStream>();
         self.visit_maybe_macro_tokens_stream(&stream);
 
-        visit::visit_stmt(self, node);
+        syn::visit::visit_stmt(self, node);
     }
 }
 
@@ -224,7 +223,7 @@ impl<'ast> Visit<'ast> for TranslationsMacrosVisitor {
 mod tests {
     use super::{TranslationMacro, TranslationsMacrosVisitor};
     use quote::quote;
-    use syn::visit::{self, Visit};
+    use syn::visit::Visit;
 
     fn tr_macros_from_file_content(
         file_content: &str,

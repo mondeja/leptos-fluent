@@ -13,6 +13,7 @@ pub(crate) fn run(
 ) -> Result<Vec<String>, syn::Error> {
     let tr_macros: Vec<TranslationMacro> = gather_tr_macro_defs_from_rs_files(
         &workspace_path.join(check_translations_globstr),
+        #[cfg(not(test))]
         workspace_path,
     )?;
 
