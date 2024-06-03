@@ -2,7 +2,7 @@
 name = "leptos-fluent-macros"
 description = "Macros for leptos-fluent"
 edition = "2021"
-version = "0.0.31"
+version = "0.0.32"
 license = "MIT"
 documentation = "https://docs.rs/leptos-fluent"
 repository = "https://github.com/mondeja/leptos-fluent"
@@ -18,7 +18,6 @@ quote = "1"
 syn = { version = "2", features = ["visit", "full"] }
 walkdir = ">=2"
 globwalk = "0.9"
-flume = { version = "0.11", default-features = false }
 fluent-templates.workspace = true
 fluent-syntax = "0.11"
 pathdiff = "0.2"

@@ -1,6 +1,10 @@
 # CHANGELOG
 
-## Unreleased - [0.0.32]
+## 2024-06-03 - [0.0.32]
+
+### Breaking changes
+
+- `locales` argument of `leptos_fluent!` macro is now required.
 
 ### Bug fixes
 
@@ -10,6 +14,7 @@
 
 - Glob passed to `check_translations` argument of `leptos_fluent!` macro
   accepts brace expansion.
+- Locale and language files are now tracked.
 
 ## 2024-06-03 - [0.0.31]
 
@@ -162,7 +167,7 @@
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
-[0.0.32]: https://github.com/mondeja/leptos-fluent/compare/v0.0.31...master
+[0.0.32]: https://github.com/mondeja/leptos-fluent/compare/v0.0.31...v0.0.32
 [0.0.31]: https://github.com/mondeja/leptos-fluent/compare/v0.0.30...v0.0.31
 [0.0.30]: https://github.com/mondeja/leptos-fluent/compare/v0.0.29...v0.0.30
 [0.0.29]: https://github.com/mondeja/leptos-fluent/compare/v0.0.28...v0.0.29

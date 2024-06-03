@@ -1,15 +1,15 @@
 mod fluent_entries;
 mod tr_macros;
 
-use fluent_entries::{gather_fluent_entries_from_locales_path, FluentEntry};
+use fluent_entries::{build_fluent_entries, FluentEntry};
 use std::collections::HashMap;
 use std::path::Path;
 use tr_macros::{gather_tr_macro_defs_from_rs_files, TranslationMacro};
 
 pub(crate) fn run(
     check_translations_globstr: &str,
-    locales_path: &str,
     workspace_path: &Path,
+    fluent_resources: &HashMap<String, (Vec<String>, Vec<String>)>,
 ) -> Result<Vec<String>, Vec<String>> {
     let tr_macros: Vec<TranslationMacro> = gather_tr_macro_defs_from_rs_files(
         &workspace_path.join(check_translations_globstr),
@@ -19,7 +19,7 @@ pub(crate) fn run(
 
     // TODO: sort locales by language code to not rely on the filesystem order
     let fluent_entries: HashMap<String, Vec<FluentEntry>> =
-        gather_fluent_entries_from_locales_path(workspace_path, locales_path);
+        build_fluent_entries(fluent_resources);
 
     let mut check_errors =
         check_tr_macros_against_fluent_entries(&tr_macros, &fluent_entries);

@@ -67,17 +67,16 @@ use quote::quote;
 ///   macro, which returns [`once_cell:sync::Lazy`]`<[`StaticLoader`]>`.
 /// - **`locales`**: Path to the locales folder, which must contain the translations
 ///   for each language in your application. Is expected to be a path relative from
-///   `Cargo.toml` file. Either `locales` or `languages` is required.
+///   `Cargo.toml` file.
 /// - **`check_translations`** (experimental): Path to the files to check if all
 ///    translations are being used and their placeholders are correct. Is expected
 ///   to be a glob pattern relative from `Cargo.toml` file. Tipically, you should use
-///   `"./src/**/*.rs"` or something like `"../{app,components}/src/**/*.rs"`. If
-///   defined, `locales` is required.
+///   `"./src/**/*.rs"` or something like `"../{app,components}/src/**/*.rs"`.
 /// - **`languages`**: Path to a languages file, which should an array of arrays
 ///   where each inner array contains a language identifier and a language name,
 ///   respectively. The language identifier should be a valid language tag, such as
 ///   `en-US`, `en`, `es-ES`, etc. Is expected to be a path relative from `Cargo.toml`
-///   file. Either `locales` or `languages` is required.
+///   file.
 ///   By default, the languages file should be a JSON with a *.json* extension because
 ///   the `json` feature is enabled. For example:
 ///   ```json
@@ -147,6 +146,7 @@ pub fn leptos_fluent(
     let I18nLoader {
         translations_ident,
         languages,
+        languages_path,
         sync_html_tag_lang_bool,
         sync_html_tag_lang_expr,
         initial_language_from_url_param_bool,
@@ -173,10 +173,10 @@ pub fn leptos_fluent(
         initial_language_from_cookie_expr,
         set_language_to_cookie_bool,
         set_language_to_cookie_expr,
+        fluent_resources,
     } = syn::parse_macro_input!(input as I18nLoader);
 
     let n_languages = languages.len();
-
     let languages_quote = format!(
         "[{}]",
         languages
@@ -187,6 +187,31 @@ pub fn leptos_fluent(
     )
     .parse::<proc_macro2::TokenStream>()
     .unwrap();
+
+    // locales tracker
+    let mut locales_tracker = "{".to_string();
+    for (lang, (paths, _)) in fluent_resources.iter() {
+        locales_tracker
+            .push_str(&format!("let {} = vec![", lang.replace('-', "_")));
+        for path in paths {
+            locales_tracker.push_str(&format!(
+                "include_bytes!(\"{}\"),",
+                &path.replace('\\', "\\\\").replace('"', "\\\"")
+            ));
+        }
+        locales_tracker.push_str("];");
+        if let Some(languages_file_path) = &languages_path {
+            locales_tracker.push_str(&format!(
+                "let languages_path = include_bytes!(\"{}\");",
+                &languages_file_path
+                    .replace('\\', "\\\\")
+                    .replace('"', "\\\"")
+            ));
+        }
+    }
+    locales_tracker.push_str("};");
+    let locales_tracker_quote =
+        locales_tracker.parse::<proc_macro2::TokenStream>().unwrap();
 
     #[cfg(not(feature = "ssr"))]
     let sync_html_tag_lang_quote = {
@@ -722,6 +747,7 @@ pub fn leptos_fluent(
             #sync_language_with_localstorage_quote
             #sync_language_with_url_param_quote
             #sync_language_with_cookie_quote
+            #locales_tracker_quote
 
             i18n
         }
