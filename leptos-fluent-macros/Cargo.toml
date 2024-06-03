@@ -16,8 +16,8 @@ path = "src/lib.rs"
 proc-macro2 = "1"
 quote = "1"
 syn = { version = "2", features = ["visit", "full"] }
-ignore = "0.4"
-glob = "0.3"
+walkdir = ">=2"
+globwalk = "0.9"
 flume = { version = "0.11", default-features = false }
 fluent-templates.workspace = true
 fluent-syntax = "0.11"
