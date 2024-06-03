@@ -341,7 +341,6 @@ impl Parse for I18nLoader {
                     return Err(err);
                 }
             } else {
-                #[cfg(not(feature = "ssr"))]
                 return Err(syn::Error::new(
                     k.span(),
                     "Not a valid parameter for leptos_fluent! macro.",
