@@ -222,7 +222,8 @@ pub mod url;
 use core::hash::{Hash, Hasher};
 use core::str::FromStr;
 use fluent_templates::{
-    loader::Loader, once_cell::sync::Lazy, LanguageIdentifier, StaticLoader,
+    fluent_bundle::FluentValue, loader::Loader, once_cell::sync::Lazy,
+    LanguageIdentifier, StaticLoader,
 };
 use leptos::{use_context, Attribute, IntoAttribute, Oco, RwSignal, SignalGet};
 pub use leptos_fluent_macros::leptos_fluent;
@@ -352,10 +353,7 @@ pub fn tr_impl(text_id: &str) -> String {
 #[doc(hidden)]
 pub fn tr_with_args_impl(
     text_id: &str,
-    args: &std::collections::HashMap<
-        String,
-        fluent_templates::fluent_bundle::FluentValue,
-    >,
+    args: &std::collections::HashMap<String, FluentValue>,
 ) -> String {
     let i18n = expect_i18n();
     i18n.translations
