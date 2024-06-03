@@ -221,7 +221,7 @@ impl Parse for I18nLoader {
 
                 #[cfg(feature = "ssr")]
                 {
-                    _ = fields.parse::<syn::Expr>()?;
+                    _ = fields.parse::<syn::LitStr>()?;
                 }
             } else if k == "sync_html_tag_lang" {
                 if let Some(err) = parse_litbool_or_expr_param(
