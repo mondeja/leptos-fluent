@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## Unreleased - [0.0.29]
+## 2024-06-03 - [0.0.29]
 
 ### Breaking changes
 
@@ -8,9 +8,9 @@
   Use `<input ... checked=lang.is_active() ... />` instead of
   `<input ... checked=i18n.is_active_language(lang) ... />`.
 - Removed `I18n.default_language()` method. Use `i18n.languages[0]`.
-- Removed `I18n.tr()` and `I18n.trs()` methods. Use `tr!` macro.
-- `tr!` and `move_tr!` macros only accepts literal strings as the message
-  name (first argument) and in the keys of translation arguments.
+- Removed `I18n.tr()` and `I18n.trs()` methods. Use the `tr!` macro.
+- `tr!` and `move_tr!` macros only accepts literal strings as the message name
+  (first argument) and in the keys of translation arguments.
 
 ### New features
 
@@ -139,7 +139,7 @@
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
-[0.0.29]: https://github.com/mondeja/leptos-fluent/compare/v0.0.28...master
+[0.0.29]: https://github.com/mondeja/leptos-fluent/compare/v0.0.28...v0.0.29
 [0.0.28]: https://github.com/mondeja/leptos-fluent/compare/v0.0.27...v0.0.28
 [0.0.27]: https://github.com/mondeja/leptos-fluent/compare/v0.0.26...v0.0.27
 [0.0.26]: https://github.com/mondeja/leptos-fluent/compare/v0.0.25...v0.0.26
