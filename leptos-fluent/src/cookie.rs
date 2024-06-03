@@ -25,23 +25,10 @@ pub fn set(name: &str, value: &str) {
     #[cfg(not(feature = "ssr"))]
     {
         use wasm_bindgen::JsCast;
-        let mut new_cookies: Vec<String> = vec![];
-        let cookies = leptos::document()
-            .dyn_into::<web_sys::HtmlDocument>()
-            .unwrap()
-            .cookie()
-            .unwrap();
-        for cookie in cookies.split(';') {
-            if !cookie.starts_with(&format!("{}=", name)) {
-                new_cookies.push(cookie.to_string());
-            } else {
-                new_cookies.push(format!("{}={}", name, value));
-            }
-        }
         leptos::document()
             .dyn_into::<web_sys::HtmlDocument>()
             .unwrap()
-            .set_cookie(&new_cookies.join("; "))
+            .set_cookie(&format!("{}={}", name, value))
             .unwrap();
     }
 
