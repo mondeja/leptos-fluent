@@ -2,6 +2,10 @@
 
 ## Unreleased - [0.0.32]
 
+### Breaking changes
+
+- `locales` argument of `leptos_fluent!` macro is now required.
+
 ### Bug fixes
 
 - Fix a lot of bugs checking translations.
@@ -10,6 +14,7 @@
 
 - Glob passed to `check_translations` argument of `leptos_fluent!` macro
   accepts brace expansion.
+- Locale and language files are now tracked.
 
 ## 2024-06-03 - [0.0.31]
 

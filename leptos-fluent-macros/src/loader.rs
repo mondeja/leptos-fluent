@@ -1,10 +1,56 @@
 use crate::languages::{read_languages_file, read_locales_folder};
-use std::path::PathBuf;
+use std::collections::HashMap;
+use std::path::{Path, PathBuf};
 use syn::{
     braced,
     parse::{Parse, ParseStream},
     token, Ident, Result,
 };
+
+pub(crate) fn read_from_dir<P: AsRef<Path>>(
+    path: P,
+) -> (Vec<String>, Vec<String>) {
+    let mut paths = vec![];
+    let mut contents = vec![];
+
+    walkdir::WalkDir::new(path)
+        .follow_links(true)
+        .into_iter()
+        .filter_map(|e| e.ok())
+        .filter(|e| e.file_type().is_file())
+        .filter(|e| e.path().extension().map_or(false, |e| e == "ftl"))
+        .for_each(|e| {
+            let p = e.path().to_owned().as_path().to_str().unwrap().to_string();
+            if let Ok(string) = std::fs::read_to_string(&p) {
+                paths.push(p);
+                contents.push(string);
+            }
+            // TODO: Handle error
+        });
+
+    (paths, contents)
+}
+
+/// Copied from `fluent_templates/macros` to ensure that the same implementation
+/// is followed.
+fn build_fluent_resources(
+    dir: impl AsRef<std::path::Path>,
+) -> HashMap<String, (Vec<String>, Vec<String>)> {
+    let mut all_resources = HashMap::new();
+    for entry in std::fs::read_dir(dir)
+        .unwrap()
+        .filter_map(|rs| rs.ok())
+        .filter(|entry| entry.file_type().unwrap().is_dir())
+    {
+        if let Some(lang) = entry.file_name().into_string().ok().filter(|l| {
+            l.parse::<fluent_templates::LanguageIdentifier>().is_ok()
+        }) {
+            let (file_paths, resources) = read_from_dir(entry.path());
+            all_resources.insert(lang, (file_paths, resources));
+        }
+    }
+    all_resources
+}
 
 fn parse_litstr_or_expr_param(
     fields: ParseStream,
@@ -70,6 +116,7 @@ fn parse_litbool_or_expr_param(
 
 pub(crate) struct I18nLoader {
     pub(crate) languages: Vec<(String, String)>,
+    pub(crate) languages_path: Option<String>,
     pub(crate) translations_ident: syn::Ident,
     pub(crate) sync_html_tag_lang_bool: Option<syn::LitBool>,
     pub(crate) sync_html_tag_lang_expr: Option<syn::Expr>,
@@ -101,6 +148,7 @@ pub(crate) struct I18nLoader {
     pub(crate) initial_language_from_cookie_expr: Option<syn::Expr>,
     pub(crate) set_language_to_cookie_bool: Option<syn::LitBool>,
     pub(crate) set_language_to_cookie_expr: Option<syn::Expr>,
+    pub(crate) fluent_resources: HashMap<String, (Vec<String>, Vec<String>)>,
 }
 
 impl Parse for I18nLoader {
@@ -114,6 +162,7 @@ impl Parse for I18nLoader {
         let mut locales_path: Option<syn::LitStr> = None;
         let mut languages_path: Option<syn::LitStr> = None;
         let mut translations_identifier: Option<syn::Ident> = None;
+        #[cfg(not(feature = "ssr"))]
         let mut check_translations: Option<syn::LitStr> = None;
         let mut sync_html_tag_lang_bool: Option<syn::LitBool> = None;
         let mut sync_html_tag_lang_expr: Option<syn::Expr> = None;
@@ -165,7 +214,15 @@ impl Parse for I18nLoader {
             } else if k == "languages" {
                 languages_path = Some(fields.parse()?);
             } else if k == "check_translations" {
-                check_translations = Some(fields.parse()?);
+                #[cfg(not(feature = "ssr"))]
+                {
+                    check_translations = Some(fields.parse()?);
+                }
+
+                #[cfg(feature = "ssr")]
+                {
+                    _ = fields.parse::<syn::Expr>()?;
+                }
             } else if k == "sync_html_tag_lang" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
@@ -284,6 +341,7 @@ impl Parse for I18nLoader {
                     return Err(err);
                 }
             } else {
+                #[cfg(not(feature = "ssr"))]
                 return Err(syn::Error::new(
                     k.span(),
                     "Not a valid parameter for leptos_fluent! macro.",
@@ -302,21 +360,28 @@ impl Parse for I18nLoader {
         })?;
 
         // languages
-        if languages_path.is_none() && locales_path.is_none() {
+        if locales_path.is_none() {
             return Err(syn::Error::new(
                 input.span(),
                 concat!(
-                    "Either `languages` or `locales` field is required",
-                    " by leptos_fluent! macro.",
+                    "The `locales` field is required by leptos_fluent! macro.",
                 ),
             ));
         }
 
-        let mut languages = Vec::new();
+        let languages;
+        let mut languages_file_path = None;
 
         let languages_path_copy = languages_path.clone();
         let languages_file = languages_path
+            .as_ref()
             .map(|languages| workspace_path.join(languages.value()));
+
+        let locales_path_copy = locales_path.clone();
+        let locales_folder_path = locales_path
+            .as_ref()
+            .map(|locales| workspace_path.join(locales.value()))
+            .unwrap();
 
         if let Some(ref file) = languages_file {
             if std::fs::metadata(file).is_err() {
@@ -335,68 +400,41 @@ impl Parse for I18nLoader {
                     ),
                 ));
             } else {
-                languages = read_languages_file(&languages_file.unwrap());
-
-                if languages.len() < 2 {
-                    return Err(syn::Error::new(
-                        languages_path_copy.unwrap().span(),
-                        "Languages file must contain at least two languages.",
-                    ));
-                }
+                let langs_path = &languages_file.unwrap();
+                languages = read_languages_file(langs_path);
+                languages_file_path =
+                    Some(langs_path.as_path().to_str().unwrap().to_string());
             }
+        } else if std::fs::metadata(&locales_folder_path).is_err() {
+            return Err(syn::Error::new(
+                locales_path_copy.unwrap().span(),
+                format!(
+                    concat!(
+                        "Couldn't read locales folder, this path should",
+                        " be relative to your crate's `Cargo.toml`.",
+                        " Looking for: {:?}",
+                    ),
+                    // TODO: Use std::path::absolute from
+                    // #![feature(absolute_path)] when stable,
+                    // see https://github.com/rust-lang/rust/issues/92750
+                    &locales_folder_path,
+                ),
+            ));
         } else {
-            // locales
-            let locales_path_copy = locales_path.clone();
-            let locales_folder = locales_path
-                .as_ref()
-                .map(|locales| workspace_path.join(locales.value()));
-
-            if let Some(ref folder) = locales_folder {
-                if std::fs::metadata(folder).is_err() {
-                    return Err(syn::Error::new(
-                        locales_path_copy.unwrap().span(),
-                        format!(
-                            concat!(
-                                "Couldn't read locales folder, this path should",
-                                " be relative to your crate's `Cargo.toml`.",
-                                " Looking for: {:?}",
-                            ),
-                            // TODO: Use std::path::absolute from
-                            // #![feature(absolute_path)] when stable,
-                            // see https://github.com/rust-lang/rust/issues/92750
-                            folder,
-                        ),
-                    ));
-                } else {
-                    languages = read_locales_folder(&locales_folder.unwrap());
-
-                    if languages.len() < 2 {
-                        return Err(syn::Error::new(
-                            locales_path_copy.unwrap().span(),
-                            "Locales folder must contain at least two languages.",
-                        ));
-                    }
-                }
-            }
+            languages = read_locales_folder(&locales_folder_path);
         }
 
-        if let Some(check_translations_globstr) = check_translations {
-            if locales_path.is_none() {
-                return Err(syn::Error::new(
-                    check_translations_globstr.span(),
-                    concat!(
-                        "You must provide a `locales` parameter",
-                        " to use the `check_translations` parameter.",
-                    ),
-                ));
-            }
+        let locales_path_str =
+            locales_folder_path.as_path().to_str().unwrap().to_string();
+        let fluent_resources = build_fluent_resources(locales_path_str);
 
-            #[cfg(not(feature = "ssr"))]
+        #[cfg(not(feature = "ssr"))]
+        if let Some(ref check_translations_globstr) = check_translations {
             {
                 match crate::translations_checker::run(
                     &check_translations_globstr.value(),
-                    &locales_path.unwrap().value(),
                     &workspace_path,
+                    &fluent_resources,
                 ) {
                     Ok(check_translations_error_messages) => {
                         if !check_translations_error_messages.is_empty() {
@@ -426,6 +464,7 @@ impl Parse for I18nLoader {
         Ok(Self {
             translations_ident,
             languages,
+            languages_path: languages_file_path,
             sync_html_tag_lang_bool,
             sync_html_tag_lang_expr,
             url_param_str,
@@ -452,6 +491,7 @@ impl Parse for I18nLoader {
             initial_language_from_cookie_expr,
             set_language_to_cookie_bool,
             set_language_to_cookie_expr,
+            fluent_resources,
         })
     }
 }

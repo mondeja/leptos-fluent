@@ -18,7 +18,6 @@ quote = "1"
 syn = { version = "2", features = ["visit", "full"] }
 walkdir = ">=2"
 globwalk = "0.9"
-flume = { version = "0.11", default-features = false }
 fluent-templates.workspace = true
 fluent-syntax = "0.11"
 pathdiff = "0.2"

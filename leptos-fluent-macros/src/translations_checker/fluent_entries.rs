@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use std::path::Path;
 
 #[derive(Debug)]
 pub(crate) struct FluentEntry {
@@ -7,14 +6,12 @@ pub(crate) struct FluentEntry {
     pub(crate) placeables: Vec<String>,
 }
 
-pub(crate) fn gather_fluent_entries_from_locales_path(
-    workspace_path: &Path,
-    locales_path: &str,
+pub(crate) fn build_fluent_entries(
+    fluent_resources: &HashMap<String, (Vec<String>, Vec<String>)>,
 ) -> HashMap<String, Vec<FluentEntry>> {
     let mut fluent_entries: HashMap<String, Vec<FluentEntry>> = HashMap::new();
 
-    let fluent_resources = build_resources(workspace_path.join(locales_path));
-    for (lang, resources) in fluent_resources.iter() {
+    for (lang, (_, resources)) in fluent_resources.iter() {
         fluent_entries.insert(lang.to_owned(), vec![]);
         for resource_str in resources {
             let resource =
@@ -49,46 +46,4 @@ pub(crate) fn gather_fluent_entries_from_locales_path(
         }
     }
     fluent_entries
-}
-
-/// Copied from `fluent_templates/macros` to ensure that the same implementation
-/// is followed.
-fn build_resources(
-    dir: impl AsRef<std::path::Path>,
-) -> HashMap<String, Vec<String>> {
-    let mut all_resources = HashMap::new();
-    for entry in std::fs::read_dir(dir)
-        .unwrap()
-        .filter_map(|rs| rs.ok())
-        .filter(|entry| entry.file_type().unwrap().is_dir())
-    {
-        if let Some(lang) = entry.file_name().into_string().ok().filter(|l| {
-            l.parse::<fluent_templates::LanguageIdentifier>().is_ok()
-        }) {
-            let resources = read_from_dir(entry.path());
-            all_resources.insert(lang, resources);
-        }
-    }
-    all_resources
-}
-
-/// Copied from `fluent_templates/macros` to ensure that the same implementation
-/// is followed.
-pub(crate) fn read_from_dir<P: AsRef<Path>>(path: P) -> Vec<String> {
-    let (tx, rx) = flume::unbounded();
-
-    walkdir::WalkDir::new(path)
-        .follow_links(true)
-        .into_iter()
-        .filter_map(|e| e.ok())
-        .filter(|e| e.file_type().is_file())
-        .filter(|e| e.path().extension().map_or(false, |e| e == "ftl"))
-        .for_each(|e| {
-            if let Ok(string) = std::fs::read_to_string(e.path()) {
-                _ = tx.send(string);
-            }
-            // TODO: Handle error
-        });
-
-    rx.drain().collect::<Vec<_>>()
 }
