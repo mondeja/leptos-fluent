@@ -36,8 +36,7 @@ repos:
       - id: clippy
         alias: clippy-no-features
         name: clippy-no-features
-        args:
-          [
+        args: [
             --exclude=leptos-fluent-ssr-hydrate-axum-example,
             --workspace,
             --,
@@ -45,6 +44,9 @@ repos:
             clippy::print_stdout,
             -D,
             warnings,
+            # TODO: remove allowing empty-docs when a new patch of Leptos is released
+            -A,
+            clippy::empty-docs,
           ]
       - id: clippy
         alias: clippy-hydrate
@@ -59,6 +61,8 @@ repos:
             clippy::print_stdout,
             -D,
             warnings,
+            -A,
+            clippy::empty-docs,
           ]
       - id: clippy
         alias: clippy-ssr-actix
@@ -74,6 +78,8 @@ repos:
             clippy::print_stdout,
             -D,
             warnings,
+            -A,
+            clippy::empty-docs,
           ]
       - id: clippy
         alias: clippy-ssr-axum
@@ -89,6 +95,8 @@ repos:
             clippy::print_stdout,
             -D,
             warnings,
+            -A,
+            clippy::empty-docs,
           ]
   - repo: https://github.com/mondeja/rust-pc-hooks
     rev: v1.1.0
