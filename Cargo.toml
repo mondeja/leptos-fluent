@@ -13,8 +13,6 @@ resolver = "2"
 
 [workspace.package]
 edition = "2021"
-version = "0.0.32"
-license = "MIT"
 documentation = "https://docs.rs/leptos-fluent"
 repository = "https://github.com/mondeja/leptos-fluent"
 
