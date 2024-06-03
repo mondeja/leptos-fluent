@@ -1472,7 +1472,6 @@ dependencies = [
  "pathdiff",
  "proc-macro2",
  "quote",
- "rustc_version",
  "serde_json",
  "serde_yaml",
  "syn 2.0.66",

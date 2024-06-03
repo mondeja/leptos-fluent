@@ -25,9 +25,6 @@ pathdiff = "0.2"
 serde_json = { version = "1", optional = true }
 serde_yaml = { version = ">=0.7", optional = true }
 
-[build-dependencies]
-rustc_version = "0.4"
-
 [features]
 hydrate = []
 ssr = []
