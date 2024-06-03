@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2024-06-03 - [0.0.30]
+
+### Bug fixes
+
+- Fix trait not in scope error when using `tr!` and `move_tr!` macros.
+
 ## 2024-06-03 - [0.0.29]
 
 ### Breaking changes
@@ -139,6 +145,7 @@
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.0.30]: https://github.com/mondeja/leptos-fluent/compare/v0.0.29...v0.0.30
 [0.0.29]: https://github.com/mondeja/leptos-fluent/compare/v0.0.28...v0.0.29
 [0.0.28]: https://github.com/mondeja/leptos-fluent/compare/v0.0.27...v0.0.28
 [0.0.27]: https://github.com/mondeja/leptos-fluent/compare/v0.0.26...v0.0.27

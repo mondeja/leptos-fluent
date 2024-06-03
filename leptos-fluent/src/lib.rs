@@ -14,7 +14,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! leptos-fluent = "0.0.29"
+//! leptos-fluent = "0.0.30"
 //! fluent-templates = "0.9"
 //!
 //! [features]
@@ -222,7 +222,7 @@ pub mod url;
 use core::hash::{Hash, Hasher};
 use core::str::FromStr;
 use fluent_templates::{
-    once_cell::sync::Lazy, LanguageIdentifier, StaticLoader,
+    loader::Loader, once_cell::sync::Lazy, LanguageIdentifier, StaticLoader,
 };
 use leptos::{use_context, Attribute, IntoAttribute, Oco, RwSignal, SignalGet};
 pub use leptos_fluent_macros::leptos_fluent;
@@ -343,6 +343,25 @@ pub fn i18n() -> I18n {
     )
 }
 
+#[doc(hidden)]
+pub fn tr_impl(text_id: &str) -> String {
+    let i18n = expect_i18n();
+    i18n.translations.lookup(&i18n.language.get().id, text_id)
+}
+
+#[doc(hidden)]
+pub fn tr_with_args_impl(
+    text_id: &str,
+    args: &std::collections::HashMap<
+        String,
+        fluent_templates::fluent_bundle::FluentValue,
+    >,
+) -> String {
+    let i18n = expect_i18n();
+    i18n.translations
+        .lookup_with_args(&i18n.language.get().id, text_id, args)
+}
+
 /// Translate a text identifier to the current language.
 ///
 /// ```rust,ignore
@@ -351,22 +370,15 @@ pub fn i18n() -> I18n {
 /// ```
 #[macro_export]
 macro_rules! tr {
-    ($text_id:literal$(,)?) => {{
-        use fluent_templates::loader::Loader;
-        let i18n = $crate::expect_i18n();
-        i18n.translations.lookup(&i18n.language.get().id, $text_id)
-    }};
+    ($text_id:literal$(,)?) => {::leptos_fluent::tr_impl($text_id)};
     ($text_id:literal, {$($key:literal => $value:expr),*$(,)?}$(,)?) => {{
-        use fluent_templates::loader::Loader;
-        let i18n = $crate::expect_i18n();
-        let args = &{
+        ::leptos_fluent::tr_with_args_impl($text_id, &{
             let mut map = ::std::collections::HashMap::new();
             $(
                 map.insert($key.to_string(), $value.into());
             )*
             map
-        };
-        i18n.translations.lookup_with_args(&i18n.language.get().id, $text_id, args)
+        })
     }}
 }
 
