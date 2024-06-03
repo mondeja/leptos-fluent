@@ -393,21 +393,33 @@ impl Parse for I18nLoader {
 
             #[cfg(not(feature = "ssr"))]
             {
-                let translations_error_messages =
-                    crate::translations_checker::run(
-                        &check_translations_globstr.value(),
-                        &locales_path.unwrap().value(),
-                        &workspace_path,
-                    )?;
-                if !translations_error_messages.is_empty() {
-                    return Err(syn::Error::new(
-                        check_translations_globstr.span(),
-                        format!(
-                            "Translations check failed:\n- {}",
-                            translations_error_messages.join("\n- "),
-                        ),
-                    ));
-                }
+                match crate::translations_checker::run(
+                    &check_translations_globstr.value(),
+                    &locales_path.unwrap().value(),
+                    &workspace_path,
+                ) {
+                    Ok(check_translations_error_messages) => {
+                        if !check_translations_error_messages.is_empty() {
+                            return Err(syn::Error::new(
+                                check_translations_globstr.span(),
+                                format!(
+                                    "Translations check failed:\n- {}",
+                                    check_translations_error_messages
+                                        .join("\n- "),
+                                ),
+                            ));
+                        }
+                    }
+                    Err(errors) => {
+                        return Err(syn::Error::new(
+                            check_translations_globstr.span(),
+                            format!(
+                                "Unrecoverable errors checking translations:\n- {}",
+                                errors.join("\n- "),
+                            )
+                        ));
+                    }
+                };
             }
         }
 

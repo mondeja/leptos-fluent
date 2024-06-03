@@ -10,19 +10,20 @@ pub(crate) fn run(
     check_translations_globstr: &str,
     locales_path: &str,
     workspace_path: &Path,
-) -> Result<Vec<String>, syn::Error> {
+) -> Result<Vec<String>, Vec<String>> {
     let tr_macros: Vec<TranslationMacro> = gather_tr_macro_defs_from_rs_files(
         &workspace_path.join(check_translations_globstr),
         #[cfg(not(test))]
         workspace_path,
     )?;
 
+    // TODO: sort locales by language code to not rely on the filesystem order
     let fluent_entries: HashMap<String, Vec<FluentEntry>> =
         gather_fluent_entries_from_locales_path(workspace_path, locales_path);
 
-    let mut error_messages =
+    let mut check_errors =
         check_tr_macros_against_fluent_entries(&tr_macros, &fluent_entries);
-    error_messages.extend(check_fluent_entries_against_tr_macros(
+    check_errors.extend(check_fluent_entries_against_tr_macros(
         &tr_macros,
         &fluent_entries,
     ));
@@ -30,7 +31,7 @@ pub(crate) fn run(
     // TODO: Currently, the fluent-syntax parser does not offer a CST
     //       parser so we don't know the spans of the entries.
     //       See https://github.com/projectfluent/fluent-rs/issues/270
-    Ok(error_messages)
+    Ok(check_errors)
 }
 
 fn format_macro_call(
