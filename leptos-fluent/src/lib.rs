@@ -14,7 +14,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! leptos-fluent = "0.0.28"
+//! leptos-fluent = "0.0.29"
 //! fluent-templates = "0.9"
 //!
 //! [features]
@@ -221,10 +221,11 @@ pub mod url;
 
 use core::hash::{Hash, Hasher};
 use core::str::FromStr;
-use fluent_templates::{LanguageIdentifier, StaticLoader};
+use fluent_templates::{
+    once_cell::sync::Lazy, LanguageIdentifier, StaticLoader,
+};
 use leptos::{use_context, Attribute, IntoAttribute, Oco, RwSignal, SignalGet};
 pub use leptos_fluent_macros::leptos_fluent;
-use once_cell::sync::Lazy;
 
 /// Each language supported by your application.
 #[derive(Clone, Debug)]
@@ -277,7 +278,7 @@ impl FromStr for Language {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         language_from_str_between_languages(s, expect_i18n().languages)
             .ok_or(())
-            .map(|lang| lang.clone())
+            .cloned()
     }
 }
 
@@ -350,12 +351,12 @@ pub fn i18n() -> I18n {
 /// ```
 #[macro_export]
 macro_rules! tr {
-    ($text_id:expr$(,)?) => {{
+    ($text_id:literal$(,)?) => {{
         use fluent_templates::loader::Loader;
         let i18n = $crate::expect_i18n();
         i18n.translations.lookup(&i18n.language.get().id, $text_id)
     }};
-    ($text_id:expr, {$($key:expr => $value:expr),*$(,)?}$(,)?) => {{
+    ($text_id:literal, {$($key:literal => $value:expr),*$(,)?}$(,)?) => {{
         use fluent_templates::loader::Loader;
         let i18n = $crate::expect_i18n();
         let args = &{
@@ -379,10 +380,10 @@ macro_rules! tr {
 /// [`leptos::Signal`]: https://docs.rs/leptos/latest/leptos/struct.Signal.html
 #[macro_export]
 macro_rules! move_tr {
-    ($text_id:expr$(,)?) => {
+    ($text_id:literal$(,)?) => {
         ::leptos::Signal::derive(move || $crate::tr!($text_id))
     };
-    ($text_id:expr, {$($key:expr => $value:expr),*$(,)?}$(,)?) => {
+    ($text_id:literal, {$($key:literal => $value:expr),*$(,)?}$(,)?) => {
         ::leptos::Signal::derive(move || $crate::tr!($text_id, {
             $(
                 $key => $value,

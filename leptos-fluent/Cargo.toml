@@ -2,7 +2,7 @@
 name = "leptos-fluent"
 description = "Fluent framework for internationalization of Leptos applications"
 edition = "2021"
-version = "0.0.28"
+version = "0.0.29"
 license = "MIT"
 documentation = "https://docs.rs/leptos-fluent"
 repository = "https://github.com/mondeja/leptos-fluent"
@@ -10,9 +10,8 @@ readme = "README.md"
 
 [dependencies]
 leptos-fluent-macros = { path = "../leptos-fluent-macros" }
-fluent-templates = "0.9"
+fluent-templates.workspace = true
 leptos = ">=0.6"
-once_cell = "1"
 web-sys = { version = ">=0.1", features = [
   "HtmlDocument",
   "Navigator",

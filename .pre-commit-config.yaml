@@ -43,6 +43,8 @@ repos:
             --,
             -D,
             clippy::print_stdout,
+            -D,
+            warnings,
           ]
       - id: clippy
         alias: clippy-hydrate
@@ -55,6 +57,8 @@ repos:
             --,
             -D,
             clippy::print_stdout,
+            -D,
+            warnings,
           ]
       - id: clippy
         alias: clippy-ssr-actix
@@ -68,6 +72,8 @@ repos:
             --,
             -D,
             clippy::print_stdout,
+            -D,
+            warnings,
           ]
       - id: clippy
         alias: clippy-ssr-axum
@@ -81,6 +87,8 @@ repos:
             --,
             -D,
             clippy::print_stdout,
+            -D,
+            warnings,
           ]
   - repo: https://github.com/mondeja/rust-pc-hooks
     rev: v1.1.0

@@ -4,3 +4,4 @@ an-error-happened = An error happened
 error-msg = Error message: { $msg }
 error-code = Error code: { $code }
 a-translated-header = A translated header
+not-found = Not found

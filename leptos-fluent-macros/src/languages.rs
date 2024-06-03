@@ -23,7 +23,7 @@ pub(crate) fn read_languages_file(path: &PathBuf) -> Vec<(String, String)> {
         }
     }
 
-    #[cfg(feature = "yaml")]
+    #[cfg(all(not(feature = "json"), feature = "yaml"))]
     {
         let file_extension = path.extension().unwrap_or_default();
         if file_extension == "yaml" || file_extension == "yml" {
@@ -37,14 +37,6 @@ pub(crate) fn read_languages_file(path: &PathBuf) -> Vec<(String, String)> {
             .map(|lang| (lang[0].clone(), lang[1].clone()))
             .collect::<Vec<(String, String)>>();
         } else {
-            #[cfg(feature = "json")]
-            {
-                panic!(
-                    "The languages file should be a JSON or YAML file. Found file extension {:?}",
-                    file_extension
-                );
-            }
-            #[cfg(not(feature = "json"))]
             {
                 panic!(
                     "The languages file should be a YAML file. Found file extension {:?}",

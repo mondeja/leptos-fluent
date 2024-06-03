@@ -2,7 +2,7 @@
 name = "leptos-fluent-macros"
 description = "Macros for leptos-fluent"
 edition = "2021"
-version = "0.0.28"
+version = "0.0.29"
 license = "MIT"
 documentation = "https://docs.rs/leptos-fluent"
 repository = "https://github.com/mondeja/leptos-fluent"
@@ -15,7 +15,13 @@ path = "src/lib.rs"
 [dependencies]
 proc-macro2 = "1"
 quote = "1"
-syn = "2"
+syn = { version = "2", features = ["visit", "full"] }
+ignore = "0.4"
+glob = "0.3"
+flume = { version = "0.11", default-features = false }
+fluent-templates.workspace = true
+fluent-syntax = "0.11"
+pathdiff = "0.2"
 serde_json = { version = "1", optional = true }
 serde_yaml = { version = ">=0.7", optional = true }
 

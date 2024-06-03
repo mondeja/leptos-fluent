@@ -14,6 +14,8 @@ pub fn App() -> impl IntoView {
     leptos_fluent! {{
         translations: TRANSLATIONS,
         languages: "./locales/languages.json",
+        locales: "./locales",
+        check_translations: "./src/**/*.rs",
         sync_html_tag_lang: true,
         url_param: "lang",
         initial_language_from_url_param: true,
