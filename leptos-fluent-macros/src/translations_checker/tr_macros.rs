@@ -1,5 +1,3 @@
-#[cfg(not(test))]
-use pathdiff::diff_paths;
 use quote::ToTokens;
 use std::path::Path;
 use syn::visit::Visit;
@@ -9,25 +7,44 @@ pub(crate) fn gather_tr_macro_defs_from_rs_files(
     #[cfg(not(test))] workspace_path: &Path,
 ) -> Result<Vec<TranslationMacro>, Vec<String>> {
     // TODO: handle errors
-    let glob_pattern =
-        glob::glob(check_translations_globstr.to_str().unwrap()).unwrap();
-
-    let mut tr_macros = Vec::new();
-    let mut error_messages = Vec::new();
-    #[cfg(not(test))]
-    let workspace_path_str = workspace_path.to_str().unwrap();
-    for path in glob_pattern.flatten() {
-        match tr_macros_from_file_path(
-            &path.as_path().to_str().unwrap(),
+    let glob_pattern = check_translations_globstr.to_str().unwrap();
+    match globwalk::glob(glob_pattern) {
+        Ok(paths) => {
+            let mut tr_macros = Vec::new();
+            let mut error_messages = Vec::new();
             #[cfg(not(test))]
-            workspace_path_str,
-        ) {
-            Ok(new_tr_macros) => tr_macros.extend(new_tr_macros),
-            Err(error_message) => error_messages.push(error_message),
-        }
-    }
+            let workspace_path_str = workspace_path.to_str().unwrap();
+            for walker in paths {
+                match walker {
+                    Ok(entry) => {
+                        let path = entry.path();
+                        match tr_macros_from_file_path(
+                            path.to_str().unwrap(),
+                            #[cfg(not(test))]
+                            workspace_path_str,
+                        ) {
+                            Ok(new_tr_macros) => {
+                                tr_macros.extend(new_tr_macros)
+                            }
+                            Err(error_message) => {
+                                error_messages.push(error_message)
+                            }
+                        }
+                    }
+                    Err(error) => {
+                        error_messages
+                            .push(format!("Error reading file: {}", error));
+                    }
+                }
+            }
 
-    Ok(tr_macros)
+            Ok(tr_macros)
+        }
+        Err(error) => Err(vec![format!(
+            r#"Error parsing glob pattern "{}": {}"#,
+            glob_pattern, error,
+        )]),
+    }
 }
 
 fn tr_macros_from_file_path(
@@ -81,6 +98,7 @@ impl PartialEq for TranslationMacro {
 pub(crate) struct TranslationsMacrosVisitor {
     pub(crate) tr_macros: Vec<TranslationMacro>,
     current_tr_macro: Option<String>,
+    current_tr_macro_punct: Option<char>,
     current_message_name: Option<String>,
     current_placeables: Vec<String>,
 
@@ -93,18 +111,21 @@ impl TranslationsMacrosVisitor {
         #[cfg(not(test))] file_path: &str,
         #[cfg(not(test))] workspace_path: &str,
     ) -> Self {
+        #[cfg(not(test))]
+        let rel_path = pathdiff::diff_paths(file_path, workspace_path)
+            .unwrap()
+            .as_path()
+            .to_str()
+            .unwrap()
+            .to_string();
         Self {
             tr_macros: Vec::new(),
             current_tr_macro: None,
+            current_tr_macro_punct: None,
             current_message_name: None,
             current_placeables: Vec::new(),
             #[cfg(not(test))]
-            file_path: diff_paths(file_path, workspace_path)
-                .unwrap()
-                .as_path()
-                .to_str()
-                .unwrap()
-                .to_string(),
+            file_path: rel_path,
         }
     }
 }
@@ -121,8 +142,27 @@ impl<'ast> TranslationsMacrosVisitor {
                 if ident_str == "move_tr" || ident_str == "tr" {
                     self.current_tr_macro = Some(ident.to_string());
                 }
+            } else if let proc_macro2::TokenTree::Punct(punct) = token {
+                if self.current_tr_macro.is_some()
+                    && self.current_tr_macro_punct.is_none()
+                {
+                    self.current_tr_macro_punct = Some(punct.as_char());
+                }
             } else if let proc_macro2::TokenTree::Group(group) = token {
                 if let Some(ref tr_macro) = &self.current_tr_macro {
+                    if let Some(ref tr_macro_punct) =
+                        &self.current_tr_macro_punct
+                    {
+                        if *tr_macro_punct != '!' {
+                            self.current_tr_macro = None;
+                            self.current_tr_macro_punct = None;
+                            continue;
+                        }
+                    } else {
+                        self.current_tr_macro = None;
+                        continue;
+                    }
+
                     for tr_token in group.stream() {
                         if let proc_macro2::TokenTree::Literal(literal) =
                             tr_token
@@ -186,12 +226,14 @@ impl<'ast> TranslationsMacrosVisitor {
                             self.tr_macros.push(new_tr_macro);
                         }
                         self.current_tr_macro = None;
+                        self.current_tr_macro_punct = None;
                         self.current_message_name = None;
                         self.current_placeables = Vec::new();
                     } else {
                         // if `current_message_name.is_none()` we are parsing
                         // `<tr>` tag from html, so we should ignore it
                         self.current_tr_macro = None;
+                        self.current_tr_macro_punct = None;
                     }
                 } else {
                     self.visit_maybe_macro_tokens_stream(&group.stream());
@@ -448,5 +490,29 @@ mod tests {
                 tr_macro!("move_tr", "dark-color-scheme", Vec::new())
             ]
         );
+    }
+
+    #[test]
+    fn tr_html_tag() {
+        let content = quote! {
+            #[component]
+            fn ThirdPartyExtensionsTableRow(
+                extension: &'static ThirdPartyExtension,
+            ) -> impl IntoView {
+                view! {
+                    <tr>
+                        <td>
+                            <a href=extension.url target="_blank">
+                                {extension.name}
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+        };
+
+        let tr_macros = tr_macros_from_file_content(&content.to_string());
+
+        assert_eq!(tr_macros, vec![]);
     }
 }

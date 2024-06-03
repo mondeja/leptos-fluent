@@ -68,10 +68,11 @@ use quote::quote;
 /// - **`locales`**: Path to the locales folder, which must contain the translations
 ///   for each language in your application. Is expected to be a path relative from
 ///   `Cargo.toml` file. Either `locales` or `languages` is required.
-/// - **`check_translations`**: Path to the files to check if all translations are
-///   being used and their placeholders are correct. Is expected to be a glob
-///   pattern relative from `Cargo.toml` file. Tipically, you should use
-///   `./src/**/*.rs`. If defined, `locales` is required.
+/// - **`check_translations`** (experimental): Path to the files to check if all
+///    translations are being used and their placeholders are correct. Is expected
+///   to be a glob pattern relative from `Cargo.toml` file. Tipically, you should use
+///   `"./src/**/*.rs"` or something like `"../{app,components}/src/**/*.rs"`. If
+///   defined, `locales` is required.
 /// - **`languages`**: Path to a languages file, which should an array of arrays
 ///   where each inner array contains a language identifier and a language name,
 ///   respectively. The language identifier should be a valid language tag, such as

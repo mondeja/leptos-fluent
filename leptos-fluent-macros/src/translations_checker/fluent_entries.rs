@@ -14,10 +14,9 @@ pub(crate) fn gather_fluent_entries_from_locales_path(
     let mut fluent_entries: HashMap<String, Vec<FluentEntry>> = HashMap::new();
 
     let fluent_resources = build_resources(workspace_path.join(locales_path));
-    for (lang, resources_paths) in fluent_resources.iter() {
+    for (lang, resources) in fluent_resources.iter() {
         fluent_entries.insert(lang.to_owned(), vec![]);
-        for path in resources_paths {
-            let resource_str = std::fs::read_to_string(path).unwrap();
+        for resource_str in resources {
             let resource =
                 fluent_templates::fluent_bundle::FluentResource::try_new(
                     resource_str.to_owned(),
@@ -78,25 +77,17 @@ fn build_resources(
 pub(crate) fn read_from_dir<P: AsRef<Path>>(path: P) -> Vec<String> {
     let (tx, rx) = flume::unbounded();
 
-    ignore::WalkBuilder::new(path)
+    walkdir::WalkDir::new(path)
         .follow_links(true)
-        .build_parallel()
-        .run(|| {
-            let tx = tx.clone();
-            Box::new(move |result| {
-                if let Ok(entry) = result {
-                    if entry.file_type().as_ref().map_or(false, |e| e.is_file())
-                        && entry
-                            .path()
-                            .extension()
-                            .map_or(false, |e| e == "ftl")
-                    {
-                        tx.send(entry.path().display().to_string()).unwrap();
-                    }
-                }
-
-                ignore::WalkState::Continue
-            })
+        .into_iter()
+        .filter_map(|e| e.ok())
+        .filter(|e| e.file_type().is_file())
+        .filter(|e| e.path().extension().map_or(false, |e| e == "ftl"))
+        .for_each(|e| {
+            if let Ok(string) = std::fs::read_to_string(e.path()) {
+                _ = tx.send(string);
+            }
+            // TODO: Handle error
         });
 
     rx.drain().collect::<Vec<_>>()
