@@ -194,13 +194,18 @@ pub fn leptos_fluent(
         locales_tracker
             .push_str(&format!("let {} = vec![", lang.replace('-', "_")));
         for path in paths {
-            locales_tracker.push_str(&format!("include_bytes!(\"{}\"),", path));
+            locales_tracker.push_str(&format!(
+                "include_bytes!(\"{}\"),",
+                &path.replace('\\', "\\\\").replace('"', "\\\"")
+            ));
         }
         locales_tracker.push_str("];");
         if let Some(languages_file_path) = &languages_path {
             locales_tracker.push_str(&format!(
                 "let languages_path = include_bytes!(\"{}\");",
                 &languages_file_path
+                    .replace('\\', "\\\\")
+                    .replace('"', "\\\"")
             ));
         }
     }
