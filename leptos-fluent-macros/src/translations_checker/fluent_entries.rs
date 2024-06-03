@@ -1,3 +1,4 @@
+use crate::FluentResources;
 use std::collections::HashMap;
 
 #[derive(Debug)]
@@ -7,7 +8,7 @@ pub(crate) struct FluentEntry {
 }
 
 pub(crate) fn build_fluent_entries(
-    fluent_resources: &HashMap<String, (Vec<String>, Vec<String>)>,
+    fluent_resources: &FluentResources,
 ) -> HashMap<String, Vec<FluentEntry>> {
     let mut fluent_entries: HashMap<String, Vec<FluentEntry>> = HashMap::new();
 

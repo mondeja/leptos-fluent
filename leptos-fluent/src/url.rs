@@ -44,3 +44,31 @@ pub fn set(k: &str, v: &str) {
         _ = v;
     };
 }
+
+pub fn delete(k: &str) {
+    #[cfg(not(feature = "ssr"))]
+    {
+        let url = web_sys::Url::new(
+            &leptos::window()
+                .location()
+                .href()
+                .expect("Failed to get location.href from the browser"),
+        )
+        .expect("Failed to parse location.href from the browser");
+        url.search_params().delete(k);
+        leptos::window()
+            .history()
+            .expect("Failed to get the history from the browser")
+            .replace_state_with_url(
+                &wasm_bindgen::JsValue::NULL,
+                "",
+                Some(&url.href()),
+            )
+            .expect("Failed to replace the history state");
+    };
+
+    #[cfg(feature = "ssr")]
+    {
+        _ = k;
+    };
+}

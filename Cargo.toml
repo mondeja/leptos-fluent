@@ -11,6 +11,11 @@ members = [
 ]
 resolver = "2"
 
+[workspace.package]
+edition = "2021"
+documentation = "https://docs.rs/leptos-fluent"
+repository = "https://github.com/mondeja/leptos-fluent"
+
 [workspace.dependencies]
 fluent-templates = "0.9"
 
