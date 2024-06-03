@@ -13,7 +13,7 @@ proc-macro = true
 path = "src/lib.rs"
 
 [dependencies]
-proc-macro2 = {version = "1", features = ["span-locations"] }
+proc-macro2 = "1"
 quote = "1"
 syn = { version = "2", features = ["visit", "full"] }
 ignore = "0.4"
