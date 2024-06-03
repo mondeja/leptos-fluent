@@ -31,8 +31,6 @@ pub(crate) fn read_from_dir<P: AsRef<Path>>(
     (paths, contents)
 }
 
-/// Copied from `fluent_templates/macros` to ensure that the same implementation
-/// is followed.
 fn build_fluent_resources(
     dir: impl AsRef<std::path::Path>,
 ) -> HashMap<String, (Vec<String>, Vec<String>)> {
