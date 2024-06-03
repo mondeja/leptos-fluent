@@ -1,6 +1,7 @@
 mod fluent_entries;
 mod tr_macros;
 
+use crate::FluentResources;
 use fluent_entries::{build_fluent_entries, FluentEntry};
 use std::collections::HashMap;
 use std::path::Path;
@@ -9,7 +10,7 @@ use tr_macros::{gather_tr_macro_defs_from_rs_files, TranslationMacro};
 pub(crate) fn run(
     check_translations_globstr: &str,
     workspace_path: &Path,
-    fluent_resources: &HashMap<String, (Vec<String>, Vec<String>)>,
+    fluent_resources: &FluentResources,
 ) -> Result<Vec<String>, Vec<String>> {
     let tr_macros: Vec<TranslationMacro> = gather_tr_macro_defs_from_rs_files(
         &workspace_path.join(check_translations_globstr),

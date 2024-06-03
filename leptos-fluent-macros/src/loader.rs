@@ -1,54 +1,14 @@
-use crate::languages::{read_languages_file, read_locales_folder};
-use std::collections::HashMap;
-use std::path::{Path, PathBuf};
+use crate::{
+    build_fluent_resources,
+    languages::{read_languages_file, read_locales_folder},
+    FluentResources,
+};
+use std::path::PathBuf;
 use syn::{
     braced,
     parse::{Parse, ParseStream},
     token, Ident, Result,
 };
-
-pub(crate) fn read_from_dir<P: AsRef<Path>>(
-    path: P,
-) -> (Vec<String>, Vec<String>) {
-    let mut paths = vec![];
-    let mut contents = vec![];
-
-    walkdir::WalkDir::new(path)
-        .follow_links(true)
-        .into_iter()
-        .filter_map(|e| e.ok())
-        .filter(|e| e.file_type().is_file())
-        .filter(|e| e.path().extension().map_or(false, |e| e == "ftl"))
-        .for_each(|e| {
-            let p = e.path().to_owned().as_path().to_str().unwrap().to_string();
-            if let Ok(string) = std::fs::read_to_string(&p) {
-                paths.push(p);
-                contents.push(string);
-            }
-            // TODO: Handle error
-        });
-
-    (paths, contents)
-}
-
-fn build_fluent_resources(
-    dir: impl AsRef<std::path::Path>,
-) -> HashMap<String, (Vec<String>, Vec<String>)> {
-    let mut all_resources = HashMap::new();
-    for entry in std::fs::read_dir(dir)
-        .unwrap()
-        .filter_map(|rs| rs.ok())
-        .filter(|entry| entry.file_type().unwrap().is_dir())
-    {
-        if let Some(lang) = entry.file_name().into_string().ok().filter(|l| {
-            l.parse::<fluent_templates::LanguageIdentifier>().is_ok()
-        }) {
-            let (file_paths, resources) = read_from_dir(entry.path());
-            all_resources.insert(lang, (file_paths, resources));
-        }
-    }
-    all_resources
-}
 
 fn parse_litstr_or_expr_param(
     fields: ParseStream,
@@ -146,7 +106,7 @@ pub(crate) struct I18nLoader {
     pub(crate) initial_language_from_cookie_expr: Option<syn::Expr>,
     pub(crate) set_language_to_cookie_bool: Option<syn::LitBool>,
     pub(crate) set_language_to_cookie_expr: Option<syn::Expr>,
-    pub(crate) fluent_resources: HashMap<String, (Vec<String>, Vec<String>)>,
+    pub(crate) fluent_resources: FluentResources,
 }
 
 impl Parse for I18nLoader {

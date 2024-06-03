@@ -61,32 +61,3 @@ pub fn html() -> web_sys::HtmlHtmlElement {
         .unwrap()
         .unchecked_into::<web_sys::HtmlHtmlElement>()
 }
-
-pub mod localstorage {
-    pub fn delete(key: &str) {
-        ::leptos::window()
-            .local_storage()
-            .unwrap()
-            .unwrap()
-            .remove_item(key)
-            .unwrap();
-    }
-
-    pub fn set(key: &str, value: &str) {
-        ::leptos::window()
-            .local_storage()
-            .unwrap()
-            .unwrap()
-            .set_item(key, value)
-            .unwrap();
-    }
-
-    pub fn get(key: &str) -> Option<String> {
-        ::leptos::window()
-            .local_storage()
-            .unwrap()
-            .unwrap()
-            .get_item(key)
-            .unwrap()
-    }
-}

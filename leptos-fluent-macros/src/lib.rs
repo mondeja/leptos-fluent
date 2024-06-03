@@ -9,12 +9,16 @@
 
 extern crate proc_macro;
 
+mod files_tracker;
+mod fluent_resources;
 mod languages;
 mod loader;
 #[cfg(not(feature = "ssr"))]
 mod translations_checker;
 
-use languages::generate_code_for_static_language;
+use files_tracker::build_files_tracker_quote;
+pub(crate) use fluent_resources::{build_fluent_resources, FluentResources};
+use languages::build_languages_quote;
 use loader::I18nLoader;
 use quote::quote;
 
@@ -177,41 +181,11 @@ pub fn leptos_fluent(
     } = syn::parse_macro_input!(input as I18nLoader);
 
     let n_languages = languages.len();
-    let languages_quote = format!(
-        "[{}]",
-        languages
-            .iter()
-            .map(|(id, name)| generate_code_for_static_language(id, name))
-            .collect::<Vec<String>>()
-            .join(",")
-    )
-    .parse::<proc_macro2::TokenStream>()
-    .unwrap();
+    let languages_quote = build_languages_quote(&languages);
 
-    // locales tracker
-    let mut locales_tracker = "{".to_string();
-    for (lang, (paths, _)) in fluent_resources.iter() {
-        locales_tracker
-            .push_str(&format!("let {} = vec![", lang.replace('-', "_")));
-        for path in paths {
-            locales_tracker.push_str(&format!(
-                "include_bytes!(\"{}\"),",
-                &path.replace('\\', "\\\\").replace('"', "\\\"")
-            ));
-        }
-        locales_tracker.push_str("];");
-        if let Some(languages_file_path) = &languages_path {
-            locales_tracker.push_str(&format!(
-                "let languages_path = include_bytes!(\"{}\");",
-                &languages_file_path
-                    .replace('\\', "\\\\")
-                    .replace('"', "\\\"")
-            ));
-        }
-    }
-    locales_tracker.push_str("};");
-    let locales_tracker_quote =
-        locales_tracker.parse::<proc_macro2::TokenStream>().unwrap();
+    // files tracker
+    let files_tracker_quote =
+        build_files_tracker_quote(&fluent_resources, &languages_path);
 
     #[cfg(not(feature = "ssr"))]
     let sync_html_tag_lang_quote = {
@@ -747,7 +721,7 @@ pub fn leptos_fluent(
             #sync_language_with_localstorage_quote
             #sync_language_with_url_param_quote
             #sync_language_with_cookie_quote
-            #locales_tracker_quote
+            #files_tracker_quote
 
             i18n
         }
@@ -761,6 +735,9 @@ pub fn leptos_fluent(
 mod test {
     #[test]
     fn test_main_and_macros_package_versions_match() {
+        // cargo-readme does not allow to use `version.workspace = true`,
+        // see https://github.com/webern/cargo-readme/issues/81
+
         let macros_cargo_toml = include_str!("../Cargo.toml");
         let main_cargo_toml = include_str!("../../leptos-fluent/Cargo.toml");
 

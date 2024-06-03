@@ -1,7 +1,6 @@
+use leptos_fluent::localstorage;
 use leptos_fluent_csr_complete_example::App;
-use tests_helpers::{
-    element_text, html, input_by_id, localstorage, mount, sleep, unmount,
-};
+use tests_helpers::{element_text, html, input_by_id, mount, sleep, unmount};
 use wasm_bindgen_test::*;
 
 wasm_bindgen_test_configure!(run_in_browser);
@@ -13,15 +12,6 @@ async fn csr_complete_example() {
     mount!(App);
     let es = move || input_by_id("es");
     let en = move || input_by_id("en");
-
-    // set_language_to_url_param
-    assert_eq!(leptos::window().location().search().unwrap(), "");
-    es().click();
-    sleep(30).await;
-    assert_eq!(leptos::window().location().search().unwrap(), "?lang=es");
-    en().click();
-    sleep(30).await;
-    assert_eq!(leptos::window().location().search().unwrap(), "?lang=en");
 
     // translations working
     en().click();

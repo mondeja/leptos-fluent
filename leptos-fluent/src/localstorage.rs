@@ -29,3 +29,18 @@ pub fn set(key: &str, value: &str) {
         _ = value;
     };
 }
+
+pub fn delete(key: &str) {
+    #[cfg(not(feature = "ssr"))]
+    ::leptos::window()
+        .local_storage()
+        .unwrap()
+        .unwrap()
+        .remove_item(key)
+        .unwrap();
+
+    #[cfg(feature = "ssr")]
+    {
+        _ = key;
+    }
+}

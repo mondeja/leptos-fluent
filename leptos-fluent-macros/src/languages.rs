@@ -90,10 +90,22 @@ pub(crate) fn read_locales_folder(path: &PathBuf) -> Vec<(String, String)> {
     locales
 }
 
-pub(crate) fn generate_code_for_static_language(
-    id: &str,
-    name: &str,
-) -> String {
+pub(crate) fn build_languages_quote(
+    languages: &[(String, String)],
+) -> proc_macro2::TokenStream {
+    format!(
+        "[{}]",
+        languages
+            .iter()
+            .map(|(id, name)| generate_code_for_static_language(id, name))
+            .collect::<Vec<String>>()
+            .join(",")
+    )
+    .parse::<proc_macro2::TokenStream>()
+    .unwrap()
+}
+
+fn generate_code_for_static_language(id: &str, name: &str) -> String {
     format!(
         concat!(
             "&::leptos_fluent::Language{{",

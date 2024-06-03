@@ -38,3 +38,23 @@ pub fn set(name: &str, value: &str) {
         _ = value;
     }
 }
+
+pub fn delete(name: &str) {
+    #[cfg(not(feature = "ssr"))]
+    {
+        use wasm_bindgen::JsCast;
+        leptos::document()
+            .dyn_into::<web_sys::HtmlDocument>()
+            .unwrap()
+            .set_cookie(&format!(
+                "{}=; expires=Thu, 01 Jan 1970 00:00:00 GMT",
+                name
+            ))
+            .unwrap();
+    }
+
+    #[cfg(feature = "ssr")]
+    {
+        _ = name;
+    }
+}
