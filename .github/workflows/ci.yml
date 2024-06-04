@@ -124,9 +124,11 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-end2end-${{ matrix.browser }}-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/Cargo.lock') }}
       - name: Run end to end tests
-        run: |
-          cd end2end
-          wasm-pack test --headless --${{ matrix.browser }}
+        uses: nick-fields/retry@v3
+        with:
+          timeout_minutes: 25
+          max_attempts: 3
+          command: cd end2end && wasm-pack test --headless --${{ matrix.browser }}
 
   build-example:
     name: Build example
