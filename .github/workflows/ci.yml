@@ -44,6 +44,8 @@ jobs:
         with:
           timeout_minutes: 25
           max_attempts: 3
+          retry_wait_seconds: 15
+          warning_on_retry: false
           command: pre-commit run --all-files --show-diff-on-failure
       - name: Check all features
         if: matrix.process == 'check-all-features'
@@ -132,6 +134,8 @@ jobs:
         with:
           timeout_minutes: 25
           max_attempts: 3
+          retry_wait_seconds: 1
+          warning_on_retry: false
           command: cd end2end && wasm-pack test --headless --${{ matrix.browser }}
 
   build-example:
