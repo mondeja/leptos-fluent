@@ -1435,7 +1435,7 @@ dependencies = [
 
 [[package]]
 name = "leptos-fluent"
-version = "0.0.32"
+version = "0.0.33"
 dependencies = [
  "fluent-templates",
  "leptos",
@@ -1467,7 +1467,7 @@ dependencies = [
 
 [[package]]
 name = "leptos-fluent-macros"
-version = "0.0.32"
+version = "0.0.33"
 dependencies = [
  "fluent-syntax",
  "fluent-templates",
