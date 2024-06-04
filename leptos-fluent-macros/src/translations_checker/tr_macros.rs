@@ -73,7 +73,7 @@ fn tr_macros_from_file_path(
     }
 }
 
-#[derive(Debug)]
+#[cfg_attr(debug_assertions, derive(Debug))]
 pub(crate) struct TranslationMacro {
     pub(crate) name: String,
     pub(crate) message_name: String,

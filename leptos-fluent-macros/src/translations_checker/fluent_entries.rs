@@ -1,7 +1,8 @@
 use crate::{FluentFilePaths, FluentResources};
 use std::collections::HashMap;
 
-#[derive(Debug, PartialEq)]
+#[cfg_attr(test, derive(PartialEq))]
+#[cfg_attr(debug_assertions, derive(Debug))]
 pub(crate) struct FluentEntry {
     pub(crate) message_name: String,
     pub(crate) placeables: Vec<String>,
