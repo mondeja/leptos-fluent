@@ -22,7 +22,7 @@ fluent-templates.workspace = true
 fluent-syntax = "0.11"
 pathdiff = "0.2"
 serde_json = { version = "1", optional = true }
-serde_yaml = { version = ">=0.7", optional = true }
+serde_yaml = { version = "0.9", optional = true }
 
 [features]
 hydrate = []
