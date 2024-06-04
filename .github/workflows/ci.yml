@@ -136,7 +136,9 @@ jobs:
           max_attempts: 3
           retry_wait_seconds: 1
           warning_on_retry: false
-          command: cd end2end && wasm-pack test --headless --${{ matrix.browser }}
+          command: |
+            cd end2end
+            wasm-pack test --headless --${{ matrix.browser }}
 
   build-example:
     name: Build example
