@@ -5,13 +5,14 @@ use syn::visit::Visit;
 pub(crate) fn gather_tr_macro_defs_from_rs_files(
     check_translations_globstr: &Path,
     #[cfg(not(test))] workspace_path: &Path,
-) -> Result<Vec<TranslationMacro>, Vec<String>> {
+) -> (Vec<TranslationMacro>, Vec<String>) {
     // TODO: handle errors
     let glob_pattern = check_translations_globstr.to_str().unwrap();
+    let mut errors = Vec::new();
+
     match globwalk::glob(glob_pattern) {
         Ok(paths) => {
             let mut tr_macros = Vec::new();
-            let mut error_messages = Vec::new();
             #[cfg(not(test))]
             let workspace_path_str = workspace_path.to_str().unwrap();
             for walker in paths {
@@ -26,24 +27,24 @@ pub(crate) fn gather_tr_macro_defs_from_rs_files(
                             Ok(new_tr_macros) => {
                                 tr_macros.extend(new_tr_macros)
                             }
-                            Err(error_message) => {
-                                error_messages.push(error_message)
-                            }
+                            Err(message) => errors.push(message),
                         }
                     }
                     Err(error) => {
-                        error_messages
-                            .push(format!("Error reading file: {}", error));
+                        errors.push(format!("Error reading file: {}", error));
                     }
                 }
             }
 
-            Ok(tr_macros)
+            (tr_macros, errors)
         }
-        Err(error) => Err(vec![format!(
-            r#"Error parsing glob pattern "{}": {}"#,
-            glob_pattern, error,
-        )]),
+        Err(error) => (
+            vec![],
+            vec![format!(
+                r#"Error parsing glob pattern "{}": {}"#,
+                glob_pattern, error,
+            )],
+        ),
     }
 }
 

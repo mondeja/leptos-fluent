@@ -1,7 +1,7 @@
 use crate::{
-    build_fluent_resources,
+    build_fluent_resources_and_file_paths,
     languages::{read_languages_file, read_locales_folder},
-    FluentResources,
+    FluentFilePaths,
 };
 use std::path::PathBuf;
 use syn::{
@@ -106,7 +106,7 @@ pub(crate) struct I18nLoader {
     pub(crate) initial_language_from_cookie_expr: Option<syn::Expr>,
     pub(crate) set_language_to_cookie_bool: Option<syn::LitBool>,
     pub(crate) set_language_to_cookie_expr: Option<syn::Expr>,
-    pub(crate) fluent_resources: FluentResources,
+    pub(crate) fluent_file_paths: FluentFilePaths,
 }
 
 impl Parse for I18nLoader {
@@ -383,38 +383,43 @@ impl Parse for I18nLoader {
 
         let locales_path_str =
             locales_folder_path.as_path().to_str().unwrap().to_string();
-        let fluent_resources = build_fluent_resources(locales_path_str);
+        let fluent_resources_and_file_paths =
+            build_fluent_resources_and_file_paths(locales_path_str);
 
         #[cfg(not(feature = "ssr"))]
         if let Some(ref check_translations_globstr) = check_translations {
             {
-                match crate::translations_checker::run(
+                let (fluent_resources, ref fluent_file_paths) =
+                    fluent_resources_and_file_paths;
+                let (check_messages, errors) = crate::translations_checker::run(
                     &check_translations_globstr.value(),
                     &workspace_path,
                     &fluent_resources,
-                ) {
-                    Ok(check_translations_error_messages) => {
-                        if !check_translations_error_messages.is_empty() {
-                            return Err(syn::Error::new(
-                                check_translations_globstr.span(),
-                                format!(
-                                    "Translations check failed:\n- {}",
-                                    check_translations_error_messages
-                                        .join("\n- "),
-                                ),
-                            ));
-                        }
+                    fluent_file_paths,
+                );
+
+                let mut report = String::new();
+                if !check_messages.is_empty() {
+                    report.push_str(&format!(
+                        "Translations check failed:\n- {}",
+                        check_messages.join("\n- "),
+                    ));
+                    if !errors.is_empty() {
+                        report.push_str("\n\n");
                     }
-                    Err(errors) => {
-                        return Err(syn::Error::new(
-                            check_translations_globstr.span(),
-                            format!(
-                                "Unrecoverable errors checking translations:\n- {}",
-                                errors.join("\n- "),
-                            )
-                        ));
-                    }
-                };
+                }
+                if !errors.is_empty() {
+                    report.push_str(&format!(
+                        "Unrecoverable errors:\n- {}",
+                        errors.join("\n- "),
+                    ));
+                }
+                if !report.is_empty() {
+                    return Err(syn::Error::new(
+                        check_translations_globstr.span(),
+                        report,
+                    ));
+                }
             }
         }
 
@@ -448,7 +453,7 @@ impl Parse for I18nLoader {
             initial_language_from_cookie_expr,
             set_language_to_cookie_bool,
             set_language_to_cookie_expr,
-            fluent_resources,
+            fluent_file_paths: fluent_resources_and_file_paths.1,
         })
     }
 }

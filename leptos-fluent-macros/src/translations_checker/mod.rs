@@ -1,7 +1,7 @@
 mod fluent_entries;
 mod tr_macros;
 
-use crate::FluentResources;
+use crate::{FluentFilePaths, FluentResources};
 use fluent_entries::{build_fluent_entries, FluentEntry};
 use std::collections::HashMap;
 use std::path::Path;
@@ -11,20 +11,28 @@ pub(crate) fn run(
     check_translations_globstr: &str,
     workspace_path: &Path,
     fluent_resources: &FluentResources,
-) -> Result<Vec<String>, Vec<String>> {
-    let tr_macros: Vec<TranslationMacro> = gather_tr_macro_defs_from_rs_files(
+    fluent_file_paths: &FluentFilePaths,
+) -> (Vec<String>, Vec<String>) {
+    let mut errors = Vec::new();
+
+    let (tr_macros, tr_macros_errors) = gather_tr_macro_defs_from_rs_files(
         &workspace_path.join(check_translations_globstr),
         #[cfg(not(test))]
         workspace_path,
-    )?;
+    );
+    errors.extend(tr_macros_errors);
 
     // TODO: sort locales by language code to not rely on the filesystem order
-    let fluent_entries: HashMap<String, Vec<FluentEntry>> =
-        build_fluent_entries(fluent_resources);
+    let (fluent_entries, fluent_syntax_errors) = build_fluent_entries(
+        fluent_resources,
+        fluent_file_paths,
+        workspace_path.to_str().unwrap(),
+    );
+    errors.extend(fluent_syntax_errors);
 
-    let mut check_errors =
+    let mut check_messages =
         check_tr_macros_against_fluent_entries(&tr_macros, &fluent_entries);
-    check_errors.extend(check_fluent_entries_against_tr_macros(
+    check_messages.extend(check_fluent_entries_against_tr_macros(
         &tr_macros,
         &fluent_entries,
     ));
@@ -32,7 +40,7 @@ pub(crate) fn run(
     // TODO: Currently, the fluent-syntax parser does not offer a CST
     //       parser so we don't know the spans of the entries.
     //       See https://github.com/projectfluent/fluent-rs/issues/270
-    Ok(check_errors)
+    (check_messages, errors)
 }
 
 fn format_macro_call(

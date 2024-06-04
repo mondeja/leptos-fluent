@@ -1,11 +1,11 @@
-use crate::FluentResources;
+use crate::FluentFilePaths;
 
 pub(crate) fn build_files_tracker_quote(
-    fluent_resources: &FluentResources,
+    fluent_resources: &FluentFilePaths,
     languages_path: &Option<String>,
 ) -> proc_macro2::TokenStream {
     let mut files_tracker_str = "{".to_string();
-    for (lang, (paths, _)) in fluent_resources.iter() {
+    for (lang, paths) in fluent_resources.iter() {
         files_tracker_str
             .push_str(&format!("let {} = vec![", lang.replace('-', "_")));
         for path in paths {
