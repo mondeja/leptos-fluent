@@ -17,7 +17,11 @@ mod loader;
 mod translations_checker;
 
 use files_tracker::build_files_tracker_quote;
-pub(crate) use fluent_resources::{build_fluent_resources, FluentResources};
+#[cfg(not(feature = "ssr"))]
+pub(crate) use fluent_resources::FluentResources;
+pub(crate) use fluent_resources::{
+    build_fluent_resources_and_file_paths, FluentFilePaths,
+};
 use languages::build_languages_quote;
 use loader::I18nLoader;
 use quote::quote;
@@ -177,7 +181,7 @@ pub fn leptos_fluent(
         initial_language_from_cookie_expr,
         set_language_to_cookie_bool,
         set_language_to_cookie_expr,
-        fluent_resources,
+        fluent_file_paths,
     } = syn::parse_macro_input!(input as I18nLoader);
 
     let n_languages = languages.len();
@@ -185,7 +189,7 @@ pub fn leptos_fluent(
 
     // files tracker
     let files_tracker_quote =
-        build_files_tracker_quote(&fluent_resources, &languages_path);
+        build_files_tracker_quote(&fluent_file_paths, &languages_path);
 
     #[cfg(not(feature = "ssr"))]
     let sync_html_tag_lang_quote = {
