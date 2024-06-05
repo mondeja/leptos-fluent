@@ -93,13 +93,21 @@ use quote::quote;
 ///     ["es-ES", "Español (España)"]
 ///   ]
 ///   ```
-///   You can use `default-features = false` and enable the `yaml` feature to be able to
-///   use a YAML file with *.yaml* or *.yml* extension. For example:
+///   You can use `default-features = false` and enable the `yaml` or the `json5` feature
+///   to be able to use a YAML or JSON5 file. For example:
 ///   ```yaml
+///   # locales/languages.yaml
 ///   - - en-US
 ///     - English (United States)
 ///   - - es-ES
 ///     - Español (España)
+///   ```
+///   ```json5
+///   // locales/languages.json5
+///   [
+///     ["en-US", "English (United States)"],
+///     ["es-ES", "Español (España)"]
+///   ]
 ///   ```
 /// - **`sync_html_tag_lang`** (_`false`_): Synchronize the global [`<html lang="...">` attribute]
 ///   with current language using [`leptos::create_effect`]. Can be a literal boolean or an

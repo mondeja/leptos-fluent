@@ -193,6 +193,7 @@
 //! - **Axum integration**: `axum`
 //! - **JSON languages file**: `json` (enabled by default)
 //! - **YAML languages file**: `yaml`
+//! - **JSON5 languages file**: `json5`
 //!
 //! # Resources
 //!

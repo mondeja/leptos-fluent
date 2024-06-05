@@ -35,7 +35,11 @@ pub(crate) fn read_languages_file(
         }
     }
 
-    #[cfg(all(not(feature = "json"), feature = "yaml"))]
+    #[cfg(all(
+        not(feature = "json"),
+        not(feature = "json5"),
+        feature = "yaml"
+    ))]
     {
         let file_extension = path.extension().unwrap_or_default();
         if file_extension == "yaml" || file_extension == "yml" {
@@ -66,12 +70,47 @@ pub(crate) fn read_languages_file(
         }
     }
 
-    #[cfg(not(any(feature = "json", feature = "yaml")))]
+    #[cfg(all(
+        not(feature = "json"),
+        not(feature = "yaml"),
+        feature = "json5"
+    ))]
+    {
+        let file_extension = path.extension().unwrap_or_default();
+        if file_extension == "json5" {
+            match fs::read_to_string(path) {
+                Ok(content) => {
+                    match json5::from_str::<Vec<(String, String)>>(
+                        content.as_str(),
+                    ) {
+                        Ok(languages) => Ok(languages),
+                        Err(e) => Err(format!(
+                            "Invalid JSON5 in languages file {}: {}",
+                            path.to_string_lossy(),
+                            e.to_string()
+                        )),
+                    }
+                }
+                Err(e) => Err(format!(
+                    "Couldn't read languages file {}: {}",
+                    path.to_string_lossy(),
+                    e.to_string(),
+                )),
+            }
+        } else {
+            Err(format!(
+                "The languages file should be a JSON5 file. Found file extension {:?}",
+                file_extension
+            ))
+        }
+    }
+
+    #[cfg(not(any(feature = "json", feature = "yaml", feature = "json5")))]
     {
         _ = path;
         Err(concat!(
             "No feature enabled to read languages file.",
-            " Enable either the 'json' or 'yaml' feature.",
+            " Enable either the 'json', 'yaml' or 'json5' feature.",
         )
         .to_string())
     }
