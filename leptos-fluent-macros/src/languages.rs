@@ -39,11 +39,7 @@ pub(crate) fn read_languages_file(
         }
     }
 
-    #[cfg(all(
-        not(feature = "json"),
-        not(feature = "json5"),
-        feature = "yaml"
-    ))]
+    #[cfg(all(not(feature = "json"), feature = "yaml"))]
     {
         let file_extension = path.extension().unwrap_or_default();
         if file_extension == "yaml" || file_extension == "yml" {
