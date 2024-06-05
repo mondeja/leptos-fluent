@@ -358,7 +358,14 @@ impl Parse for I18nLoader {
                 ));
             } else {
                 let langs_path = &languages_file.unwrap();
-                languages = read_languages_file(langs_path);
+                let maybe_languages = read_languages_file(langs_path);
+                if let Err(e) = maybe_languages {
+                    return Err(syn::Error::new(
+                        languages_path_copy.unwrap().span(),
+                        e.to_string(),
+                    ));
+                }
+                languages = maybe_languages.unwrap();
                 languages_file_path =
                     Some(langs_path.as_path().to_str().unwrap().to_string());
             }
