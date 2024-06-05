@@ -1,25 +1,37 @@
 use std::fs;
 use std::path::PathBuf;
 
-pub(crate) fn read_languages_file(path: &PathBuf) -> Vec<(String, String)> {
+pub(crate) fn read_languages_file(
+    path: &PathBuf,
+) -> Result<Vec<(String, String)>, String> {
     #[cfg(feature = "json")]
     {
         let file_extension = path.extension().unwrap_or_default();
         if file_extension == "json" {
-            return serde_json::from_str::<Vec<Vec<String>>>(
-                fs::read_to_string(path)
-                    .expect("Couldn't read languages file")
-                    .as_str(),
-            )
-            .expect("Invalid JSON")
-            .iter()
-            .map(|lang| (lang[0].clone(), lang[1].clone()))
-            .collect::<Vec<(String, String)>>();
+            match fs::read_to_string(path) {
+                Ok(content) => {
+                    match serde_json::from_str::<Vec<(String, String)>>(
+                        content.as_str(),
+                    ) {
+                        Ok(languages) => Ok(languages),
+                        Err(e) => Err(format!(
+                            "Invalid JSON in languages file {}: {}",
+                            path.to_string_lossy(),
+                            e
+                        )),
+                    }
+                }
+                Err(e) => Err(format!(
+                    "Couldn't read languages file {}: {}",
+                    path.to_string_lossy(),
+                    e,
+                )),
+            }
         } else {
-            panic!(
+            Err(format!(
                 "The languages file should be a JSON file. Found file extension {:?}",
                 file_extension
-            );
+            ))
         }
     }
 
@@ -27,29 +39,41 @@ pub(crate) fn read_languages_file(path: &PathBuf) -> Vec<(String, String)> {
     {
         let file_extension = path.extension().unwrap_or_default();
         if file_extension == "yaml" || file_extension == "yml" {
-            return serde_yaml::from_str::<Vec<Vec<String>>>(
-                fs::read_to_string(path)
-                    .expect("Couldn't read languages file")
-                    .as_str(),
-            )
-            .expect("Invalid YAML languages file")
-            .iter()
-            .map(|lang| (lang[0].clone(), lang[1].clone()))
-            .collect::<Vec<(String, String)>>();
-        } else {
-            {
-                panic!(
-                    "The languages file should be a YAML file. Found file extension {:?}",
-                    file_extension
-                );
+            match fs::read_to_string(path) {
+                Ok(content) => {
+                    match serde_yaml::from_str::<Vec<(String, String)>>(
+                        content.as_str(),
+                    ) {
+                        Ok(languages) => Ok(languages),
+                        Err(e) => Err(format!(
+                            "Invalid YAML in languages file {}: {}",
+                            path.to_string_lossy(),
+                            e.to_string()
+                        )),
+                    }
+                }
+                Err(e) => Err(format!(
+                    "Couldn't read languages file {}: {}",
+                    path.to_string_lossy(),
+                    e.to_string(),
+                )),
             }
+        } else {
+            Err(format!(
+                "The languages file should be a YAML file. Found file extension {:?}",
+                file_extension
+            ))
         }
     }
 
     #[cfg(not(any(feature = "json", feature = "yaml")))]
     {
         _ = path;
-        panic!("No feature enabled to read languages file. Enable either the 'json' or 'yaml' feature.");
+        Err(concat!(
+            "No feature enabled to read languages file.",
+            " Enable either the 'json' or 'yaml' feature.",
+        )
+        .to_string())
     }
 }
 
