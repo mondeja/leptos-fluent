@@ -29,7 +29,11 @@ pub(crate) fn read_languages_file(
             }
         } else {
             Err(format!(
-                "The languages file should be a JSON file. Found file extension {:?}",
+                concat!(
+                    "The languages file should be a JSON file because",
+                    " you've enabled the 'json' feature.",
+                    " Found file extension {:?}"
+                ),
                 file_extension
             ))
         }
@@ -64,7 +68,11 @@ pub(crate) fn read_languages_file(
             }
         } else {
             Err(format!(
-                "The languages file should be a YAML file. Found file extension {:?}",
+                concat!(
+                    "The languages file should be a YAML file because",
+                    " you've enabled the 'yaml' feature.",
+                    " Found file extension {:?}"
+                ),
                 file_extension
             ))
         }
@@ -99,7 +107,11 @@ pub(crate) fn read_languages_file(
             }
         } else {
             Err(format!(
-                "The languages file should be a JSON5 file. Found file extension {:?}",
+                concat!(
+                    "The languages file should be a JSON5 file because",
+                    " you've enabled the 'json5' feature.",
+                    " Found file extension {:?}"
+                ),
                 file_extension
             ))
         }
