@@ -75,8 +75,7 @@ pub(crate) fn read_languages_file(
     }
 
     #[cfg(all(
-        not(feature = "json"),
-        not(feature = "yaml"),
+        not(any(feature = "json", feature = "yaml")),
         feature = "json5"
     ))]
     {
