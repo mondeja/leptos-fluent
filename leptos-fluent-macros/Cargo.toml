@@ -23,6 +23,7 @@ fluent-syntax = "0.11"
 pathdiff = "0.2"
 serde_json = { version = "1", optional = true }
 serde_yaml = { version = "0.9", optional = true }
+json5 = { version = "0.4", optional = true }
 
 [features]
 hydrate = []
@@ -31,6 +32,7 @@ actix = []
 axum = []
 json = ["dep:serde_json"]
 yaml = ["dep:serde_yaml"]
+json5 = ["dep:json5"]
 
 [package.metadata.cargo-all-features]
 skip_feature_sets = [
@@ -44,4 +46,4 @@ skip_feature_sets = [
   ["axum", "hydrate"]
 ]
 always_include_features = ["json"]
-denylist = ["yaml"]
+denylist = ["yaml", "json5"]

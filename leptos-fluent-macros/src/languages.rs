@@ -29,7 +29,11 @@ pub(crate) fn read_languages_file(
             }
         } else {
             Err(format!(
-                "The languages file should be a JSON file. Found file extension {:?}",
+                concat!(
+                    "The languages file should be a JSON file because",
+                    " you've enabled the 'json' feature.",
+                    " Found file extension {:?}"
+                ),
                 file_extension
             ))
         }
@@ -60,18 +64,60 @@ pub(crate) fn read_languages_file(
             }
         } else {
             Err(format!(
-                "The languages file should be a YAML file. Found file extension {:?}",
+                concat!(
+                    "The languages file should be a YAML file because",
+                    " you've enabled the 'yaml' feature.",
+                    " Found file extension {:?}"
+                ),
                 file_extension
             ))
         }
     }
 
-    #[cfg(not(any(feature = "json", feature = "yaml")))]
+    #[cfg(all(
+        not(any(feature = "json", feature = "yaml")),
+        feature = "json5"
+    ))]
+    {
+        let file_extension = path.extension().unwrap_or_default();
+        if file_extension == "json5" {
+            match fs::read_to_string(path) {
+                Ok(content) => {
+                    match json5::from_str::<Vec<(String, String)>>(
+                        content.as_str(),
+                    ) {
+                        Ok(languages) => Ok(languages),
+                        Err(e) => Err(format!(
+                            "Invalid JSON5 in languages file {}: {}",
+                            path.to_string_lossy(),
+                            e.to_string()
+                        )),
+                    }
+                }
+                Err(e) => Err(format!(
+                    "Couldn't read languages file {}: {}",
+                    path.to_string_lossy(),
+                    e.to_string(),
+                )),
+            }
+        } else {
+            Err(format!(
+                concat!(
+                    "The languages file should be a JSON5 file because",
+                    " you've enabled the 'json5' feature.",
+                    " Found file extension {:?}"
+                ),
+                file_extension
+            ))
+        }
+    }
+
+    #[cfg(not(any(feature = "json", feature = "yaml", feature = "json5")))]
     {
         _ = path;
         Err(concat!(
             "No feature enabled to read languages file.",
-            " Enable either the 'json' or 'yaml' feature.",
+            " Enable either the 'json', 'yaml' or 'json5' feature.",
         )
         .to_string())
     }
