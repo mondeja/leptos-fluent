@@ -14,7 +14,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! leptos-fluent = "0.0.33"
+//! leptos-fluent = "0.0.34"
 //! fluent-templates = "0.9"
 //!
 //! [features]
