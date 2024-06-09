@@ -37,4 +37,6 @@ pub(crate) fn build_files_tracker_quote(
 
 fn escape_string(s: &str) -> String {
     s.replace('"', "\\\"")
+        // Windows path separator
+        .replace('\\', "\\\\")
 }
