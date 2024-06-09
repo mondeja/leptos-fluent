@@ -14,6 +14,7 @@ pub fn App() -> impl IntoView {
     leptos_fluent! {{
         translations: TRANSLATIONS,
         locales: "./locales",
+        check_translations: "./src/**/*.rs",
     }};
 
     view! { <ChildComponent/> }

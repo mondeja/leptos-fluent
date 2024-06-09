@@ -19,7 +19,7 @@ Add the following to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-leptos-fluent = "0.0.33"
+leptos-fluent = "0.0.34"
 fluent-templates = "0.9"
 
 [features]
@@ -146,8 +146,8 @@ fn ChildComponent() -> impl IntoView {
         <p>
             <span>{move || tr!("hello-world")}</span>
             <span>{move_tr!("hello-args", {
-                "arg1" => "value1",
-                "arg2" => "value2",
+                "arg1" => "foo",
+                "arg2" => "bar",
             })}</span>
         </p>
     }

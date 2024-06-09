@@ -75,6 +75,7 @@ fn parse_litbool_or_expr_param(
 pub(crate) struct I18nLoader {
     pub(crate) languages: Vec<(String, String)>,
     pub(crate) languages_path: Option<String>,
+    pub(crate) core_locales_path: Option<String>,
     pub(crate) translations_ident: syn::Ident,
     pub(crate) sync_html_tag_lang_bool: Option<syn::LitBool>,
     pub(crate) sync_html_tag_lang_expr: Option<syn::Expr>,
@@ -119,6 +120,7 @@ impl Parse for I18nLoader {
         braced!(fields in input);
         let mut locales_path: Option<syn::LitStr> = None;
         let mut languages_path: Option<syn::LitStr> = None;
+        let mut core_locales_path: Option<syn::LitStr> = None;
         let mut translations_identifier: Option<syn::Ident> = None;
         #[cfg(not(feature = "ssr"))]
         let mut check_translations: Option<syn::LitStr> = None;
@@ -169,6 +171,8 @@ impl Parse for I18nLoader {
                 translations_identifier = Some(fields.parse()?);
             } else if k == "locales" {
                 locales_path = Some(fields.parse()?);
+            } else if k == "core_locales" {
+                core_locales_path = Some(fields.parse()?);
             } else if k == "languages" {
                 languages_path = Some(fields.parse()?);
             } else if k == "check_translations" {
@@ -390,6 +394,37 @@ impl Parse for I18nLoader {
 
         let locales_path_str =
             locales_folder_path.as_path().to_str().unwrap().to_string();
+
+        // core_locales
+        #[cfg(not(feature = "ssr"))]
+        let mut core_locales_content = None;
+        let mut core_locales_path_str = None;
+        if let Some(core_locales) = &core_locales_path {
+            let core_locales = workspace_path.join(core_locales.value());
+            if std::fs::metadata(&core_locales).is_err() {
+                return Err(syn::Error::new(
+                    core_locales_path.unwrap().span(),
+                    format!(
+                        concat!(
+                            "Couldn't read core fluent resource, this path should",
+                            " be relative to your crate's `Cargo.toml`.",
+                            " Looking for: {:?}",
+                        ),
+                        core_locales,
+                    )
+                ));
+            } else {
+                #[cfg(not(feature = "ssr"))]
+                {
+                    core_locales_content =
+                        Some(std::fs::read_to_string(&core_locales).unwrap());
+                }
+
+                core_locales_path_str =
+                    Some(core_locales.to_str().unwrap().to_string());
+            }
+        }
+
         let fluent_resources_and_file_paths =
             build_fluent_resources_and_file_paths(locales_path_str);
 
@@ -403,6 +438,8 @@ impl Parse for I18nLoader {
                     &workspace_path,
                     &fluent_resources,
                     fluent_file_paths,
+                    &core_locales_path_str,
+                    &core_locales_content,
                 );
 
                 let mut report = String::new();
@@ -461,6 +498,7 @@ impl Parse for I18nLoader {
             set_language_to_cookie_bool,
             set_language_to_cookie_expr,
             fluent_file_paths: fluent_resources_and_file_paths.1,
+            core_locales_path: core_locales_path_str,
         })
     }
 }

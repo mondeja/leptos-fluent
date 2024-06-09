@@ -1,10 +1,12 @@
 # CHANGELOG
 
-## Unreleased - [0.0.34]
+## 2024-06-09 - [0.0.34]
 
 ### New features
 
-- Allow to read languages from a JSON5 file.
+- Allow to read languages from a JSON5 file with a new feature `json5`.
+- Add `core_locales` argument to `leptos_fluent!` macro to specify the
+  file where the core locales are located.
 
 ### Enhancements
 
@@ -184,7 +186,7 @@
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
-[0.0.34]: https://github.com/mondeja/leptos-fluent/compare/v0.0.33...master
+[0.0.34]: https://github.com/mondeja/leptos-fluent/compare/v0.0.33...v0.0.34
 [0.0.33]: https://github.com/mondeja/leptos-fluent/compare/v0.0.32...v0.0.33
 [0.0.32]: https://github.com/mondeja/leptos-fluent/compare/v0.0.31...v0.0.32
 [0.0.31]: https://github.com/mondeja/leptos-fluent/compare/v0.0.30...v0.0.31

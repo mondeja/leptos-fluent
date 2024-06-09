@@ -12,6 +12,8 @@ pub(crate) fn run(
     workspace_path: &Path,
     fluent_resources: &FluentResources,
     fluent_file_paths: &FluentFilePaths,
+    core_locales_path: &Option<String>,
+    core_locales_content: &Option<String>,
 ) -> (Vec<String>, Vec<String>) {
     let mut errors = Vec::new();
 
@@ -27,6 +29,8 @@ pub(crate) fn run(
         fluent_resources,
         fluent_file_paths,
         workspace_path.to_str().unwrap(),
+        core_locales_path,
+        core_locales_content,
     );
     errors.extend(fluent_syntax_errors);
 
