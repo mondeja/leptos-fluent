@@ -41,6 +41,8 @@ pub(crate) fn build_fluent_entries(
     fluent_resources: &FluentResources,
     fluent_file_paths: &FluentFilePaths,
     workspace_path: &str,
+    core_locales_path: &Option<String>,
+    core_locales_content: &Option<String>,
 ) -> (HashMap<String, Vec<FluentEntry>>, Vec<String>) {
     let mut fluent_entries: HashMap<String, Vec<FluentEntry>> = HashMap::new();
     let mut errors: Vec<String> = Vec::new();
@@ -85,6 +87,57 @@ pub(crate) fn build_fluent_entries(
                     ));
                     fluent_entries
                         .get_mut(lang)
+                        .unwrap()
+                        .extend(get_fluent_entries_from_resource(&resource));
+                }
+            }
+        }
+    }
+
+    if let Some(resource_str) = &core_locales_content {
+        match fluent_templates::fluent_bundle::FluentResource::try_new(
+            resource_str.to_owned(),
+        ) {
+            Ok(resource) => {
+                let langs =
+                    fluent_entries.keys().cloned().collect::<Vec<String>>();
+                for lang in langs {
+                    fluent_entries
+                        .get_mut(&lang)
+                        .unwrap()
+                        .extend(get_fluent_entries_from_resource(&resource));
+                }
+            }
+            Err((resource, errs)) => {
+                let rel_file_path = pathdiff::diff_paths(
+                    core_locales_path.clone().unwrap(),
+                    workspace_path,
+                )
+                .unwrap()
+                .as_path()
+                .to_str()
+                .unwrap()
+                .to_string();
+                errors.push(format!(
+                    "Error{} parsing core fluent resource in file {}:\n  + {}",
+                    if errs.len() > 1 { "s" } else { "" },
+                    rel_file_path,
+                    errs.iter()
+                        .map(|e| {
+                            let (line, col) = line_col_from_index_content(
+                                resource_str,
+                                e.pos.start,
+                            );
+                            format!("{} (at line {}, col {})", e, line, col)
+                        })
+                        .collect::<Vec<String>>()
+                        .join("\n   +")
+                ));
+                let langs =
+                    fluent_entries.keys().cloned().collect::<Vec<String>>();
+                for lang in langs {
+                    fluent_entries
+                        .get_mut(&lang)
                         .unwrap()
                         .extend(get_fluent_entries_from_resource(&resource));
                 }

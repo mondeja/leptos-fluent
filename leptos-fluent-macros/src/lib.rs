@@ -190,14 +190,18 @@ pub fn leptos_fluent(
         set_language_to_cookie_bool,
         set_language_to_cookie_expr,
         fluent_file_paths,
+        core_locales_path,
     } = syn::parse_macro_input!(input as I18nLoader);
 
     let n_languages = languages.len();
     let languages_quote = build_languages_quote(&languages);
 
     // files tracker
-    let files_tracker_quote =
-        build_files_tracker_quote(&fluent_file_paths, &languages_path);
+    let files_tracker_quote = build_files_tracker_quote(
+        &fluent_file_paths,
+        &languages_path,
+        &core_locales_path,
+    );
 
     #[cfg(not(feature = "ssr"))]
     let sync_html_tag_lang_quote = {
