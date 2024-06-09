@@ -190,6 +190,8 @@ mod tests {
             &fluent_resources,
             &fluent_file_paths,
             &workspace_path,
+            None,
+            None,
         );
         assert!(errors.is_empty());
         assert_eq!(
@@ -238,6 +240,8 @@ mod tests {
             &fluent_resources,
             &fluent_file_paths,
             &workspace_path,
+            None,
+            None,
         );
         assert!(errors.is_empty());
         assert_eq!(entries, HashMap::from([("en-US".to_string(), vec![]),]))
@@ -258,6 +262,8 @@ mod tests {
             &fluent_resources,
             &fluent_file_paths,
             &workspace_path,
+            None,
+            None,
         );
         assert_eq!(
             errors,
@@ -294,6 +300,8 @@ mod tests {
             &fluent_resources,
             &fluent_file_paths,
             &workspace_path,
+            None,
+            None,
         );
         assert_eq!(
             errors,
