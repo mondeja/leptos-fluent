@@ -19,7 +19,7 @@ Add the following to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-leptos-fluent = "0.0.34"
+leptos-fluent = "0.0.35"
 fluent-templates = "0.9"
 
 [features]
@@ -90,18 +90,12 @@ fn App() -> impl IntoView {
         // Synchronize `<html lang="...">` attribute with the current
         // language using `leptos::create_effect`. By default, it is `false`.
         sync_html_tag_lang: true,
-        // URL parameter name to use discovering the initial language
-        // of the user. By default is `"lang"`.
-        url_param: "lang",
-        // Discover the initial language of the user from the URL.
-        // By default, it is `false`.
-        initial_language_from_url_param: true,
-        // Set the discovered initial language of the user from
-        // the URL in local storage. By default, it is `false`.
-        initial_language_from_url_param_to_localstorage: true,
         // Update the language on URL parameter when using the method
         // `I18n.set_language`. By default, it is `false`.
         set_language_to_url_param: true,
+        // Set the discovered initial language of the user from
+        // the URL in local storage. By default, it is `false`.
+        initial_language_from_url_param_to_localstorage: true,
         // Name of the field in local storage to get and set the
         // current language of the user. By default, it is `"lang"`.
         localstorage_key: "language",
@@ -131,6 +125,12 @@ fn App() -> impl IntoView {
         // Update the language on cookie when using the method `I18n.set_language`.
         // By default, it is `false`.
         set_language_to_cookie: true,
+        // URL parameter name to use discovering the initial language
+        // of the user. By default is `"lang"`.
+        url_param: "lang",
+        // Discover the initial language of the user from the URL.
+        // By default, it is `false`.
+        initial_language_from_url_param: true,
     }};
 
     view! {
