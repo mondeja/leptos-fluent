@@ -19,7 +19,7 @@ Add the following to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-leptos-fluent = "0.0.35"
+leptos-fluent = "0.0.36"
 fluent-templates = "0.9"
 
 [features]
