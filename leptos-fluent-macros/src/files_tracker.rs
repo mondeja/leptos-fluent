@@ -7,15 +7,14 @@ pub(crate) fn build_files_tracker_quote(
 ) -> proc_macro2::TokenStream {
     let mut files_tracker_str = "{".to_string();
     for (lang, paths) in fluent_resources.iter() {
-        files_tracker_str
-            .push_str(&format!("let {} = vec![", lang.replace('-', "_")));
-        for path in paths {
+        for (i, path) in paths.iter().enumerate() {
             files_tracker_str.push_str(&format!(
-                "include_bytes!(\"{}\"),",
+                "let {}{} = include_bytes!(\"{}\");",
+                lang.replace('-', "_"),
+                i,
                 &escape_string(path)
             ));
         }
-        files_tracker_str.push_str("];");
     }
     if let Some(languages_file_path) = &languages_path {
         files_tracker_str.push_str(&format!(

@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2024-06-15 - [0.0.36]
+
+### Bug fixes
+
+- Fix error building files tracker when multiple files for each language.
+
 ## 2024-06-15 - [0.0.35]
 
 ### Bug fixes
@@ -192,6 +198,7 @@
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.0.36]: https://github.com/mondeja/leptos-fluent/compare/v0.0.35...v0.0.36
 [0.0.35]: https://github.com/mondeja/leptos-fluent/compare/v0.0.34...v0.0.35
 [0.0.34]: https://github.com/mondeja/leptos-fluent/compare/v0.0.33...v0.0.34
 [0.0.33]: https://github.com/mondeja/leptos-fluent/compare/v0.0.32...v0.0.33
