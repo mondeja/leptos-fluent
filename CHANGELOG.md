@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## Unreleased - [0.0.35]
+
+### Bug fixes
+
+- Get the initial language from URL parameter on server side rendering.
+
 ## 2024-06-09 - [0.0.34]
 
 ### New features
@@ -186,6 +192,7 @@
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.0.35]: https://github.com/mondeja/leptos-fluent/compare/v0.0.34...master
 [0.0.34]: https://github.com/mondeja/leptos-fluent/compare/v0.0.33...v0.0.34
 [0.0.33]: https://github.com/mondeja/leptos-fluent/compare/v0.0.32...v0.0.33
 [0.0.32]: https://github.com/mondeja/leptos-fluent/compare/v0.0.31...v0.0.32
