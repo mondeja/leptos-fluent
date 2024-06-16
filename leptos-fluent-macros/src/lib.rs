@@ -80,10 +80,11 @@ use quote::quote;
 /// - **`core_locales`**: Path to the core locales file, which must contain a shared
 ///   translation for all languages. Is expected to be a path relative from `Cargo.toml`,
 ///   the same used in the [`fluent_templates::static_loader!`] macro.
-/// - **`check_translations`** (experimental): Path to the files to check if all
-///    translations are being used and their placeholders are correct. Is expected
-///   to be a glob pattern relative from `Cargo.toml` file. Tipically, you should use
-///   `"./src/**/*.rs"` or something like `"../{app,components}/src/**/*.rs"`.
+/// - **`check_translations`**: Path to the files to check if all translations are
+///   being used and their placeholders are correct. Is expected to be a glob pattern
+///   relative from `Cargo.toml` file. Tipically, you should use `"./src/**/*.rs"` for
+///   a single crate or something like `"../{app,components}/src/**/*.rs"` to match
+///   multiple crates in a workspace.
 /// - **`languages`**: Path to a languages file, which should an array of arrays
 ///   where each inner array contains a language identifier and a language name,
 ///   respectively. The language identifier should be a valid language tag, such as
@@ -97,7 +98,7 @@ use quote::quote;
 ///     ["es-ES", "Español (España)"]
 ///   ]
 ///   ```
-///   You can use `default-features = false` and enable the `yaml` or the `json5` feature
+///   You can set `default-features = false` and enable the `yaml` or the `json5` feature
 ///   to be able to use a YAML or JSON5 file. For example:
 ///   ```yaml
 ///   # locales/languages.yaml
@@ -151,9 +152,9 @@ use quote::quote;
 /// - **`set_language_to_cookie`** (_`false`_): Save the language of the user to a cookie when setting the language.
 ///   Can be a literal boolean or an expression that will be evaluated at runtime. It will only take effect on client-side.
 ///
-/// [`fluent_templates::static_loader!`]: https://docs.rs/fluent-templates/0.8.0/fluent_templates/macro.static_loader.html
+/// [`fluent_templates::static_loader!`]: https://docs.rs/fluent-templates/latest/fluent_templates/macro.static_loader.html
 /// [`once_cell:sync::Lazy`]: https://docs.rs/once_cell/latest/once_cell/sync/struct.Lazy.html
-/// [`StaticLoader`]: https://docs.rs/fluent-templates/0.8.0/fluent_templates/struct.StaticLoader.html
+/// [`StaticLoader`]: https://docs.rs/fluent-templates/latest/fluent_templates/struct.StaticLoader.html
 /// [`<html lang="...">` attribute]: https://developer.mozilla.org/es/docs/Web/HTML/Global_attributes/lang
 /// [local storage]: https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
 /// [`navigator.languages`]: https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages
