@@ -7,22 +7,22 @@ pub(crate) fn gather_tr_macro_defs_from_rs_files(
     #[cfg(not(test))] workspace_path: &Path,
 ) -> (Vec<TranslationMacro>, Vec<String>) {
     // TODO: handle errors
-    let glob_pattern = check_translations_globstr.to_str().unwrap();
     let mut errors = Vec::new();
+    let glob_pattern = check_translations_globstr.to_string_lossy();
 
-    match globwalk::glob(glob_pattern) {
+    match globwalk::glob(&glob_pattern) {
         Ok(paths) => {
             let mut tr_macros = Vec::new();
             #[cfg(not(test))]
-            let workspace_path_str = workspace_path.to_str().unwrap();
+            let workspace_path_str = workspace_path.to_string_lossy();
             for walker in paths {
                 match walker {
                     Ok(entry) => {
                         let path = entry.path();
                         match tr_macros_from_file_path(
-                            path.to_str().unwrap(),
+                            &path.to_string_lossy(),
                             #[cfg(not(test))]
-                            workspace_path_str,
+                            &workspace_path_str,
                         ) {
                             Ok(new_tr_macros) => {
                                 tr_macros.extend(new_tr_macros)
@@ -116,8 +116,7 @@ impl TranslationsMacrosVisitor {
         let rel_path = pathdiff::diff_paths(file_path, workspace_path)
             .unwrap()
             .as_path()
-            .to_str()
-            .unwrap()
+            .to_string_lossy()
             .to_string();
         Self {
             tr_macros: Vec::new(),
@@ -128,6 +127,40 @@ impl TranslationsMacrosVisitor {
             #[cfg(not(test))]
             file_path: rel_path,
         }
+    }
+}
+
+/// Convert a literal to a string, removing the quotes and the string type characters
+fn value_from_literal(literal: &proc_macro2::Literal) -> String {
+    let literal_str = literal.to_string();
+    if literal_str.starts_with("r#") {
+        literal_str
+            .strip_prefix("r#\"")
+            .expect("Raw string literal that does not starts with 'r#\"'")
+            .strip_suffix("\"#")
+            .expect("Raw string literal that does not ends with '\"#'")
+            .to_string()
+    } else if literal_str.starts_with("c\"") {
+        literal_str
+            .strip_prefix("c\"")
+            .expect("C string literal that does not starts with 'c\"'")
+            .strip_suffix('"')
+            .expect("C string literal that does not ends with '\"'")
+            .to_string()
+    } else if literal_str.starts_with("cr#") {
+        literal_str
+            .strip_prefix("cr#\"")
+            .expect("C raw string literal that does not starts with 'cr#\"'")
+            .strip_suffix("\"#")
+            .expect("C raw string literal that does not ends with '\"#'")
+            .to_string()
+    } else {
+        literal_str
+            .strip_prefix('"')
+            .expect("Literal that does not starts with '\"'")
+            .strip_suffix('"')
+            .expect("Literal that does not ends with '\"'")
+            .to_string()
     }
 }
 
@@ -168,15 +201,8 @@ impl<'ast> TranslationsMacrosVisitor {
                         if let proc_macro2::TokenTree::Literal(literal) =
                             tr_token
                         {
-                            self.current_message_name = Some(
-                                literal
-                                    .to_string()
-                                    .strip_prefix('"')
-                                    .unwrap()
-                                    .strip_suffix('"')
-                                    .unwrap()
-                                    .to_string(),
-                            );
+                            self.current_message_name =
+                                Some(value_from_literal(&literal));
                         } else if let proc_macro2::TokenTree::Group(
                             placeables_group,
                         ) = tr_token
@@ -189,13 +215,7 @@ impl<'ast> TranslationsMacrosVisitor {
                                 {
                                     if after_comma_punct {
                                         self.current_placeables.push(
-                                            arg_literal
-                                                .to_string()
-                                                .strip_prefix('"')
-                                                .unwrap()
-                                                .strip_suffix('"')
-                                                .unwrap()
-                                                .to_string(),
+                                            value_from_literal(&arg_literal),
                                         );
                                         after_comma_punct = false;
                                     }
@@ -318,7 +338,7 @@ mod tests {
                 tr_macro!(
                     "move_tr",
                     "html-tag-lang-is",
-                    vec!["foo".to_string(), "bar".to_string(),]
+                    vec!["foo".to_string(), "bar".to_string()]
                 ),
             ]
         );
@@ -347,13 +367,13 @@ mod tests {
                 tr_macro!(
                     "tr",
                     "html-tag-lang-is",
-                    vec!["foo".to_string(), "bar".to_string(),]
+                    vec!["foo".to_string(), "bar".to_string()]
                 ),
                 tr_macro!("tr", "select-another-language", Vec::new()),
                 tr_macro!(
                     "tr",
                     "other-html-tag-lang-is",
-                    vec!["foo".to_string(), "bar".to_string(),]
+                    vec!["foo".to_string(), "bar".to_string()]
                 ),
             ]
         );
@@ -404,7 +424,7 @@ mod tests {
                 tr_macro!(
                     "tr",
                     "html-tag-lang-is",
-                    vec!["foo".to_string(), "bar".to_string(),]
+                    vec!["foo".to_string(), "bar".to_string()]
                 ),
             ]
         );
@@ -427,7 +447,7 @@ mod tests {
                 tr_macro!(
                     "tr",
                     "html-tag-lang-is",
-                    vec!["foo".to_string(), "bar".to_string(),]
+                    vec!["foo".to_string(), "bar".to_string()]
                 ),
             ]
         );
@@ -515,5 +535,30 @@ mod tests {
         let tr_macros = tr_macros_from_file_content(&content.to_string());
 
         assert_eq!(tr_macros, vec![]);
+    }
+
+    #[test]
+    fn raw_string_literals() {
+        let content = quote! {
+            fn App() -> impl IntoView {
+                view! {
+                    <p>{tr!(r#"select-a-language"#)}</p>
+                    <p>{move_tr!(r#"html-tag-lang-is"#, { "foo" => r#"value1"#, "bar" => r#"value2"# })}</p>
+                }
+            }
+        };
+        let tr_macros = tr_macros_from_file_content(&content.to_string());
+
+        assert_eq!(
+            tr_macros,
+            vec![
+                tr_macro!("tr", "select-a-language", Vec::new()),
+                tr_macro!(
+                    "move_tr",
+                    "html-tag-lang-is",
+                    vec!["foo".to_string(), "bar".to_string()]
+                ),
+            ]
+        );
     }
 }

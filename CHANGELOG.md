@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## Unreleased - [0.0.37]
+
+### Bug fixes
+
+- Don't panic parsing raw string literals of `tr!` macros checking
+  translations.
+
 ## 2024-06-15 - [0.0.36]
 
 ### Bug fixes
@@ -198,6 +205,7 @@
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.0.37]: https://github.com/mondeja/leptos-fluent/compare/v0.0.36...master
 [0.0.36]: https://github.com/mondeja/leptos-fluent/compare/v0.0.35...v0.0.36
 [0.0.35]: https://github.com/mondeja/leptos-fluent/compare/v0.0.34...v0.0.35
 [0.0.34]: https://github.com/mondeja/leptos-fluent/compare/v0.0.33...v0.0.34
