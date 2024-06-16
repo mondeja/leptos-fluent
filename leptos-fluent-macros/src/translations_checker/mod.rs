@@ -53,7 +53,7 @@ fn check_tr_macros_against_fluent_entries(
     let mut error_messages: Vec<String> = Vec::new();
 
     for tr_macro in tr_macros {
-        for (lang, entries) in fluent_entries.iter() {
+        for (lang, entries) in fluent_entries {
             // tr macro message must be defined for each language
             let mut message_name_found = false;
             for entry in entries {
@@ -161,7 +161,7 @@ fn check_fluent_entries_against_tr_macros(
 ) -> Vec<String> {
     let mut error_messages: Vec<String> = Vec::new();
 
-    for (lang, entries) in fluent_entries.iter() {
+    for (lang, entries) in fluent_entries {
         for entry in entries {
             // fluent entry message must be defined for each language
             let mut message_name_found = false;
@@ -175,7 +175,7 @@ fn check_fluent_entries_against_tr_macros(
                             let file_path = {
                                 #[cfg(not(test))]
                                 {
-                                    tr_macro.file_path.clone()
+                                    &tr_macro.file_path
                                 }
 
                                 #[cfg(test)]

@@ -6,7 +6,7 @@ pub(crate) fn build_files_tracker_quote(
     core_locales_path: &Option<String>,
 ) -> proc_macro2::TokenStream {
     let mut files_tracker_str = "{".to_string();
-    for (lang, paths) in fluent_resources.iter() {
+    for (lang, paths) in fluent_resources {
         for (i, path) in paths.iter().enumerate() {
             files_tracker_str.push_str(&format!(
                 "let {}{} = include_bytes!(\"{}\");",

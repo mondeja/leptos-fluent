@@ -359,12 +359,10 @@ impl Parse for I18nLoader {
         let languages;
         let mut languages_file_path = None;
 
-        let languages_path_copy = languages_path.clone();
         let languages_file = languages_path
             .as_ref()
             .map(|languages| workspace_path.join(languages.value()));
 
-        let locales_path_copy = locales_path.clone();
         let locales_folder_path = locales_path
             .as_ref()
             .map(|locales| workspace_path.join(locales.value()))
@@ -373,7 +371,7 @@ impl Parse for I18nLoader {
         if let Some(ref file) = languages_file {
             if std::fs::metadata(file).is_err() {
                 return Err(syn::Error::new(
-                    languages_path_copy.unwrap().span(),
+                    languages_path.as_ref().unwrap().span(),
                     format!(
                         concat!(
                             "Couldn't read languages file, this path should",
@@ -391,7 +389,7 @@ impl Parse for I18nLoader {
                 let maybe_languages = read_languages_file(langs_path);
                 if let Err(e) = maybe_languages {
                     return Err(syn::Error::new(
-                        languages_path_copy.unwrap().span(),
+                        languages_path.as_ref().unwrap().span(),
                         e.to_string(),
                     ));
                 }
@@ -401,7 +399,7 @@ impl Parse for I18nLoader {
             }
         } else if std::fs::metadata(&locales_folder_path).is_err() {
             return Err(syn::Error::new(
-                locales_path_copy.unwrap().span(),
+                locales_path.as_ref().unwrap().span(),
                 format!(
                     concat!(
                         "Couldn't read locales folder, this path should",

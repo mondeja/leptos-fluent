@@ -44,6 +44,8 @@ repos:
             -D,
             clippy::print_stdout,
             -D,
+            clippy::explicit_iter_loop,
+            -D,
             warnings,
           ]
       - id: clippy
@@ -57,6 +59,8 @@ repos:
             --,
             -D,
             clippy::print_stdout,
+            -D,
+            clippy::explicit_iter_loop,
             -D,
             warnings,
           ]
@@ -75,6 +79,8 @@ repos:
             -D,
             clippy::print_stdout,
             -D,
+            clippy::explicit_iter_loop,
+            -D,
             warnings,
           ]
       - id: clippy
@@ -91,6 +97,8 @@ repos:
             --,
             -D,
             clippy::print_stdout,
+            -D,
+            clippy::explicit_iter_loop,
             -D,
             warnings,
           ]

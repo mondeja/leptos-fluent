@@ -12,7 +12,7 @@ fn set_dir_to_languages_from_languages_file(
     languages: &[LanguagesFileLanguage],
 ) -> Vec<(String, String, String)> {
     let mut locales = vec![];
-    for tuple in languages.iter() {
+    for tuple in languages {
         match tuple {
             LanguagesFileLanguage::CodeName(lang_code, lang_name) => {
                 locales.push((
@@ -184,7 +184,7 @@ pub(crate) fn read_locales_folder(
     }
 
     let mut locales = vec![];
-    for entry in entries.iter() {
+    for entry in entries {
         let lang_code = entry
             .path()
             .file_name()
