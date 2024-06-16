@@ -263,9 +263,9 @@ impl WritingDirection {
     }
 }
 
-impl std::string::ToString for WritingDirection {
-    fn to_string(&self) -> String {
-        self.as_str().to_string()
+impl core::fmt::Display for WritingDirection {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.write_str(self.as_str())
     }
 }
 
