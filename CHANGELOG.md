@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## Unreleased - [0.0.38]
+## Unreleased - [0.1.0]
 
 ### New features
 
@@ -221,7 +221,7 @@
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
-[0.0.38]: https://github.com/mondeja/leptos-fluent/compare/v0.0.37...master
+[0.1.0]: https://github.com/mondeja/leptos-fluent/compare/v0.0.37...master
 [0.0.37]: https://github.com/mondeja/leptos-fluent/compare/v0.0.36...v0.0.37
 [0.0.36]: https://github.com/mondeja/leptos-fluent/compare/v0.0.35...v0.0.36
 [0.0.35]: https://github.com/mondeja/leptos-fluent/compare/v0.0.34...v0.0.35
