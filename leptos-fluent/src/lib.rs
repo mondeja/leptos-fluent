@@ -28,6 +28,14 @@
 //! ]
 //! ```
 //!
+//! If you're using `cargo-leptos` to build your project, watch the
+//! _locales/_ folder with:
+//!
+//! ```toml
+//! [package.metadata.leptos]
+//! watch-additional-files = ["locales"]  # Relative to Cargo.toml file
+//! ```
+//!
 //! # Usage
 //!
 //! Giving the following directory structure:
