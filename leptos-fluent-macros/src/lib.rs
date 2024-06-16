@@ -120,7 +120,8 @@ use quote::quote;
 ///   [
 ///     ["en-US", "English (United States)", "ltr"],
 ///     ["es-ES", "Español (España)", "auto"],
-///     ["ar", "العربية", "rtl"]
+///     ["ar", "العربية", "rtl"],
+///     ["it", "Italiano"]
 ///   ]
 ///   ```
 /// - **`sync_html_tag_lang`** (_`false`_): Synchronize the global [`<html lang="...">` attribute]
