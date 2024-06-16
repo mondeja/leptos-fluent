@@ -40,7 +40,6 @@ pub(crate) fn run(
         &tr_macros,
         &fluent_entries,
     ));
-    // TODO: Include the core.ftl file in the check
     // TODO: Currently, the fluent-syntax parser does not offer a CST
     //       parser so we don't know the spans of the entries.
     //       See https://github.com/projectfluent/fluent-rs/issues/270
