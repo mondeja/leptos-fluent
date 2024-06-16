@@ -99,6 +99,9 @@ fn App() -> impl IntoView {
         // Synchronize `<html lang="...">` attribute with the current
         // language using `leptos::create_effect`. By default, it is `false`.
         sync_html_tag_lang: true,
+        // Synchronize `<html dir="...">` attribute setting `"ltr"`
+        // or `"rtl"` depending on the current language.
+        sync_html_tag_dir: true,
         // Update the language on URL parameter when using the method
         // `I18n.set_language`. By default, it is `false`.
         set_language_to_url_param: true,

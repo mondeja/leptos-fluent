@@ -114,9 +114,25 @@ use quote::quote;
 ///     ["es-ES", "Español (España)"]
 ///   ]
 ///   ```
+///   You can define a third element in the inner array with the direction of the language,
+///   to use it in the [`<html dir="...">` attribute] (see `sync_html_tag_dir`). For example:
+///   ```json
+///   [
+///     ["en-US", "English (United States)", "ltr"],
+///     ["es-ES", "Español (España)", "auto"],
+///     ["ar", "العربية", "rtl"]
+///   ]
+///   ```
 /// - **`sync_html_tag_lang`** (_`false`_): Synchronize the global [`<html lang="...">` attribute]
 ///   with current language using [`leptos::create_effect`]. Can be a literal boolean or an
 ///   expression that will be evaluated at runtime.
+/// - **`sync_html_tag_dir`** (_`false`_): Synchronize the global [`<html dir="...">` attribute]
+///   with current language using [`leptos::create_effect`]. Can be a literal boolean or an
+///   expression that will be evaluated at runtime. For custom languages from a languages file,
+///   you can specify a third element in the inner array with the direction of the language,
+///   which can be `"auto"`, `"ltr"`, or `"rtl"`. For automatic languages will be defined depending
+///   on the language. For example, Arabic will be `"rtl"`, English will be `"ltr"` and Japanese
+///   will be `"auto"`.
 /// - **`url_param`** (_`"lang"`_): The parameter name to manage the language in a URL parameter.
 ///   Can be a literal string or an expression that will be evaluated at runtime. It will take effect
 ///   on client-side and server side.
@@ -159,6 +175,7 @@ use quote::quote;
 /// [`once_cell:sync::Lazy`]: https://docs.rs/once_cell/latest/once_cell/sync/struct.Lazy.html
 /// [`StaticLoader`]: https://docs.rs/fluent-templates/latest/fluent_templates/struct.StaticLoader.html
 /// [`<html lang="...">` attribute]: https://developer.mozilla.org/es/docs/Web/HTML/Global_attributes/lang
+/// [`<html dir="...">` attribute]: https://developer.mozilla.org/es/docs/Web/HTML/Global_attributes/dir
 /// [local storage]: https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
 /// [`navigator.languages`]: https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages
 /// [`leptos::create_effect`]: https://docs.rs/leptos/latest/leptos/fn.create_effect.html
@@ -174,6 +191,8 @@ pub fn leptos_fluent(
         languages_path,
         sync_html_tag_lang_bool,
         sync_html_tag_lang_expr,
+        sync_html_tag_dir_bool,
+        sync_html_tag_dir_expr,
         initial_language_from_url_param_bool,
         initial_language_from_url_param_expr,
         url_param_str,
@@ -217,16 +236,17 @@ pub fn leptos_fluent(
     #[cfg(not(feature = "ssr"))]
     let sync_html_tag_lang_quote = {
         let effect_quote = quote! {
-            use wasm_bindgen::JsCast;
-            ::leptos::create_effect(move |_| ::leptos::document()
-                .document_element()
-                .unwrap()
-                .unchecked_into::<::leptos::web_sys::HtmlElement>()
-                .set_attribute(
-                    "lang",
-                    &::leptos_fluent::expect_i18n().language.get().id.to_string()
-                )
-            );
+            ::leptos::create_effect(move |_| {
+                use wasm_bindgen::JsCast;
+                _ = ::leptos::document()
+                    .document_element()
+                    .unwrap()
+                    .unchecked_into::<::leptos::web_sys::HtmlElement>()
+                    .set_attribute(
+                        "lang",
+                        &::leptos_fluent::expect_i18n().language.get().id.to_string()
+                    );
+            });
         };
 
         match sync_html_tag_lang_bool {
@@ -247,6 +267,41 @@ pub fn leptos_fluent(
 
     #[cfg(feature = "ssr")]
     let sync_html_tag_lang_quote = quote! {};
+
+    #[cfg(not(feature = "ssr"))]
+    let sync_html_tag_dir_quote = {
+        let effect_quote = quote! {
+            ::leptos::create_effect(move |_| {
+                use wasm_bindgen::JsCast;
+                _ = ::leptos::document()
+                    .document_element()
+                    .unwrap()
+                    .unchecked_into::<::leptos::web_sys::HtmlElement>()
+                    .set_attribute(
+                        "dir",
+                        ::leptos_fluent::expect_i18n().language.get().dir.as_str(),
+                    );
+            });
+        };
+
+        match sync_html_tag_dir_bool {
+            Some(lit) => match lit.value {
+                true => effect_quote,
+                false => quote! {},
+            },
+            None => match sync_html_tag_dir_expr {
+                Some(expr) => quote! {
+                    if #expr {
+                        #effect_quote
+                    }
+                },
+                None => quote! {},
+            },
+        }
+    };
+
+    #[cfg(feature = "ssr")]
+    let sync_html_tag_dir_quote = quote! {};
 
     let url_param = match url_param_str {
         Some(lit) => quote! { #lit },
@@ -817,6 +872,7 @@ pub fn leptos_fluent(
             };
             provide_context::<::leptos_fluent::I18n>(i18n);
             #sync_html_tag_lang_quote
+            #sync_html_tag_dir_quote
             #sync_language_with_localstorage_quote
             #sync_language_with_url_param_quote
             #sync_language_with_cookie_quote

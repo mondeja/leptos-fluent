@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## Unreleased - [0.0.38]
+
+### New features
+
+- Add `sync_html_tag_dir` parameter to `leptos_fluent!` macro to sync the `dir`
+  global attribute of the `<html>` tag with the current language direction.
+
 ## 2024-06-16 - [0.0.37]
 
 ### Bug fixes
@@ -214,6 +221,7 @@
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.0.38]: https://github.com/mondeja/leptos-fluent/compare/v0.0.37...master
 [0.0.37]: https://github.com/mondeja/leptos-fluent/compare/v0.0.36...v0.0.37
 [0.0.36]: https://github.com/mondeja/leptos-fluent/compare/v0.0.35...v0.0.36
 [0.0.35]: https://github.com/mondeja/leptos-fluent/compare/v0.0.34...v0.0.35

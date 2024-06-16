@@ -1,19 +1,55 @@
 use std::fs;
 use std::path::PathBuf;
 
+#[derive(serde::Deserialize)]
+#[serde(untagged)]
+enum LanguagesFileLanguage {
+    CodeName(String, String),
+    CodeNameDir(String, String, String),
+}
+
+fn set_dir_to_languages_from_languages_file(
+    languages: &[LanguagesFileLanguage],
+) -> Vec<(String, String, String)> {
+    let mut locales = vec![];
+    for tuple in languages.iter() {
+        match tuple {
+            LanguagesFileLanguage::CodeName(lang_code, lang_name) => {
+                locales.push((
+                    lang_code.to_owned(),
+                    lang_name.to_owned(),
+                    iso639_to_dir(&code_to_iso639(lang_code)).to_string(),
+                ));
+            }
+            LanguagesFileLanguage::CodeNameDir(lang_code, lang_name, dir) => {
+                locales.push((
+                    lang_code.to_owned(),
+                    lang_name.to_owned(),
+                    dir.to_owned(),
+                ));
+            }
+        }
+    }
+    locales
+}
+
 pub(crate) fn read_languages_file(
     path: &PathBuf,
-) -> Result<Vec<(String, String)>, String> {
+) -> Result<Vec<(String, String, String)>, String> {
     #[cfg(feature = "json")]
     {
         let file_extension = path.extension().unwrap_or_default();
         if file_extension == "json" {
             match fs::read_to_string(path) {
                 Ok(content) => {
-                    match serde_json::from_str::<Vec<(String, String)>>(
+                    match serde_json::from_str::<Vec<LanguagesFileLanguage>>(
                         content.as_str(),
                     ) {
-                        Ok(languages) => Ok(languages),
+                        Ok(languages) => {
+                            Ok(set_dir_to_languages_from_languages_file(
+                                &languages,
+                            ))
+                        }
                         Err(e) => Err(format!(
                             "Invalid JSON in languages file {}: {}",
                             path.to_string_lossy(),
@@ -45,10 +81,14 @@ pub(crate) fn read_languages_file(
         if file_extension == "yaml" || file_extension == "yml" {
             match fs::read_to_string(path) {
                 Ok(content) => {
-                    match serde_yaml::from_str::<Vec<(String, String)>>(
+                    match serde_yaml::from_str::<Vec<LanguagesFileLanguage>>(
                         content.as_str(),
                     ) {
-                        Ok(languages) => Ok(languages),
+                        Ok(languages) => {
+                            Ok(set_dir_to_languages_from_languages_file(
+                                &languages,
+                            ))
+                        }
                         Err(e) => Err(format!(
                             "Invalid YAML in languages file {}: {}",
                             path.to_string_lossy(),
@@ -83,10 +123,14 @@ pub(crate) fn read_languages_file(
         if file_extension == "json5" {
             match fs::read_to_string(path) {
                 Ok(content) => {
-                    match json5::from_str::<Vec<(String, String)>>(
+                    match json5::from_str::<Vec<LanguagesFileLanguage>>(
                         content.as_str(),
                     ) {
-                        Ok(languages) => Ok(languages),
+                        Ok(languages) => {
+                            Ok(set_dir_to_languages_from_languages_file(
+                                &languages,
+                            ))
+                        }
                         Err(e) => Err(format!(
                             "Invalid JSON5 in languages file {}: {}",
                             path.to_string_lossy(),
@@ -123,7 +167,9 @@ pub(crate) fn read_languages_file(
     }
 }
 
-pub(crate) fn read_locales_folder(path: &PathBuf) -> Vec<(String, String)> {
+pub(crate) fn read_locales_folder(
+    path: &PathBuf,
+) -> Vec<(String, String, String)> {
     let mut iso639_language_codes = vec![];
     let mut entries = vec![];
     for entry in fs::read_dir(path).expect("Couldn't read locales folder") {
@@ -154,20 +200,23 @@ pub(crate) fn read_locales_folder(path: &PathBuf) -> Vec<(String, String)> {
             > 1;
         let lang_name =
             language_name_from_language_code(&lang_code, use_country_code);
-        locales.push((lang_code, lang_name.to_string()));
+        let lang_dir = iso639_to_dir(&iso639_code);
+        locales.push((lang_code, lang_name.to_string(), lang_dir.to_string()));
     }
     locales.sort_by(|a, b| a.1.cmp(&b.1));
     locales
 }
 
 pub(crate) fn build_languages_quote(
-    languages: &[(String, String)],
+    languages: &[(String, String, String)],
 ) -> proc_macro2::TokenStream {
     format!(
         "[{}]",
         languages
             .iter()
-            .map(|(id, name)| generate_code_for_static_language(id, name))
+            .map(|(id, name, dir)| generate_code_for_static_language(
+                id, name, dir
+            ))
             .collect::<Vec<String>>()
             .join(",")
     )
@@ -175,15 +224,26 @@ pub(crate) fn build_languages_quote(
     .unwrap()
 }
 
-fn generate_code_for_static_language(id: &str, name: &str) -> String {
+fn generate_code_for_static_language(
+    id: &str,
+    name: &str,
+    dir: &str,
+) -> String {
     format!(
         concat!(
             "&::leptos_fluent::Language{{",
             "id: ::fluent_templates::loader::langid!(\"{}\"),",
-            "name: \"{}\"",
+            "name: \"{}\",",
+            "dir: {}",
             "}}",
         ),
-        id, name
+        id,
+        name,
+        match dir {
+            "ltr" => "&::leptos_fluent::WritingDirection::Ltr",
+            "rtl" => "&::leptos_fluent::WritingDirection::Rtl",
+            _ => "&::leptos_fluent::WritingDirection::Auto",
+        }
     )
 }
 
@@ -196,6 +256,198 @@ fn code_to_iso639(code: &str) -> String {
         return code.to_lowercase();
     };
     code.split(splitter).collect::<Vec<&str>>()[0].to_string()
+}
+
+/// Convert an ISO-639 language code to a directionality string.
+///
+/// Taken from https://github.com/chladog/iso-639-1-dir
+fn iso639_to_dir(code: &str) -> &'static str {
+    match code {
+        "aa" => "ltr",
+        "ab" => "ltr",
+        "ae" => "ltr",
+        "af" => "ltr",
+        "ak" => "ltr",
+        "am" => "ltr",
+        "an" => "ltr",
+        "ar" => "rtl",
+        "as" => "ltr",
+        "av" => "ltr",
+        "ay" => "ltr",
+        "az" => "ltr",
+        "ba" => "ltr",
+        "be" => "ltr",
+        "bg" => "ltr",
+        "bi" => "ltr",
+        "bm" => "ltr", // TODO: not sure about this
+        "bn" => "ltr",
+        "bo" => "ltr",
+        "br" => "ltr",
+        "bs" => "ltr",
+        "ca" => "ltr",
+        "ce" => "ltr",
+        "ch" => "ltr",
+        "co" => "ltr",
+        "cr" => "ltr",
+        "cs" => "ltr",
+        "cu" => "ltr",
+        "cv" => "ltr",
+        "cy" => "ltr",
+        "da" => "ltr",
+        "de" => "ltr",
+        "dv" => "rtl",
+        "dz" => "ltr",
+        "ee" => "ltr",
+        "el" => "ltr",
+        "en" => "ltr",
+        "eo" => "ltr",
+        "es" => "ltr",
+        "et" => "ltr",
+        "eu" => "ltr",
+        "fa" => "rtl",
+        "ff" => "ltr",
+        "fi" => "ltr",
+        "fj" => "ltr",
+        "fo" => "ltr",
+        "fr" => "ltr",
+        "fy" => "ltr",
+        "ga" => "ltr",
+        "gd" => "ltr",
+        "gl" => "ltr",
+        "gn" => "ltr",
+        "gu" => "ltr",
+        "gv" => "ltr",
+        "ha" => "ltr",
+        "he" => "rtl",
+        "hi" => "ltr",
+        "ho" => "ltr",
+        "hr" => "ltr",
+        "ht" => "ltr",
+        "hu" => "ltr",
+        "hy" => "ltr",
+        "hz" => "ltr",
+        "ia" => "ltr",
+        "id" => "ltr",
+        "ie" => "ltr",
+        "ig" => "ltr",
+        "ii" => "ltr",
+        "ik" => "ltr",
+        "io" => "ltr",
+        "is" => "ltr",
+        "it" => "ltr",
+        "iu" => "ltr",
+        "ja" => "auto", // (top to bottom)
+        "jv" => "ltr",
+        "ka" => "ltr",
+        "kg" => "ltr",
+        "ki" => "ltr",
+        "kj" => "ltr",
+        "kk" => "ltr",
+        "kl" => "ltr",
+        "km" => "ltr",
+        "kn" => "ltr",
+        "ko" => "auto", // (top to bottom)
+        "kr" => "ltr",
+        "ks" => "rtl",
+        "ku" => "rtl",
+        "kv" => "ltr",
+        "kw" => "ltr",
+        "ky" => "ltr",
+        "la" => "ltr",
+        "lb" => "ltr",
+        "lg" => "ltr",
+        "li" => "ltr",
+        "ln" => "ltr",
+        "lo" => "ltr",
+        "lt" => "ltr",
+        "lu" => "ltr",
+        "lv" => "ltr",
+        "mg" => "ltr",
+        "mh" => "ltr",
+        "mi" => "ltr",
+        "mk" => "ltr",
+        "ml" => "ltr",
+        "mn" => "auto", // (top to bottom)
+        "mr" => "ltr",
+        "ms" => "ltr",
+        "mt" => "ltr",
+        "my" => "ltr",
+        "na" => "ltr",
+        "nb" => "ltr",
+        "nd" => "ltr",
+        "ne" => "ltr",
+        "ng" => "ltr",
+        "nl" => "ltr",
+        "nn" => "ltr",
+        "no" => "ltr",
+        "nr" => "ltr",
+        "nv" => "ltr",
+        "ny" => "ltr",
+        "oc" => "ltr",
+        "oj" => "ltr",
+        "om" => "ltr",
+        "or" => "ltr",
+        "os" => "ltr",
+        "pa" => "rtl",
+        "pi" => "ltr",
+        "pl" => "ltr",
+        "ps" => "rtl",
+        "pt" => "ltr",
+        "qu" => "ltr",
+        "rm" => "ltr",
+        "rn" => "ltr",
+        "ro" => "ltr",
+        "ru" => "ltr",
+        "rw" => "ltr",
+        "sa" => "ltr",
+        "sc" => "ltr",
+        "sd" => "rtl",
+        "se" => "ltr",
+        "sg" => "ltr",
+        "si" => "ltr",
+        "sk" => "ltr",
+        "sl" => "ltr",
+        "sm" => "ltr",
+        "sn" => "ltr",
+        "so" => "ltr",
+        "sq" => "ltr",
+        "sr" => "ltr",
+        "ss" => "ltr",
+        "st" => "ltr",
+        "su" => "ltr",
+        "sv" => "ltr",
+        "sw" => "ltr",
+        "ta" => "ltr",
+        "te" => "ltr",
+        "tg" => "ltr",
+        "th" => "ltr",
+        "ti" => "ltr",
+        "tk" => "rtl",
+        "tl" => "ltr",
+        "tn" => "ltr",
+        "to" => "ltr",
+        "tr" => "ltr",
+        "ts" => "ltr",
+        "tt" => "ltr",
+        "tw" => "ltr",
+        "ty" => "ltr",
+        "ug" => "rtl",
+        "uk" => "ltr",
+        "ur" => "rtl",
+        "uz" => "ltr",
+        "ve" => "ltr",
+        "vi" => "auto", // (top to bottom)
+        "vo" => "ltr",
+        "wa" => "ltr",
+        "wo" => "ltr",
+        "xh" => "ltr",
+        "yi" => "rtl",
+        "yo" => "ltr",
+        "za" => "auto", // (top to bottom)
+        "zh" => "auto", // (top to bottom)
+        "zu" => "ltr",
+        _ => "auto",
+    }
 }
 
 fn language_name_from_language_code(
