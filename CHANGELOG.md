@@ -7,6 +7,10 @@
 - Don't panic parsing raw string literals of `tr!` macros checking
   translations.
 
+### Enhancements
+
+- Notify invalid Fluent message identifiers checking translations.
+
 ## 2024-06-15 - [0.0.36]
 
 ### Bug fixes

@@ -6,7 +6,6 @@ pub(crate) fn gather_tr_macro_defs_from_rs_files(
     check_translations_globstr: &Path,
     #[cfg(not(test))] workspace_path: &Path,
 ) -> (Vec<TranslationMacro>, Vec<String>) {
-    // TODO: handle errors
     let mut errors = Vec::new();
     let glob_pattern = check_translations_globstr.to_string_lossy();
 
