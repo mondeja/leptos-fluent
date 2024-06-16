@@ -147,7 +147,8 @@ use quote::quote;
 /// - **`cookie_name`** (_`"lf-lang"`_): The cookie name to manage language in a cookie. Can be a literal string or an
 ///   expression that will be evaluated at runtime. It will take effect on client-side and server side.
 /// - **`cookie_attrs`** (_`""`_): The [attributes][cookie-attributes] to set in the cookie. Can be a literal string or an expression
-///   that will be evaluated at runtime. It will take effect on client-side.
+///   that will be evaluated at runtime. For example, `"SameSite=Strict; Secure; path=/; max-age=600"`.
+///   It will take effect on client-side.
 /// - **`initial_language_from_cookie`** (_`false`_): Load the initial language of the user from a cookie.
 ///   Can be a literal boolean or an expression that will be evaluated at runtime. It will take effect on client-side
 ///   and server side.
