@@ -18,6 +18,8 @@ pub fn App() -> impl IntoView {
         translations: TRANSLATIONS,
         locales: "./locales",
         check_translations: "./src/**/*.rs",
+        sync_html_tag_lang: true,
+        sync_html_tag_dir: true,
         cookie_name: "lang",
         cookie_attrs: "SameSite=Strict; Secure; path=/; max-age=600",
         initial_language_from_cookie: true,

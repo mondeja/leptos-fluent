@@ -91,9 +91,12 @@
 //!
 //!         // Client side options
 //!         // -------------------
-//!         // Synchronize `<html lang="...">` attribute with the current
-//!         // language using `leptos::create_effect`. By default, it is `false`.
+//!         // Synchronize `<html lang="...">` attribute with the current active
+//!         // language. By default, it is `false`.
 //!         sync_html_tag_lang: true,
+//!         // Synchronize `<html dir="...">` attribute setting `"ltr"`,
+//!         // `"rtl"` or `"auto"` depending on the current active language.
+//!         sync_html_tag_dir: true,
 //!         // Update the language on URL parameter when using the method
 //!         // `I18n.set_language`. By default, it is `false`.
 //!         set_language_to_url_param: true,
@@ -242,8 +245,33 @@ use fluent_templates::{
 use leptos::{use_context, Attribute, IntoAttribute, Oco, RwSignal, SignalGet};
 pub use leptos_fluent_macros::leptos_fluent;
 
+#[doc(hidden)]
+#[cfg_attr(debug_assertions, derive(Debug))]
+pub enum WritingDirection {
+    Ltr,
+    Rtl,
+    Auto,
+}
+
+impl WritingDirection {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            WritingDirection::Ltr => "ltr",
+            WritingDirection::Rtl => "rtl",
+            WritingDirection::Auto => "auto",
+        }
+    }
+}
+
+impl core::fmt::Display for WritingDirection {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
 /// Each language supported by your application.
-#[derive(Clone, Debug)]
+#[derive(Clone)]
+#[cfg_attr(debug_assertions, derive(Debug))]
 pub struct Language {
     /// Language identifier
     ///
@@ -254,6 +282,8 @@ pub struct Language {
     /// The name of the language, such as `English`, `Español`, etc.
     /// This name will be intended to be displayed in the language selector.
     pub name: &'static str,
+    /// Writing direction of the language
+    pub dir: &'static WritingDirection,
 }
 
 impl Language {
@@ -334,6 +364,16 @@ pub struct I18n {
     pub languages: &'static [&'static Language],
     /// Static translations loader of fluent-templates.
     pub translations: &'static Lazy<StaticLoader>,
+}
+
+#[cfg(debug_assertions)]
+impl core::fmt::Debug for I18n {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.debug_struct("I18n")
+            .field("language", &self.language.get())
+            .field("languages", &self.languages)
+            .finish()
+    }
 }
 
 /// Get the current context for localization.

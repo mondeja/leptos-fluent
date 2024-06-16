@@ -34,6 +34,14 @@ async fn csr_complete_example() {
     sleep(30).await;
     assert_eq!(html().lang(), "en".to_string());
 
+    // sync_html_tag_dir
+    assert_eq!(html().dir(), "ltr".to_string());
+    es().click();
+    sleep(30).await;
+    assert_eq!(html().dir(), "auto".to_string());
+    en().click();
+    sleep(30).await;
+
     // set_language_to_localstorage
     localstorage::delete("language");
     assert_eq!(localstorage::get("language"), None);

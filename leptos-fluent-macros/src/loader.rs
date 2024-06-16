@@ -73,12 +73,14 @@ fn parse_litbool_or_expr_param(
 }
 
 pub(crate) struct I18nLoader {
-    pub(crate) languages: Vec<(String, String)>,
+    pub(crate) languages: Vec<(String, String, String)>,
     pub(crate) languages_path: Option<String>,
     pub(crate) core_locales_path: Option<String>,
     pub(crate) translations_ident: syn::Ident,
     pub(crate) sync_html_tag_lang_bool: Option<syn::LitBool>,
     pub(crate) sync_html_tag_lang_expr: Option<syn::Expr>,
+    pub(crate) sync_html_tag_dir_bool: Option<syn::LitBool>,
+    pub(crate) sync_html_tag_dir_expr: Option<syn::Expr>,
     pub(crate) url_param_str: Option<syn::LitStr>,
     pub(crate) url_param_expr: Option<syn::Expr>,
     pub(crate) initial_language_from_url_param_bool: Option<syn::LitBool>,
@@ -128,6 +130,8 @@ impl Parse for I18nLoader {
         let mut check_translations: Option<syn::LitStr> = None;
         let mut sync_html_tag_lang_bool: Option<syn::LitBool> = None;
         let mut sync_html_tag_lang_expr: Option<syn::Expr> = None;
+        let mut sync_html_tag_dir_bool: Option<syn::LitBool> = None;
+        let mut sync_html_tag_dir_expr: Option<syn::Expr> = None;
         let mut url_param_str: Option<syn::LitStr> = None;
         let mut url_param_expr: Option<syn::Expr> = None;
         let mut initial_language_from_url_param_bool: Option<syn::LitBool> =
@@ -195,6 +199,15 @@ impl Parse for I18nLoader {
                     &mut sync_html_tag_lang_bool,
                     &mut sync_html_tag_lang_expr,
                     "sync_html_tag_lang",
+                ) {
+                    return Err(err);
+                }
+            } else if k == "sync_html_tag_dir" {
+                if let Some(err) = parse_litbool_or_expr_param(
+                    &fields,
+                    &mut sync_html_tag_dir_bool,
+                    &mut sync_html_tag_dir_expr,
+                    "sync_html_tag_dir",
                 ) {
                     return Err(err);
                 }
@@ -486,6 +499,8 @@ impl Parse for I18nLoader {
             languages_path: languages_file_path,
             sync_html_tag_lang_bool,
             sync_html_tag_lang_expr,
+            sync_html_tag_dir_bool,
+            sync_html_tag_dir_expr,
             url_param_str,
             url_param_expr,
             initial_language_from_url_param_bool,
