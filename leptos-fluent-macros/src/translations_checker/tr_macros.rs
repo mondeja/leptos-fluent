@@ -338,7 +338,7 @@ mod tests {
                 tr_macro!(
                     "move_tr",
                     "html-tag-lang-is",
-                    vec!["foo".to_string(), "bar".to_string(),]
+                    vec!["foo".to_string(), "bar".to_string()]
                 ),
             ]
         );
@@ -367,13 +367,13 @@ mod tests {
                 tr_macro!(
                     "tr",
                     "html-tag-lang-is",
-                    vec!["foo".to_string(), "bar".to_string(),]
+                    vec!["foo".to_string(), "bar".to_string()]
                 ),
                 tr_macro!("tr", "select-another-language", Vec::new()),
                 tr_macro!(
                     "tr",
                     "other-html-tag-lang-is",
-                    vec!["foo".to_string(), "bar".to_string(),]
+                    vec!["foo".to_string(), "bar".to_string()]
                 ),
             ]
         );
@@ -424,7 +424,7 @@ mod tests {
                 tr_macro!(
                     "tr",
                     "html-tag-lang-is",
-                    vec!["foo".to_string(), "bar".to_string(),]
+                    vec!["foo".to_string(), "bar".to_string()]
                 ),
             ]
         );
@@ -447,7 +447,7 @@ mod tests {
                 tr_macro!(
                     "tr",
                     "html-tag-lang-is",
-                    vec!["foo".to_string(), "bar".to_string(),]
+                    vec!["foo".to_string(), "bar".to_string()]
                 ),
             ]
         );
@@ -556,7 +556,7 @@ mod tests {
                 tr_macro!(
                     "move_tr",
                     "html-tag-lang-is",
-                    vec!["foo".to_string(), "bar".to_string(),]
+                    vec!["foo".to_string(), "bar".to_string()]
                 ),
             ]
         );
