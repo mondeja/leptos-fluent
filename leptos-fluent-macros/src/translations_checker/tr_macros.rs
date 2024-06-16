@@ -169,7 +169,7 @@ impl<'ast> TranslationsMacrosVisitor {
         tokens: &'ast proc_macro2::TokenStream,
     ) {
         // Inside a macro group like `view!`
-        for token in tokens.clone().into_iter() {
+        for token in tokens.clone() {
             if let proc_macro2::TokenTree::Ident(ident) = token {
                 let ident_str = ident.to_string();
                 if ident_str == "move_tr" || ident_str == "tr" {
@@ -234,9 +234,9 @@ impl<'ast> TranslationsMacrosVisitor {
                         &self.current_message_name
                     {
                         let new_tr_macro = TranslationMacro {
-                            name: tr_macro.clone(),
-                            message_name: current_message_name.clone(),
-                            placeables: self.current_placeables.clone(),
+                            name: tr_macro.to_owned(),
+                            message_name: current_message_name.to_owned(),
+                            placeables: self.current_placeables.to_owned(),
                             #[cfg(not(test))]
                             file_path: self.file_path.clone(),
                         };

@@ -215,12 +215,6 @@
 //! - [Examples]
 //! - [Documentation]
 //!
-//! # Roadmap
-//!
-//! Leptos-fluent is currently ready for most use cases. However, it is still in an
-//! early stage of development and the API may contain breaking changes through
-//! v0.0.X releases.
-//!
 //! [leptos]: https://leptos.dev/
 //! [fluent-templates]: https://github.com/XAMPPRocky/fluent-templates
 //! [quickstart]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.leptos_fluent.html
@@ -468,8 +462,13 @@ pub fn language_from_str_between_languages(
         {
             Some(lang) => Some(lang),
             None => {
-                let mut lazy_target_lang = target_lang.clone();
-                lazy_target_lang.region = None;
+                let lazy_target_lang =
+                    LanguageIdentifier::from_raw_parts_unchecked(
+                        target_lang.language,
+                        None,
+                        None,
+                        None,
+                    );
                 match languages
                     .iter()
                     .find(|lang| lang.id.matches(&lazy_target_lang, true, true))

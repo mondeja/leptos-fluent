@@ -220,12 +220,6 @@ fn LanguageSelector() -> impl IntoView {
 - [Examples]
 - [Documentation]
 
-## Roadmap
-
-Leptos-fluent is currently ready for most use cases. However, it is still in an
-early stage of development and the API may contain breaking changes through
-v0.0.X releases.
-
 [leptos]: https://leptos.dev/
 [fluent-templates]: https://github.com/XAMPPRocky/fluent-templates
 [quickstart]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.leptos_fluent.html
