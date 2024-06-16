@@ -117,6 +117,11 @@ fn App() -> impl IntoView {
         // Get the initial language from `navigator.languages` if not
         // found in the local storage. By default, it is `false`.
         initial_language_from_navigator: true,
+        // Attributes to set for the language cookie. By default is `""`.
+        cookie_attrs: "SameSite=Strict; Secure; path=/; max-age=600",
+        // Update the language on cookie when using the method `I18n.set_language`.
+        // By default, it is `false`.
+        set_language_to_cookie: true,
 
         // Server side options
         // -------------------
@@ -131,9 +136,6 @@ fn App() -> impl IntoView {
         cookie_name: "lang",
         // Get the initial language from cookie. By default, it is `false`.
         initial_language_from_cookie: true,
-        // Update the language on cookie when using the method `I18n.set_language`.
-        // By default, it is `false`.
-        set_language_to_cookie: true,
         // URL parameter name to use discovering the initial language
         // of the user. By default is `"lang"`.
         url_param: "lang",
