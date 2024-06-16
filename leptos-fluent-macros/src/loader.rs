@@ -103,6 +103,8 @@ pub(crate) struct I18nLoader {
         Option<syn::Expr>,
     pub(crate) cookie_name_str: Option<syn::LitStr>,
     pub(crate) cookie_name_expr: Option<syn::Expr>,
+    pub(crate) cookie_attrs_str: Option<syn::LitStr>,
+    pub(crate) cookie_attrs_expr: Option<syn::Expr>,
     pub(crate) initial_language_from_cookie_bool: Option<syn::LitBool>,
     pub(crate) initial_language_from_cookie_expr: Option<syn::Expr>,
     pub(crate) set_language_to_cookie_bool: Option<syn::LitBool>,
@@ -158,6 +160,8 @@ impl Parse for I18nLoader {
         > = None;
         let mut cookie_name_str: Option<syn::LitStr> = None;
         let mut cookie_name_expr: Option<syn::Expr> = None;
+        let mut cookie_attrs_str: Option<syn::LitStr> = None;
+        let mut cookie_attrs_expr: Option<syn::Expr> = None;
         let mut initial_language_from_cookie_bool: Option<syn::LitBool> = None;
         let mut initial_language_from_cookie_expr: Option<syn::Expr> = None;
         let mut set_language_to_cookie_bool: Option<syn::LitBool> = None;
@@ -281,6 +285,15 @@ impl Parse for I18nLoader {
                     &mut cookie_name_str,
                     &mut cookie_name_expr,
                     "cookie_name",
+                ) {
+                    return Err(err);
+                }
+            } else if k == "cookie_attrs" {
+                if let Some(err) = parse_litstr_or_expr_param(
+                    &fields,
+                    &mut cookie_attrs_str,
+                    &mut cookie_attrs_expr,
+                    "cookie_attrs",
                 ) {
                     return Err(err);
                 }
@@ -493,6 +506,8 @@ impl Parse for I18nLoader {
             initial_language_from_accept_language_header_expr,
             cookie_name_str,
             cookie_name_expr,
+            cookie_attrs_str,
+            cookie_attrs_expr,
             initial_language_from_cookie_bool,
             initial_language_from_cookie_expr,
             set_language_to_cookie_bool,

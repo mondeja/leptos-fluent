@@ -11,6 +11,11 @@
 
 - Notify invalid Fluent message identifiers checking translations.
 
+### New features
+
+- Add `cookie_attrs` parameter to `leptos_fluent!` macro to set cookie
+  attributes.
+
 ## 2024-06-15 - [0.0.36]
 
 ### Bug fixes
