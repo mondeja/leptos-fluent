@@ -58,14 +58,14 @@ Giving the following directory structure:
     └── 📄 lib.rs
 ```
 
-With Fluent files _en.ftl_ and _es.ftl_:
-
 ```ftl
+# locales/en/main.ftl
 hello-world = Hello, world!
 hello-args = Hello, { $arg1 } and { $arg2 }!
 ```
 
 ```ftl
+# locales/es/main.ftl
 hello-world = ¡Hola, mundo!
 hello-args = ¡Hola, { $arg1 } y { $arg2 }!
 ```
@@ -128,7 +128,7 @@ fn App() -> impl IntoView {
 
         // Server side options
         // -------------------
-        // Set the initial language from the Accept-Language header of the
+        // Set the initial language from the `Accept-Language` header of the
         // request. By default, it is `false`.
         initial_language_from_accept_language_header: true,
 

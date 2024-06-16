@@ -8,10 +8,10 @@ name = "leptos_fluent_csr_minimal_example"
 path = "src/lib.rs"
 
 [dependencies]
-leptos = { version = "0.6.9", features = ["csr"] }
+leptos = { version = "0.6.12", features = ["csr"] }
 leptos-fluent = { path = "../../leptos-fluent" }
 fluent-templates = "0.9"
-console_error_panic_hook = "0"
+console_error_panic_hook = "0.1"
 
 [[bin]]
 name = "main"
