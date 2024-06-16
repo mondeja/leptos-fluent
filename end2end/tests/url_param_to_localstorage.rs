@@ -1,6 +1,6 @@
 use leptos::*;
 use leptos_fluent::{leptos_fluent, localstorage, url};
-use leptos_fluent_csr_minimal_example::{ChildComponent, TRANSLATIONS};
+use leptos_fluent_csr_minimal_example::{LanguageSelector, TRANSLATIONS};
 use tests_helpers::{element_text, input_by_id, mount, unmount};
 use wasm_bindgen_test::*;
 
@@ -20,7 +20,7 @@ pub fn App() -> impl IntoView {
         localstorage_key: LOCALSTORAGE_KEY,
     }};
 
-    view! { <ChildComponent/> }
+    view! { <LanguageSelector/> }
 }
 
 #[wasm_bindgen_test]
