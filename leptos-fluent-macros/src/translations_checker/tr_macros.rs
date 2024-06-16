@@ -131,7 +131,7 @@ impl TranslationsMacrosVisitor {
 }
 
 /// Convert a literal to a string, removing the quotes and the string type characters
-fn literal_to_string(literal: &proc_macro2::Literal) -> String {
+fn value_from_literal(literal: &proc_macro2::Literal) -> String {
     let literal_str = literal.to_string();
     if literal_str.starts_with("r#") {
         literal_str
@@ -202,7 +202,7 @@ impl<'ast> TranslationsMacrosVisitor {
                             tr_token
                         {
                             self.current_message_name =
-                                Some(literal_to_string(&literal));
+                                Some(value_from_literal(&literal));
                         } else if let proc_macro2::TokenTree::Group(
                             placeables_group,
                         ) = tr_token
@@ -215,7 +215,7 @@ impl<'ast> TranslationsMacrosVisitor {
                                 {
                                     if after_comma_punct {
                                         self.current_placeables.push(
-                                            literal_to_string(&arg_literal),
+                                            value_from_literal(&arg_literal),
                                         );
                                         after_comma_punct = false;
                                     }
