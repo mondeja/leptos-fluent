@@ -146,6 +146,9 @@ use quote::quote;
 ///   runtime. It will only take effect on server-side.
 /// - **`cookie_name`** (_`"lf-lang"`_): The cookie name to manage language in a cookie. Can be a literal string or an
 ///   expression that will be evaluated at runtime. It will take effect on client-side and server side.
+/// - **`cookie_attrs`** (_`""`_): The [attributes][cookie-attributes] to set in the cookie. Can be a literal string or an expression
+///   that will be evaluated at runtime. For example, `"SameSite=Strict; Secure; path=/; max-age=600"`.
+///   It will take effect on client-side.
 /// - **`initial_language_from_cookie`** (_`false`_): Load the initial language of the user from a cookie.
 ///   Can be a literal boolean or an expression that will be evaluated at runtime. It will take effect on client-side
 ///   and server side.
@@ -159,6 +162,7 @@ use quote::quote;
 /// [local storage]: https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
 /// [`navigator.languages`]: https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages
 /// [`leptos::create_effect`]: https://docs.rs/leptos/latest/leptos/fn.create_effect.html
+/// [cookie-attributes]: https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie#write_a_new_cookie
 #[proc_macro]
 pub fn leptos_fluent(
     input: proc_macro::TokenStream,
@@ -190,6 +194,8 @@ pub fn leptos_fluent(
         initial_language_from_accept_language_header_expr,
         cookie_name_str,
         cookie_name_expr,
+        cookie_attrs_str,
+        cookie_attrs_expr,
         initial_language_from_cookie_bool,
         initial_language_from_cookie_expr,
         set_language_to_cookie_bool,
@@ -647,11 +653,20 @@ pub fn leptos_fluent(
 
     #[cfg(not(feature = "ssr"))]
     let sync_language_with_cookie_quote = {
+        let cookie_attrs = match cookie_attrs_str {
+            Some(lit) => quote! { #lit },
+            None => match cookie_attrs_expr {
+                Some(expr) => quote! { #expr },
+                None => quote! { "" },
+            },
+        };
+
         let effect_quote = quote! {
             ::leptos::create_effect(move |_| {
                 ::leptos_fluent::cookie::set(
                     #cookie_name,
                     &::leptos_fluent::expect_i18n().language.get().id.to_string(),
+                    &#cookie_attrs,
                 );
             });
         };

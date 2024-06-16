@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## Unreleased - [0.0.37]
+## 2024-06-16 - [0.0.37]
 
 ### Bug fixes
 
@@ -10,6 +10,11 @@
 ### Enhancements
 
 - Notify invalid Fluent message identifiers checking translations.
+
+### New features
+
+- Add `cookie_attrs` parameter to `leptos_fluent!` macro to set cookie
+  attributes.
 
 ## 2024-06-15 - [0.0.36]
 
@@ -209,7 +214,7 @@
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
-[0.0.37]: https://github.com/mondeja/leptos-fluent/compare/v0.0.36...master
+[0.0.37]: https://github.com/mondeja/leptos-fluent/compare/v0.0.36...v0.0.37
 [0.0.36]: https://github.com/mondeja/leptos-fluent/compare/v0.0.35...v0.0.36
 [0.0.35]: https://github.com/mondeja/leptos-fluent/compare/v0.0.34...v0.0.35
 [0.0.34]: https://github.com/mondeja/leptos-fluent/compare/v0.0.33...v0.0.34

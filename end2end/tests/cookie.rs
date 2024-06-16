@@ -33,13 +33,13 @@ async fn test_cookie() {
     assert_eq!(element_text("p"), "Select a language:");
     unmount!();
 
-    cookie::set(COOKIE_NAME, "es");
+    cookie::set(COOKIE_NAME, "es", "");
     mount!(App);
     assert!(es().checked());
     assert_eq!(element_text("p"), "Selecciona un idioma:");
     unmount!();
 
-    cookie::set(COOKIE_NAME, "en");
+    cookie::set(COOKIE_NAME, "en", "");
     mount!(App);
     assert!(en().checked());
     assert_eq!(element_text("p"), "Select a language:");

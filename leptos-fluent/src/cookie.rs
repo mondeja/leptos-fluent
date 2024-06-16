@@ -21,36 +21,41 @@ pub fn get(name: &str) -> Option<String> {
     }
 }
 
-pub fn set(name: &str, value: &str) {
+#[cfg(not(feature = "ssr"))]
+fn set_cookie(new_value: &str) {
+    use wasm_bindgen::JsCast;
+    leptos::document()
+        .dyn_into::<web_sys::HtmlDocument>()
+        .unwrap()
+        .set_cookie(new_value)
+        .unwrap();
+}
+
+pub fn set(name: &str, value: &str, attrs: &str) {
     #[cfg(not(feature = "ssr"))]
     {
-        use wasm_bindgen::JsCast;
-        leptos::document()
-            .dyn_into::<web_sys::HtmlDocument>()
-            .unwrap()
-            .set_cookie(&format!("{}={}", name, value))
-            .unwrap();
+        let mut new_value = format!("{}={}", name, value);
+        if !attrs.is_empty() {
+            new_value.push_str("; ");
+            new_value.push_str(attrs);
+        }
+        set_cookie(&new_value);
     }
 
     #[cfg(feature = "ssr")]
     {
         _ = name;
         _ = value;
+        _ = attrs;
     }
 }
 
 pub fn delete(name: &str) {
     #[cfg(not(feature = "ssr"))]
     {
-        use wasm_bindgen::JsCast;
-        leptos::document()
-            .dyn_into::<web_sys::HtmlDocument>()
-            .unwrap()
-            .set_cookie(&format!(
-                "{}=; expires=Thu, 01 Jan 1970 00:00:00 GMT",
-                name
-            ))
-            .unwrap();
+        let new_value =
+            format!("{}=; expires=Thu, 01 Jan 1970 00:00:00 GMT", name);
+        set_cookie(&new_value);
     }
 
     #[cfg(feature = "ssr")]
