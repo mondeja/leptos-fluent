@@ -279,7 +279,7 @@ fn iso639_to_dir(code: &str) -> &'static str {
         "be" => "ltr",
         "bg" => "ltr",
         "bi" => "ltr",
-        "bm" => "ltr", // TODO: not sure about this
+        "bm" => "auto",
         "bn" => "ltr",
         "bo" => "ltr",
         "br" => "ltr",
