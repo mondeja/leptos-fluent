@@ -15,7 +15,7 @@ static_loader! {
 pub fn App() -> impl IntoView {
     provide_meta_context();
     leptos_fluent! {{
-        translations: TRANSLATIONS,
+        translations: [TRANSLATIONS],
         locales: "./locales",
         check_translations: "./src/**/*.rs",
         cookie_name: "lang",

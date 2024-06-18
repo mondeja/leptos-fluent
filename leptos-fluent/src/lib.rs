@@ -228,7 +228,10 @@ use fluent_templates::{
     fluent_bundle::FluentValue, loader::Loader, once_cell::sync::Lazy,
     LanguageIdentifier, StaticLoader,
 };
-use leptos::{use_context, Attribute, IntoAttribute, Oco, RwSignal, SignalGet};
+use leptos::{
+    use_context, Attribute, IntoAttribute, Oco, ReadSignal, RwSignal,
+    SignalGet, SignalWith,
+};
 pub use leptos_fluent_macros::leptos_fluent;
 
 /// Each language supported by your application.
@@ -312,9 +315,6 @@ impl IntoAttribute for &&'static Language {
 /// This context is used to provide the current language, the available languages
 /// and all the translations. It is capable of doing what is needed to translate
 /// and manage translations in a whole application.
-///
-/// If you need to separate the translations of different parts of the application,
-/// you can wrap this context in another struct and provide it to Leptos as a context.
 #[derive(Clone, Copy)]
 pub struct I18n {
     /// Signal that holds the current language.
@@ -322,7 +322,7 @@ pub struct I18n {
     /// Available languages for the application.
     pub languages: &'static [&'static Language],
     /// Static translations loader of fluent-templates.
-    pub translations: &'static Lazy<StaticLoader>,
+    pub translations: ReadSignal<Vec<&'static Lazy<StaticLoader>>>,
 }
 
 /// Get the current context for localization.
@@ -350,7 +350,19 @@ pub fn i18n() -> I18n {
 #[doc(hidden)]
 pub fn tr_impl(text_id: &str) -> String {
     let i18n = expect_i18n();
-    i18n.translations.lookup(&i18n.language.get().id, text_id)
+    let found = i18n.translations.with(|translations| {
+        for tr in translations.iter() {
+            if let Some(result) =
+                tr.try_lookup(&i18n.language.get().id, text_id)
+            {
+                return Some(result);
+            }
+        }
+
+        None
+    });
+
+    found.unwrap_or_else(|| panic!("Unknown localization {text_id}"))
 }
 
 #[doc(hidden)]
@@ -359,8 +371,19 @@ pub fn tr_with_args_impl(
     args: &std::collections::HashMap<String, FluentValue>,
 ) -> String {
     let i18n = expect_i18n();
-    i18n.translations
-        .lookup_with_args(&i18n.language.get().id, text_id, args)
+    let found = i18n.translations.with(|translations| {
+        for tr in translations.iter() {
+            if let Some(result) =
+                tr.try_lookup_with_args(&i18n.language.get().id, text_id, args)
+            {
+                return Some(result);
+            }
+        }
+
+        None
+    });
+
+    found.unwrap_or_else(|| panic!("Unknown localization {text_id}"))
 }
 
 /// Translate a text identifier to the current language.

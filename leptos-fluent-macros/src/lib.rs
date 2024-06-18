@@ -164,7 +164,7 @@ pub fn leptos_fluent(
 ) -> proc_macro::TokenStream {
     #[allow(unused_variables)]
     let I18nLoader {
-        translations_ident,
+        translations,
         languages,
         languages_path,
         sync_html_tag_lang_bool,
@@ -781,6 +781,23 @@ pub fn leptos_fluent(
         }
     };
 
+    let translations = {
+        let loader::Translations { simple, compound } = translations;
+
+        let quote = quote! {{
+            let mut all_loaders = Vec::new();
+            all_loaders.extend([#(& #simple),*]);
+            #(
+                all_loaders.extend(#compound.iter());
+            );*
+
+            all_loaders
+        }};
+
+        println!("{quote}");
+        quote
+    };
+
     let quote = quote! {
         {
             const LANGUAGES: [&::leptos_fluent::Language; #n_languages] = #languages_quote;
@@ -797,7 +814,7 @@ pub fn leptos_fluent(
             let mut i18n = ::leptos_fluent::I18n {
                 language: ::leptos::create_rw_signal(initial_lang),
                 languages: &LANGUAGES,
-                translations: &#translations_ident,
+                translations: ::leptos::create_signal(#translations).0,
             };
             provide_context::<::leptos_fluent::I18n>(i18n);
             #sync_html_tag_lang_quote

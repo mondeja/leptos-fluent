@@ -11,7 +11,7 @@ const LOCALSTORAGE_KEY: &str = "foobarbaz";
 #[component]
 pub fn App() -> impl IntoView {
     leptos_fluent! {{
-        translations: TRANSLATIONS,
+        translations: [TRANSLATIONS],
         locales: "../examples/csr-minimal/locales",
         initial_language_from_localstorage: true,
         localstorage_key: LOCALSTORAGE_KEY,
