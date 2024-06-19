@@ -15,7 +15,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! leptos-fluent = "0.0.37"
+//! leptos-fluent = "0.1"
 //! fluent-templates = "0.9"
 //!
 //! [features]
@@ -484,6 +484,10 @@ pub fn language_from_str_between_languages(
 
 #[cfg(test)]
 mod test {
+    fn major_and_minor_version(version: &str) -> String {
+        version.split('.').take(2).collect::<Vec<_>>().join(".")
+    }
+
     #[test]
     fn test_readme_leptos_fluent_version_is_updated() {
         let this_file = include_str!("./lib.rs");
@@ -507,8 +511,8 @@ mod test {
             r#"leptos-fluent = "<version>" not found in leptos-fluent/src/lib.rs"#
         );
         assert_eq!(
-            version.unwrap(),
-            env!("CARGO_PKG_VERSION"),
+            major_and_minor_version(&version.unwrap()),
+            major_and_minor_version(env!("CARGO_PKG_VERSION")),
             concat!(
                 "The version of leptos-fluent shown in the README at",
                 " 'Installation' section is not updated."
