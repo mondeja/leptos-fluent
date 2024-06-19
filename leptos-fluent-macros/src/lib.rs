@@ -868,7 +868,6 @@ pub fn leptos_fluent(
             all_loaders
         }};
 
-        println!("{quote}");
         quote
     };
 

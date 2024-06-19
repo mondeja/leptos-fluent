@@ -396,7 +396,7 @@ pub fn i18n() -> I18n {
 pub fn tr_impl(text_id: &str) -> String {
     let i18n = expect_i18n();
     let found = i18n.translations.with(|translations| {
-        for tr in translations.iter() {
+        for tr in translations {
             if let Some(result) =
                 tr.try_lookup(&i18n.language.get().id, text_id)
             {
@@ -417,7 +417,7 @@ pub fn tr_with_args_impl(
 ) -> String {
     let i18n = expect_i18n();
     let found = i18n.translations.with(|translations| {
-        for tr in translations.iter() {
+        for tr in translations {
             if let Some(result) =
                 tr.try_lookup_with_args(&i18n.language.get().id, text_id, args)
             {
