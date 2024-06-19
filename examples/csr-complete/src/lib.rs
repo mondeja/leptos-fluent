@@ -17,6 +17,11 @@ pub fn App() -> impl IntoView {
         locales: "./locales",
         check_translations: "./src/**/*.rs",
         sync_html_tag_lang: true,
+        sync_html_tag_dir: true,
+        cookie_name: "lang",
+        cookie_attrs: "SameSite=Strict; Secure; path=/; max-age=600",
+        set_language_to_cookie: true,
+        initial_language_from_cookie: true,
         url_param: "lang",
         initial_language_from_url_param: true,
         initial_language_from_url_param_to_localstorage: true,
@@ -58,7 +63,19 @@ fn ChildComponent() -> impl IntoView {
             />
 
         </fieldset>
-        <p>{move_tr!("html-tag-lang-is", { "lang" => i18n.language.get().id.to_string() })}</p>
-        <p>{move_tr!("add-es-en-url-param")}</p>
+
+        <ul>
+            <li>
+                <p>
+                    {move_tr!("html-tag-lang-is", { "lang" => i18n.language.get().id.to_string() })}
+                </p>
+                <p>{move_tr!("add-es-en-url-param")}</p>
+            </li>
+            <li>
+                <p>
+                    {move_tr!("html-tag-dir-is", { "dir" => i18n.language.get().dir.to_string() })}
+                </p>
+            </li>
+        </ul>
     }
 }

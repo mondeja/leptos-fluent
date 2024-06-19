@@ -48,6 +48,7 @@ use quote::quote;
 ///         translations: TRANSLATIONS,
 ///         languages: "./locales/languages.json",
 ///         sync_html_tag_lang: true,
+///         sync_html_tag_dir: true,
 ///         url_param: "lang",
 ///         initial_language_from_url_param: true,
 ///         initial_language_from_url_param_to_localstorage: true,
@@ -58,6 +59,7 @@ use quote::quote;
 ///         initial_language_from_navigator: true,
 ///         initial_language_from_accept_language_header: true,
 ///         cookie_name: "lang",
+///         cookie_attrs: "SameSite=Strict; Secure; path=/; max-age=2592000",
 ///         initial_language_from_cookie: true,
 ///         set_language_to_cookie: true,
 ///     }};
@@ -80,10 +82,11 @@ use quote::quote;
 /// - **`core_locales`**: Path to the core locales file, which must contain a shared
 ///   translation for all languages. Is expected to be a path relative from `Cargo.toml`,
 ///   the same used in the [`fluent_templates::static_loader!`] macro.
-/// - **`check_translations`** (experimental): Path to the files to check if all
-///    translations are being used and their placeholders are correct. Is expected
-///   to be a glob pattern relative from `Cargo.toml` file. Tipically, you should use
-///   `"./src/**/*.rs"` or something like `"../{app,components}/src/**/*.rs"`.
+/// - **`check_translations`**: Path to the files to check if all translations are
+///   being used and their placeholders are correct. Is expected to be a glob pattern
+///   relative from `Cargo.toml` file. Tipically, you should use `"./src/**/*.rs"` for
+///   a single crate or something like `"../{app,components}/src/**/*.rs"` to match
+///   multiple crates in a workspace.
 /// - **`languages`**: Path to a languages file, which should an array of arrays
 ///   where each inner array contains a language identifier and a language name,
 ///   respectively. The language identifier should be a valid language tag, such as
@@ -97,7 +100,7 @@ use quote::quote;
 ///     ["es-ES", "Español (España)"]
 ///   ]
 ///   ```
-///   You can use `default-features = false` and enable the `yaml` or the `json5` feature
+///   You can set `default-features = false` and enable the `yaml` or the `json5` feature
 ///   to be able to use a YAML or JSON5 file. For example:
 ///   ```yaml
 ///   # locales/languages.yaml
@@ -113,9 +116,26 @@ use quote::quote;
 ///     ["es-ES", "Español (España)"]
 ///   ]
 ///   ```
+///   You can define a third element in the inner array with the direction of the language,
+///   to use it in the [`<html dir="...">` attribute] (see `sync_html_tag_dir`). For example:
+///   ```json
+///   [
+///     ["en-US", "English (United States)", "ltr"],
+///     ["es-ES", "Español (España)", "auto"],
+///     ["ar", "العربية", "rtl"],
+///     ["it", "Italiano"]
+///   ]
+///   ```
 /// - **`sync_html_tag_lang`** (_`false`_): Synchronize the global [`<html lang="...">` attribute]
 ///   with current language using [`leptos::create_effect`]. Can be a literal boolean or an
 ///   expression that will be evaluated at runtime.
+/// - **`sync_html_tag_dir`** (_`false`_): Synchronize the global [`<html dir="...">` attribute]
+///   with current language using [`leptos::create_effect`]. Can be a literal boolean or an
+///   expression that will be evaluated at runtime. For custom languages from a languages file,
+///   you can specify a third element in the inner array with the direction of the language,
+///   which can be `"auto"`, `"ltr"`, or `"rtl"`. For automatic languages will be defined depending
+///   on the language. For example, Arabic will be `"rtl"`, English will be `"ltr"` and Japanese
+///   will be `"auto"`.
 /// - **`url_param`** (_`"lang"`_): The parameter name to manage the language in a URL parameter.
 ///   Can be a literal string or an expression that will be evaluated at runtime. It will take effect
 ///   on client-side and server side.
@@ -145,19 +165,24 @@ use quote::quote;
 ///   runtime. It will only take effect on server-side.
 /// - **`cookie_name`** (_`"lf-lang"`_): The cookie name to manage language in a cookie. Can be a literal string or an
 ///   expression that will be evaluated at runtime. It will take effect on client-side and server side.
+/// - **`cookie_attrs`** (_`""`_): The [attributes][cookie-attributes] to set in the cookie. Can be a literal string or an expression
+///   that will be evaluated at runtime. For example, `"SameSite=Strict; Secure; path=/; max-age=600"`.
+///   It will take effect on client-side.
 /// - **`initial_language_from_cookie`** (_`false`_): Load the initial language of the user from a cookie.
 ///   Can be a literal boolean or an expression that will be evaluated at runtime. It will take effect on client-side
 ///   and server side.
 /// - **`set_language_to_cookie`** (_`false`_): Save the language of the user to a cookie when setting the language.
 ///   Can be a literal boolean or an expression that will be evaluated at runtime. It will only take effect on client-side.
 ///
-/// [`fluent_templates::static_loader!`]: https://docs.rs/fluent-templates/0.8.0/fluent_templates/macro.static_loader.html
+/// [`fluent_templates::static_loader!`]: https://docs.rs/fluent-templates/latest/fluent_templates/macro.static_loader.html
 /// [`once_cell:sync::Lazy`]: https://docs.rs/once_cell/latest/once_cell/sync/struct.Lazy.html
-/// [`StaticLoader`]: https://docs.rs/fluent-templates/0.8.0/fluent_templates/struct.StaticLoader.html
+/// [`StaticLoader`]: https://docs.rs/fluent-templates/latest/fluent_templates/struct.StaticLoader.html
 /// [`<html lang="...">` attribute]: https://developer.mozilla.org/es/docs/Web/HTML/Global_attributes/lang
+/// [`<html dir="...">` attribute]: https://developer.mozilla.org/es/docs/Web/HTML/Global_attributes/dir
 /// [local storage]: https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
 /// [`navigator.languages`]: https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages
 /// [`leptos::create_effect`]: https://docs.rs/leptos/latest/leptos/fn.create_effect.html
+/// [cookie-attributes]: https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie#write_a_new_cookie
 #[proc_macro]
 pub fn leptos_fluent(
     input: proc_macro::TokenStream,
@@ -169,6 +194,8 @@ pub fn leptos_fluent(
         languages_path,
         sync_html_tag_lang_bool,
         sync_html_tag_lang_expr,
+        sync_html_tag_dir_bool,
+        sync_html_tag_dir_expr,
         initial_language_from_url_param_bool,
         initial_language_from_url_param_expr,
         url_param_str,
@@ -189,6 +216,8 @@ pub fn leptos_fluent(
         initial_language_from_accept_language_header_expr,
         cookie_name_str,
         cookie_name_expr,
+        cookie_attrs_str,
+        cookie_attrs_expr,
         initial_language_from_cookie_bool,
         initial_language_from_cookie_expr,
         set_language_to_cookie_bool,
@@ -210,16 +239,17 @@ pub fn leptos_fluent(
     #[cfg(not(feature = "ssr"))]
     let sync_html_tag_lang_quote = {
         let effect_quote = quote! {
-            use wasm_bindgen::JsCast;
-            ::leptos::create_effect(move |_| ::leptos::document()
-                .document_element()
-                .unwrap()
-                .unchecked_into::<::leptos::web_sys::HtmlElement>()
-                .set_attribute(
-                    "lang",
-                    &::leptos_fluent::expect_i18n().language.get().id.to_string()
-                )
-            );
+            ::leptos::create_effect(move |_| {
+                use wasm_bindgen::JsCast;
+                _ = ::leptos::document()
+                    .document_element()
+                    .unwrap()
+                    .unchecked_into::<::leptos::web_sys::HtmlElement>()
+                    .set_attribute(
+                        "lang",
+                        &::leptos_fluent::expect_i18n().language.get().id.to_string()
+                    );
+            });
         };
 
         match sync_html_tag_lang_bool {
@@ -240,6 +270,41 @@ pub fn leptos_fluent(
 
     #[cfg(feature = "ssr")]
     let sync_html_tag_lang_quote = quote! {};
+
+    #[cfg(not(feature = "ssr"))]
+    let sync_html_tag_dir_quote = {
+        let effect_quote = quote! {
+            ::leptos::create_effect(move |_| {
+                use wasm_bindgen::JsCast;
+                _ = ::leptos::document()
+                    .document_element()
+                    .unwrap()
+                    .unchecked_into::<::leptos::web_sys::HtmlElement>()
+                    .set_attribute(
+                        "dir",
+                        ::leptos_fluent::expect_i18n().language.get().dir.as_str(),
+                    );
+            });
+        };
+
+        match sync_html_tag_dir_bool {
+            Some(lit) => match lit.value {
+                true => effect_quote,
+                false => quote! {},
+            },
+            None => match sync_html_tag_dir_expr {
+                Some(expr) => quote! {
+                    if #expr {
+                        #effect_quote
+                    }
+                },
+                None => quote! {},
+            },
+        }
+    };
+
+    #[cfg(feature = "ssr")]
+    let sync_html_tag_dir_quote = quote! {};
 
     let url_param = match url_param_str {
         Some(lit) => quote! { #lit },
@@ -646,11 +711,20 @@ pub fn leptos_fluent(
 
     #[cfg(not(feature = "ssr"))]
     let sync_language_with_cookie_quote = {
+        let cookie_attrs = match cookie_attrs_str {
+            Some(lit) => quote! { #lit },
+            None => match cookie_attrs_expr {
+                Some(expr) => quote! { #expr },
+                None => quote! { "" },
+            },
+        };
+
         let effect_quote = quote! {
             ::leptos::create_effect(move |_| {
                 ::leptos_fluent::cookie::set(
                     #cookie_name,
                     &::leptos_fluent::expect_i18n().language.get().id.to_string(),
+                    &#cookie_attrs,
                 );
             });
         };
@@ -818,6 +892,7 @@ pub fn leptos_fluent(
             };
             provide_context::<::leptos_fluent::I18n>(i18n);
             #sync_html_tag_lang_quote
+            #sync_html_tag_dir_quote
             #sync_language_with_localstorage_quote
             #sync_language_with_url_param_quote
             #sync_language_with_cookie_quote

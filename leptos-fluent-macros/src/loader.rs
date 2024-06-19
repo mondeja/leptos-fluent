@@ -159,12 +159,14 @@ impl Parse for Translations {
 }
 
 pub(crate) struct I18nLoader {
-    pub(crate) languages: Vec<(String, String)>,
+    pub(crate) languages: Vec<(String, String, String)>,
     pub(crate) languages_path: Option<String>,
     pub(crate) core_locales_path: Option<String>,
     pub(crate) translations: Translations,
     pub(crate) sync_html_tag_lang_bool: Option<syn::LitBool>,
     pub(crate) sync_html_tag_lang_expr: Option<syn::Expr>,
+    pub(crate) sync_html_tag_dir_bool: Option<syn::LitBool>,
+    pub(crate) sync_html_tag_dir_expr: Option<syn::Expr>,
     pub(crate) url_param_str: Option<syn::LitStr>,
     pub(crate) url_param_expr: Option<syn::Expr>,
     pub(crate) initial_language_from_url_param_bool: Option<syn::LitBool>,
@@ -189,6 +191,8 @@ pub(crate) struct I18nLoader {
         Option<syn::Expr>,
     pub(crate) cookie_name_str: Option<syn::LitStr>,
     pub(crate) cookie_name_expr: Option<syn::Expr>,
+    pub(crate) cookie_attrs_str: Option<syn::LitStr>,
+    pub(crate) cookie_attrs_expr: Option<syn::Expr>,
     pub(crate) initial_language_from_cookie_bool: Option<syn::LitBool>,
     pub(crate) initial_language_from_cookie_expr: Option<syn::Expr>,
     pub(crate) set_language_to_cookie_bool: Option<syn::LitBool>,
@@ -212,6 +216,8 @@ impl Parse for I18nLoader {
         let mut check_translations: Option<syn::LitStr> = None;
         let mut sync_html_tag_lang_bool: Option<syn::LitBool> = None;
         let mut sync_html_tag_lang_expr: Option<syn::Expr> = None;
+        let mut sync_html_tag_dir_bool: Option<syn::LitBool> = None;
+        let mut sync_html_tag_dir_expr: Option<syn::Expr> = None;
         let mut url_param_str: Option<syn::LitStr> = None;
         let mut url_param_expr: Option<syn::Expr> = None;
         let mut initial_language_from_url_param_bool: Option<syn::LitBool> =
@@ -244,6 +250,8 @@ impl Parse for I18nLoader {
         > = None;
         let mut cookie_name_str: Option<syn::LitStr> = None;
         let mut cookie_name_expr: Option<syn::Expr> = None;
+        let mut cookie_attrs_str: Option<syn::LitStr> = None;
+        let mut cookie_attrs_expr: Option<syn::Expr> = None;
         let mut initial_language_from_cookie_bool: Option<syn::LitBool> = None;
         let mut initial_language_from_cookie_expr: Option<syn::Expr> = None;
         let mut set_language_to_cookie_bool: Option<syn::LitBool> = None;
@@ -277,6 +285,15 @@ impl Parse for I18nLoader {
                     &mut sync_html_tag_lang_bool,
                     &mut sync_html_tag_lang_expr,
                     "sync_html_tag_lang",
+                ) {
+                    return Err(err);
+                }
+            } else if k == "sync_html_tag_dir" {
+                if let Some(err) = parse_litbool_or_expr_param(
+                    &fields,
+                    &mut sync_html_tag_dir_bool,
+                    &mut sync_html_tag_dir_expr,
+                    "sync_html_tag_dir",
                 ) {
                     return Err(err);
                 }
@@ -370,6 +387,15 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
+            } else if k == "cookie_attrs" {
+                if let Some(err) = parse_litstr_or_expr_param(
+                    &fields,
+                    &mut cookie_attrs_str,
+                    &mut cookie_attrs_expr,
+                    "cookie_attrs",
+                ) {
+                    return Err(err);
+                }
             } else if k == "initial_language_from_cookie" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
@@ -419,12 +445,10 @@ impl Parse for I18nLoader {
         let languages;
         let mut languages_file_path = None;
 
-        let languages_path_copy = languages_path.clone();
         let languages_file = languages_path
             .as_ref()
             .map(|languages| workspace_path.join(languages.value()));
 
-        let locales_path_copy = locales_path.clone();
         let locales_folder_path = locales_path
             .as_ref()
             .map(|locales| workspace_path.join(locales.value()))
@@ -433,7 +457,7 @@ impl Parse for I18nLoader {
         if let Some(ref file) = languages_file {
             if std::fs::metadata(file).is_err() {
                 return Err(syn::Error::new(
-                    languages_path_copy.unwrap().span(),
+                    languages_path.as_ref().unwrap().span(),
                     format!(
                         concat!(
                             "Couldn't read languages file, this path should",
@@ -451,7 +475,7 @@ impl Parse for I18nLoader {
                 let maybe_languages = read_languages_file(langs_path);
                 if let Err(e) = maybe_languages {
                     return Err(syn::Error::new(
-                        languages_path_copy.unwrap().span(),
+                        languages_path.as_ref().unwrap().span(),
                         e.to_string(),
                     ));
                 }
@@ -461,7 +485,7 @@ impl Parse for I18nLoader {
             }
         } else if std::fs::metadata(&locales_folder_path).is_err() {
             return Err(syn::Error::new(
-                locales_path_copy.unwrap().span(),
+                locales_path.as_ref().unwrap().span(),
                 format!(
                     concat!(
                         "Couldn't read locales folder, this path should",
@@ -559,6 +583,8 @@ impl Parse for I18nLoader {
             languages_path: languages_file_path,
             sync_html_tag_lang_bool,
             sync_html_tag_lang_expr,
+            sync_html_tag_dir_bool,
+            sync_html_tag_dir_expr,
             url_param_str,
             url_param_expr,
             initial_language_from_url_param_bool,
@@ -579,6 +605,8 @@ impl Parse for I18nLoader {
             initial_language_from_accept_language_header_expr,
             cookie_name_str,
             cookie_name_expr,
+            cookie_attrs_str,
+            cookie_attrs_expr,
             initial_language_from_cookie_bool,
             initial_language_from_cookie_expr,
             set_language_to_cookie_bool,

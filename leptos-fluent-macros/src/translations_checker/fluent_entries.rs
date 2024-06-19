@@ -47,7 +47,7 @@ pub(crate) fn build_fluent_entries(
     let mut fluent_entries: HashMap<String, Vec<FluentEntry>> = HashMap::new();
     let mut errors: Vec<String> = Vec::new();
 
-    for (lang, resources) in fluent_resources.iter() {
+    for (lang, resources) in fluent_resources {
         fluent_entries.insert(lang.to_owned(), vec![]);
         for (r, resource_str) in resources.iter().enumerate() {
             match fluent_templates::fluent_bundle::FluentResource::try_new(
@@ -110,7 +110,7 @@ pub(crate) fn build_fluent_entries(
             }
             Err((resource, errs)) => {
                 let rel_file_path = pathdiff::diff_paths(
-                    core_locales_path.clone().unwrap(),
+                    core_locales_path.as_ref().unwrap(),
                     workspace_path,
                 )
                 .unwrap()

@@ -1,5 +1,34 @@
 # CHANGELOG
 
+## Unreleased - [0.1.0]
+
+### New features
+
+- Add `sync_html_tag_dir` parameter to `leptos_fluent!` macro to sync the `dir`
+  global attribute of the `<html>` tag with the current language direction.
+
+## 2024-06-16 - [0.0.37]
+
+### Bug fixes
+
+- Don't panic parsing raw string literals of `tr!` macros checking
+  translations.
+
+### Enhancements
+
+- Notify invalid Fluent message identifiers checking translations.
+
+### New features
+
+- Add `cookie_attrs` parameter to `leptos_fluent!` macro to set cookie
+  attributes.
+
+## 2024-06-15 - [0.0.36]
+
+### Bug fixes
+
+- Fix error building files tracker when multiple files for each language.
+
 ## 2024-06-15 - [0.0.35]
 
 ### Bug fixes
@@ -192,6 +221,9 @@
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.1.0]: https://github.com/mondeja/leptos-fluent/compare/v0.0.37...master
+[0.0.37]: https://github.com/mondeja/leptos-fluent/compare/v0.0.36...v0.0.37
+[0.0.36]: https://github.com/mondeja/leptos-fluent/compare/v0.0.35...v0.0.36
 [0.0.35]: https://github.com/mondeja/leptos-fluent/compare/v0.0.34...v0.0.35
 [0.0.34]: https://github.com/mondeja/leptos-fluent/compare/v0.0.33...v0.0.34
 [0.0.33]: https://github.com/mondeja/leptos-fluent/compare/v0.0.32...v0.0.33

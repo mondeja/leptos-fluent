@@ -9,7 +9,8 @@ and run `pre-commit run -a cargo-readme`
 [![License](https://img.shields.io/crates/l/leptos-fluent?logo=mit)](https://github.com/mondeja/leptos-fluent/blob/master/LICENSE.md)
 [![Tests](https://img.shields.io/github/actions/workflow/status/mondeja/leptos-fluent/ci.yml?label=tests&logo=github)](https://github.com/mondeja/leptos-fluent/actions)
 [![docs.rs](https://img.shields.io/docsrs/leptos-fluent?logo=docs.rs)][documentation]
-![Crates.io downloads](https://img.shields.io/crates/d/leptos-fluent)
+[![Crates.io downloads](https://img.shields.io/crates/d/leptos-fluent)](https://crates.io/crates/leptos-fluent)
+[![Discord channel](https://img.shields.io/badge/-Discord-5865F2?style=flat-square&logo=discord&logoColor=white)](https://discord.com/channels/1031524867910148188/1251579884371705927)
 
 Internationalization framework for [Leptos] using [fluent-templates].
 
@@ -19,7 +20,7 @@ Add the following to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-leptos-fluent = "0.0.35"
+leptos-fluent = "0.0.37"
 fluent-templates = "0.9"
 
 [features]
@@ -30,6 +31,14 @@ ssr = [
   "leptos-fluent/ssr",
   "leptos-fluent/actix",  # actix and axum are supported
 ]
+```
+
+If you're using `cargo-leptos` to build your project, watch the
+_locales/_ folder with:
+
+```toml
+[package.metadata.leptos]
+watch-additional-files = ["locales"]  # Relative from Cargo.toml file
 ```
 
 ## Usage
@@ -87,9 +96,12 @@ fn App() -> impl IntoView {
 
         // Client side options
         // -------------------
-        // Synchronize `<html lang="...">` attribute with the current
-        // language using `leptos::create_effect`. By default, it is `false`.
+        // Synchronize `<html lang="...">` attribute with the current active
+        // language. By default, it is `false`.
         sync_html_tag_lang: true,
+        // Synchronize `<html dir="...">` attribute setting `"ltr"`,
+        // `"rtl"` or `"auto"` depending on the current active language.
+        sync_html_tag_dir: true,
         // Update the language on URL parameter when using the method
         // `I18n.set_language`. By default, it is `false`.
         set_language_to_url_param: true,
@@ -108,6 +120,11 @@ fn App() -> impl IntoView {
         // Get the initial language from `navigator.languages` if not
         // found in the local storage. By default, it is `false`.
         initial_language_from_navigator: true,
+        // Attributes to set for the language cookie. By default is `""`.
+        cookie_attrs: "SameSite=Strict; Secure; path=/; max-age=600",
+        // Update the language on cookie when using the method `I18n.set_language`.
+        // By default, it is `false`.
+        set_language_to_cookie: true,
 
         // Server side options
         // -------------------
@@ -122,9 +139,6 @@ fn App() -> impl IntoView {
         cookie_name: "lang",
         // Get the initial language from cookie. By default, it is `false`.
         initial_language_from_cookie: true,
-        // Update the language on cookie when using the method `I18n.set_language`.
-        // By default, it is `false`.
-        set_language_to_cookie: true,
         // URL parameter name to use discovering the initial language
         // of the user. By default is `"lang"`.
         url_param: "lang",
@@ -205,12 +219,6 @@ fn LanguageSelector() -> impl IntoView {
 - [Quickstart]
 - [Examples]
 - [Documentation]
-
-## Roadmap
-
-Leptos-fluent is currently ready for most use cases. However, it is still in an
-early stage of development and the API may contain breaking changes through
-v0.0.X releases.
 
 [leptos]: https://leptos.dev/
 [fluent-templates]: https://github.com/XAMPPRocky/fluent-templates

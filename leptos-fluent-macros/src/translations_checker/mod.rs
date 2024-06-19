@@ -40,22 +40,10 @@ pub(crate) fn run(
         &tr_macros,
         &fluent_entries,
     ));
-    // TODO: Include the core.ftl file in the check
     // TODO: Currently, the fluent-syntax parser does not offer a CST
     //       parser so we don't know the spans of the entries.
     //       See https://github.com/projectfluent/fluent-rs/issues/270
     (check_messages, errors)
-}
-
-fn format_macro_call(
-    macro_name: &str,
-    message_name: &str,
-    has_placeables: bool,
-) -> String {
-    if has_placeables {
-        return format!(r#"`{}!("{}", {{ ... }})`"#, macro_name, message_name);
-    }
-    format!(r#"`{}!("{}")`"#, macro_name, message_name)
 }
 
 fn check_tr_macros_against_fluent_entries(
@@ -65,7 +53,7 @@ fn check_tr_macros_against_fluent_entries(
     let mut error_messages: Vec<String> = Vec::new();
 
     for tr_macro in tr_macros {
-        for (lang, entries) in fluent_entries.iter() {
+        for (lang, entries) in fluent_entries {
             // tr macro message must be defined for each language
             let mut message_name_found = false;
             for entry in entries {
@@ -78,16 +66,16 @@ fn check_tr_macros_against_fluent_entries(
                             let file_path = {
                                 #[cfg(not(test))]
                                 {
-                                    tr_macro.file_path.clone()
+                                    &tr_macro.file_path
                                 }
 
                                 #[cfg(test)]
                                 {
-                                    "[test content]".to_string()
+                                    "[test content]"
                                 }
                             };
 
-                            error_messages.push(format!(
+                            let error_message = format!(
                                 concat!(
                                     r#"Variable "{}" defined at {} macro"#,
                                     r#" call in {} not found in message"#,
@@ -102,7 +90,9 @@ fn check_tr_macros_against_fluent_entries(
                                 file_path,
                                 tr_macro.message_name,
                                 lang,
-                            ));
+                            );
+
+                            error_messages.push(error_message);
                         }
                     }
 
@@ -113,29 +103,52 @@ fn check_tr_macros_against_fluent_entries(
                 let file_path = {
                     #[cfg(not(test))]
                     {
-                        tr_macro.file_path.clone()
+                        &tr_macro.file_path
                     }
 
                     #[cfg(test)]
                     {
-                        "[test content]".to_string()
+                        "[test content]"
                     }
                 };
 
-                error_messages.push(format!(
-                    concat!(
-                        r#"Message "{}" defined at {} macro call in {}"#,
-                        r#" not found in files for locale "{}"."#,
-                    ),
-                    tr_macro.message_name,
-                    format_macro_call(
-                        &tr_macro.name,
-                        &tr_macro.message_name,
-                        !tr_macro.placeables.is_empty(),
-                    ),
-                    file_path,
-                    lang,
-                ));
+                let error_message = if check_tr_macro_message_name_is_valid(
+                    &tr_macro.message_name,
+                ) {
+                    format!(
+                        concat!(
+                            r#"Message "{}" defined at {} macro call in {}"#,
+                            r#" not found in files for locale "{}"."#,
+                        ),
+                        tr_macro.message_name,
+                        format_macro_call(
+                            &tr_macro.name,
+                            &tr_macro.message_name,
+                            !tr_macro.placeables.is_empty(),
+                        ),
+                        file_path,
+                        lang,
+                    )
+                } else {
+                    format!(
+                        concat!(
+                            r#"Invalid message identifier "{}" defined at"#,
+                            r#" {} macro call in {} for locale "{}"."#,
+                            " Fluent message identifiers must match the",
+                            " regular expression '[a-zA-Z][a-zA-Z0-9_-]+'.",
+                        ),
+                        tr_macro.message_name,
+                        format_macro_call(
+                            &tr_macro.name,
+                            &tr_macro.message_name,
+                            !tr_macro.placeables.is_empty(),
+                        ),
+                        file_path,
+                        lang,
+                    )
+                };
+
+                error_messages.push(error_message);
             }
         }
     }
@@ -148,7 +161,7 @@ fn check_fluent_entries_against_tr_macros(
 ) -> Vec<String> {
     let mut error_messages: Vec<String> = Vec::new();
 
-    for (lang, entries) in fluent_entries.iter() {
+    for (lang, entries) in fluent_entries {
         for entry in entries {
             // fluent entry message must be defined for each language
             let mut message_name_found = false;
@@ -162,12 +175,12 @@ fn check_fluent_entries_against_tr_macros(
                             let file_path = {
                                 #[cfg(not(test))]
                                 {
-                                    tr_macro.file_path.clone()
+                                    &tr_macro.file_path
                                 }
 
                                 #[cfg(test)]
                                 {
-                                    "[test content]".to_string()
+                                    "[test content]"
                                 }
                             };
 
@@ -196,15 +209,50 @@ fn check_fluent_entries_against_tr_macros(
                 }
             }
             if !message_name_found {
-                error_messages.push(format!(
+                let error_message = format!(
                     concat!(
                         r#"Message "{}" of locale "{}" not found in any"#,
                         r#" `tr!` or `move_tr!` macro calls."#,
                     ),
                     entry.message_name, lang,
-                ));
+                );
+                error_messages.push(error_message);
             }
         }
     }
     error_messages
+}
+
+fn format_macro_call(
+    macro_name: &str,
+    message_name: &str,
+    has_placeables: bool,
+) -> String {
+    if has_placeables {
+        return format!(r#"`{}!("{}", {{ ... }})`"#, macro_name, message_name);
+    }
+    format!(r#"`{}!("{}")`"#, macro_name, message_name)
+}
+
+/// Check if the message name is a valid Fluent message identifier.
+///
+/// See the Fluent EBNF grammar for message identifiers:
+/// https://github.com/projectfluent/fluent/blob/fd8f95478e29dda8121da7e275d375eb8dadbcb0/spec/fluent.ebnf
+fn check_tr_macro_message_name_is_valid(message_name: &str) -> bool {
+    let mut chars = message_name.chars();
+    if !chars.next().unwrap_or('0').is_ascii_alphabetic() {
+        return false;
+    }
+    loop {
+        match chars.next() {
+            Some(character) => {
+                if !character.is_ascii_alphanumeric()
+                    && !['_', '-'].contains(&character)
+                {
+                    return false;
+                }
+            }
+            None => break true,
+        }
+    }
 }
