@@ -43,7 +43,7 @@ static_loader! {
 #[component]
 pub fn App() -> impl IntoView {
     leptos_fluent! {{
-        translations: TRANSLATIONS,
+        translations: [TRANSLATIONS],
         locales: "./locales",
     }};
 
@@ -113,6 +113,9 @@ leptos = { version = "0.6.12", features = ["csr"] }
 leptos-fluent = "0.1"
 fluent-templates = "0.9"
 console_error_panic_hook = "0.1"
+
+[package.metadata.leptos]
+watch-additional-files = ["locales"]
 ```
 
 ## Translating messages

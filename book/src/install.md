@@ -30,6 +30,10 @@ ssr = [
   "leptos-fluent/ssr",
   "leptos-fluent/actix",  # actix and axum are supported
 ]
+
+# Using cargo-leptos
+[package.metadata.leptos]
+watch-additional-files = ["locales"]
 ```
 
 [`fluent-templates`]: https://github.com/XAMPPRocky/fluent-templates
