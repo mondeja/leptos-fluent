@@ -20,7 +20,7 @@ Add the following to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-leptos-fluent = "0.0.37"
+leptos-fluent = "0.1"
 fluent-templates = "0.9"
 
 [features]
@@ -90,7 +90,7 @@ fn App() -> impl IntoView {
         // Path to the locales directory, relative to Cargo.toml file.
         locales: "./locales",
         // Static translations struct provided by fluent-templates.
-        translations: TRANSLATIONS,
+        translations: [TRANSLATIONS],
         // Check translations correctness in the specified files.
         check_translations: "./src/**/*.rs",
 

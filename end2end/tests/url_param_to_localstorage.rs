@@ -12,7 +12,7 @@ const LOCALSTORAGE_KEY: &str = "my-weird-localstorage-key";
 #[component]
 pub fn App() -> impl IntoView {
     leptos_fluent! {{
-        translations: TRANSLATIONS,
+        translations: [TRANSLATIONS],
         locales: "../examples/csr-minimal/locales",
         initial_language_from_url_param: true,
         url_param: URL_PARAM,

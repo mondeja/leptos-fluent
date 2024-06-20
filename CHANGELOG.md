@@ -1,11 +1,24 @@
 # CHANGELOG
 
-## Unreleased - [0.1.0]
+## 2024-06-20 - [0.1.0]
+
+### Breaking changes
+
+- The parameter `translations` of the `leptos_fluent!` macro must now be
+  an array of translations. Replace `translations: TRANSLATIONS` by
+  `translations: [TRANSLATIONS]`.
 
 ### New features
 
 - Add `sync_html_tag_dir` parameter to `leptos_fluent!` macro to sync the `dir`
   global attribute of the `<html>` tag with the current language direction.
+- Multiple translations can be passed to the `leptos_fluent!` macro.
+
+## Versioning
+
+**leptos-fluent** will include breaking changes in minor versions during
+the v0.x.0 series until v1.0.0 version is reached. Is safe to pin the
+version to `0.1` during installation.
 
 ## 2024-06-16 - [0.0.37]
 
@@ -221,7 +234,7 @@
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
-[0.1.0]: https://github.com/mondeja/leptos-fluent/compare/v0.0.37...master
+[0.1.0]: https://github.com/mondeja/leptos-fluent/compare/v0.0.37...v0.1.0
 [0.0.37]: https://github.com/mondeja/leptos-fluent/compare/v0.0.36...v0.0.37
 [0.0.36]: https://github.com/mondeja/leptos-fluent/compare/v0.0.35...v0.0.36
 [0.0.35]: https://github.com/mondeja/leptos-fluent/compare/v0.0.34...v0.0.35
