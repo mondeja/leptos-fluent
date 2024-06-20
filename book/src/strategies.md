@@ -2,8 +2,8 @@
 
 # Features
 
-All the features of the framework are optional and follows an
-"opt-in" configuration.
+All the features of the framework are optional, following a declarative
+"opt-in" configuration method.
 
 ## Loading the initial language of the user
 
