@@ -12,6 +12,7 @@
 
 - Add `sync_html_tag_dir` parameter to `leptos_fluent!` macro to sync the `dir`
   global attribute of the `<html>` tag with the current language direction.
+- Multiple translations can be passed to the `leptos_fluent!` macro.
 
 ## 2024-06-16 - [0.0.37]
 
