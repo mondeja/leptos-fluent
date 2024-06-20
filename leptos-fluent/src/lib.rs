@@ -3,7 +3,7 @@
 //! [![Crates.io](https://img.shields.io/crates/v/leptos-fluent?logo=rust)](https://crates.io/crates/leptos-fluent)
 //! [![License](https://img.shields.io/crates/l/leptos-fluent?logo=mit)](https://github.com/mondeja/leptos-fluent/blob/master/LICENSE.md)
 //! [![Tests](https://img.shields.io/github/actions/workflow/status/mondeja/leptos-fluent/ci.yml?label=tests&logo=github)](https://github.com/mondeja/leptos-fluent/actions)
-//! [![Book](https://img.shields.io/github/actions/workflow/status/mondeja/leptos-fluent/.github%2Fworkflows%2Fci.yml?logo=github&label=book&labelColor=black)](https://mondeja.github.io/leptos-fluent/)
+//! [![Book](https://img.shields.io/github/actions/workflow/status/mondeja/leptos-fluent/.github%2Fworkflows%2Fci.yml?logo=github&label=book)](https://mondeja.github.io/leptos-fluent/)
 //! [![docs.rs](https://img.shields.io/docsrs/leptos-fluent?logo=docs.rs)][documentation]
 //! [![Crates.io downloads](https://img.shields.io/crates/d/leptos-fluent)](https://crates.io/crates/leptos-fluent)
 //! [![Discord channel](https://img.shields.io/badge/-Discord-5865F2?style=flat-square&logo=discord&logoColor=white)](https://discord.com/channels/1031524867910148188/1251579884371705927)
