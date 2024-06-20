@@ -45,7 +45,7 @@ use quote::quote;
 /// #[component]
 /// pub fn App() -> impl IntoView {
 ///     leptos_fluent! {{
-///         translations: TRANSLATIONS,
+///         translations: [TRANSLATIONS],
 ///         languages: "./locales/languages.json",
 ///         sync_html_tag_lang: true,
 ///         sync_html_tag_dir: true,
@@ -887,7 +887,7 @@ pub fn leptos_fluent(
             let mut i18n = ::leptos_fluent::I18n {
                 language: ::leptos::create_rw_signal(initial_lang),
                 languages: &LANGUAGES,
-                translations: ::leptos::create_signal(#translations).0,
+                translations: ::leptos::Signal::derive(|| #translations),
             };
             provide_context::<::leptos_fluent::I18n>(i18n);
             #sync_html_tag_lang_quote

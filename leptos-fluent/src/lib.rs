@@ -237,8 +237,8 @@ use fluent_templates::{
     LanguageIdentifier, StaticLoader,
 };
 use leptos::{
-    use_context, Attribute, IntoAttribute, Oco, ReadSignal, RwSignal,
-    SignalGet, SignalWith,
+    use_context, Attribute, IntoAttribute, Oco, RwSignal, Signal, SignalGet,
+    SignalWith,
 };
 pub use leptos_fluent_macros::leptos_fluent;
 
@@ -357,7 +357,7 @@ pub struct I18n {
     /// Available languages for the application.
     pub languages: &'static [&'static Language],
     /// Static translations loader of fluent-templates.
-    pub translations: ReadSignal<Vec<&'static Lazy<StaticLoader>>>,
+    pub translations: Signal<Vec<&'static Lazy<StaticLoader>>>,
 }
 
 #[cfg(debug_assertions)]
@@ -395,11 +395,10 @@ pub fn i18n() -> I18n {
 #[doc(hidden)]
 pub fn tr_impl(text_id: &str) -> String {
     let i18n = expect_i18n();
+    let lang_id = i18n.language.get().id.clone();
     let found = i18n.translations.with(|translations| {
         for tr in translations {
-            if let Some(result) =
-                tr.try_lookup(&i18n.language.get().id, text_id)
-            {
+            if let Some(result) = tr.try_lookup(&lang_id, text_id) {
                 return Some(result);
             }
         }
@@ -416,10 +415,11 @@ pub fn tr_with_args_impl(
     args: &std::collections::HashMap<String, FluentValue>,
 ) -> String {
     let i18n = expect_i18n();
+    let lang_id = i18n.language.get().id.clone();
     let found = i18n.translations.with(|translations| {
         for tr in translations {
             if let Some(result) =
-                tr.try_lookup_with_args(&i18n.language.get().id, text_id, args)
+                tr.try_lookup_with_args(&lang_id, text_id, args)
             {
                 return Some(result);
             }
