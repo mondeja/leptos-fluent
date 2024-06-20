@@ -553,7 +553,7 @@ mod test {
             r#"leptos-fluent = "<version>" not found in leptos-fluent/src/lib.rs"#
         );
         assert_eq!(
-            major_and_minor_version(&version.unwrap()),
+            major_and_minor_version(version.unwrap()),
             major_and_minor_version(env!("CARGO_PKG_VERSION")),
             concat!(
                 "The version of leptos-fluent shown in the README at",

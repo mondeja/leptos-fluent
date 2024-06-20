@@ -80,7 +80,7 @@ pub(crate) fn build_fluent_entries(
                             .iter()
                             .map(|e| {
                                 let (line, col) = line_col_from_index_content(resource_str, e.pos.start);
-                                format!("{} (at line {}, col {})", e, line, col)
+                                format!("{e} (at line {line}, col {col})")
                             })
                             .collect::<Vec<String>>()
                             .join("\n   +")
@@ -128,7 +128,7 @@ pub(crate) fn build_fluent_entries(
                                 resource_str,
                                 e.pos.start,
                             );
-                            format!("{} (at line {}, col {})", e, line, col)
+                            format!("{e} (at line {line}, col {col})")
                         })
                         .collect::<Vec<String>>()
                         .join("\n   +")
@@ -189,7 +189,7 @@ mod tests {
         let (entries, errors) = build_fluent_entries(
             &fluent_resources,
             &fluent_file_paths,
-            &workspace_path,
+            workspace_path,
             &None,
             &None,
         );
@@ -224,7 +224,7 @@ mod tests {
                     ]
                 )
             ])
-        )
+        );
     }
 
     #[test]
@@ -239,12 +239,12 @@ mod tests {
         let (entries, errors) = build_fluent_entries(
             &fluent_resources,
             &fluent_file_paths,
-            &workspace_path,
+            workspace_path,
             &None,
             &None,
         );
         assert!(errors.is_empty());
-        assert_eq!(entries, HashMap::from([("en-US".to_string(), vec![]),]))
+        assert_eq!(entries, HashMap::from([("en-US".to_string(), vec![]),]));
     }
 
     #[test]
@@ -261,7 +261,7 @@ mod tests {
         let (entries, errors) = build_fluent_entries(
             &fluent_resources,
             &fluent_file_paths,
-            &workspace_path,
+            workspace_path,
             &None,
             &None,
         );
@@ -299,7 +299,7 @@ mod tests {
         let (entries, errors) = build_fluent_entries(
             &fluent_resources,
             &fluent_file_paths,
-            &workspace_path,
+            workspace_path,
             &None,
             &None,
         );

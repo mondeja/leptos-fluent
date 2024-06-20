@@ -229,9 +229,9 @@ fn format_macro_call(
     has_placeables: bool,
 ) -> String {
     if has_placeables {
-        return format!(r#"`{}!("{}", {{ ... }})`"#, macro_name, message_name);
+        return format!(r#"`{macro_name}!("{message_name}", {{ ... }})`"#);
     }
-    format!(r#"`{}!("{}")`"#, macro_name, message_name)
+    format!(r#"`{macro_name}!("{message_name}")`"#)
 }
 
 /// Check if the message name is a valid Fluent message identifier.

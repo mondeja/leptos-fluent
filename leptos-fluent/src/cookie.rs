@@ -9,7 +9,7 @@ pub fn get(name: &str) -> Option<String> {
             .unwrap();
         cookies.insert_str(0, "; ");
         return cookies
-            .split(&format!("; {}=", name).as_str())
+            .split(&format!("; {name}=").as_str())
             .nth(1)
             .and_then(|cookie| cookie.split(';').next().map(String::from));
     }
@@ -34,7 +34,7 @@ fn set_cookie(new_value: &str) {
 pub fn set(name: &str, value: &str, attrs: &str) {
     #[cfg(not(feature = "ssr"))]
     {
-        let mut new_value = format!("{}={}", name, value);
+        let mut new_value = format!("{name}={value}");
         if !attrs.is_empty() {
             new_value.push_str("; ");
             new_value.push_str(attrs);
@@ -54,7 +54,7 @@ pub fn delete(name: &str) {
     #[cfg(not(feature = "ssr"))]
     {
         let new_value =
-            format!("{}=; expires=Thu, 01 Jan 1970 00:00:00 GMT", name);
+            format!("{name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT");
         set_cookie(&new_value);
     }
 

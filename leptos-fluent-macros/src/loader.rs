@@ -145,11 +145,11 @@ impl Parse for Translations {
             match loader {
                 SimpleOrCompound::Simple(x) => {
                     for loader in x.0.into_iter() {
-                        simple.push(loader)
+                        simple.push(loader);
                     }
                 }
                 SimpleOrCompound::Compound(compound_loader) => {
-                    compound.push(compound_loader.0)
+                    compound.push(compound_loader.0);
                 }
             }
         }
