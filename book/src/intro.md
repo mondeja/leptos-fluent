@@ -40,6 +40,12 @@ the less code possible for each possible configuration. I hope you enjoy it!
 
 ## Help and support
 
+<!-- markdownlint-disable MD013 -->
+
+[![Discord channel](https://img.shields.io/badge/Discord%20server-grey?logo=discord&logoColor=white)][`leptos-fluent` channel]
+
+<!-- markdownlint-enable MD013 -->
+
 You can ask for help and support in the [`leptos-fluent` channel] of
 [Leptos Discord server]. Additionally, if you experience bugs or just don't
 like chat servers you can [open an issue in the GitHub repository].
