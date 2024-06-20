@@ -321,10 +321,10 @@ move || tr!("language-selected-is", { "lang" =&gt; i18n.language.get().name })
 </span>leptos::Signal::derive(move || tr!("select-a-language"))
 <span class="boring">}</span></code></pre></pre>
 <h2 id="retrieving-the-leptos_fluenti18n-context"><a class="header" href="#retrieving-the-leptos_fluenti18n-context">Retrieving the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html"><code>leptos_fluent::I18n</code></a> context</a></h2>
-<p>Use the <code>expect_i18n</code> function to get the current i18n context:</p>
+<p>Use the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.expect_i18n.html"><code>expect_i18n</code></a> function to get the current i18n context:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>let i18n = expect_i18n();
+</span>let i18n = leptos_fluent::expect_i18n();
 <span class="boring">}</span></code></pre></pre>
 <p>It is exported as <code>i18n()</code> too:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
@@ -342,7 +342,8 @@ i18n context:</p>
 <ul>
 <li><a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.language"><code>language</code></a>: A read-write signal with a pointer to the static current active language.</li>
 <li><a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.languages"><code>languages</code></a>: A pointer to a static list of pointers of the static available languages.</li>
-<li><a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.translations"><code>translations</code></a>: A pointer to the <a href="https://docs.rs/fluent-templates/latest/fluent_templates">fluent-templates</a> loader that stores the translations.</li>
+<li><a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.translations"><code>translations</code></a>: A signal to the vector of <a href="https://docs.rs/fluent-templates/latest/fluent_templates">fluent-templates</a> loaders that stores
+the translations.</li>
 </ul>
 <p>To update the language, use <code>set</code> method of <code>language</code> field:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
