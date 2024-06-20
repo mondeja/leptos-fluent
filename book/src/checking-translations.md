@@ -35,14 +35,14 @@ The mechanism of translations checking needs to know where reside the calls to
 This is performed by parsing the source code looking for these macros
 invocations.
 
-This is the mean reason why **leptos-fluent** doesn't provide
+This is the main reason why **leptos-fluent** doesn't provide
 ways to translate directly using methods of the [`leptos_fluent::I18n`]
 context, as it would be impossible to extract the translations at compile time.
 
 The only limitation for checking translations with glob patterns is that the
 [`tr!`] and [`move_tr!`] macros that consume each context must be in
-different file trees, but this enforces a good practice of separation of
-concerns in the codebase.
+different file trees, but this enforces anyway a good practice of file-level
+separation of contexts in the codebase.
 
 [`tr!`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.tr.html
 [`move_tr!`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.move_tr.html
