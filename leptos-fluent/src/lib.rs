@@ -187,7 +187,7 @@
 //!                                 id=lang
 //!                                 name="language"
 //!                                 value=lang
-//!                                 checked=i18n.language.set(lang)
+//!                                 checked=lang.is_active()
 //!                                 on:click=move |_| i18n.language.set(lang)
 //!                             />
 //!                             <label for=lang>{lang.name}</label>
