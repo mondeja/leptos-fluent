@@ -359,7 +359,7 @@ pub struct I18n {
     pub language: RwSignal<&'static Language>,
     /// Available languages for the application.
     pub languages: &'static [&'static Language],
-    /// Static translations loader of fluent-templates.
+    /// Signal with a vector of fluent-templates static loaders.
     pub translations: Signal<Vec<&'static Lazy<StaticLoader>>>,
 }
 
