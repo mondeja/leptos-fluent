@@ -85,7 +85,7 @@
 //!         // Path to the locales directory, relative to Cargo.toml file.
 //!         locales: "./locales",
 //!         // Static translations struct provided by fluent-templates.
-//!         translations: TRANSLATIONS,
+//!         translations: [TRANSLATIONS],
 //!         // Check translations correctness in the specified files.
 //!         check_translations: "./src/**/*.rs",
 //!
