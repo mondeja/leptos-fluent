@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## Unreleased - [0.1.1]
+
+### Enhancements
+
+- Add method `activate` to `leptos_fluent::Language` struct to set a language
+  active. Use `lang.activate()` instead of `expect_i18n().language.set(lang)`.
+
 ## 2024-06-20 - [0.1.0]
 
 ### Breaking changes

@@ -79,7 +79,7 @@ fn HomePage() -> impl IntoView {
                                     name="language"
                                     value=lang
                                     checked=lang.is_active()
-                                    on:click=move |_| i18n.language.set(lang)
+                                    on:click=move |_| lang.activate()
                                 />
                                 <label for=lang>{lang.name}</label>
                             </div>

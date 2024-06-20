@@ -173,7 +173,7 @@
 //!
 //!     // `i18n.languages` is a static array with the available languages
 //!     // `i18n.language.get()` to get the current language
-//!     // `i18n.language.set(lang)` to set the current language
+//!     // `lang.activate()` to set the current language
 //!     // `lang.is_active()` to check if a language is the current selected one
 //!
 //!     view! {
@@ -241,7 +241,7 @@ use fluent_templates::{
 };
 use leptos::{
     use_context, Attribute, IntoAttribute, Oco, RwSignal, Signal, SignalGet,
-    SignalWith,
+    SignalSet, SignalWith,
 };
 pub use leptos_fluent_macros::leptos_fluent;
 
@@ -290,6 +290,11 @@ impl Language {
     /// Check if the language is the active language.
     pub fn is_active(&self) -> bool {
         self == expect_i18n().language.get()
+    }
+
+    /// Set the language as the active language.
+    pub fn activate(&'static self) {
+        expect_i18n().language.set(self);
     }
 }
 

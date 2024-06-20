@@ -362,7 +362,7 @@ pub fn leptos_fluent(
         let hydrate_rerender_quote = quote! {
             ::leptos::create_effect(move |prev| {
                 if prev.is_none() {
-                    ::leptos_fluent::expect_i18n().language.set(l);
+                    l.activate();
                 }
             });
         };

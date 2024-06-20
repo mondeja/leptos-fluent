@@ -178,7 +178,7 @@ fn LanguageSelector() -> impl IntoView {
 
     // `i18n.languages` is a static array with the available languages
     // `i18n.language.get()` to get the current language
-    // `i18n.language.set(lang)` to set the current language
+    // `lang.activate()` to set the current language
     // `lang.is_active()` to check if a language is the current selected one
 
     view! {
