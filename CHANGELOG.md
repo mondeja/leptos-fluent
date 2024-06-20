@@ -16,8 +16,8 @@
 
 ## Versioning
 
-**leptos-fluent** will include breacking changes in minor versions during
-the v0.x.0 series until the v1.0.0 version is reached. Is safe to pin the
+**leptos-fluent** will include breaking changes in minor versions during
+the v0.x.0 series until v1.0.0 version is reached. Is safe to pin the
 version to `0.1` during installation.
 
 ## 2024-06-16 - [0.0.37]
