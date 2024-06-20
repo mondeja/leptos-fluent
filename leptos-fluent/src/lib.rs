@@ -287,7 +287,7 @@ pub struct Language {
 }
 
 impl Language {
-    /// Check if the language is the active language.
+    /// Get if the language is the active language.
     #[inline(always)]
     pub fn is_active(&self) -> bool {
         self == expect_i18n().language.get()
@@ -336,6 +336,15 @@ impl FromStr for Language {
 
 macro_rules! impl_into_attr_for_language {
     () => {
+        /// Convert a language to an attribute passing the language identifier.
+        ///
+        /// ```rust,ignore
+        /// // The following code:
+        /// <input id={lang} ... >
+        /// // is the same as
+        /// <input id={lang.id.to_string()} ... >
+        /// ```
+        #[inline(always)]
         fn into_attribute(self) -> Attribute {
             Attribute::String(Oco::Owned(self.id.to_string()))
         }
