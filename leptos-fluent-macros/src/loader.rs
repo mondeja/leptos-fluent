@@ -72,11 +72,97 @@ fn parse_litbool_or_expr_param(
     }
 }
 
+/// A syntax part consisting of a list of simple loaders.
+///
+/// e.g. `[loader1, loader2]`
+///
+/// # Note
+/// Must not contain a [`Compound`] loader.
+pub(crate) struct Simple(pub(crate) Vec<syn::Path>);
+
+impl Parse for Simple {
+    fn parse(input: ParseStream) -> Result<Self> {
+        let bracketed;
+        syn::bracketed!(bracketed in input);
+
+        let list =
+            bracketed.parse_terminated(syn::Path::parse, syn::Token![,])?;
+        Ok(Self(list.into_iter().collect()))
+    }
+}
+
+/// A syntax part consisting of a group of loaders passed as one.
+///
+/// Used to pack loaders and export them from a crate for example.
+pub(crate) struct Compound(pub(crate) syn::Path);
+
+impl Parse for Compound {
+    fn parse(input: ParseStream) -> Result<Self> {
+        Ok(Self(input.parse()?))
+    }
+}
+
+/// Either a [`List`] or a [`Compound`].
+pub(crate) enum SimpleOrCompound {
+    Simple(Simple),
+    Compound(Compound),
+}
+
+impl Parse for SimpleOrCompound {
+    fn parse(input: ParseStream) -> Result<Self> {
+        if let Ok(list) = Simple::parse(input) {
+            Ok(Self::Simple(list))
+        } else if let Ok(compound) = Compound::parse(input) {
+            Ok(Self::Compound(compound))
+        } else {
+            Err(syn::Error::new(
+                input.span(),
+                "need to pass either a list of loaders or a compound loader",
+            ))
+        }
+    }
+}
+
+/// A collection of loaders (both simple and compound ones) to use
+/// for translating.
+pub(crate) struct Translations {
+    pub(crate) simple: Vec<syn::Path>,
+    pub(crate) compound: Vec<syn::Path>,
+}
+
+impl Parse for Translations {
+    fn parse(input: ParseStream) -> Result<Self> {
+        // example of input
+        // [loader1, loader2] + loaders1 + loaders2 + [loader3]
+        let mut simple = Vec::new();
+        let mut compound = Vec::new();
+
+        let loaders = syn::punctuated::Punctuated::<
+            SimpleOrCompound,
+            syn::Token![+],
+        >::parse_separated_nonempty(input)?;
+        for loader in loaders.into_iter() {
+            match loader {
+                SimpleOrCompound::Simple(x) => {
+                    for loader in x.0.into_iter() {
+                        simple.push(loader)
+                    }
+                }
+                SimpleOrCompound::Compound(compound_loader) => {
+                    compound.push(compound_loader.0)
+                }
+            }
+        }
+
+        Ok(Self { simple, compound })
+    }
+}
+
 pub(crate) struct I18nLoader {
     pub(crate) languages: Vec<(String, String, String)>,
     pub(crate) languages_path: Option<String>,
     pub(crate) core_locales_path: Option<String>,
-    pub(crate) translations_ident: syn::Ident,
+    pub(crate) translations: Translations,
     pub(crate) sync_html_tag_lang_bool: Option<syn::LitBool>,
     pub(crate) sync_html_tag_lang_expr: Option<syn::Expr>,
     pub(crate) sync_html_tag_dir_bool: Option<syn::LitBool>,
@@ -125,7 +211,7 @@ impl Parse for I18nLoader {
         let mut locales_path: Option<syn::LitStr> = None;
         let mut languages_path: Option<syn::LitStr> = None;
         let mut core_locales_path: Option<syn::LitStr> = None;
-        let mut translations_identifier: Option<syn::Ident> = None;
+        let mut translations: Option<Translations> = None;
         #[cfg(not(feature = "ssr"))]
         let mut check_translations: Option<syn::LitStr> = None;
         let mut sync_html_tag_lang_bool: Option<syn::LitBool> = None;
@@ -176,7 +262,7 @@ impl Parse for I18nLoader {
             fields.parse::<syn::Token![:]>()?;
 
             if k == "translations" {
-                translations_identifier = Some(fields.parse()?);
+                translations = Some(fields.parse()?);
             } else if k == "locales" {
                 locales_path = Some(fields.parse()?);
             } else if k == "core_locales" {
@@ -342,7 +428,7 @@ impl Parse for I18nLoader {
         }
 
         // translations
-        let translations_ident = translations_identifier.ok_or_else(|| {
+        let translations = translations.ok_or_else(|| {
             syn::Error::new(input.span(), "Missing `translations` field")
         })?;
 
@@ -492,7 +578,7 @@ impl Parse for I18nLoader {
         }
 
         Ok(Self {
-            translations_ident,
+            translations,
             languages,
             languages_path: languages_file_path,
             sync_html_tag_lang_bool,

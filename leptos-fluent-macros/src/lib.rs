@@ -45,7 +45,7 @@ use quote::quote;
 /// #[component]
 /// pub fn App() -> impl IntoView {
 ///     leptos_fluent! {{
-///         translations: TRANSLATIONS,
+///         translations: [TRANSLATIONS],
 ///         languages: "./locales/languages.json",
 ///         sync_html_tag_lang: true,
 ///         sync_html_tag_dir: true,
@@ -189,7 +189,7 @@ pub fn leptos_fluent(
 ) -> proc_macro::TokenStream {
     #[allow(unused_variables)]
     let I18nLoader {
-        translations_ident,
+        translations,
         languages,
         languages_path,
         sync_html_tag_lang_bool,
@@ -855,6 +855,22 @@ pub fn leptos_fluent(
         }
     };
 
+    let translations = {
+        let loader::Translations { simple, compound } = translations;
+
+        let quote = quote! {{
+            let mut all_loaders = Vec::new();
+            all_loaders.extend([#(& #simple),*]);
+            #(
+                all_loaders.extend(#compound.iter());
+            );*
+
+            all_loaders
+        }};
+
+        quote
+    };
+
     let quote = quote! {
         {
             const LANGUAGES: [&::leptos_fluent::Language; #n_languages] = #languages_quote;
@@ -871,7 +887,7 @@ pub fn leptos_fluent(
             let mut i18n = ::leptos_fluent::I18n {
                 language: ::leptos::create_rw_signal(initial_lang),
                 languages: &LANGUAGES,
-                translations: &#translations_ident,
+                translations: ::leptos::Signal::derive(|| #translations),
             };
             provide_context::<::leptos_fluent::I18n>(i18n);
             #sync_html_tag_lang_quote

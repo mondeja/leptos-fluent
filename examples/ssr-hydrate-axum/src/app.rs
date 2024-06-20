@@ -1,5 +1,7 @@
 use crate::error_template::{AppError, ErrorTemplate};
+use fluent_templates::once_cell::sync::Lazy;
 use fluent_templates::static_loader;
+use fluent_templates::StaticLoader;
 use leptos::*;
 use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, tr};
 use leptos_meta::*;
@@ -12,12 +14,13 @@ static_loader! {
     };
 }
 
+pub static COMPOUND: &[&Lazy<StaticLoader>] = &[&TRANSLATIONS, &TRANSLATIONS];
+
 #[component]
 pub fn App() -> impl IntoView {
     provide_meta_context();
     leptos_fluent! {{
-        translations: TRANSLATIONS,
-        languages: "./locales/languages.yaml",
+        translations: [TRANSLATIONS, TRANSLATIONS] + COMPOUND,
         locales: "./locales",
         check_translations: "./src/**/*.rs",
         sync_html_tag_lang: true,

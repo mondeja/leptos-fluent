@@ -85,7 +85,7 @@
 //!         // Path to the locales directory, relative to Cargo.toml file.
 //!         locales: "./locales",
 //!         // Static translations struct provided by fluent-templates.
-//!         translations: TRANSLATIONS,
+//!         translations: [TRANSLATIONS],
 //!         // Check translations correctness in the specified files.
 //!         check_translations: "./src/**/*.rs",
 //!
@@ -236,7 +236,10 @@ use fluent_templates::{
     fluent_bundle::FluentValue, loader::Loader, once_cell::sync::Lazy,
     LanguageIdentifier, StaticLoader,
 };
-use leptos::{use_context, Attribute, IntoAttribute, Oco, RwSignal, SignalGet};
+use leptos::{
+    use_context, Attribute, IntoAttribute, Oco, RwSignal, Signal, SignalGet,
+    SignalWith,
+};
 pub use leptos_fluent_macros::leptos_fluent;
 
 #[doc(hidden)]
@@ -347,9 +350,6 @@ impl IntoAttribute for &&'static Language {
 /// This context is used to provide the current language, the available languages
 /// and all the translations. It is capable of doing what is needed to translate
 /// and manage translations in a whole application.
-///
-/// If you need to separate the translations of different parts of the application,
-/// you can wrap this context in another struct and provide it to Leptos as a context.
 #[derive(Clone, Copy)]
 pub struct I18n {
     /// Signal that holds the current language.
@@ -357,7 +357,7 @@ pub struct I18n {
     /// Available languages for the application.
     pub languages: &'static [&'static Language],
     /// Static translations loader of fluent-templates.
-    pub translations: &'static Lazy<StaticLoader>,
+    pub translations: Signal<Vec<&'static Lazy<StaticLoader>>>,
 }
 
 #[cfg(debug_assertions)]
@@ -395,7 +395,18 @@ pub fn i18n() -> I18n {
 #[doc(hidden)]
 pub fn tr_impl(text_id: &str) -> String {
     let i18n = expect_i18n();
-    i18n.translations.lookup(&i18n.language.get().id, text_id)
+    let lang_id = i18n.language.get().id.clone();
+    let found = i18n.translations.with(|translations| {
+        for tr in translations {
+            if let Some(result) = tr.try_lookup(&lang_id, text_id) {
+                return Some(result);
+            }
+        }
+
+        None
+    });
+
+    found.unwrap_or("Unknown localization {text_id}".to_string())
 }
 
 #[doc(hidden)]
@@ -404,8 +415,20 @@ pub fn tr_with_args_impl(
     args: &std::collections::HashMap<String, FluentValue>,
 ) -> String {
     let i18n = expect_i18n();
-    i18n.translations
-        .lookup_with_args(&i18n.language.get().id, text_id, args)
+    let lang_id = i18n.language.get().id.clone();
+    let found = i18n.translations.with(|translations| {
+        for tr in translations {
+            if let Some(result) =
+                tr.try_lookup_with_args(&lang_id, text_id, args)
+            {
+                return Some(result);
+            }
+        }
+
+        None
+    });
+
+    found.unwrap_or("Unknown localization {text_id}".to_string())
 }
 
 /// Translate a text identifier to the current language.
