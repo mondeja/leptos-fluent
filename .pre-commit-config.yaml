@@ -42,11 +42,15 @@ repos:
             --workspace,
             --,
             -D,
+            warnings,
+            -D,
             clippy::print_stdout,
             -D,
             clippy::explicit_iter_loop,
             -D,
-            warnings,
+            clippy::uninlined_format_args,
+            -D,
+            clippy::semicolon_if_nothing_returned,
           ]
       - id: clippy
         alias: clippy-hydrate
@@ -58,11 +62,15 @@ repos:
             --workspace,
             --,
             -D,
+            warnings,
+            -D,
             clippy::print_stdout,
             -D,
             clippy::explicit_iter_loop,
             -D,
-            warnings,
+            clippy::uninlined_format_args,
+            -D,
+            clippy::semicolon_if_nothing_returned,
           ]
       - id: clippy
         alias: clippy-ssr-actix
@@ -77,11 +85,15 @@ repos:
             --workspace,
             --,
             -D,
+            warnings,
+            -D,
             clippy::print_stdout,
             -D,
             clippy::explicit_iter_loop,
             -D,
-            warnings,
+            clippy::uninlined_format_args,
+            -D,
+            clippy::semicolon_if_nothing_returned,
           ]
       - id: clippy
         alias: clippy-ssr-axum
@@ -96,11 +108,15 @@ repos:
             --workspace,
             --,
             -D,
+            warnings,
+            -D,
             clippy::print_stdout,
             -D,
             clippy::explicit_iter_loop,
             -D,
-            warnings,
+            clippy::uninlined_format_args,
+            -D,
+            clippy::semicolon_if_nothing_returned,
           ]
   - repo: https://github.com/mondeja/rust-pc-hooks
     rev: v1.1.0
