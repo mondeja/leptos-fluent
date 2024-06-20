@@ -407,7 +407,7 @@ pub fn tr_impl(text_id: &str) -> String {
         None
     });
 
-    found.unwrap_or_else(|| panic!("Unknown localization {text_id}"))
+    found.unwrap_or("Unknown localization {text_id}".to_string())
 }
 
 #[doc(hidden)]
@@ -428,7 +428,7 @@ pub fn tr_with_args_impl(
         None
     });
 
-    found.unwrap_or_else(|| panic!("Unknown localization {text_id}"))
+    found.unwrap_or("Unknown localization {text_id}".to_string())
 }
 
 /// Translate a text identifier to the current language.
