@@ -19,7 +19,7 @@ follows a different approach. The main differences are:
   while `leptos_i18n` only allows one.
 - `leptos-fluent` has a lot of strategies for activating the initial language
   of the user at initialization and updating it when the user changes the
-  language, while `leptos_i18n` only has follows the cookie strategy.
+  language, while `leptos_i18n` only follows the cookie strategy.
 - `leptos-fluent` automatically builds language names and directions based on
   language codes, while `leptos_i18n` don't.
 - `leptos-fluent` has multiple side effects for updating the language in the

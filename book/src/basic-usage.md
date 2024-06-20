@@ -162,10 +162,10 @@ leptos::Signal::derive(move || tr!("select-a-language"))
 
 ## Retrieving the [`leptos_fluent::I18n`] context
 
-Use the `expect_i18n` function to get the current i18n context:
+Use the [`expect_i18n`] function to get the current i18n context:
 
 ```rust
-let i18n = expect_i18n();
+let i18n = leptos_fluent::expect_i18n();
 ```
 
 It is exported as `i18n()` too:
@@ -187,8 +187,10 @@ The i18n context has the following fields:
 
 - [`language`]: A read-write signal with a pointer to the static current active language.
 - [`languages`]: A pointer to a static list of pointers of the static available languages.
-- [`translations`]: A pointer to the [fluent-templates] loader that stores the translations.
+- [`translations`]: A signal to the vector of [fluent-templates] loaders that stores
+  the translations.
 
+[`expect_i18n`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.expect_i18n.html
 [`language`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.language
 [`languages`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.languages
 [`translations`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.translations
