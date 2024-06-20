@@ -288,11 +288,13 @@ pub struct Language {
 
 impl Language {
     /// Check if the language is the active language.
+    #[inline(always)]
     pub fn is_active(&self) -> bool {
         self == expect_i18n().language.get()
     }
 
     /// Set the language as the active language.
+    #[inline(always)]
     pub fn activate(&'static self) {
         expect_i18n().language.set(self);
     }
