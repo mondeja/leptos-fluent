@@ -3,9 +3,10 @@
 //! [![Crates.io](https://img.shields.io/crates/v/leptos-fluent?logo=rust)](https://crates.io/crates/leptos-fluent)
 //! [![License](https://img.shields.io/crates/l/leptos-fluent?logo=mit)](https://github.com/mondeja/leptos-fluent/blob/master/LICENSE.md)
 //! [![Tests](https://img.shields.io/github/actions/workflow/status/mondeja/leptos-fluent/ci.yml?label=tests&logo=github)](https://github.com/mondeja/leptos-fluent/actions)
+//! [![Book](https://img.shields.io/github/actions/workflow/status/mondeja/leptos-fluent/.github%2Fworkflows%2Fci.yml?logo=github&label=book)](https://mondeja.github.io/leptos-fluent/)
 //! [![docs.rs](https://img.shields.io/docsrs/leptos-fluent?logo=docs.rs)][documentation]
 //! [![Crates.io downloads](https://img.shields.io/crates/d/leptos-fluent)](https://crates.io/crates/leptos-fluent)
-//! [![Discord channel](https://img.shields.io/badge/-Discord-5865F2?style=flat-square&logo=discord&logoColor=white)](https://discord.com/channels/1031524867910148188/1251579884371705927)
+//! [![Discord channel](https://img.shields.io/badge/discord-grey?logo=discord&logoColor=white)](https://discord.com/channels/1031524867910148188/1251579884371705927)
 //!
 //! Internationalization framework for [Leptos] using [fluent-templates].
 //!
@@ -53,14 +54,14 @@
 //!     └── 📄 lib.rs
 //! ```
 //!
-//! With Fluent files _en.ftl_ and _es.ftl_:
-//!
 //! ```ftl
+//! # locales/en/main.ftl
 //! hello-world = Hello, world!
 //! hello-args = Hello, { $arg1 } and { $arg2 }!
 //! ```
 //!
 //! ```ftl
+//! # locales/es/main.ftl
 //! hello-world = ¡Hola, mundo!
 //! hello-args = ¡Hola, { $arg1 } y { $arg2 }!
 //! ```
@@ -123,7 +124,7 @@
 //!
 //!         // Server side options
 //!         // -------------------
-//!         // Set the initial language from the Accept-Language header of the
+//!         // Set the initial language from the `Accept-Language` header of the
 //!         // request. By default, it is `false`.
 //!         initial_language_from_accept_language_header: true,
 //!
@@ -211,15 +212,17 @@
 //!
 //! # Resources
 //!
+//! - [Book]
 //! - [Quickstart]
-//! - [Examples]
 //! - [Documentation]
+//! - [Examples]
 //!
 //! [leptos]: https://leptos.dev/
 //! [fluent-templates]: https://github.com/XAMPPRocky/fluent-templates
 //! [quickstart]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.leptos_fluent.html
 //! [examples]: https://github.com/mondeja/leptos-fluent/tree/master/examples
 //! [documentation]: https://docs.rs/leptos-fluent
+//! [book]: https://mondeja.github.io/leptos-fluent/
 
 #[doc(hidden)]
 pub mod cookie;
@@ -435,7 +438,10 @@ pub fn tr_with_args_impl(
 ///
 /// ```rust,ignore
 /// tr!("hello-world")
-/// tr!("hello-world", { "name" => "John" })
+/// tr!("hello-world", { "name" => "John" });
+///
+/// let name = "John";
+/// tr!("hello-world", { "name" => name, "age" => 30 });
 /// ```
 #[macro_export]
 macro_rules! tr {
@@ -456,6 +462,19 @@ macro_rules! tr {
 /// ```rust,ignore
 /// move_tr!("hello-world")
 /// move_tr!("hello-world", { "name" => "John" })
+///
+/// let name = "John";
+/// move_tr!("hello-world", { "name" => name, "age" => 30 });
+/// ```
+///
+/// The same as:
+///
+/// ```rust,ignore
+/// Signal::derive(move || tr!("hello-world"));
+/// Signal::derive(move || tr!("hello-world", { "name" => "John" }));
+///
+/// let name = "John";
+/// Signal::derive(move || tr!("hello-world", { "name" => name, "age" => 30 }));
 /// ```
 ///
 /// [`leptos::Signal`]: https://docs.rs/leptos/latest/leptos/struct.Signal.html

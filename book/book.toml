@@ -1,0 +1,14 @@
+[book]
+authors = ["Álvaro Mondéjar Rubio"]
+description = "Internationalization framework for Leptos using Fluent."
+language = "en"
+multilingual = false
+src = "src"
+title = "leptos-fluent"
+
+[rust]
+edition = "2021"
+
+[output.html]
+git-repository-url = "https://github.com/mondeja/leptos-fluent/tree/master/book"
+edit-url-template = "https://github.com/mondeja/leptos-fluent/edit/master/book/{path}"

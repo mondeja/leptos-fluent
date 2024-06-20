@@ -43,6 +43,19 @@ cargo test -p leptos-fluent -p leptos-fluent-macros
 
 ## Documentation
 
+### Reference
+
 ```sh
 cargo doc --open --no-deps
+```
+
+### Book
+
+```sh
+cargo install mdbook
+```
+
+```sh
+cd book
+mdbook serve --open
 ```
