@@ -1801,6 +1801,6 @@ fn language_name_from_language_code(
         "za" => "Saɯ cueŋƅ",
         "zh" => "中文",
         "zu" => "isiZulu",
-        _ => panic!("Language name for language code '{}' not found", code,),
+        _ => panic!("Language name for language code '{code}' not found",),
     }
 }

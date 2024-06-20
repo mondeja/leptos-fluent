@@ -33,13 +33,13 @@ async fn test_url_param() {
     sleep(30).await;
     assert_eq!(
         leptos::window().location().search().unwrap(),
-        format!("?{}=es", URL_PARAM)
+        format!("?{URL_PARAM}=es")
     );
     en().click();
     sleep(30).await;
     assert_eq!(
         leptos::window().location().search().unwrap(),
-        format!("?{}=en", URL_PARAM)
+        format!("?{URL_PARAM}=en")
     );
     unmount!();
 

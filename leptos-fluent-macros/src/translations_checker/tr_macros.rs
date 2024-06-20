@@ -24,13 +24,13 @@ pub(crate) fn gather_tr_macro_defs_from_rs_files(
                             &workspace_path_str,
                         ) {
                             Ok(new_tr_macros) => {
-                                tr_macros.extend(new_tr_macros)
+                                tr_macros.extend(new_tr_macros);
                             }
                             Err(message) => errors.push(message),
                         }
                     }
                     Err(error) => {
-                        errors.push(format!("Error reading file: {}", error));
+                        errors.push(format!("Error reading file: {error}"));
                     }
                 }
             }
@@ -64,11 +64,11 @@ fn tr_macros_from_file_path(
                 Ok(visitor.tr_macros)
             }
             Err(error) => {
-                Err(format!("Error parsing file {}\n{}", file_path, error))
+                Err(format!("Error parsing file {file_path}\n{error}"))
             }
         }
     } else {
-        Err(format!("Error reading file: {}", file_path))
+        Err(format!("Error reading file: {file_path}"))
     }
 }
 

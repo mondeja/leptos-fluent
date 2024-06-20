@@ -187,7 +187,6 @@ use quote::quote;
 pub fn leptos_fluent(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
-    #[allow(unused_variables)]
     let I18nLoader {
         translations,
         languages,
@@ -270,6 +269,11 @@ pub fn leptos_fluent(
 
     #[cfg(feature = "ssr")]
     let sync_html_tag_lang_quote = quote! {};
+    #[cfg(feature = "ssr")]
+    {
+        _ = sync_html_tag_lang_bool;
+        _ = sync_html_tag_lang_expr;
+    }
 
     #[cfg(not(feature = "ssr"))]
     let sync_html_tag_dir_quote = {
@@ -305,6 +309,11 @@ pub fn leptos_fluent(
 
     #[cfg(feature = "ssr")]
     let sync_html_tag_dir_quote = quote! {};
+    #[cfg(feature = "ssr")]
+    {
+        _ = sync_html_tag_dir_bool;
+        _ = sync_html_tag_dir_expr;
+    }
 
     let url_param = match url_param_str {
         Some(lit) => quote! { #lit },
@@ -387,6 +396,12 @@ pub fn leptos_fluent(
                     }
                 }
             };
+
+        #[cfg(feature = "ssr")]
+        {
+            _ = initial_language_from_url_param_to_localstorage_bool;
+            _ = initial_language_from_url_param_to_localstorage_expr;
+        }
 
         #[cfg(not(feature = "ssr"))]
         let parse_language_from_url_quote = quote! {
@@ -509,6 +524,12 @@ pub fn leptos_fluent(
             },
         };
 
+    #[cfg(feature = "ssr")]
+    {
+        _ = initial_language_from_localstorage_bool;
+        _ = initial_language_from_localstorage_expr;
+    }
+
     let sync_language_with_url_param_quote = {
         let effect_quote = quote! {
             ::leptos::create_effect(move |_| {
@@ -573,6 +594,12 @@ pub fn leptos_fluent(
             },
         }
     };
+
+    #[cfg(feature = "ssr")]
+    {
+        _ = initial_language_from_navigator_bool;
+        _ = initial_language_from_navigator_expr;
+    }
 
     // Accept-Language header
     //   Actix
@@ -665,6 +692,13 @@ pub fn leptos_fluent(
     #[cfg(all(not(feature = "actix"), not(feature = "axum"), feature = "ssr"))]
     let initial_language_from_accept_language_header_quote = quote! {};
 
+    // No SSR
+    #[cfg(not(feature = "ssr"))]
+    {
+        _ = initial_language_from_accept_language_header_bool;
+        _ = initial_language_from_accept_language_header_expr;
+    }
+
     // Cookie
     #[cfg(any(
         not(feature = "ssr"),
@@ -744,6 +778,16 @@ pub fn leptos_fluent(
             },
         }
     };
+
+    #[cfg(feature = "ssr")]
+    {
+        _ = initial_language_from_cookie_bool;
+        _ = initial_language_from_cookie_expr;
+        _ = cookie_attrs_str;
+        _ = cookie_attrs_expr;
+        _ = set_language_to_cookie_bool;
+        _ = set_language_to_cookie_expr;
+    }
 
     //   Actix
     #[cfg(all(feature = "ssr", feature = "actix"))]
