@@ -244,7 +244,7 @@ mod tests {
             &None,
         );
         assert!(errors.is_empty());
-        assert_eq!(entries, HashMap::from([("en-US".to_string(), vec![]),]));
+        assert_eq!(entries, HashMap::from([("en-US".to_string(), vec![])]));
     }
 
     #[test]
