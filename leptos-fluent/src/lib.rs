@@ -336,7 +336,7 @@ impl FromStr for Language {
 
 macro_rules! impl_into_attr_for_language {
     () => {
-        /// Convert a language to an attribute passing the language identifier.
+        /// Convert a language to an HTML attribute passing the language identifier.
         ///
         /// ```rust,ignore
         /// // The following code:
@@ -366,8 +366,8 @@ impl IntoAttribute for &&'static Language {
 
 /// Internationalization context.
 ///
-/// This context is used to provide the current language, the available languages
-/// and all the translations. It is capable of doing what is needed to translate
+/// Ysed to provide the current language, the available languages and all
+/// the translations. It is capable of doing what is needed to translate
 /// and manage translations in a whole application.
 #[derive(Clone, Copy)]
 pub struct I18n {
@@ -425,7 +425,7 @@ pub fn tr_impl(text_id: &str) -> String {
         None
     });
 
-    found.unwrap_or("Unknown localization {text_id}".to_string())
+    found.unwrap_or(format!("Unknown localization {text_id}"))
 }
 
 #[doc(hidden)]
@@ -447,7 +447,7 @@ pub fn tr_with_args_impl(
         None
     });
 
-    found.unwrap_or("Unknown localization {text_id}".to_string())
+    found.unwrap_or(format!("Unknown localization {text_id}"))
 }
 
 /// Translate a text identifier to the current language.
