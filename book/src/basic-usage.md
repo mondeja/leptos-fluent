@@ -99,6 +99,7 @@ pub fn main() {
 ```
 
 ```toml
+# Cargo.toml
 [package]
 name = "minimal-example"
 edition = "2021"
@@ -114,13 +115,14 @@ leptos-fluent = "0.1"
 fluent-templates = "0.9"
 console_error_panic_hook = "0.1"
 
+# Using cargo-leptos
 [package.metadata.leptos]
 watch-additional-files = ["locales"]
 ```
 
 ## Translating messages
 
-Use the `move_tr!` macro to translate a string. The macro takes the key of the
+Use the [`move_tr!`] macro to translate a string. The macro takes the key of the
 translation and an optional object with the variables to interpolate:
 
 ```rust
@@ -129,9 +131,19 @@ move_tr!("select-a-language")
 move_tr!("language-selected-is", { "lang" => i18n.language.get().name })
 ```
 
-Additionally, you can use the `tr!` macro to translate a string inside
+Additionally, you can use the [`tr!`] macro to translate a string inside
 a reactive context. Note that if you're not inside a reactive context,
-the translation won't be updated on the fly when the language changes:
+the translation won't be updated on the fly when the language changes.
+This can lead to errors in console output like:
+
+```sh
+At <file>.rs:ln, you access a signal or memo (defined at <file>.rs:ln)
+outside of a reactive context. This might mean your app is not responding
+to changes in signal values in the way you expect.
+```
+
+Can be fixed by replacing calls to `tr!` with `move_tr!` or wrapping the
+`tr!` calls in a reactive context.
 
 The previous code _could_ be rewritten as:
 
@@ -142,13 +154,13 @@ move || tr!("language-selected-is", { "lang" => i18n.language.get().name })
 ```
 
 The main difference is that `move_tr!` encapsulates the movement in a
-`leptos::Signal`, strictly would be rewritten as:
+`leptos::Signal` (wich is copyable), strictly would be rewritten as:
 
 ```rust
 leptos::Signal::derive(move || tr!("select-a-language"))
 ```
 
-## Retrieving the i18n context
+## Retrieving the [`leptos_fluent::I18n`] context
 
 Use the `expect_i18n` function to get the current i18n context:
 
@@ -166,28 +178,29 @@ With the function `use_i18n()` context you'll get an `Option` with the current
 i18n context:
 
 ```rust
-use leptos_fluent::use_i18n;
-
-let i18n = use_i18n().expect("No i18n context found");
+let i18n = leptos_fluent::use_i18n().expect("No leptos_fluent::I18n context found");
 ```
 
-## Using the i18n context
+## Using the [`leptos_fluent::I18n`] context
 
 The i18n context has the following fields:
 
-- `language`: A read-write signal with a pointer to the static current active language.
-- `languages`: A pointer to a static list of pointers of the static available languages.
-- `translations`: A pointer to the [fluent-templates] loader that stores the translations.
+- [`language`]: A read-write signal with a pointer to the static current active language.
+- [`languages`]: A pointer to a static list of pointers of the static available languages.
+- [`translations`]: A pointer to the [fluent-templates] loader that stores the translations.
 
+[`language`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.language
+[`languages`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.languages
+[`translations`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.translations
 [fluent-templates]: https://docs.rs/fluent-templates/latest/fluent_templates
 
-To update the language, use the `set` method of the `language` field:
+To update the language, use `set` method of `language` field:
 
 ```rust
 i18n.language.set(lang)
 ```
 
-To get the current active language, use the `get` method of the `language` field:
+To get the current active language, use `get` method of `language` field:
 
 ```rust
 i18n.language.get()
@@ -199,9 +212,14 @@ To get the available languages, iterate over the `languages` field:
 i18n.languages.iter()
 ```
 
-To check if a language is the active one, use the `is_active` method of a
-`Language` struct:
+To check if a language is the active one, use `is_active` method of a
+[`leptos_fluent::Language`] struct:
 
 ```rust
 lang.is_active()
 ```
+
+[`tr!`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.tr.html
+[`move_tr!`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.move_tr.html
+[`leptos_fluent::I18n`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html
+[`leptos_fluent::Language`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html

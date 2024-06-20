@@ -435,7 +435,10 @@ pub fn tr_with_args_impl(
 ///
 /// ```rust,ignore
 /// tr!("hello-world")
-/// tr!("hello-world", { "name" => "John" })
+/// tr!("hello-world", { "name" => "John" });
+///
+/// let name = "John";
+/// tr!("hello-world", { "name" => name, "age" => 30 });
 /// ```
 #[macro_export]
 macro_rules! tr {
@@ -456,6 +459,19 @@ macro_rules! tr {
 /// ```rust,ignore
 /// move_tr!("hello-world")
 /// move_tr!("hello-world", { "name" => "John" })
+///
+/// let name = "John";
+/// move_tr!("hello-world", { "name" => name, "age" => 30 });
+/// ```
+///
+/// The same as:
+///
+/// ```rust,ignore
+/// Signal::derive(move || tr!("hello-world"));
+/// Signal::derive(move || tr!("hello-world", { "name" => "John" }));
+///
+/// let name = "John";
+/// Signal::derive(move || tr!("hello-world", { "name" => name, "age" => 30 }));
 /// ```
 ///
 /// [`leptos::Signal`]: https://docs.rs/leptos/latest/leptos/struct.Signal.html

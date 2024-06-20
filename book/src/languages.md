@@ -1,7 +1,7 @@
 # Languages
 
 **leptos-fluent** follows a default strategy to generate the languages
-of the application. This strategy is based on the `locales` directory.
+of the application. This strategy is based on the _locales/_ directory.
 
 Giving the next directory structure:
 
@@ -47,8 +47,8 @@ order of their names, not their codes.
 ## The languages file
 
 The languages array can be fully customized by defining a `languages` parameter
-in the `leptos_fluent!` macro pointing to a languages file. This file must
-be relative to the `Cargo.toml` file.
+in the [`leptos_fluent!`] macro pointing to a languages file. This file must
+be relative to the _Cargo.toml_ file.
 
 ```rust
 leptos_fluent! {{
@@ -73,7 +73,7 @@ The languages file must expose an array of arrays with the structure:
 ]
 ```
 
-The order of the languages in `leptos_fluent::I18n::languages` will be
+The order of the languages in [`leptos_fluent::I18n::languages`] will be
 the same as in the file regardless of the alphabetical order of the names.
 
 ### File format
@@ -95,7 +95,7 @@ Available features for languages file formats are:
 
 ## Tracking locales file with `cargo leptos`
 
-Using `cargo-leptos` the _locales/_ folder must be manually
+Using [`cargo-leptos`] the _locales/_ folder must be manually
 configured to be watched:
 
 ```toml
@@ -114,3 +114,6 @@ watch-additional-files = ["examples/csr/locales"]
 ```
 
 [ISO 639-1 code]: https://en.wikipedia.org/wiki/ISO_639-1
+[`leptos_fluent::I18n::languages`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.languages
+[`cargo-leptos`]: https://github.com/leptos-rs/cargo-leptos
+[`leptos_fluent!`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.leptos_fluent.html
