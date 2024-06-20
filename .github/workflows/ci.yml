@@ -293,7 +293,9 @@ jobs:
           prerelease: false
 
   deploy-book:
-    if: startsWith(github.ref, 'refs/tags/')
+    if: |
+      startsWith(github.ref, 'refs/tags/') ||
+      github.ref == 'refs/heads/master'
     name: Create release
     needs:
       - create-release
