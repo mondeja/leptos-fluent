@@ -211,15 +211,17 @@
 //!
 //! # Resources
 //!
+//! - [Book]
 //! - [Quickstart]
-//! - [Examples]
 //! - [Documentation]
+//! - [Examples]
 //!
 //! [leptos]: https://leptos.dev/
 //! [fluent-templates]: https://github.com/XAMPPRocky/fluent-templates
 //! [quickstart]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.leptos_fluent.html
 //! [examples]: https://github.com/mondeja/leptos-fluent/tree/master/examples
 //! [documentation]: https://docs.rs/leptos-fluent
+//! [book]: https://mondeja.github.io/leptos-fluent/
 
 #[doc(hidden)]
 pub mod cookie;
