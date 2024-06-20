@@ -2,10 +2,17 @@
 
 ## 2024-06-20 - [0.1.0]
 
+### Breaking changes
+
+- The parameter `translations` of the `leptos_fluent!` macro must now be
+  an array of translations. Replace `translations: TRANSLATIONS` by
+  `translations: [TRANSLATIONS]`.
+
 ### New features
 
 - Add `sync_html_tag_dir` parameter to `leptos_fluent!` macro to sync the `dir`
   global attribute of the `<html>` tag with the current language direction.
+- Multiple translations can be passed to the `leptos_fluent!` macro.
 
 ## Versioning
 
