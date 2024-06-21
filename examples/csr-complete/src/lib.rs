@@ -22,6 +22,7 @@ pub fn App() -> impl IntoView {
         cookie_attrs: "SameSite=Strict; Secure; Path=/; Max-Age=600",
         set_language_to_cookie: true,
         initial_language_from_cookie: true,
+        initial_language_from_cookie_to_localstorage: true,
         url_param: "lang",
         initial_language_from_url_param: true,
         initial_language_from_url_param_to_localstorage: true,

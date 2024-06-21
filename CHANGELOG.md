@@ -13,6 +13,9 @@
 
 - Add `initial_language_from_url_param_to_cookie` parameter to `leptos_fluent!`
   macro to set the initial language from URL parameter to a cookie.
+- Add `initial_language_from_cookie_to_localstorage` parameter to
+  `leptos_fluent!` macro to set the initial language from a cookie to
+  local storage.
 - Add `nightly` feature to enable nightly toolchain features.
 
 ## 2024-06-21 - [0.1.1]

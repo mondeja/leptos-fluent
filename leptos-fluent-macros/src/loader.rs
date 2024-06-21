@@ -200,6 +200,10 @@ pub(crate) struct I18nLoader {
     pub(crate) cookie_attrs_expr: Option<syn::Expr>,
     pub(crate) initial_language_from_cookie_bool: Option<syn::LitBool>,
     pub(crate) initial_language_from_cookie_expr: Option<syn::Expr>,
+    pub(crate) initial_language_from_cookie_to_localstorage_bool:
+        Option<syn::LitBool>,
+    pub(crate) initial_language_from_cookie_to_localstorage_expr:
+        Option<syn::Expr>,
     pub(crate) set_language_to_cookie_bool: Option<syn::LitBool>,
     pub(crate) set_language_to_cookie_expr: Option<syn::Expr>,
     pub(crate) fluent_file_paths: FluentFilePaths,
@@ -265,6 +269,12 @@ impl Parse for I18nLoader {
         let mut cookie_attrs_expr: Option<syn::Expr> = None;
         let mut initial_language_from_cookie_bool: Option<syn::LitBool> = None;
         let mut initial_language_from_cookie_expr: Option<syn::Expr> = None;
+        let mut initial_language_from_cookie_to_localstorage_bool: Option<
+            syn::LitBool,
+        > = None;
+        let mut initial_language_from_cookie_to_localstorage_expr: Option<
+            syn::Expr,
+        > = None;
         let mut set_language_to_cookie_bool: Option<syn::LitBool> = None;
         let mut set_language_to_cookie_expr: Option<syn::Expr> = None;
 
@@ -422,6 +432,15 @@ impl Parse for I18nLoader {
                     &mut initial_language_from_cookie_bool,
                     &mut initial_language_from_cookie_expr,
                     "initial_language_from_cookie",
+                ) {
+                    return Err(err);
+                }
+            } else if k == "initial_language_from_cookie_to_localstorage" {
+                if let Some(err) = parse_litbool_or_expr_param(
+                    &fields,
+                    &mut initial_language_from_cookie_to_localstorage_bool,
+                    &mut initial_language_from_cookie_to_localstorage_expr,
+                    "initial_language_from_cookie_to_localstorage",
                 ) {
                     return Err(err);
                 }
@@ -645,6 +664,8 @@ impl Parse for I18nLoader {
             cookie_attrs_expr,
             initial_language_from_cookie_bool,
             initial_language_from_cookie_expr,
+            initial_language_from_cookie_to_localstorage_bool,
+            initial_language_from_cookie_to_localstorage_expr,
             set_language_to_cookie_bool,
             set_language_to_cookie_expr,
             fluent_file_paths: fluent_resources_and_file_paths.1,
