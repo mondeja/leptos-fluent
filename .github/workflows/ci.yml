@@ -65,9 +65,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Get toolchain
+        id: toolchain
+        uses: ./.github/actions/get-toolchain
       - name: Setup Rust
         uses: hecrj/setup-rust-action@v2
         with:
+          rust-version: ${{ steps.toolchain.outputs.channel }}
           profile: minimal
       - name: Install cargo binstall
         uses: cargo-bins/cargo-binstall@main
@@ -87,11 +91,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Get toolchain
+        id: toolchain
+        uses: ./.github/actions/get-toolchain
       - name: Setup Rust
         uses: hecrj/setup-rust-action@v2
         with:
-          targets: wasm32-unknown-unknown
+          rust-version: ${{ steps.toolchain.outputs.channel }}
           profile: minimal
+          targets: wasm32-unknown-unknown
       - name: Install cargo binstall
         uses: cargo-bins/cargo-binstall@main
         env:
@@ -130,11 +138,15 @@ jobs:
             browser: chrome
     steps:
       - uses: actions/checkout@v4
+      - name: Get toolchain
+        id: toolchain
+        uses: ./.github/actions/get-toolchain
       - name: Setup Rust
         uses: hecrj/setup-rust-action@v2
         with:
-          targets: wasm32-unknown-unknown
+          rust-version: ${{ steps.toolchain.outputs.channel }}
           profile: minimal
+          targets: wasm32-unknown-unknown
       - name: Install cargo binstall
         uses: cargo-bins/cargo-binstall@main
         env:
@@ -175,11 +187,15 @@ jobs:
           - ssr-hydrate-axum
     steps:
       - uses: actions/checkout@v4
+      - name: Get toolchain
+        id: toolchain
+        uses: ./.github/actions/get-toolchain
       - name: Setup Rust
         uses: hecrj/setup-rust-action@v2
         with:
-          targets: wasm32-unknown-unknown
+          rust-version: ${{ steps.toolchain.outputs.channel }}
           profile: minimal
+          targets: wasm32-unknown-unknown
       - name: Install cargo binstall
         uses: cargo-bins/cargo-binstall@main
         env:

@@ -6,11 +6,14 @@
 
 - Validate cookie attributes in `leptos_fluent!` when defined using string
   literals.
+- Show locations of `tr!` macros with translations checker when using the
+  `nightly` feature.
 
 ### New features
 
 - Add `initial_language_from_url_param_to_cookie` parameter to `leptos_fluent!`
   macro to set the initial language from URL parameter to a cookie.
+- Add `nightly` feature to enable nightly toolchain features.
 
 ## 2024-06-21 - [0.1.1]
 

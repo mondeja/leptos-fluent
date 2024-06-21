@@ -46,6 +46,38 @@ pub(crate) fn run(
     (check_messages, errors)
 }
 
+fn macro_location(tr_macro: &TranslationMacro) -> String {
+    let file_path = {
+        #[cfg(not(test))]
+        {
+            &tr_macro.file_path
+        }
+
+        #[cfg(test)]
+        {
+            _ = tr_macro;
+            "[test content]"
+        }
+    };
+
+    #[cfg(not(feature = "nightly"))]
+    {
+        file_path.to_string()
+    }
+
+    #[cfg(feature = "nightly")]
+    {
+        if tr_macro.start.line == 0 && tr_macro.start.column == 0 {
+            file_path.to_string()
+        } else {
+            format!(
+                "{}:{}:{}",
+                &file_path, tr_macro.start.line, tr_macro.start.column,
+            )
+        }
+    }
+}
+
 fn check_tr_macros_against_fluent_entries(
     tr_macros: &Vec<TranslationMacro>,
     fluent_entries: &HashMap<String, Vec<FluentEntry>>,
@@ -63,18 +95,6 @@ fn check_tr_macros_against_fluent_entries(
                     // Check if all variables in the tr macro are present in the fluent entry
                     for placeable in &tr_macro.placeables {
                         if !entry.placeables.contains(placeable) {
-                            let file_path = {
-                                #[cfg(not(test))]
-                                {
-                                    &tr_macro.file_path
-                                }
-
-                                #[cfg(test)]
-                                {
-                                    "[test content]"
-                                }
-                            };
-
                             let error_message = format!(
                                 concat!(
                                     r#"Variable "{}" defined at {} macro"#,
@@ -87,7 +107,7 @@ fn check_tr_macros_against_fluent_entries(
                                     &tr_macro.message_name,
                                     !tr_macro.placeables.is_empty(),
                                 ),
-                                file_path,
+                                macro_location(tr_macro),
                                 tr_macro.message_name,
                                 lang,
                             );
@@ -100,18 +120,6 @@ fn check_tr_macros_against_fluent_entries(
                 }
             }
             if !message_name_found {
-                let file_path = {
-                    #[cfg(not(test))]
-                    {
-                        &tr_macro.file_path
-                    }
-
-                    #[cfg(test)]
-                    {
-                        "[test content]"
-                    }
-                };
-
                 let error_message = if check_tr_macro_message_name_is_valid(
                     &tr_macro.message_name,
                 ) {
@@ -126,7 +134,7 @@ fn check_tr_macros_against_fluent_entries(
                             &tr_macro.message_name,
                             !tr_macro.placeables.is_empty(),
                         ),
-                        file_path,
+                        macro_location(tr_macro),
                         lang,
                     )
                 } else {
@@ -143,7 +151,7 @@ fn check_tr_macros_against_fluent_entries(
                             &tr_macro.message_name,
                             !tr_macro.placeables.is_empty(),
                         ),
-                        file_path,
+                        macro_location(tr_macro),
                         lang,
                     )
                 };
@@ -172,18 +180,6 @@ fn check_fluent_entries_against_tr_macros(
                     // Check if all variables in the entry are present in the tr macro
                     for placeable in &entry.placeables {
                         if !tr_macro.placeables.contains(placeable) {
-                            let file_path = {
-                                #[cfg(not(test))]
-                                {
-                                    &tr_macro.file_path
-                                }
-
-                                #[cfg(test)]
-                                {
-                                    "[test content]"
-                                }
-                            };
-
                             error_messages.push(
                                 format!(
                                     concat!(
@@ -199,7 +195,7 @@ fn check_fluent_entries_against_tr_macros(
                                         &tr_macro.message_name,
                                         !tr_macro.placeables.is_empty(),
                                     ),
-                                    file_path,
+                                    macro_location(tr_macro),
                                 )
                             );
                         }

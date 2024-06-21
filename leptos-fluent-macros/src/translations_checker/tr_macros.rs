@@ -77,6 +77,8 @@ pub(crate) struct TranslationMacro {
     pub(crate) name: String,
     pub(crate) message_name: String,
     pub(crate) placeables: Vec<String>,
+    #[cfg(feature = "nightly")]
+    pub(crate) start: proc_macro2::LineColumn,
 
     // On tests is easier to not use file paths
     #[cfg(not(test))]
@@ -101,6 +103,8 @@ pub(crate) struct TranslationsMacrosVisitor {
     current_tr_macro_punct: Option<char>,
     current_message_name: Option<String>,
     current_placeables: Vec<String>,
+    #[cfg(feature = "nightly")]
+    current_tr_macro_start: Option<proc_macro2::LineColumn>,
 
     #[cfg(not(test))]
     file_path: String,
@@ -125,6 +129,8 @@ impl TranslationsMacrosVisitor {
             current_placeables: Vec::new(),
             #[cfg(not(test))]
             file_path: rel_path,
+            #[cfg(feature = "nightly")]
+            current_tr_macro_start: None,
         }
     }
 }
@@ -174,6 +180,11 @@ impl<'ast> TranslationsMacrosVisitor {
                 let ident_str = ident.to_string();
                 if ident_str == "move_tr" || ident_str == "tr" {
                     self.current_tr_macro = Some(ident.to_string());
+                    #[cfg(feature = "nightly")]
+                    {
+                        self.current_tr_macro_start =
+                            Some(ident.span().start());
+                    }
                 }
             } else if let proc_macro2::TokenTree::Punct(punct) = token {
                 if self.current_tr_macro.is_some()
@@ -193,6 +204,11 @@ impl<'ast> TranslationsMacrosVisitor {
                         }
                     } else {
                         self.current_tr_macro = None;
+
+                        #[cfg(feature = "nightly")]
+                        {
+                            self.current_tr_macro_start = None;
+                        }
                         continue;
                     }
 
@@ -239,6 +255,8 @@ impl<'ast> TranslationsMacrosVisitor {
                             placeables: self.current_placeables.to_owned(),
                             #[cfg(not(test))]
                             file_path: self.file_path.clone(),
+                            #[cfg(feature = "nightly")]
+                            start: self.current_tr_macro_start.unwrap(),
                         };
                         // TODO: this is expensive because we're executing
                         // it recursively for each group
@@ -249,11 +267,21 @@ impl<'ast> TranslationsMacrosVisitor {
                         self.current_tr_macro_punct = None;
                         self.current_message_name = None;
                         self.current_placeables = Vec::new();
+
+                        #[cfg(feature = "nightly")]
+                        {
+                            self.current_tr_macro_start = None;
+                        }
                     } else {
                         // if `current_message_name.is_none()` we are parsing
                         // `<tr>` tag from html, so we should ignore it
                         self.current_tr_macro = None;
                         self.current_tr_macro_punct = None;
+
+                        #[cfg(feature = "nightly")]
+                        {
+                            self.current_tr_macro_start = None;
+                        }
                     }
                 } else {
                     self.visit_maybe_macro_tokens_stream(&group.stream());

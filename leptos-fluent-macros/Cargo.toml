@@ -21,19 +21,20 @@ globwalk = "0.9"
 fluent-templates.workspace = true
 fluent-syntax = "0.11"
 pathdiff = "0.2"
-serde = { version = "1", default-features = false, features = ["derive"] }
+serde = { version = "1", default-features = false, features = ["derive"], optional = true }
 serde_json = { version = "1", optional = true }
 serde_yaml = { version = "0.9", optional = true }
 json5 = { version = "0.4", optional = true }
 
 [features]
+nightly = ["proc-macro2/span-locations"]
 hydrate = []
 ssr = []
 actix = []
 axum = []
-json = ["dep:serde_json"]
-yaml = ["dep:serde_yaml"]
-json5 = ["dep:json5"]
+json = ["dep:serde", "dep:serde_json"]
+yaml = ["dep:serde", "dep:serde_yaml"]
+json5 = ["dep:serde", "dep:json5"]
 
 [package.metadata.cargo-all-features]
 skip_feature_sets = [
@@ -48,4 +49,4 @@ skip_feature_sets = [
   ["ssr"],
 ]
 always_include_features = ["json"]
-denylist = ["yaml", "json5"]
+denylist = ["yaml", "json5", "nightly"]
