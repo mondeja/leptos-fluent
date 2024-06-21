@@ -1,5 +1,6 @@
 use crate::{
     build_fluent_resources_and_file_paths,
+    cookie::validate_cookie_attrs,
     languages::{read_languages_file, read_locales_folder},
     FluentFilePaths,
 };
@@ -574,6 +575,20 @@ impl Parse for I18nLoader {
                         report,
                     ));
                 }
+            }
+        }
+
+        if let Some(ref cookie_attrs) = cookie_attrs_str {
+            let cookie_attrs = cookie_attrs.value();
+            let errors = validate_cookie_attrs(&cookie_attrs);
+            if !errors.is_empty() {
+                return Err(syn::Error::new(
+                    cookie_attrs_str.unwrap().span(),
+                    format!(
+                        "Invalid cookie attributes:\n- {}",
+                        errors.join("\n- "),
+                    ),
+                ));
             }
         }
 

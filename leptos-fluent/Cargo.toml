@@ -2,7 +2,7 @@
 name = "leptos-fluent"
 description = "Fluent framework for internationalization of Leptos applications"
 edition.workspace = true
-version = "0.1.1"
+version = "0.1.2"
 license = "MIT"
 documentation.workspace = true
 repository.workspace = true
@@ -41,6 +41,7 @@ skip_feature_sets = [
   ["actix", "hydrate"],
   ["axum", "csr"],
   ["axum", "hydrate"],
+  ["ssr"],
 ]
 always_include_features = ["json"]
 denylist = ["yaml", "json5"]

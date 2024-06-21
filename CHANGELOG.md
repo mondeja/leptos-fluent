@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## Unreleased - [0.1.2]
+
+### Enhancements
+
+- Validate cookie attributes in `leptos_fluent!` when defined using string
+  literals.
+
 ## 2024-06-21 - [0.1.1]
 
 ### Enhancements
@@ -241,6 +248,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.1.2]: https://github.com/mondeja/leptos-fluent/compare/v0.1.1...master
 [0.1.1]: https://github.com/mondeja/leptos-fluent/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/mondeja/leptos-fluent/compare/v0.0.37...v0.1.0
 [0.0.37]: https://github.com/mondeja/leptos-fluent/compare/v0.0.36...v0.0.37

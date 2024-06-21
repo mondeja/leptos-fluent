@@ -220,6 +220,10 @@ jobs:
       - end2end-tests
       - build-example
       - build-book
+    if: |
+      '${{ github.event.pull_request.user.login }}' == 'mondeja' ||
+      startsWith(github.ref, 'refs/tags/') ||
+      github.ref == 'refs/heads/master'
     name: Test leptos-fluent-macros release
     runs-on: ubuntu-latest
     steps:
