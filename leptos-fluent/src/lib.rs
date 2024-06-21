@@ -98,7 +98,7 @@
 //!         // Synchronize `<html dir="...">` attribute setting `"ltr"`,
 //!         // `"rtl"` or `"auto"` depending on the current active language.
 //!         sync_html_tag_dir: true,
-//!         // Update the language on URL parameter when changing the language.
+//!         // Update the language on URL parameter when the language changes.
 //!         // By default, it is `false`.
 //!         set_language_to_url_param: true,
 //!         // Set the discovered initial language of the user from
@@ -110,7 +110,7 @@
 //!         // Get the initial language from local storage if not found
 //!         // in an URL param. By default, it is `false`.
 //!         initial_language_from_localstorage: true,
-//!         // Update the language on local storage when changing the language.
+//!         // Update the language on local storage when the language changes.
 //!         // By default, it is `false`.
 //!         set_language_to_localstorage: true,
 //!         // Get the initial language from `navigator.languages` if not
@@ -118,7 +118,7 @@
 //!         initial_language_from_navigator: true,
 //!         // Attributes to set for the language cookie. By default is `""`.
 //!         cookie_attrs: "SameSite=Strict; Secure; Path=/; Max-Age=600",
-//!         // Update the language on cookie when changing the language.
+//!         // Update the language on cookie when the language changes.
 //!         // By default, it is `false`.
 //!         set_language_to_cookie: true,
 //!
