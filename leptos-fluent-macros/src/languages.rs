@@ -1,6 +1,7 @@
 use std::fs;
 use std::path::PathBuf;
 
+#[cfg(any(feature = "json", feature = "yaml", feature = "json5"))]
 #[derive(serde::Deserialize)]
 #[serde(untagged)]
 enum LanguagesFileLanguage {
@@ -8,6 +9,7 @@ enum LanguagesFileLanguage {
     CodeNameDir(String, String, String),
 }
 
+#[cfg(any(feature = "json", feature = "yaml", feature = "json5"))]
 fn set_dir_to_languages_from_languages_file(
     languages: &[LanguagesFileLanguage],
 ) -> Vec<(String, String, String)> {
