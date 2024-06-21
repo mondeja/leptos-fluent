@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Introduction - leptos-fluent</title>
+        <title>FAQs - leptos-fluent</title>
 
 
         <!-- Custom HTML head -->
@@ -88,7 +88,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="intro.html" class="active">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">User guide</li><li class="chapter-item expanded "><a href="install.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="basic-usage.html"><strong aria-hidden="true">2.</strong> Basic usage</a></li><li class="chapter-item expanded "><a href="strategies.html"><strong aria-hidden="true">3.</strong> Strategies</a></li><li class="chapter-item expanded "><a href="languages.html"><strong aria-hidden="true">4.</strong> Languages</a></li><li class="chapter-item expanded "><a href="checking-translations.html"><strong aria-hidden="true">5.</strong> Checking translations</a></li><li class="chapter-item expanded "><a href="faqs.html"><strong aria-hidden="true">6.</strong> FAQs</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="intro.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">User guide</li><li class="chapter-item expanded "><a href="install.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="basic-usage.html"><strong aria-hidden="true">2.</strong> Basic usage</a></li><li class="chapter-item expanded "><a href="strategies.html"><strong aria-hidden="true">3.</strong> Strategies</a></li><li class="chapter-item expanded "><a href="languages.html"><strong aria-hidden="true">4.</strong> Languages</a></li><li class="chapter-item expanded "><a href="checking-translations.html"><strong aria-hidden="true">5.</strong> Checking translations</a></li><li class="chapter-item expanded "><a href="faqs.html" class="active"><strong aria-hidden="true">6.</strong> FAQs</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -150,7 +150,7 @@
                         <a href="https://github.com/mondeja/leptos-fluent/tree/master/book" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
-                        <a href="https://github.com/mondeja/leptos-fluent/edit/master/book/src/intro.md" title="Suggest an edit" aria-label="Suggest an edit">
+                        <a href="https://github.com/mondeja/leptos-fluent/edit/master/book/src/faqs.md" title="Suggest an edit" aria-label="Suggest an edit">
                             <i id="git-edit-button" class="fa fa-edit"></i>
                         </a>
 
@@ -179,57 +179,76 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
-<p><strong>leptos-fluent</strong> is a framework for internationalizing <a href="https://leptos.dev">Leptos</a> applications
-using <a href="https://projectfluent.org">Fluent</a>. It has all the batteries included to handle language switching,
-translations management, strategies for activating translations at
-initialization, different modes of persistent storage, and more.</p>
-<h2 id="alternatives"><a class="header" href="#alternatives">Alternatives</a></h2>
-<p>The unique alternative to <strong>leptos-fluent</strong> currently is <a href="https://github.com/Baptistemontan/leptos_i18n">Leptos i18n</a>, which
-follows a different approach. The main differences are:</p>
-<ul>
-<li><code>leptos-fluent</code> uses <a href="https://projectfluent.org">Fluent</a> files and the Fluent syntax for translations,
-while <code>leptos_i18n</code> uses JSON files and a custom syntax.</li>
-<li><code>leptos-fluent</code> defines all the configuration in a macro and an optional
-languages file, while <code>leptos_i18n</code> defines the configuration in a
-<code>[package.metadata.leptos-i18n]</code> section in <em>Cargo.toml</em>.</li>
-<li><code>leptos-fluent</code> allows to instantiate multiple internationalization contexts,
-while <code>leptos_i18n</code> only allows one.</li>
-<li><code>leptos-fluent</code> has a lot of strategies for activating the initial language
-of the user at initialization and updating it when the user changes the
-language, while <code>leptos_i18n</code> only follows the cookie strategy.</li>
-<li><code>leptos-fluent</code> automatically builds language names and directions based on
-language codes, while <code>leptos_i18n</code> don't.</li>
-<li><code>leptos-fluent</code> has multiple side effects for updating the language in the
-client, while <code>leptos_i18n</code> only has the <code>&lt;html lang="..."&gt;</code> attribute
-and is not configurable.</li>
-</ul>
-<h2 id="project-goals"><a class="header" href="#project-goals">Project goals</a></h2>
-<p>The main goals of <strong>leptos-fluent</strong> are:</p>
-<ul>
-<li>To provide a simple and easy-to-use API for internationalizing Leptos
-applications.</li>
-<li>Be the most fully featured internationalization framework in any language.</li>
-<li>Be the most performant internationalization framework available.</li>
-</ul>
-<p>Defining the internationalization strategy using a macro allows to generate
-the less code possible for each possible configuration.</p>
-<h2 id="help-and-support"><a class="header" href="#help-and-support">Help and support</a></h2>
-<!-- markdownlint-disable MD013 -->
-<p><a href="https://discord.com/channels/1031524867910148188/1251579884371705927"><img src="https://img.shields.io/badge/Discord%20server-grey?logo=discord&amp;logoColor=white" alt="Discord channel" /></a></p>
-<!-- markdownlint-enable MD013 -->
-<p>You can ask for help and support in the <a href="https://discord.com/channels/1031524867910148188/1251579884371705927"><code>leptos-fluent</code> channel</a> of
-<a href="https://discord.com/channels/1031524867910148188">Leptos Discord server</a>. Additionally, if you experience bugs or just don't
-like chat servers you can <a href="https://github.com/mondeja/leptos-fluent/issues/new">open an issue in the GitHub repository</a>.</p>
+                        <!-- markdownlint-disable MD001 -->
+<h1 id="faqs"><a class="header" href="#faqs">FAQs</a></h1>
+<h3 id="how-to-get-unic_langidlanguageidentifier-if-not-installed"><a class="header" href="#how-to-get-unic_langidlanguageidentifier-if-not-installed">How to get <code>unic_langid::LanguageIdentifier</code> if not installed?</a></h3>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use fluent_templates::LanguageIdentifier;
+<span class="boring">}</span></code></pre></pre>
+<p><code>fluent-templates</code> also depends externally on <a href="https://docs.rs/fluent-bundle/latest/fluent_bundle/"><code>fluent-bundle</code></a> whichs
+provides utilities for parsing the Fluent syntax.</p>
+<h3 id="how-to-get-the-fallback-language"><a class="header" href="#how-to-get-the-fallback-language">How to get the fallback language</a></h3>
+<p>From fluent-templates <code>v0.9.5</code> onwards you can get it from your translations.</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let fallback_language = expect_i18n().translations.get()[0].fallback();
+<span class="boring">}</span></code></pre></pre>
+<h3 id="custom-cookie-attributes-are-invalid"><a class="header" href="#custom-cookie-attributes-are-invalid">Custom cookie attributes are invalid</a></h3>
+<p>Use an expression to set the cookie attributes and will not be validated.</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let attrs = "SameSite=Strict; MyCustomAttr=MyCustomValue;";
+leptos_fluent! {{
+    cookie_attrs: attrs,
+
+    // ... other options
+}}
+<span class="boring">}</span></code></pre></pre>
+<h3 id="why-examples-dont-use-for-component"><a class="header" href="#why-examples-dont-use-for-component">Why examples don't use <code>&lt;For/&gt;</code> component?</a></h3>
+<p>There are some cases in which the <code>For</code> component is not reproducible between
+SSR and hydrate modes leading to different renders, so decided to use a
+simple vector to not bring confusion to main examples.</p>
+<p>In any case, the <code>&lt;For/&gt;</code> component is secure on CSR contexts and
+<code>leptos_fluent::Language</code>s implement <code>Hash</code> and <code>Eq</code> traits to be
+able to be passed directly to <code>key</code>s properties trigerring reactivity
+depending on the current active language.</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use leptos_fluent::{i18n, Language};
+
+leptos::logging::warn!("[WARNING]: Not secure on SSR");
+view! {
+    &lt;p&gt;{move_tr!("select-a-language")}&lt;/p&gt;
+    &lt;For
+        each=move || i18n().languages
+        key=|lang| *lang
+        children=move |lang| render_language(lang)
+    /&gt;
+}
+
+fn render_language(lang: &amp;'static Language) -&gt; impl IntoView { ... }
+<span class="boring">}</span></code></pre></pre>
+<h3 id="how-to-get-the-i18n-context-at-initialization"><a class="header" href="#how-to-get-the-i18n-context-at-initialization">How to get the i18n context at initialization?</a></h3>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use leptos_fluent::leptos_fluent;
+
+let i18n = leptos_fluent!{{
+    // ... options
+}};
+
+leptos::logging::log!("i18n: {i18n:?}");
+<span class="boring">}</span></code></pre></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-
-                            <a rel="next prefetch" href="install.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <i class="fa fa-angle-right"></i>
+                            <a rel="prev" href="checking-translations.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
                             </a>
+
 
                         <div style="clear: both"></div>
                     </nav>
@@ -237,10 +256,10 @@ like chat servers you can <a href="https://github.com/mondeja/leptos-fluent/issu
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-
-                    <a rel="next prefetch" href="install.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <i class="fa fa-angle-right"></i>
+                    <a rel="prev" href="checking-translations.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
                     </a>
+
             </nav>
 
         </div>

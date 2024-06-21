@@ -88,7 +88,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="intro.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">User guide</li><li class="chapter-item expanded "><a href="install.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="basic-usage.html" class="active"><strong aria-hidden="true">2.</strong> Basic usage</a></li><li class="chapter-item expanded "><a href="strategies.html"><strong aria-hidden="true">3.</strong> Strategies</a></li><li class="chapter-item expanded "><a href="languages.html"><strong aria-hidden="true">4.</strong> Languages</a></li><li class="chapter-item expanded "><a href="checking-translations.html"><strong aria-hidden="true">5.</strong> Checking translations</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="intro.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">User guide</li><li class="chapter-item expanded "><a href="install.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="basic-usage.html" class="active"><strong aria-hidden="true">2.</strong> Basic usage</a></li><li class="chapter-item expanded "><a href="strategies.html"><strong aria-hidden="true">3.</strong> Strategies</a></li><li class="chapter-item expanded "><a href="languages.html"><strong aria-hidden="true">4.</strong> Languages</a></li><li class="chapter-item expanded "><a href="checking-translations.html"><strong aria-hidden="true">5.</strong> Checking translations</a></li><li class="chapter-item expanded "><a href="faqs.html"><strong aria-hidden="true">6.</strong> FAQs</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -250,6 +250,7 @@ fn render_language(lang: &amp;'static Language) -&gt; impl IntoView {
     // so `&lt;input id=lang` becomes `&lt;input id=lang.id.to_string()`
     view! {
         &lt;div&gt;
+            &lt;label for=lang&gt;{lang.name}&lt;/label&gt;
             &lt;input
                 id=lang
                 name="language"
@@ -258,7 +259,6 @@ fn render_language(lang: &amp;'static Language) -&gt; impl IntoView {
                 on:click=move |_| expect_i18n().language.set(lang)
                 type="radio"
             /&gt;
-            &lt;label for=lang&gt;{lang.name}&lt;/label&gt;
         &lt;/div&gt;
     }
 }
@@ -301,7 +301,7 @@ move_tr!("language-selected-is", { "lang" =&gt; i18n.language.get().name })
 a reactive context. Note that if you're not inside a reactive context,
 the translation won't be updated on the fly when the language changes.
 This can lead to errors in console output like:</p>
-<pre><code class="language-sh">At &lt;file&gt;.rs:ln, you access a signal or memo (defined at &lt;file&gt;.rs:ln)
+<pre><code class="language-text">At &lt;file&gt;.rs:ln, you access a signal or memo (defined at &lt;file&gt;.rs:ln)
 outside of a reactive context. This might mean your app is not responding
 to changes in signal values in the way you expect.
 </code></pre>
@@ -335,7 +335,7 @@ move || tr!("language-selected-is", { "lang" =&gt; i18n.language.get().name })
 i18n context:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>let i18n = leptos_fluent::use_i18n().expect("No leptos_fluent::I18n context found");
+</span>let i18n = leptos_fluent::use_i18n().expect("No `leptos_fluent::I18n` context found");
 <span class="boring">}</span></code></pre></pre>
 <h2 id="using-the-leptos_fluenti18n-context"><a class="header" href="#using-the-leptos_fluenti18n-context">Using the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html"><code>leptos_fluent::I18n</code></a> context</a></h2>
 <p>The i18n context has the following fields:</p>

@@ -88,7 +88,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="intro.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">User guide</li><li class="chapter-item expanded "><a href="install.html" class="active"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="basic-usage.html"><strong aria-hidden="true">2.</strong> Basic usage</a></li><li class="chapter-item expanded "><a href="strategies.html"><strong aria-hidden="true">3.</strong> Strategies</a></li><li class="chapter-item expanded "><a href="languages.html"><strong aria-hidden="true">4.</strong> Languages</a></li><li class="chapter-item expanded "><a href="checking-translations.html"><strong aria-hidden="true">5.</strong> Checking translations</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="intro.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">User guide</li><li class="chapter-item expanded "><a href="install.html" class="active"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="basic-usage.html"><strong aria-hidden="true">2.</strong> Basic usage</a></li><li class="chapter-item expanded "><a href="strategies.html"><strong aria-hidden="true">3.</strong> Strategies</a></li><li class="chapter-item expanded "><a href="languages.html"><strong aria-hidden="true">4.</strong> Languages</a></li><li class="chapter-item expanded "><a href="checking-translations.html"><strong aria-hidden="true">5.</strong> Checking translations</a></li><li class="chapter-item expanded "><a href="faqs.html"><strong aria-hidden="true">6.</strong> FAQs</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -187,6 +187,18 @@
 leptos-fluent = "0.1"
 fluent-templates = "0.9"
 </code></pre>
+<!-- markdownlint-disable MD033 -->
+<details>
+<summary>Minimal</summary>
+<p>Using <code>default-features = false</code> the <code>json</code> default feature of
+<strong>leptos-fluent</strong> will not be enabled, so the <code>languages</code> parameter
+of <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.leptos_fluent.html"><code>leptos_fluent!</code></a> macro will not be available.</p>
+<pre><code class="language-toml">[dependencies]
+leptos-fluent = { version = "0.1", default-features = false }
+fluent-templates = "0.9"
+</code></pre>
+</details>
+<!-- markdownlint-enable MD033 -->
 <h2 id="ssr"><a class="header" href="#ssr">SSR</a></h2>
 <p>For server side rendering apps you need to install <strong>leptos-fluent</strong>,
 <a href="https://github.com/XAMPPRocky/fluent-templates"><code>fluent-templates</code></a> and activate the <code>hydrate</code>, <code>ssr</code> and <code>actix</code>/<code>axum</code>
@@ -208,6 +220,16 @@ ssr = [
 [package.metadata.leptos]
 watch-additional-files = ["locales"]
 </code></pre>
+<h2 id="features"><a class="header" href="#features">Features</a></h2>
+<ul>
+<li><strong>Server Side Rendering</strong>: <code>ssr</code></li>
+<li><strong>Hydration</strong>: <code>hydrate</code></li>
+<li><strong>Actix Web integration</strong>: <code>actix</code></li>
+<li><strong>Axum integration</strong>: <code>axum</code></li>
+<li><strong>JSON languages file</strong>: <code>json</code> (enabled by default)</li>
+<li><strong>YAML languages file</strong>: <code>yaml</code></li>
+<li><strong>JSON5 languages file</strong>: <code>json5</code></li>
+</ul>
 
                     </main>
 

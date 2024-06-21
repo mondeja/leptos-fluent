@@ -89,7 +89,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="intro.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">User guide</li><li class="chapter-item expanded "><a href="install.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="basic-usage.html"><strong aria-hidden="true">2.</strong> Basic usage</a></li><li class="chapter-item expanded "><a href="strategies.html"><strong aria-hidden="true">3.</strong> Strategies</a></li><li class="chapter-item expanded "><a href="languages.html"><strong aria-hidden="true">4.</strong> Languages</a></li><li class="chapter-item expanded "><a href="checking-translations.html"><strong aria-hidden="true">5.</strong> Checking translations</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="intro.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">User guide</li><li class="chapter-item expanded "><a href="install.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="basic-usage.html"><strong aria-hidden="true">2.</strong> Basic usage</a></li><li class="chapter-item expanded "><a href="strategies.html"><strong aria-hidden="true">3.</strong> Strategies</a></li><li class="chapter-item expanded "><a href="languages.html"><strong aria-hidden="true">4.</strong> Languages</a></li><li class="chapter-item expanded "><a href="checking-translations.html"><strong aria-hidden="true">5.</strong> Checking translations</a></li><li class="chapter-item expanded "><a href="faqs.html"><strong aria-hidden="true">6.</strong> FAQs</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -211,7 +211,7 @@ applications.</li>
 <li>Be the most performant internationalization framework available.</li>
 </ul>
 <p>Defining the internationalization strategy using a macro allows to generate
-the less code possible for each possible configuration. I hope you enjoy it!</p>
+the less code possible for each possible configuration.</p>
 <h2 id="help-and-support"><a class="header" href="#help-and-support">Help and support</a></h2>
 <!-- markdownlint-disable MD013 -->
 <p><a href="https://discord.com/channels/1031524867910148188/1251579884371705927"><img src="https://img.shields.io/badge/Discord%20server-grey?logo=discord&amp;logoColor=white" alt="Discord channel" /></a></p>
@@ -227,6 +227,18 @@ like chat servers you can <a href="https://github.com/mondeja/leptos-fluent/issu
 leptos-fluent = "0.1"
 fluent-templates = "0.9"
 </code></pre>
+<!-- markdownlint-disable MD033 -->
+<details>
+<summary>Minimal</summary>
+<p>Using <code>default-features = false</code> the <code>json</code> default feature of
+<strong>leptos-fluent</strong> will not be enabled, so the <code>languages</code> parameter
+of <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.leptos_fluent.html"><code>leptos_fluent!</code></a> macro will not be available.</p>
+<pre><code class="language-toml">[dependencies]
+leptos-fluent = { version = "0.1", default-features = false }
+fluent-templates = "0.9"
+</code></pre>
+</details>
+<!-- markdownlint-enable MD033 -->
 <h2 id="ssr"><a class="header" href="#ssr">SSR</a></h2>
 <p>For server side rendering apps you need to install <strong>leptos-fluent</strong>,
 <a href="https://github.com/XAMPPRocky/fluent-templates"><code>fluent-templates</code></a> and activate the <code>hydrate</code>, <code>ssr</code> and <code>actix</code>/<code>axum</code>
@@ -248,6 +260,16 @@ ssr = [
 [package.metadata.leptos]
 watch-additional-files = ["locales"]
 </code></pre>
+<h2 id="features"><a class="header" href="#features">Features</a></h2>
+<ul>
+<li><strong>Server Side Rendering</strong>: <code>ssr</code></li>
+<li><strong>Hydration</strong>: <code>hydrate</code></li>
+<li><strong>Actix Web integration</strong>: <code>actix</code></li>
+<li><strong>Axum integration</strong>: <code>axum</code></li>
+<li><strong>JSON languages file</strong>: <code>json</code> (enabled by default)</li>
+<li><strong>YAML languages file</strong>: <code>yaml</code></li>
+<li><strong>JSON5 languages file</strong>: <code>json5</code></li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="basic-usage"><a class="header" href="#basic-usage">Basic usage</a></h1>
 <p>The most basic CSR app is reproduced here:</p>
 <pre><code class="language-plaintext">.
@@ -319,6 +341,7 @@ fn render_language(lang: &amp;'static Language) -&gt; impl IntoView {
     // so `&lt;input id=lang` becomes `&lt;input id=lang.id.to_string()`
     view! {
         &lt;div&gt;
+            &lt;label for=lang&gt;{lang.name}&lt;/label&gt;
             &lt;input
                 id=lang
                 name="language"
@@ -327,7 +350,6 @@ fn render_language(lang: &amp;'static Language) -&gt; impl IntoView {
                 on:click=move |_| expect_i18n().language.set(lang)
                 type="radio"
             /&gt;
-            &lt;label for=lang&gt;{lang.name}&lt;/label&gt;
         &lt;/div&gt;
     }
 }
@@ -370,7 +392,7 @@ move_tr!("language-selected-is", { "lang" =&gt; i18n.language.get().name })
 a reactive context. Note that if you're not inside a reactive context,
 the translation won't be updated on the fly when the language changes.
 This can lead to errors in console output like:</p>
-<pre><code class="language-sh">At &lt;file&gt;.rs:ln, you access a signal or memo (defined at &lt;file&gt;.rs:ln)
+<pre><code class="language-text">At &lt;file&gt;.rs:ln, you access a signal or memo (defined at &lt;file&gt;.rs:ln)
 outside of a reactive context. This might mean your app is not responding
 to changes in signal values in the way you expect.
 </code></pre>
@@ -404,7 +426,7 @@ move || tr!("language-selected-is", { "lang" =&gt; i18n.language.get().name })
 i18n context:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>let i18n = leptos_fluent::use_i18n().expect("No leptos_fluent::I18n context found");
+</span>let i18n = leptos_fluent::use_i18n().expect("No `leptos_fluent::I18n` context found");
 <span class="boring">}</span></code></pre></pre>
 <h2 id="using-the-leptos_fluenti18n-context"><a class="header" href="#using-the-leptos_fluenti18n-context">Using the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html"><code>leptos_fluent::I18n</code></a> context</a></h2>
 <p>The i18n context has the following fields:</p>
@@ -439,7 +461,7 @@ lang.activate()  // New in v0.1.1
 </span>lang.is_active()
 <span class="boring">}</span></code></pre></pre>
 <div style="break-before: page; page-break-before: always;"></div><!-- markdownlint-disable MD013 -->
-<h1 id="features"><a class="header" href="#features">Features</a></h1>
+<h1 id="features-1"><a class="header" href="#features-1">Features</a></h1>
 <p>All the features of the framework are optional, following a declarative
 "opt-in" configuration method.</p>
 <h2 id="loading-the-initial-language-of-the-user"><a class="header" href="#loading-the-initial-language-of-the-user">Loading the initial language of the user</a></h2>
@@ -631,6 +653,7 @@ a glob pattern that matches the Rust files that you want to check.</p>
   --&gt; examples/csr-complete/src/lib.rs:18:29
    |
 18 |         check_translations: "./src/**/*.rs",
+   |                             ^^^^^^^^^^^^^^^
 </code></pre>
 <!-- markdownlint-enable MD013 -->
 <h2 id="why-glob-patterns-to-rust-files"><a class="header" href="#why-glob-patterns-to-rust-files">Why glob patterns to Rust files?</a></h2>
@@ -649,6 +672,67 @@ context, as it would be impossible to extract the translations at compile time.<
 <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.tr.html"><code>tr!</code></a> and <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.move_tr.html"><code>move_tr!</code></a> macros that consume each context must be in
 different file trees, but this enforces anyway a good practice of file-level
 separation of contexts in the codebase.</p>
+<div style="break-before: page; page-break-before: always;"></div><!-- markdownlint-disable MD001 -->
+<h1 id="faqs"><a class="header" href="#faqs">FAQs</a></h1>
+<h3 id="how-to-get-unic_langidlanguageidentifier-if-not-installed"><a class="header" href="#how-to-get-unic_langidlanguageidentifier-if-not-installed">How to get <code>unic_langid::LanguageIdentifier</code> if not installed?</a></h3>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use fluent_templates::LanguageIdentifier;
+<span class="boring">}</span></code></pre></pre>
+<p><code>fluent-templates</code> also depends externally on <a href="https://docs.rs/fluent-bundle/latest/fluent_bundle/"><code>fluent-bundle</code></a> whichs
+provides utilities for parsing the Fluent syntax.</p>
+<h3 id="how-to-get-the-fallback-language"><a class="header" href="#how-to-get-the-fallback-language">How to get the fallback language</a></h3>
+<p>From fluent-templates <code>v0.9.5</code> onwards you can get it from your translations.</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let fallback_language = expect_i18n().translations.get()[0].fallback();
+<span class="boring">}</span></code></pre></pre>
+<h3 id="custom-cookie-attributes-are-invalid"><a class="header" href="#custom-cookie-attributes-are-invalid">Custom cookie attributes are invalid</a></h3>
+<p>Use an expression to set the cookie attributes and will not be validated.</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let attrs = "SameSite=Strict; MyCustomAttr=MyCustomValue;";
+leptos_fluent! {{
+    cookie_attrs: attrs,
+
+    // ... other options
+}}
+<span class="boring">}</span></code></pre></pre>
+<h3 id="why-examples-dont-use-for-component"><a class="header" href="#why-examples-dont-use-for-component">Why examples don't use <code>&lt;For/&gt;</code> component?</a></h3>
+<p>There are some cases in which the <code>For</code> component is not reproducible between
+SSR and hydrate modes leading to different renders, so decided to use a
+simple vector to not bring confusion to main examples.</p>
+<p>In any case, the <code>&lt;For/&gt;</code> component is secure on CSR contexts and
+<code>leptos_fluent::Language</code>s implement <code>Hash</code> and <code>Eq</code> traits to be
+able to be passed directly to <code>key</code>s properties trigerring reactivity
+depending on the current active language.</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use leptos_fluent::{i18n, Language};
+
+leptos::logging::warn!("[WARNING]: Not secure on SSR");
+view! {
+    &lt;p&gt;{move_tr!("select-a-language")}&lt;/p&gt;
+    &lt;For
+        each=move || i18n().languages
+        key=|lang| *lang
+        children=move |lang| render_language(lang)
+    /&gt;
+}
+
+fn render_language(lang: &amp;'static Language) -&gt; impl IntoView { ... }
+<span class="boring">}</span></code></pre></pre>
+<h3 id="how-to-get-the-i18n-context-at-initialization"><a class="header" href="#how-to-get-the-i18n-context-at-initialization">How to get the i18n context at initialization?</a></h3>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use leptos_fluent::leptos_fluent;
+
+let i18n = leptos_fluent!{{
+    // ... options
+}};
+
+leptos::logging::log!("i18n: {i18n:?}");
+<span class="boring">}</span></code></pre></pre>
 
                     </main>
 
