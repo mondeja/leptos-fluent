@@ -35,11 +35,11 @@ leptos_fluent! {{
 
 ### Why examples don't use `<For/>` component?
 
-I've found cases in which the `For` component is not reproducible between
+There are some cases in which the `For` component is not reproducible between
 SSR and hydrate modes leading to different renders, so decided to use a
 simple vector to not bring confusion to main examples.
 
-In any case, the `<For/>` component is secure for CSR contexts and
+In any case, the `<For/>` component is secure on CSR contexts and
 `leptos_fluent::Language`s implement `Hash` and `Eq` traits to be
 able to be passed directly to `key`s properties trigerring reactivity
 depending on the current active language.
