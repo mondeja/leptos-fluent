@@ -7,6 +7,11 @@
 - Validate cookie attributes in `leptos_fluent!` when defined using string
   literals.
 
+### New features
+
+- Add `initial_language_from_url_param_to_cookie` parameter to `leptos_fluent!`
+  macro to set the initial language from URL parameter to a cookie.
+
 ## 2024-06-21 - [0.1.1]
 
 ### Enhancements
