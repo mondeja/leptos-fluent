@@ -26,9 +26,10 @@ let fallback_language = expect_i18n().translations.get()[0].fallback();
 Use an expression to set the cookie attributes and will not be validated.
 
 ```rust
-let cookie_attrs = "SameSite=Strict; MyCustomAttr=MyCustomValue;";
+let attrs = "SameSite=Strict; MyCustomAttr=MyCustomValue;";
 leptos_fluent! {{
-    cookie_attrs: cookie_attrs,
+    cookie_attrs: attrs,
+
     // ... other options
 }}
 ```
@@ -47,7 +48,7 @@ depending on the current active language.
 ```rust
 use leptos_fluent::{i18n, Language};
 
-// WARNING: not secure on SSR
+leptos::logging::warn!("[WARNING]: Not secure on SSR");
 view! {
     <p>{move_tr!("select-a-language")}</p>
     <For
