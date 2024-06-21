@@ -188,11 +188,16 @@
 <span class="boring">}</span></code></pre></pre>
 <p><code>fluent-templates</code> also depends externally on <a href="https://docs.rs/fluent-bundle/latest/fluent_bundle/"><code>fluent-bundle</code></a> whichs
 provides utilities for parsing the Fluent syntax.</p>
-<h3 id="how-to-get-the-fallback-language"><a class="header" href="#how-to-get-the-fallback-language">How to get the fallback language</a></h3>
-<p>From fluent-templates <code>v0.9.5</code> onwards you can get it from your translations.</p>
+<h3 id="how-to-get-the-i18n-context-at-initialization"><a class="header" href="#how-to-get-the-i18n-context-at-initialization">How to get the i18n context at initialization?</a></h3>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>let fallback_language = expect_i18n().translations.get()[0].fallback();
+</span>use leptos_fluent::leptos_fluent;
+
+let i18n = leptos_fluent!{{
+    // ... options
+}};
+
+leptos::logging::log!("i18n context: {i18n:?}");
 <span class="boring">}</span></code></pre></pre>
 <h3 id="custom-cookie-attributes-are-invalid"><a class="header" href="#custom-cookie-attributes-are-invalid">Custom cookie attributes are invalid</a></h3>
 <p>Use an expression to set the cookie attributes and will not be validated.</p>
@@ -204,6 +209,12 @@ leptos_fluent! {{
 
     // ... other options
 }}
+<span class="boring">}</span></code></pre></pre>
+<h3 id="how-to-get-the-fallback-language"><a class="header" href="#how-to-get-the-fallback-language">How to get the fallback language</a></h3>
+<p>From fluent-templates <code>v0.9.5</code> onwards you can get it from your translations.</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let fallback_language = expect_i18n().translations.get()[0].fallback();
 <span class="boring">}</span></code></pre></pre>
 <h3 id="why-examples-dont-use-for-component"><a class="header" href="#why-examples-dont-use-for-component">Why examples don't use <code>&lt;For/&gt;</code> component?</a></h3>
 <p>There are some cases in which the <code>For</code> component is not reproducible between
@@ -228,17 +239,6 @@ view! {
 }
 
 fn render_language(lang: &amp;'static Language) -&gt; impl IntoView { ... }
-<span class="boring">}</span></code></pre></pre>
-<h3 id="how-to-get-the-i18n-context-at-initialization"><a class="header" href="#how-to-get-the-i18n-context-at-initialization">How to get the i18n context at initialization?</a></h3>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>use leptos_fluent::leptos_fluent;
-
-let i18n = leptos_fluent!{{
-    // ... options
-}};
-
-leptos::logging::log!("i18n: {i18n:?}");
 <span class="boring">}</span></code></pre></pre>
 
                     </main>

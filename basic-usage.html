@@ -253,10 +253,10 @@ fn render_language(lang: &amp;'static Language) -&gt; impl IntoView {
             &lt;label for=lang&gt;{lang.name}&lt;/label&gt;
             &lt;input
                 id=lang
-                name="language"
                 value=lang
+                name="language"
                 checked=lang.is_active()
-                on:click=move |_| expect_i18n().language.set(lang)
+                on:click=move |_| lang.activate()
                 type="radio"
             /&gt;
         &lt;/div&gt;
