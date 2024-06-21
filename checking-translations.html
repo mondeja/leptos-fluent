@@ -199,6 +199,25 @@ a glob pattern that matches the Rust files that you want to check.</p>
     check_translations: "../{app,components}/src/**/*.rs",
 }}
 <span class="boring">}</span></code></pre></pre>
+<!-- markdownlint-disable MD013 -->
+<p>When the translations stop being synchronized, you will see errors like:</p>
+<pre><code class="language-text">error: Translations check failed:
+       - Message "select-a-language" defined at `move_tr!("select-a-language")` macro call in src/lib.rs not found in files for locale "en".
+       - Message "select-a-lang" of locale "en" not found in any `tr!` or `move_tr!` macro calls.
+  --&gt; examples/csr-complete/src/lib.rs:18:29
+   |
+18 |         check_translations: "./src/**/*.rs",
+   |                             ^^^^^^^^^^^^^^^
+</code></pre>
+<p>If placeable are missing in the translations, you will see errors like:</p>
+<pre><code class="language-text">error: Translations check failed:
+       - Variable "dir" defined at `move_tr!("html-tag-dir-is", { ... })` macro call in src/lib.rs not found in message "html-tag-dir-is" of locale "en".
+       - Variable "name" defined in message "html-tag-dir-is" of locale "en" not found in arguments of `move_tr!("html-tag-dir-is", { ... })` macro call at file src/lib.rs.
+  --&gt; examples/csr-complete/src/lib.rs:18:29
+   |
+18 |         check_translations: "./src/**/*.rs",
+</code></pre>
+<!-- markdownlint-enable MD013 -->
 <h2 id="why-glob-patterns-to-rust-files"><a class="header" href="#why-glob-patterns-to-rust-files">Why glob patterns to Rust files?</a></h2>
 <p><strong>leptos-fluent</strong> provides a <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html"><code>leptos_fluent::I18n</code></a> context to Leptos when
 the macro <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.leptos_fluent.html"><code>leptos_fluent!</code></a> is called. So multiple instances of a context
