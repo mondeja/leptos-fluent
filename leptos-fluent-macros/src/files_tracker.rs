@@ -9,7 +9,7 @@ pub(crate) fn build_files_tracker_quote(
     for (lang, paths) in fluent_resources {
         for (i, path) in paths.iter().enumerate() {
             files_tracker_str.push_str(&format!(
-                "let {}{} = include_bytes!(\"{}\");",
+                "let s{}{} = include_bytes!(\"{}\");",
                 lang.replace('-', "_"),
                 i,
                 &escape_string(path)
@@ -18,13 +18,13 @@ pub(crate) fn build_files_tracker_quote(
     }
     if let Some(languages_file_path) = &languages_path {
         files_tracker_str.push_str(&format!(
-            "let languages_path = include_bytes!(\"{}\");",
+            "let languages = include_bytes!(\"{}\");",
             &escape_string(languages_file_path)
         ));
     }
     if let Some(core_locales_file_path) = &core_locales_path {
         files_tracker_str.push_str(&format!(
-            "let core_locales_path = include_bytes!(\"{}\");",
+            "let core_locales = include_bytes!(\"{}\");",
             &escape_string(core_locales_file_path)
         ));
     }
