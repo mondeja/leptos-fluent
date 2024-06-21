@@ -23,6 +23,8 @@ leptos_fluent! {{
 }}
 ```
 
+## Translations error messages
+
 <!-- markdownlint-disable MD013 -->
 
 When the translations stop being synchronized, you will see errors like:
