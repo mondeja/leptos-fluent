@@ -55,6 +55,7 @@ fn macro_location(tr_macro: &TranslationMacro) -> String {
 
         #[cfg(test)]
         {
+            _ = tr_macro.file_path;
             "[test content]"
         }
     };
