@@ -9,6 +9,7 @@
 
 extern crate proc_macro;
 
+pub(crate) mod cookie;
 mod files_tracker;
 mod fluent_resources;
 mod languages;

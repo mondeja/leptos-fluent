@@ -19,7 +19,7 @@ pub fn App() -> impl IntoView {
         sync_html_tag_lang: true,
         sync_html_tag_dir: true,
         cookie_name: "lang",
-        cookie_attrs: "SameSite=Strict; Secure; path=/; max-age=600",
+        cookie_attrs: "SameSite=Strict; Secure; Path=/; Max-Age=600",
         set_language_to_cookie: true,
         initial_language_from_cookie: true,
         url_param: "lang",
