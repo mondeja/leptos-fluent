@@ -274,7 +274,7 @@ language-selected-is = El idioma seleccionado es { $lang }.
 </span>// src/lib.rs
 use fluent_templates::static_loader;
 use leptos::*;
-use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, tr};
+use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, Language};
 
 static_loader! {
     pub static TRANSLATIONS = {
@@ -301,34 +301,34 @@ fn LanguageSelector() -&gt; impl IntoView {
     view! {
         &lt;p&gt;{move_tr!("select-a-language")}&lt;/p&gt;
         &lt;fieldset&gt;
-            {
-                move || i18n.languages.iter().map(|lang| {
-                    view! {
-                        &lt;div&gt;
-                            &lt;input
-                                type="radio"
-                                id=lang
-                                name="language"
-                                value=lang
-                                checked=lang.is_active()
-                                on:click=move |_| i18n.language.set(lang)
-                            /&gt;
-                            &lt;label for=lang&gt;{lang.name}&lt;/label&gt;
-                        &lt;/div&gt;
-                    }
-                }).collect::&lt;Vec&lt;_&gt;&gt;()
-            }
+            {move || {
+                i18n.languages.iter().map(|lang| render_language(lang)).collect::&lt;Vec&lt;_&gt;&gt;()
+            }}
         &lt;/fieldset&gt;
         &lt;p&gt;
-            {
-                move || {
-                    tr!(
-                        "language-selected-is",
-                        { "lang" =&gt; i18n.language.get().name }
-                    )
-                }
-            }
+            {move_tr!(
+                 "language-selected-is",
+                 { "lang" =&gt; i18n.language.get().name }
+            )}
         &lt;/p&gt;
+    }
+}
+
+fn render_language(lang: &amp;'static Language) -&gt; impl IntoView {
+    // Passed as atrribute, `Language` is converted to their code,
+    // so `&lt;input id=lang` becomes `&lt;input id=lang.id.to_string()`
+    view! {
+        &lt;div&gt;
+            &lt;input
+                id=lang
+                name="language"
+                value=lang
+                checked=lang.is_active()
+                on:click=move |_| expect_i18n().language.set(lang)
+                type="radio"
+            /&gt;
+            &lt;label for=lang&gt;{lang.name}&lt;/label&gt;
+        &lt;/div&gt;
     }
 }
 <span class="boring">}</span></code></pre></pre>
@@ -414,10 +414,13 @@ i18n context:</p>
 <li><a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.translations"><code>translations</code></a>: A signal to the vector of <a href="https://docs.rs/fluent-templates/latest/fluent_templates">fluent-templates</a> loaders that stores
 the translations.</li>
 </ul>
-<p>To update the language, use <code>set</code> method of <code>language</code> field:</p>
+<p>To update the language, use <code>set</code> method of <code>language</code> field or just
+<a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html#method.activate"><code>lang.activate()</code></a> (new in v0.1.1):</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>i18n.language.set(lang)
+</span>expect_i18n().language.set(lang)
+
+lang.activate()  // New in v0.1.1
 <span class="boring">}</span></code></pre></pre>
 <p>To get the current active language, use <code>get</code> method of <code>language</code> field:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
