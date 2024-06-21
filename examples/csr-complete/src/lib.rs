@@ -11,7 +11,7 @@ static_loader! {
 
 #[component]
 pub fn App() -> impl IntoView {
-    leptos_fluent! {{
+    let i18n = leptos_fluent! {{
         translations: [TRANSLATIONS],
         languages: "./locales/languages.json",
         locales: "./locales",
@@ -31,6 +31,8 @@ pub fn App() -> impl IntoView {
         set_language_to_localstorage: true,
         initial_language_from_navigator: true,
     }};
+
+    leptos::logging::log!("i18n: {i18n:?}");
 
     view! { <ChildComponent/> }
 }

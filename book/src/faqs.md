@@ -60,3 +60,15 @@ view! {
 
 fn render_language(lang: &'static Language) -> impl IntoView { ... }
 ```
+
+### How to get the i18n context at initialization?
+
+```rust
+use leptos_fluent::leptos_fluent;
+
+let i18n = leptos_fluent!{{
+    // ... options
+}};
+
+leptos::logging::log!("i18n: {i18n:?}");
+```
