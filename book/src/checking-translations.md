@@ -46,6 +46,7 @@ error: Translations check failed:
   --> examples/csr-complete/src/lib.rs:18:29
    |
 18 |         check_translations: "./src/**/*.rs",
+   |                             ^^^^^^^^^^^^^^^
 ```
 
 <!-- markdownlint-enable MD013 -->
