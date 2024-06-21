@@ -366,7 +366,7 @@ impl IntoAttribute for &&'static Language {
 
 /// Internationalization context.
 ///
-/// Ysed to provide the current language, the available languages and all
+/// Used to provide the current language, the available languages and all
 /// the translations. It is capable of doing what is needed to translate
 /// and manage translations in a whole application.
 #[derive(Clone, Copy)]
