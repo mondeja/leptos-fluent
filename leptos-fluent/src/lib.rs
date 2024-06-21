@@ -98,8 +98,8 @@
 //!         // Synchronize `<html dir="...">` attribute setting `"ltr"`,
 //!         // `"rtl"` or `"auto"` depending on the current active language.
 //!         sync_html_tag_dir: true,
-//!         // Update the language on URL parameter when using the method
-//!         // `I18n.set_language`. By default, it is `false`.
+//!         // Update the language on URL parameter when changing the language.
+//!         // By default, it is `false`.
 //!         set_language_to_url_param: true,
 //!         // Set the discovered initial language of the user from
 //!         // the URL in local storage. By default, it is `false`.
@@ -110,15 +110,15 @@
 //!         // Get the initial language from local storage if not found
 //!         // in an URL param. By default, it is `false`.
 //!         initial_language_from_localstorage: true,
-//!         // Update the language on local storage when using the method
-//!         // `I18n.set_language`. By default, it is `false`.
+//!         // Update the language on local storage when changing the language.
+//!         // By default, it is `false`.
 //!         set_language_to_localstorage: true,
 //!         // Get the initial language from `navigator.languages` if not
 //!         // found in the local storage. By default, it is `false`.
 //!         initial_language_from_navigator: true,
 //!         // Attributes to set for the language cookie. By default is `""`.
-//!         cookie_attrs: "SameSite=Strict; Secure; path=/; max-age=600",
-//!         // Update the language on cookie when using the method `I18n.set_language`.
+//!         cookie_attrs: "SameSite=Strict; Secure; Path=/; Max-Age=600",
+//!         // Update the language on cookie when changing the language.
 //!         // By default, it is `false`.
 //!         set_language_to_cookie: true,
 //!
@@ -144,13 +144,13 @@
 //!     }};
 //!
 //!     view! {
-//!         <ChildComponent />
+//!         <TranslatableComponent />
 //!         <LanguageSelector />
 //!     }
 //! }
 //!
 //! #[component]
-//! fn ChildComponent() -> impl IntoView {
+//! fn TranslatableComponent() -> impl IntoView {
 //!     // Use `tr!` and `move_tr!` macros to translate strings:
 //!     view! {
 //!         <p>
@@ -162,8 +162,8 @@
 //!         </p>
 //!     }
 //!
-//!     // You must use `tr!` inside a reactive context or the translation
-//!     // will not be updated on the fly when the current language changes.
+//!     // The `tr!` macro must be inside a reactive context or the
+//!     // translation will not be updated on the fly when the language changes.
 //! }
 //!
 //! #[component]
