@@ -176,6 +176,10 @@ pub(crate) struct I18nLoader {
         Option<syn::LitBool>,
     pub(crate) initial_language_from_url_param_to_localstorage_expr:
         Option<syn::Expr>,
+    pub(crate) initial_language_from_url_param_to_cookie_bool:
+        Option<syn::LitBool>,
+    pub(crate) initial_language_from_url_param_to_cookie_expr:
+        Option<syn::Expr>,
     pub(crate) set_language_to_url_param_bool: Option<syn::LitBool>,
     pub(crate) set_language_to_url_param_expr: Option<syn::Expr>,
     pub(crate) localstorage_key_str: Option<syn::LitStr>,
@@ -228,6 +232,12 @@ impl Parse for I18nLoader {
             syn::LitBool,
         > = None;
         let mut initial_language_from_url_param_to_localstorage_expr: Option<
+            syn::Expr,
+        > = None;
+        let mut initial_language_from_url_param_to_cookie_bool: Option<
+            syn::LitBool,
+        > = None;
+        let mut initial_language_from_url_param_to_cookie_expr: Option<
             syn::Expr,
         > = None;
         let mut set_language_to_url_param_bool: Option<syn::LitBool> = None;
@@ -322,6 +332,15 @@ impl Parse for I18nLoader {
                     &mut initial_language_from_url_param_to_localstorage_bool,
                     &mut initial_language_from_url_param_to_localstorage_expr,
                     "initial_language_from_url_param_to_localstorage",
+                ) {
+                    return Err(err);
+                }
+            } else if k == "initial_language_from_url_param_to_cookie" {
+                if let Some(err) = parse_litbool_or_expr_param(
+                    &fields,
+                    &mut initial_language_from_url_param_to_cookie_bool,
+                    &mut initial_language_from_url_param_to_cookie_expr,
+                    "initial_language_from_url_param_to_cookie",
                 ) {
                     return Err(err);
                 }
@@ -606,6 +625,8 @@ impl Parse for I18nLoader {
             initial_language_from_url_param_expr,
             initial_language_from_url_param_to_localstorage_bool,
             initial_language_from_url_param_to_localstorage_expr,
+            initial_language_from_url_param_to_cookie_bool,
+            initial_language_from_url_param_to_cookie_expr,
             set_language_to_url_param_bool,
             set_language_to_url_param_expr,
             localstorage_key_str,

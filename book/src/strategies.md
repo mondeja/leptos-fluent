@@ -51,6 +51,7 @@ are available:
 | Strategy                                 | [`leptos_fluent!`] parameter                      |
 | :--------------------------------------- | :------------------------------------------------ |
 | [URL query parameter] to [local storage] | `initial_language_from_url_param_to_localstorage` |
+| [URL query parameter] to [Cookie]        | `initial_language_from_url_param_to_cookie`       |
 
 ## Client side effects
 

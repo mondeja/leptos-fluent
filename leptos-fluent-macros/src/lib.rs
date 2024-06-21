@@ -53,6 +53,7 @@ use quote::quote;
 ///         url_param: "lang",
 ///         initial_language_from_url_param: true,
 ///         initial_language_from_url_param_to_localstorage: true,
+///         initial_language_from_url_param_to_cookie: true,
 ///         set_language_to_url_param: true,
 ///         localstorage_key: "language",
 ///         initial_language_from_localstorage: true,
@@ -149,6 +150,8 @@ use quote::quote;
 /// - **`initial_language_from_url_param_to_localstorage`** (_`false`_): Save the initial language
 ///   of the user from the URL to [local storage]. Can be a literal boolean or an expression that will
 ///   be evaluated at runtime. It will only take effect on client-side.
+/// - **`initial_language_from_url_param_to_cookie`** (_`false`_): Save the initial language of the user
+///   from the URL to a cookie. Can be a literal boolean or an expression that will be evaluated at runtime.
 /// - **`localstorage_key`** (_`"lang"`_): The [local storage] field to get and save the current language
 ///   of the user. Can be a literal string or an expression that will be evaluated at runtime.
 ///   It will only take effect on client-side.
@@ -202,6 +205,8 @@ pub fn leptos_fluent(
         url_param_expr,
         initial_language_from_url_param_to_localstorage_bool,
         initial_language_from_url_param_to_localstorage_expr,
+        initial_language_from_url_param_to_cookie_bool,
+        initial_language_from_url_param_to_cookie_expr,
         set_language_to_url_param_bool,
         set_language_to_url_param_expr,
         localstorage_key_str,
@@ -358,6 +363,28 @@ pub fn leptos_fluent(
         }
     };
 
+    #[cfg(any(
+        not(feature = "ssr"),
+        all(feature = "ssr", feature = "actix"),
+        all(feature = "ssr", feature = "axum")
+    ))]
+    let cookie_name = match cookie_name_str {
+        Some(lit) => quote! { #lit },
+        None => match cookie_name_expr {
+            Some(expr) => quote! { #expr },
+            None => quote! { "lf-lang" },
+        },
+    };
+
+    #[cfg(not(feature = "ssr"))]
+    let cookie_attrs = match cookie_attrs_str {
+        Some(lit) => quote! { #lit },
+        None => match cookie_attrs_expr {
+            Some(expr) => quote! { #expr },
+            None => quote! { "" },
+        },
+    };
+
     let initial_language_from_url_param_quote = {
         #[cfg(feature = "hydrate")]
         let hydrate_rerender_quote = quote! {
@@ -398,10 +425,39 @@ pub fn leptos_fluent(
                 }
             };
 
+        #[cfg(not(feature = "ssr"))]
+        let set_to_cookie_quote =
+            match initial_language_from_url_param_to_cookie_bool {
+                Some(lit) => match lit.value {
+                    true => quote! {
+                        ::leptos_fluent::cookie::set(
+                            #cookie_name,
+                            &l.id.to_string(),
+                            &#cookie_attrs,
+                        );
+                    },
+                    false => quote! {},
+                },
+                None => match initial_language_from_url_param_to_cookie_expr {
+                    Some(expr) => quote! {
+                        if #expr {
+                            ::leptos_fluent::cookie::set(
+                                #cookie_name,
+                                &l.id.to_string(),
+                                &#cookie_attrs,
+                            );
+                        }
+                    },
+                    None => quote! {},
+                },
+            };
+
         #[cfg(feature = "ssr")]
         {
             _ = initial_language_from_url_param_to_localstorage_bool;
             _ = initial_language_from_url_param_to_localstorage_expr;
+            _ = initial_language_from_url_param_to_cookie_bool;
+            _ = initial_language_from_url_param_to_cookie_expr;
         }
 
         #[cfg(not(feature = "ssr"))]
@@ -416,6 +472,7 @@ pub fn leptos_fluent(
                 if let Some(l) = lang {
                     #hydrate_rerender_quote;
                     #set_to_localstorage_quote;
+                    #set_to_cookie_quote;
                 }
             }
         };
@@ -701,19 +758,6 @@ pub fn leptos_fluent(
     }
 
     // Cookie
-    #[cfg(any(
-        not(feature = "ssr"),
-        all(feature = "ssr", feature = "actix"),
-        all(feature = "ssr", feature = "axum")
-    ))]
-    let cookie_name = match cookie_name_str {
-        Some(lit) => quote! { #lit },
-        None => match cookie_name_expr {
-            Some(expr) => quote! { #expr },
-            None => quote! { "lf-lang" },
-        },
-    };
-
     #[cfg(not(feature = "ssr"))]
     let initial_language_from_cookie_quote = {
         let parse_client_cookie_quote = quote! {
@@ -746,14 +790,6 @@ pub fn leptos_fluent(
 
     #[cfg(not(feature = "ssr"))]
     let sync_language_with_cookie_quote = {
-        let cookie_attrs = match cookie_attrs_str {
-            Some(lit) => quote! { #lit },
-            None => match cookie_attrs_expr {
-                Some(expr) => quote! { #expr },
-                None => quote! { "" },
-            },
-        };
-
         let effect_quote = quote! {
             ::leptos::create_effect(move |_| {
                 ::leptos_fluent::cookie::set(
