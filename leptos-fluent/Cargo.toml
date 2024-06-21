@@ -23,6 +23,7 @@ wasm-bindgen = ">=0.1"
 
 [features]
 default = ["json"]
+nightly = ["leptos-fluent-macros/nightly"]
 hydrate = ["leptos-fluent-macros/hydrate"]
 ssr = ["leptos-fluent-macros/ssr"]
 actix = ["leptos-fluent-macros/actix"]
@@ -44,4 +45,4 @@ skip_feature_sets = [
   ["ssr"],
 ]
 always_include_features = ["json"]
-denylist = ["yaml", "json5"]
+denylist = ["yaml", "json5", "nightly"]

@@ -13,7 +13,7 @@ proc-macro = true
 path = "src/lib.rs"
 
 [dependencies]
-proc-macro2 = "1"
+proc-macro2 = { version = "1", features = ["span-locations"] }
 quote = "1"
 syn = { version = "2", features = ["visit", "full"] }
 walkdir = ">=2"
@@ -27,6 +27,7 @@ serde_yaml = { version = "0.9", optional = true }
 json5 = { version = "0.4", optional = true }
 
 [features]
+nightly = []
 hydrate = []
 ssr = []
 actix = []
@@ -48,4 +49,4 @@ skip_feature_sets = [
   ["ssr"],
 ]
 always_include_features = ["json"]
-denylist = ["yaml", "json5"]
+denylist = ["yaml", "json5", "nightly"]
