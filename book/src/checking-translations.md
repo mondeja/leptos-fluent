@@ -23,6 +23,33 @@ leptos_fluent! {{
 }}
 ```
 
+<!-- markdownlint-disable MD013 -->
+
+When the translations stop being synchronized, you will see errors like:
+
+```text
+error: Translations check failed:
+       - Message "select-a-language" defined at `move_tr!("select-a-language")` macro call in src/lib.rs not found in files for locale "en".
+       - Message "select-a-lang" of locale "en" not found in any `tr!` or `move_tr!` macro calls.
+  --> examples/csr-complete/src/lib.rs:18:29
+   |
+18 |         check_translations: "./src/**/*.rs",
+   |                             ^^^^^^^^^^^^^^^
+```
+
+If placeable are missing in the translations, you will see errors like:
+
+```text
+error: Translations check failed:
+       - Variable "dir" defined at `move_tr!("html-tag-dir-is", { ... })` macro call in src/lib.rs not found in message "html-tag-dir-is" of locale "en".
+       - Variable "name" defined in message "html-tag-dir-is" of locale "en" not found in arguments of `move_tr!("html-tag-dir-is", { ... })` macro call at file src/lib.rs.
+  --> examples/csr-complete/src/lib.rs:18:29
+   |
+18 |         check_translations: "./src/**/*.rs",
+```
+
+<!-- markdownlint-enable MD013 -->
+
 ## Why glob patterns to Rust files?
 
 **leptos-fluent** provides a [`leptos_fluent::I18n`] context to Leptos when
