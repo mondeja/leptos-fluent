@@ -61,6 +61,7 @@ watch-additional-files = ["locales"]
 - **Hydration**: `hydrate`
 - **Actix Web integration**: `actix`
 - **Axum integration**: `axum`
+- **Nightly toolchain**: `nightly`
 - **JSON languages file**: `json` (enabled by default)
 - **YAML languages file**: `yaml`
 - **JSON5 languages file**: `json5`

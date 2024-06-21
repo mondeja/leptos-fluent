@@ -13,12 +13,16 @@ provides utilities for parsing the Fluent syntax.
 
 [`fluent-bundle`]: https://docs.rs/fluent-bundle/latest/fluent_bundle/
 
-### How to get the fallback language
-
-From fluent-templates `v0.9.5` onwards you can get it from your translations.
+### How to get the i18n context at initialization?
 
 ```rust
-let fallback_language = expect_i18n().translations.get()[0].fallback();
+use leptos_fluent::leptos_fluent;
+
+let i18n = leptos_fluent!{{
+    // ... options
+}};
+
+leptos::logging::log!("i18n context: {i18n:?}");
 ```
 
 ### Custom cookie attributes are invalid
@@ -32,6 +36,14 @@ leptos_fluent! {{
 
     // ... other options
 }}
+```
+
+### How to get the fallback language
+
+From fluent-templates `v0.9.5` onwards you can get it from your translations.
+
+```rust
+let fallback_language = expect_i18n().translations.get()[0].fallback();
 ```
 
 ### Why examples don't use `<For/>` component?
@@ -59,16 +71,4 @@ view! {
 }
 
 fn render_language(lang: &'static Language) -> impl IntoView { ... }
-```
-
-### How to get the i18n context at initialization?
-
-```rust
-use leptos_fluent::leptos_fluent;
-
-let i18n = leptos_fluent!{{
-    // ... options
-}};
-
-leptos::logging::log!("i18n: {i18n:?}");
 ```

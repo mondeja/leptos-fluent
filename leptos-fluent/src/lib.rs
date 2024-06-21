@@ -104,6 +104,9 @@
 //!         // Set the discovered initial language of the user from
 //!         // the URL in local storage. By default, it is `false`.
 //!         initial_language_from_url_param_to_localstorage: true,
+//!         // Set the discovered initial language of the user from
+//!         // the URL in a cookie. By default, it is `false`.
+//!         initial_language_from_url_param_to_cookie: true,
 //!         // Name of the field in local storage to get and set the
 //!         // current language of the user. By default, it is `"lang"`.
 //!         localstorage_key: "language",
@@ -121,6 +124,9 @@
 //!         // Update the language on cookie when the language changes.
 //!         // By default, it is `false`.
 //!         set_language_to_cookie: true,
+//!         // Set the discovered initial language of the user from
+//!         // a cookie to local storage. By default, it is `false`.
+//!         initial_language_from_cookie_to_localstorage: true,
 //!
 //!         // Server side options
 //!         // -------------------
@@ -173,7 +179,7 @@
 //!
 //!     // `i18n.languages` is a static array with the available languages
 //!     // `i18n.language.get()` to get the current language
-//!     // `i18n.language.set(lang)` to set the current language
+//!     // `lang.activate()` to set the current language
 //!     // `lang.is_active()` to check if a language is the current selected one
 //!
 //!     view! {
@@ -188,7 +194,7 @@
 //!                                 name="language"
 //!                                 value=lang
 //!                                 checked=lang.is_active()
-//!                                 on:click=move |_| i18n.language.set(lang)
+//!                                 on:click=move |_| lang.activate()
 //!                             />
 //!                             <label for=lang>{lang.name}</label>
 //!                         </div>
@@ -206,6 +212,7 @@
 //! - **Hydration**: `hydrate`
 //! - **Actix Web integration**: `actix`
 //! - **Axum integration**: `axum`
+//! - **Nightly toolchain**: `nightly`
 //! - **JSON languages file**: `json` (enabled by default)
 //! - **YAML languages file**: `yaml`
 //! - **JSON5 languages file**: `json5`
