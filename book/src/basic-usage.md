@@ -76,6 +76,7 @@ fn render_language(lang: &'static Language) -> impl IntoView {
     // so `<input id=lang` becomes `<input id=lang.id.to_string()`
     view! {
         <div>
+            <label for=lang>{lang.name}</label>
             <input
                 id=lang
                 name="language"
@@ -84,7 +85,6 @@ fn render_language(lang: &'static Language) -> impl IntoView {
                 on:click=move |_| expect_i18n().language.set(lang)
                 type="radio"
             />
-            <label for=lang>{lang.name}</label>
         </div>
     }
 }
@@ -136,7 +136,7 @@ a reactive context. Note that if you're not inside a reactive context,
 the translation won't be updated on the fly when the language changes.
 This can lead to errors in console output like:
 
-```sh
+```text
 At <file>.rs:ln, you access a signal or memo (defined at <file>.rs:ln)
 outside of a reactive context. This might mean your app is not responding
 to changes in signal values in the way you expect.
@@ -178,7 +178,7 @@ With the function `use_i18n()` context you'll get an `Option` with the current
 i18n context:
 
 ```rust
-let i18n = leptos_fluent::use_i18n().expect("No leptos_fluent::I18n context found");
+let i18n = leptos_fluent::use_i18n().expect("No `leptos_fluent::I18n` context found");
 ```
 
 ## Using the [`leptos_fluent::I18n`] context

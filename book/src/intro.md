@@ -36,7 +36,7 @@ The main goals of **leptos-fluent** are:
 - Be the most performant internationalization framework available.
 
 Defining the internationalization strategy using a macro allows to generate
-the less code possible for each possible configuration. I hope you enjoy it!
+the less code possible for each possible configuration.
 
 ## Help and support
 

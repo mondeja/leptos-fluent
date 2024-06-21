@@ -11,3 +11,4 @@
 - [Strategies](./strategies.md)
 - [Languages](./languages.md)
 - [Checking translations](./checking-translations.md)
+- [FAQs](./faqs.md)
