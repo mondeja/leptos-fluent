@@ -190,18 +190,13 @@ The i18n context has the following fields:
 - [`translations`]: A signal to the vector of [fluent-templates] loaders that stores
   the translations.
 
-[`expect_i18n`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.expect_i18n.html
-[`language`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.language
-[`languages`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.languages
-[`translations`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.translations
-[fluent-templates]: https://docs.rs/fluent-templates/latest/fluent_templates
-
 To update the language, use `set` method of `language` field or just
-`lang.activate()`:
+[`lang.activate()`] (new in v0.1.1):
 
 ```rust
 expect_i18n().language.set(lang)
-lang.activate()
+
+lang.activate()  // New in v0.1.1
 ```
 
 To get the current active language, use `get` method of `language` field:
@@ -227,3 +222,9 @@ lang.is_active()
 [`move_tr!`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.move_tr.html
 [`leptos_fluent::I18n`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html
 [`leptos_fluent::Language`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html
+[`lang.activate()`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html#method.activate
+[`expect_i18n`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.expect_i18n.html
+[`language`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.language
+[`languages`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.languages
+[`translations`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.translations
+[fluent-templates]: https://docs.rs/fluent-templates/latest/fluent_templates
