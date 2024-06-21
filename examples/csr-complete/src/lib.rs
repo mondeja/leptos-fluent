@@ -1,6 +1,6 @@
 use fluent_templates::static_loader;
 use leptos::*;
-use leptos_fluent::{expect_i18n, leptos_fluent, move_tr};
+use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, Language};
 
 static_loader! {
     static TRANSLATIONS = {
@@ -44,24 +44,7 @@ fn ChildComponent() -> impl IntoView {
         <fieldset>
 
             {move || {
-                i18n.languages
-                    .iter()
-                    .map(|lang| {
-                        view! {
-                            <div>
-                                <input
-                                    type="radio"
-                                    id=lang
-                                    name="language"
-                                    value=lang
-                                    checked=lang.is_active()
-                                    on:click=move |_| i18n.language.set(lang)
-                                />
-                                <label for=lang>{lang.name}</label>
-                            </div>
-                        }
-                    })
-                    .collect::<Vec<_>>()
+                i18n.languages.iter().map(|lang| render_language(lang)).collect::<Vec<_>>()
             }}
 
         </fieldset>
@@ -79,5 +62,23 @@ fn ChildComponent() -> impl IntoView {
                 </p>
             </li>
         </ul>
+    }
+}
+
+fn render_language(lang: &'static Language) -> impl IntoView {
+    // Passed as atrribute, `Language` is converted to their code,
+    // so `<input id=lang` becomes `<input id=lang.id.to_string()`
+    view! {
+        <div>
+            <input
+                type="radio"
+                id=lang
+                name="language"
+                value=lang
+                checked=lang.is_active()
+                on:click=move |_| lang.activate()
+            />
+            <label for=lang>{lang.name}</label>
+        </div>
     }
 }

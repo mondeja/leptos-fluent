@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2024-06-21 - [0.1.1]
+
+### Enhancements
+
+- Add method `activate` to `leptos_fluent::Language` struct to set a language
+  active. Use `lang.activate()` instead of `expect_i18n().language.set(lang)`.
+
 ## 2024-06-20 - [0.1.0]
 
 ### Breaking changes
@@ -234,6 +241,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.1.1]: https://github.com/mondeja/leptos-fluent/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/mondeja/leptos-fluent/compare/v0.0.37...v0.1.0
 [0.0.37]: https://github.com/mondeja/leptos-fluent/compare/v0.0.36...v0.0.37
 [0.0.36]: https://github.com/mondeja/leptos-fluent/compare/v0.0.35...v0.0.36

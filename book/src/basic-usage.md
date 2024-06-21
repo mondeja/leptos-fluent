@@ -31,7 +31,7 @@ language-selected-is = El idioma seleccionado es { $lang }.
 // src/lib.rs
 use fluent_templates::static_loader;
 use leptos::*;
-use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, tr};
+use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, Language};
 
 static_loader! {
     pub static TRANSLATIONS = {
@@ -58,34 +58,34 @@ fn LanguageSelector() -> impl IntoView {
     view! {
         <p>{move_tr!("select-a-language")}</p>
         <fieldset>
-            {
-                move || i18n.languages.iter().map(|lang| {
-                    view! {
-                        <div>
-                            <input
-                                type="radio"
-                                id=lang
-                                name="language"
-                                value=lang
-                                checked=lang.is_active()
-                                on:click=move |_| i18n.language.set(lang)
-                            />
-                            <label for=lang>{lang.name}</label>
-                        </div>
-                    }
-                }).collect::<Vec<_>>()
-            }
+            {move || {
+                i18n.languages.iter().map(|lang| render_language(lang)).collect::<Vec<_>>()
+            }}
         </fieldset>
         <p>
-            {
-                move || {
-                    tr!(
-                        "language-selected-is",
-                        { "lang" => i18n.language.get().name }
-                    )
-                }
-            }
+            {move_tr!(
+                 "language-selected-is",
+                 { "lang" => i18n.language.get().name }
+            )}
         </p>
+    }
+}
+
+fn render_language(lang: &'static Language) -> impl IntoView {
+    // Passed as atrribute, `Language` is converted to their code,
+    // so `<input id=lang` becomes `<input id=lang.id.to_string()`
+    view! {
+        <div>
+            <input
+                id=lang
+                name="language"
+                value=lang
+                checked=lang.is_active()
+                on:click=move |_| expect_i18n().language.set(lang)
+                type="radio"
+            />
+            <label for=lang>{lang.name}</label>
+        </div>
     }
 }
 ```
@@ -190,16 +190,13 @@ The i18n context has the following fields:
 - [`translations`]: A signal to the vector of [fluent-templates] loaders that stores
   the translations.
 
-[`expect_i18n`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.expect_i18n.html
-[`language`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.language
-[`languages`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.languages
-[`translations`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.translations
-[fluent-templates]: https://docs.rs/fluent-templates/latest/fluent_templates
-
-To update the language, use `set` method of `language` field:
+To update the language, use `set` method of `language` field or just
+[`lang.activate()`] (new in v0.1.1):
 
 ```rust
-i18n.language.set(lang)
+expect_i18n().language.set(lang)
+
+lang.activate()  // New in v0.1.1
 ```
 
 To get the current active language, use `get` method of `language` field:
@@ -225,3 +222,9 @@ lang.is_active()
 [`move_tr!`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.move_tr.html
 [`leptos_fluent::I18n`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html
 [`leptos_fluent::Language`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html
+[`lang.activate()`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html#method.activate
+[`expect_i18n`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.expect_i18n.html
+[`language`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.language
+[`languages`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.languages
+[`translations`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.translations
+[fluent-templates]: https://docs.rs/fluent-templates/latest/fluent_templates

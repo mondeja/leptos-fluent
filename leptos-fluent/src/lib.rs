@@ -241,7 +241,7 @@ use fluent_templates::{
 };
 use leptos::{
     use_context, Attribute, IntoAttribute, Oco, RwSignal, Signal, SignalGet,
-    SignalWith,
+    SignalSet, SignalWith,
 };
 pub use leptos_fluent_macros::leptos_fluent;
 
@@ -287,9 +287,16 @@ pub struct Language {
 }
 
 impl Language {
-    /// Check if the language is the active language.
+    /// Get if the language is the active language.
+    #[inline(always)]
     pub fn is_active(&self) -> bool {
         self == expect_i18n().language.get()
+    }
+
+    /// Set the language as the active language.
+    #[inline(always)]
+    pub fn activate(&'static self) {
+        expect_i18n().language.set(self);
     }
 }
 
@@ -329,6 +336,15 @@ impl FromStr for Language {
 
 macro_rules! impl_into_attr_for_language {
     () => {
+        /// Convert a language to an HTML attribute passing the language identifier.
+        ///
+        /// ```rust,ignore
+        /// // The following code:
+        /// <input id={lang} ... >
+        /// // is the same as
+        /// <input id={lang.id.to_string()} ... >
+        /// ```
+        #[inline(always)]
         fn into_attribute(self) -> Attribute {
             Attribute::String(Oco::Owned(self.id.to_string()))
         }
@@ -350,8 +366,8 @@ impl IntoAttribute for &&'static Language {
 
 /// Internationalization context.
 ///
-/// This context is used to provide the current language, the available languages
-/// and all the translations. It is capable of doing what is needed to translate
+/// Used to provide the current language, the available languages and all
+/// the translations. It is capable of doing what is needed to translate
 /// and manage translations in a whole application.
 #[derive(Clone, Copy)]
 pub struct I18n {
@@ -409,7 +425,7 @@ pub fn tr_impl(text_id: &str) -> String {
         None
     });
 
-    found.unwrap_or("Unknown localization {text_id}".to_string())
+    found.unwrap_or(format!("Unknown localization {text_id}"))
 }
 
 #[doc(hidden)]
@@ -431,7 +447,7 @@ pub fn tr_with_args_impl(
         None
     });
 
-    found.unwrap_or("Unknown localization {text_id}".to_string())
+    found.unwrap_or(format!("Unknown localization {text_id}"))
 }
 
 /// Translate a text identifier to the current language.
