@@ -24,7 +24,6 @@ pub(crate) fn run(
     );
     errors.extend(tr_macros_errors);
 
-    // TODO: sort locales by language code to not rely on the filesystem order
     let (fluent_entries, fluent_syntax_errors) = build_fluent_entries(
         fluent_resources,
         fluent_file_paths,
