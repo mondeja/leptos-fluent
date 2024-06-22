@@ -98,7 +98,7 @@ pub fn App() -> impl IntoView {
 ```
 
 ```json5
-// locales/languages.json5
+// ./locales/languages.json5
 [
   ["en", "English"],
   ["es-ES", "Español (España)"],
