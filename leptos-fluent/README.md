@@ -9,7 +9,7 @@ and run `pre-commit run -a cargo-readme`
 [![License](https://img.shields.io/crates/l/leptos-fluent?logo=mit)](https://github.com/mondeja/leptos-fluent/blob/master/LICENSE.md)
 [![Tests](https://img.shields.io/github/actions/workflow/status/mondeja/leptos-fluent/ci.yml?label=tests&logo=github)](https://github.com/mondeja/leptos-fluent/actions)
 [![Book](https://img.shields.io/github/actions/workflow/status/mondeja/leptos-fluent/.github%2Fworkflows%2Fci.yml?logo=github&label=book)](https://mondeja.github.io/leptos-fluent/)
-[![docs.rs](https://img.shields.io/docsrs/leptos-fluent?logo=docs.rs)][documentation]
+[![docs.rs](https://img.shields.io/docsrs/leptos-fluent?logo=docs.rs)](https://docs.rs/leptos-fluent)
 [![Crates.io downloads](https://img.shields.io/crates/d/leptos-fluent)](https://crates.io/crates/leptos-fluent)
 [![Discord channel](https://img.shields.io/badge/discord-grey?logo=discord&logoColor=white)](https://discord.com/channels/1031524867910148188/1251579884371705927)
 
@@ -233,5 +233,4 @@ fn LanguageSelector() -> impl IntoView {
 [fluent-templates]: https://github.com/XAMPPRocky/fluent-templates
 [quickstart]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.leptos_fluent.html
 [examples]: https://github.com/mondeja/leptos-fluent/tree/master/examples
-[documentation]: https://docs.rs/leptos-fluent
 [book]: https://mondeja.github.io/leptos-fluent/

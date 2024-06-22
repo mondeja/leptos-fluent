@@ -5,6 +5,11 @@ using [Fluent]. It has all the batteries included to handle language switching,
 translations management, strategies for activating translations at
 initialization, different modes of persistent storage, and more.
 
+[![Crates.io](https://img.shields.io/crates/v/leptos-fluent?logo=rust)](https://crates.io/crates/leptos-fluent)
+[![License](https://img.shields.io/crates/l/leptos-fluent?logo=mit)](https://github.com/mondeja/leptos-fluent/blob/master/LICENSE.md)
+[![docs.rs](https://img.shields.io/docsrs/leptos-fluent?logo=docs.rs)](https://docs.rs/leptos-fluent)
+[![Crates.io downloads](https://img.shields.io/crates/d/leptos-fluent)](https://crates.io/crates/leptos-fluent)
+
 ## Alternatives
 
 The unique alternative to **leptos-fluent** currently is [Leptos i18n], which
@@ -57,7 +62,7 @@ Bugs can be reported [opening an issue].
 See [_CONTRIBUTING.md_] file for more information about how to setup the
 development environment and contribute to the project.
 
-[discord-badge]: https://img.shields.io/badge/Discord%20server-grey?logo=discord&logoColor=white
+[discord-badge]: https://img.shields.io/badge/Discord-grey?logo=discord&logoColor=white
 [Leptos]: https://leptos.dev
 [Fluent]: https://projectfluent.org
 [Leptos i18n]: https://github.com/Baptistemontan/leptos_i18n
@@ -65,4 +70,4 @@ development environment and contribute to the project.
 [Leptos Discord server]: https://discord.com/channels/1031524867910148188
 [open a discussion]: https://github.com/mondeja/leptos-fluent/discussions/new
 [opening an issue]: https://github.com/mondeja/leptos-fluent/issues/new
-[_CONTRIBUTING.md_]: https://github.com/mondeja/leptos-fluent/blob/master/CONTRIBUTING.md
+[_CONTRIBUTING.md_]: https://github.com/mondeja/leptos-fluent/blob/master/CONTRIBUTING.md#setup
