@@ -6,9 +6,10 @@ pub(crate) type FluentFilePaths = HashMap<String, Vec<String>>;
 
 pub(crate) fn build_fluent_resources_and_file_paths(
     dir: impl AsRef<std::path::Path>,
-) -> (FluentResources, FluentFilePaths) {
+) -> ((FluentResources, FluentFilePaths), Vec<String>) {
     let mut resources = HashMap::new();
     let mut paths = HashMap::new();
+    let mut errors = Vec::new();
 
     for entry in std::fs::read_dir(dir)
         .unwrap()
@@ -18,18 +19,27 @@ pub(crate) fn build_fluent_resources_and_file_paths(
         if let Some(lang) = entry.file_name().into_string().ok().filter(|l| {
             l.parse::<fluent_templates::LanguageIdentifier>().is_ok()
         }) {
-            let (file_paths, file_contents) = read_from_dir(entry.path());
+            let ((file_paths, file_contents), read_errors) =
+                read_from_dir(entry.path());
             resources.insert(lang.clone(), file_contents);
             paths.insert(lang, file_paths);
+            errors.extend(read_errors);
+        } else {
+            errors.push(format!(
+                "Invalid language directory name: {}",
+                entry.file_name().to_string_lossy()
+            ));
         }
-        // TODO: Handle error
     }
-    (resources, paths)
+    ((resources, paths), errors)
 }
 
-fn read_from_dir<P: AsRef<Path>>(path: P) -> (Vec<String>, Vec<String>) {
-    let mut paths = vec![];
-    let mut contents = vec![];
+fn read_from_dir<P: AsRef<Path>>(
+    path: P,
+) -> ((Vec<String>, Vec<String>), Vec<String>) {
+    let mut paths = Vec::new();
+    let mut contents = Vec::new();
+    let mut errors = Vec::new();
 
     walkdir::WalkDir::new(path)
         .follow_links(true)
@@ -39,14 +49,18 @@ fn read_from_dir<P: AsRef<Path>>(path: P) -> (Vec<String>, Vec<String>) {
         .filter(|e| e.path().extension().map_or(false, |e| e == "ftl"))
         .for_each(|e| {
             let p = e.path().to_owned().as_path().to_str().unwrap().to_string();
-            if let Ok(string) = std::fs::read_to_string(&p) {
-                paths.push(p);
-                contents.push(normalize_newlines(&string));
+            match std::fs::read_to_string(&p) {
+                Ok(string) => {
+                    paths.push(p);
+                    contents.push(normalize_newlines(&string));
+                }
+                Err(e) => {
+                    errors.push(format!("Failed to read file {p}: {e}"));
+                }
             }
-            // TODO: Handle error
         });
 
-    (paths, contents)
+    ((paths, contents), errors)
 }
 
 fn normalize_newlines(s: &str) -> String {

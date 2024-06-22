@@ -8,13 +8,14 @@ pub(crate) fn validate_cookie_attrs(cookie_attrs: &str) -> Vec<String> {
             continue;
         }
         let key;
-        let mut value = "";
+        let value;
         if attr.contains('=') {
             let attr = attr.split('=').collect::<Vec<_>>();
             key = attr[0];
             value = attr[1];
         } else {
             key = attr;
+            value = "";
         }
 
         match key.to_ascii_lowercase().as_str() {

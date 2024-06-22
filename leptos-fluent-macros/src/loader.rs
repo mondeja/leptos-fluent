@@ -574,8 +574,18 @@ impl Parse for I18nLoader {
             }
         }
 
-        let fluent_resources_and_file_paths =
-            build_fluent_resources_and_file_paths(locales_path_str);
+        let (fluent_resources_and_file_paths, resources_file_paths_errors) =
+            build_fluent_resources_and_file_paths(&locales_path_str);
+        if !resources_file_paths_errors.is_empty() {
+            return Err(syn::Error::new(
+                locales_path.unwrap().span(),
+                format!(
+                    "Errors while reading fluent resources from {}:\n- {}",
+                    locales_path_str,
+                    resources_file_paths_errors.join("\n- "),
+                ),
+            ));
+        }
 
         #[cfg(not(feature = "ssr"))]
         if let Some(ref check_translations_globstr) = check_translations {
