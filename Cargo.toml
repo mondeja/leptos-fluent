@@ -15,6 +15,21 @@ resolver = "2"
 edition = "2021"
 documentation = "https://docs.rs/leptos-fluent"
 repository = "https://github.com/mondeja/leptos-fluent"
+homepage = "https://mondeja.github.io/leptos-fluent"
+keywords = [
+  "leptos",
+  "fluent",
+  "leptos-fluent",
+  "i18n",
+  "internationalization",
+  "localization",
+  "web",
+  "wasm",
+  "actix",
+  "axum",
+  "ssr",
+  "csr",
+]
 
 [workspace.dependencies]
 fluent-templates = "0.9"

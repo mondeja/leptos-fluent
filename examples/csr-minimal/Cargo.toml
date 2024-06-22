@@ -2,6 +2,7 @@
 name = "leptos-fluent-csr-minimal-example"
 edition = "2021"
 version = "0.1.0"
+publish = false
 
 [lib]
 name = "leptos_fluent_csr_minimal_example"
