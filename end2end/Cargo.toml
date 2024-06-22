@@ -2,6 +2,7 @@
 name = "leptos-fluent-tests"
 edition = "2021"
 version = "0.1.0"
+publish = false
 
 [dependencies]
 tests-helpers = { path = "./tests-helpers" }
