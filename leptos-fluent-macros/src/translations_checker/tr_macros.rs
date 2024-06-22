@@ -90,8 +90,12 @@ impl PartialEq for TranslationMacro {
         let equal = self.name == other.name
             && self.message_name == other.message_name
             && self.placeables == other.placeables;
-        #[cfg(not(test))]
+        #[cfg(all(not(test), not(feature = "nightly")))]
         return equal && self.file_path == other.file_path;
+        #[cfg(all(not(test), feature = "nightly"))]
+        return equal
+            && self.file_path == other.file_path
+            && self.start == other.start;
         #[cfg(test)]
         return equal;
     }

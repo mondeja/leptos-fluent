@@ -52,8 +52,8 @@ the less code possible for each possible configuration.
 <!-- markdownlint-enable MD013 -->
 
 You can ask for help and support in the [`#leptos-fluent` channel] of
-[Leptos Discord server], [open a discussion] in the GitHub repository.
-Bugs can be reported [opening an issue].
+[Leptos Discord server], [open a discussion] in the GitHub repository or
+report bugs by [opening an issue].
 
 ## Contributing
 
