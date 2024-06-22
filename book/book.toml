@@ -5,10 +5,19 @@ language = "en"
 multilingual = false
 src = "src"
 title = "leptos-fluent"
+text-direction = "ltr"
 
 [rust]
 edition = "2021"
 
+[build]
+build-dir = "dist"
+
 [output.html]
+site-url = "/leptos-fluent/"
 git-repository-url = "https://github.com/mondeja/leptos-fluent/tree/master/book"
 edit-url-template = "https://github.com/mondeja/leptos-fluent/edit/master/book/{path}"
+
+[output.html.playground]
+editable = true
+line-numbers = true
