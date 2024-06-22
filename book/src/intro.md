@@ -70,4 +70,4 @@ development environment and contribute to the project.
 [Leptos Discord server]: https://discord.com/channels/1031524867910148188
 [open a discussion]: https://github.com/mondeja/leptos-fluent/discussions/new
 [opening an issue]: https://github.com/mondeja/leptos-fluent/issues/new
-[_CONTRIBUTING.md_]: https://github.com/mondeja/leptos-fluent/blob/master/CONTRIBUTING.md#setup
+[_CONTRIBUTING.md_]: https://github.com/mondeja/leptos-fluent/blob/master/CONTRIBUTING.md
