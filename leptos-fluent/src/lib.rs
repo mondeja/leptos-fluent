@@ -239,6 +239,9 @@ pub mod localstorage;
 #[doc(hidden)]
 pub mod url;
 
+#[doc(hidden)]
+pub use web_sys;
+
 use core::hash::{Hash, Hasher};
 use core::str::FromStr;
 use fluent_templates::{
