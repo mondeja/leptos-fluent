@@ -10,13 +10,17 @@ pre-commit install
 ## Tests
 
 > [!NOTE]
-> End to end tests are located at _end2end/_.
+> End to end tests are located at _end2end/_
 
 ### End to end tests
 
+```sh
+cargo install wasm-pack
+```
+
 You need to install a browser and run:
 
-```bash
+```sh
 cd tests
 wasm-pack test --{browser} --headless
 ```
