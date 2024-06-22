@@ -9,7 +9,7 @@ pub fn get(name: &str) -> Option<String> {
             .unwrap();
         cookies.insert_str(0, "; ");
         return cookies
-            .split(&format!("; {name}=").as_str())
+            .split(format!("; {name}=").as_str())
             .nth(1)
             .and_then(|cookie| cookie.split(';').next().map(String::from));
     }
