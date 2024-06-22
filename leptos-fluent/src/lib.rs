@@ -34,7 +34,7 @@
 //!
 //! ```toml
 //! [package.metadata.leptos]
-//! watch-additional-files = ["locales"]  # Relative from Cargo.toml
+//! watch-additional-files = ["locales"]  # Relative to Cargo.toml
 //! ```
 //!
 //! # Usage

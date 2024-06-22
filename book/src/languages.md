@@ -128,7 +128,7 @@ Using [`cargo-leptos`] the _locales/_ folder must be manually
 configured to be watched:
 
 ```toml
-# Relative from Cargo.toml file
+# Relative to Cargo.toml file
 [package.metadata.leptos]
 watch-additional-files = ["locales"]
 ```
@@ -137,7 +137,7 @@ When inside a workspace, use the full path to the folder from the
 workspace _Cargo.toml_ file:
 
 ```toml
- # Relative from workspace Cargo.toml file
+ # Relative to workspace Cargo.toml file
 [package.metadata.leptos]
 watch-additional-files = ["examples/csr/locales"]
 ```
