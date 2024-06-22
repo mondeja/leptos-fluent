@@ -34,7 +34,7 @@
 //!
 //! ```toml
 //! [package.metadata.leptos]
-//! watch-additional-files = ["locales"]  # Relative from Cargo.toml file
+//! watch-additional-files = ["locales"]  # Relative from Cargo.toml
 //! ```
 //!
 //! # Usage
@@ -83,7 +83,7 @@
 //! #[component]
 //! fn App() -> impl IntoView {
 //!     leptos_fluent! {{
-//!         // Path to the locales directory, relative to Cargo.toml file.
+//!         // Path to the locales directory, relative to Cargo.toml.
 //!         locales: "./locales",
 //!         // Static translations struct provided by fluent-templates.
 //!         translations: [TRANSLATIONS],
