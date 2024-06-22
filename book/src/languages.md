@@ -76,6 +76,35 @@ The languages file must expose an array of arrays with the structure:
 The order of the languages in [`leptos_fluent::I18n::languages`] will be
 the same as in the file regardless of the alphabetical order of the names.
 
+The first in the languages file will used as the initial of the user when any
+other initialization value is discovered. Use the same as the one configured
+as `fallback_language` in `static_loader!`.
+
+```rust
+static_loader! {
+    static TRANSLATIONS = {
+        locales: "./locales",
+        fallback_language: "en",
+    };
+}
+
+#[component]
+pub fn App() -> impl IntoView {
+    leptos_fluent! {{
+        translations: [TRANSLATIONS],
+        languages: "./locales/languages.json5",
+    }};
+}
+```
+
+```json5
+// ./locales/languages.json5
+[
+  ["en", "English"],
+  ["es-ES", "Español (España)"],
+]
+```
+
 ### File format
 
 By default, the `leptos-fluent/json` feature is enabled, which only
@@ -93,13 +122,13 @@ Available features for languages file formats are:
 - `yaml`: YAML
 - `json5`: JSON5
 
-## Tracking locales file with `cargo leptos`
+## Tracking locales files with `cargo leptos`
 
 Using [`cargo-leptos`] the _locales/_ folder must be manually
 configured to be watched:
 
 ```toml
-# Relative from Cargo.toml file
+# Relative to Cargo.toml file
 [package.metadata.leptos]
 watch-additional-files = ["locales"]
 ```
@@ -108,7 +137,7 @@ When inside a workspace, use the full path to the folder from the
 workspace _Cargo.toml_ file:
 
 ```toml
- # Relative from workspace Cargo.toml file
+ # Relative to workspace Cargo.toml file
 [package.metadata.leptos]
 watch-additional-files = ["examples/csr/locales"]
 ```

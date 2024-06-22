@@ -976,7 +976,7 @@ pub fn leptos_fluent(
     let translations = {
         let loader::Translations { simple, compound } = translations;
 
-        let quote = quote! {{
+        quote! {{
             let mut all_loaders = Vec::new();
             all_loaders.extend([#(& #simple),*]);
             #(
@@ -984,9 +984,7 @@ pub fn leptos_fluent(
             );*
 
             all_loaders
-        }};
-
-        quote
+        }}
     };
 
     let quote = quote! {
@@ -1007,7 +1005,7 @@ pub fn leptos_fluent(
                 languages: &LANGUAGES,
                 translations: ::leptos::Signal::derive(|| #translations),
             };
-            provide_context::<::leptos_fluent::I18n>(i18n);
+            ::leptos::provide_context::<::leptos_fluent::I18n>(i18n);
             #sync_html_tag_lang_quote
             #sync_html_tag_dir_quote
             #sync_language_with_localstorage_quote

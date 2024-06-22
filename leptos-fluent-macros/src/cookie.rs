@@ -7,7 +7,7 @@ pub(crate) fn validate_cookie_attrs(cookie_attrs: &str) -> Vec<String> {
         if attr.is_empty() {
             continue;
         }
-        let mut key;
+        let key;
         let mut value = "";
         if attr.contains('=') {
             let attr = attr.split('=').collect::<Vec<_>>();
@@ -15,12 +15,6 @@ pub(crate) fn validate_cookie_attrs(cookie_attrs: &str) -> Vec<String> {
             value = attr[1];
         } else {
             key = attr;
-        }
-        if key.starts_with("__Secure-") {
-            key = key.trim_start_matches("__Secure-");
-        }
-        if key.starts_with("__Host-") {
-            key = key.trim_start_matches("__Host-");
         }
 
         match key.to_ascii_lowercase().as_str() {
