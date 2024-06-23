@@ -253,7 +253,7 @@ pub fn leptos_fluent(
                 _ = ::leptos::document()
                     .document_element()
                     .unwrap()
-                    .unchecked_into::<::leptos::web_sys::HtmlElement>()
+                    .unchecked_into::<::leptos_fluent::web_sys::HtmlElement>()
                     .set_attribute(
                         "lang",
                         &::leptos_fluent::expect_i18n().language.get().id.to_string()
@@ -293,7 +293,7 @@ pub fn leptos_fluent(
                 _ = ::leptos::document()
                     .document_element()
                     .unwrap()
-                    .unchecked_into::<::leptos::web_sys::HtmlElement>()
+                    .unchecked_into::<::leptos_fluent::web_sys::HtmlElement>()
                     .set_attribute(
                         "dir",
                         ::leptos_fluent::expect_i18n().language.get().dir.as_str(),
