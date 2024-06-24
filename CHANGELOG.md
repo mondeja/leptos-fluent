@@ -7,6 +7,8 @@
 - Add `initial_language_from_navigator_to_localstorage` parameter to
   `leptos_fluent!` macro to set the initial language from the browser language
   to local storage.
+- Add `initial_language_from_navigator_to_cookie` parameter to `leptos_fluent!`
+  macro to set the initial language from the browser language to a cookie.
 
 ## 2024-06-24 - [0.1.3]
 

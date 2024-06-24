@@ -7,3 +7,4 @@
 - `set_language_to_cookie`
 - `cookie_attrs`
 - `initial_language_from_navigator_to_localstorage`
+- `initial_language_from_navigator_to_cookie`

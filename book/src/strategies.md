@@ -55,6 +55,7 @@ are available:
 | [Cookie] to [local storage]                | `initial_language_from_cookie_to_localstorage`    |
 | [Local storage] to [cookie]                | `initial_language_from_localstorage_to_cookie`    |
 | [`navigator.languages`] to [local storage] | `initial_language_from_navigator_to_localstorage` |
+| [`navigator.languages`] to [cookie]        | `initial_language_from_navigator_to_cookie`       |
 
 ## Client side effects
 
