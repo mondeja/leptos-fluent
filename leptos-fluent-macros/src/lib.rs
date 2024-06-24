@@ -261,6 +261,15 @@ pub fn leptos_fluent(
         &core_locales_path,
     );
 
+    #[cfg(feature = "nightly")]
+    let get_language_quote = quote! {
+        &(::leptos_fluent::i18n())()
+    };
+    #[cfg(not(feature = "nightly"))]
+    let get_language_quote = quote! {
+        &::leptos_fluent::i18n().language.get()
+    };
+
     #[cfg(not(feature = "ssr"))]
     let sync_html_tag_lang_quote = {
         let effect_quote = quote! {
@@ -272,7 +281,7 @@ pub fn leptos_fluent(
                     .unchecked_into::<::leptos_fluent::web_sys::HtmlElement>()
                     .set_attribute(
                         "lang",
-                        &::leptos_fluent::expect_i18n().language.get().id.to_string()
+                        #get_language_quote.id.to_string()
                     );
             });
         };
@@ -312,7 +321,7 @@ pub fn leptos_fluent(
                     .unchecked_into::<::leptos_fluent::web_sys::HtmlElement>()
                     .set_attribute(
                         "dir",
-                        ::leptos_fluent::expect_i18n().language.get().dir.as_str(),
+                        #get_language_quote.dir.as_str(),
                     );
             });
         };
@@ -362,7 +371,7 @@ pub fn leptos_fluent(
             ::leptos::create_effect(move |_| {
                 ::leptos_fluent::localstorage::set(
                     #localstorage_key,
-                    &::leptos_fluent::expect_i18n().language.get().id.to_string(),
+                    #get_language_quote.id.to_string(),
                 );
             });
         };
@@ -643,7 +652,7 @@ pub fn leptos_fluent(
             ::leptos::create_effect(move |_| {
                 ::leptos_fluent::url::set(
                     #url_param,
-                    &::leptos_fluent::expect_i18n().language.get().id.to_string(),
+                    #get_language_quote.id.to_string(),
                 );
             });
         };
@@ -934,7 +943,7 @@ pub fn leptos_fluent(
             ::leptos::create_effect(move |_| {
                 ::leptos_fluent::cookie::set(
                     #cookie_name,
-                    &::leptos_fluent::expect_i18n().language.get().id.to_string(),
+                    #get_language_quote.id.to_string(),
                     &#cookie_attrs,
                 );
             });
