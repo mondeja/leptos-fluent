@@ -84,7 +84,7 @@ fn render_language(lang: &'static Language) -> impl IntoView {
                 on:click=move |_| {
                     lang.activate();
                     spawn_local(async {
-                        show_hello_world(tr!("hello-world"), lang.name.to_string()).await.unwrap();
+                        _ = show_hello_world(tr!("hello-world"), lang.name.to_string()).await;
                     });
                 }
 
