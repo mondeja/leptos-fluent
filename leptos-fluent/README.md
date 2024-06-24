@@ -95,62 +95,65 @@ fn App() -> impl IntoView {
         // Check translations correctness in the specified files.
         check_translations: "./src/**/*.rs",
 
+        // All next options are all opt-in and can be enabled
+        // separately as needed.
+
         // Client side options
         // -------------------
-        // Synchronize `<html lang="...">` attribute with the current active
-        // language. By default, it is `false`.
+        // Synchronize `<html lang="...">` attribute with the
+        // current active language.
         sync_html_tag_lang: true,
         // Synchronize `<html dir="...">` attribute setting `"ltr"`,
         // `"rtl"` or `"auto"` depending on the current active language.
         sync_html_tag_dir: true,
         // Update the language on URL parameter when the language changes.
-        // By default, it is `false`.
         set_language_to_url_param: true,
         // Set the discovered initial language of the user from
-        // the URL in local storage. By default, it is `false`.
+        // the URL in local storage.
         initial_language_from_url_param_to_localstorage: true,
         // Set the discovered initial language of the user from
-        // the URL in a cookie. By default, it is `false`.
+        // the URL in a cookie.
         initial_language_from_url_param_to_cookie: true,
         // Name of the field in local storage to get and set the
         // current language of the user. By default, it is `"lang"`.
         localstorage_key: "language",
         // Get the initial language from local storage if not found
-        // in an URL param. By default, it is `false`.
+        // in an URL param.
         initial_language_from_localstorage: true,
+        // Set the discovered initial language of the user from
+        // local storage to a cookie.
+        initial_language_from_localstorage_to_cookie: true,
         // Update the language on local storage when the language changes.
-        // By default, it is `false`.
         set_language_to_localstorage: true,
         // Get the initial language from `navigator.languages` if not
-        // found in the local storage. By default, it is `false`.
+        // found in the local storage.
         initial_language_from_navigator: true,
-        // Attributes to set for the language cookie. By default is `""`.
+        // Attributes to set for the language cookie.
+        // By default is `""`.
         cookie_attrs: "SameSite=Strict; Secure; Path=/; Max-Age=600",
         // Update the language on cookie when the language changes.
-        // By default, it is `false`.
         set_language_to_cookie: true,
         // Set the discovered initial language of the user from
-        // a cookie to local storage. By default, it is `false`.
+        // a cookie to local storage.
         initial_language_from_cookie_to_localstorage: true,
 
         // Server side options
         // -------------------
-        // Set the initial language from the `Accept-Language` header of the
-        // request. By default, it is `false`.
+        // Set the initial language from the `Accept-Language`
+        // header of the request.
         initial_language_from_accept_language_header: true,
 
         // Server and client side options
         // ------------------------------
-        // Name of the cookie to get and set the current language of the user.
-        // By default, it is `"lf-lang"`.
+        // Name of the cookie to get and set the current language
+        // of the user. By default, it is `"lf-lang"`.
         cookie_name: "lang",
-        // Get the initial language from cookie. By default, it is `false`.
+        // Get the initial language from cookie.
         initial_language_from_cookie: true,
-        // URL parameter name to use discovering the initial language
-        // of the user. By default is `"lang"`.
+        // URL parameter to use when setting the language in the URL.
+        // By default is `"lang"`.
         url_param: "lang",
-        // Discover the initial language of the user from the URL.
-        // By default, it is `false`.
+        // Discover the initial language of the user from an URL parameter.
         initial_language_from_url_param: true,
     }};
 
