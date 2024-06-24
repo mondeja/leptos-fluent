@@ -494,7 +494,7 @@ pub fn leptos_fluent(
             if let Some(l) = ::leptos_fluent::url::get(
                 #url_param
             ) {
-                lang = ::leptos_fluent::language_from_str_between_languages(
+                lang = ::leptos_fluent::l(
                     &l,
                     &LANGUAGES
                 );
@@ -522,7 +522,7 @@ pub fn leptos_fluent(
                 }
 
                 if let Some(l) = maybe_lang {
-                    lang = ::leptos_fluent::language_from_str_between_languages(
+                    lang = ::leptos_fluent::l(
                         &l,
                         &LANGUAGES
                     );
@@ -546,7 +546,7 @@ pub fn leptos_fluent(
                 }
 
                 if let Some(l) = maybe_lang {
-                    lang = ::leptos_fluent::language_from_str_between_languages(
+                    lang = ::leptos_fluent::l(
                         &l,
                         &LANGUAGES
                     );
@@ -608,7 +608,7 @@ pub fn leptos_fluent(
         let localstorage_get_quote = quote! {
             if let Some(l) = ::leptos_fluent::localstorage::get(#localstorage_key)
             {
-                lang = ::leptos_fluent::language_from_str_between_languages(
+                lang = ::leptos_fluent::l(
                     &l,
                     &LANGUAGES
                 );
@@ -733,7 +733,7 @@ pub fn leptos_fluent(
                 if language.is_none() {
                     continue;
                 }
-                if let Some(l) = ::leptos_fluent::language_from_str_between_languages(
+                if let Some(l) = ::leptos_fluent::l(
                     &language.unwrap(),
                     &LANGUAGES
                 ) {
@@ -789,7 +789,7 @@ pub fn leptos_fluent(
                 if let Some(header) = maybe_header {
                     let langs = ::leptos_fluent::http_header::parse(header);
                     for l in langs {
-                        if let Some(l) = ::leptos_fluent::language_from_str_between_languages(&l, &LANGUAGES) {
+                        if let Some(l) = ::leptos_fluent::l(&l, &LANGUAGES) {
                             lang = Some(l);
 
                             break;
@@ -832,7 +832,7 @@ pub fn leptos_fluent(
                 if let Some(header) = maybe_header {
                     let langs = ::leptos_fluent::http_header::parse(header);
                     for l in langs {
-                        if let Some(l) = ::leptos_fluent::language_from_str_between_languages(&l, &LANGUAGES) {
+                        if let Some(l) = ::leptos_fluent::l(&l, &LANGUAGES) {
                             lang = Some(l);
 
                             break;
@@ -903,7 +903,7 @@ pub fn leptos_fluent(
 
         let parse_client_cookie_quote = quote! {
             if let Some(cookie) = ::leptos_fluent::cookie::get(#cookie_name) {
-                if let Some(l) = ::leptos_fluent::language_from_str_between_languages(&cookie, &LANGUAGES) {
+                if let Some(l) = ::leptos_fluent::l(&cookie, &LANGUAGES) {
                     lang = Some(l);
 
                     #initial_language_from_cookie_to_localstorage_quote;
@@ -985,7 +985,7 @@ pub fn leptos_fluent(
                     .and_then(|cookie| Some(cookie.value().to_string()));
 
                 if let Some(cookie) = maybe_cookie {
-                    if let Some(l) = ::leptos_fluent::language_from_str_between_languages(&cookie, &LANGUAGES) {
+                    if let Some(l) = ::leptos_fluent::l(&cookie, &LANGUAGES) {
                         lang = Some(l);
                     }
                 }
@@ -1031,7 +1031,7 @@ pub fn leptos_fluent(
                     });
 
                 if let Some(cookie) = maybe_cookie {
-                    if let Some(l) = ::leptos_fluent::language_from_str_between_languages(&cookie, &LANGUAGES) {
+                    if let Some(l) = ::leptos_fluent::l(&cookie, &LANGUAGES) {
                         lang = Some(l);
                     }
                 }

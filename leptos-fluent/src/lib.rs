@@ -620,6 +620,16 @@ pub fn language_from_str_between_languages(
     }
 }
 
+// Used by `leptos_fluent!` macro
+#[doc(hidden)]
+#[inline(always)]
+pub fn l(
+    code: &str,
+    languages: &'static [&Language],
+) -> Option<&'static Language> {
+    language_from_str_between_languages(code, languages)
+}
+
 #[cfg(test)]
 mod test {
     fn major_and_minor_version(version: &str) -> String {
