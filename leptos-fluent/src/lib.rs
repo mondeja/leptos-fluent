@@ -234,6 +234,7 @@
 //! [quickstart]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.leptos_fluent.html
 //! [examples]: https://github.com/mondeja/leptos-fluent/tree/master/examples
 //! [book]: https://mondeja.github.io/leptos-fluent/
+//! [documentation]: https://docs.rs/leptos-fluent
 
 #[doc(hidden)]
 pub mod cookie;
