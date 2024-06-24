@@ -19,16 +19,9 @@ homepage = "https://mondeja.github.io/leptos-fluent"
 keywords = [
   "leptos",
   "fluent",
-  "leptos-fluent",
   "i18n",
-  "internationalization",
   "localization",
-  "web",
   "wasm",
-  "actix",
-  "axum",
-  "ssr",
-  "csr",
 ]
 
 [workspace.dependencies]
