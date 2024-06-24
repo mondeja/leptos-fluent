@@ -171,6 +171,9 @@ use quote::quote;
 /// - **`initial_language_from_navigator_to_localstorage`** (_`false`_): Save the initial language of the user
 ///   from [`navigator.languages`] to [local storage]. Can be a literal boolean or an expression that will be
 ///   evaluated at runtime. It will only take effect on client-side.
+/// - **`initial_language_from_navigator_to_cookie`** (_`false`_): Save the initial language of the user
+///   from [`navigator.languages`] to a cookie. Can be a literal boolean or an expression that will be evaluated
+///   at runtime. It will only take effect on client-side.
 /// - **`initial_language_from_accept_language_header`** (_`false`_): Load the initial language of the user
 ///   from the `Accept-Language` header. Can be a literal boolean or an expression that will be evaluated at
 ///   runtime. It will only take effect on server-side.
