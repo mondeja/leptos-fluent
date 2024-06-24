@@ -240,6 +240,53 @@ view! {
 
 fn render_language(lang: &amp;'static Language) -&gt; impl IntoView { ... }
 <span class="boring">}</span></code></pre></pre>
+<h3 id="how-to-manage-translations-on-server-actions"><a class="header" href="#how-to-manage-translations-on-server-actions">How to manage translations on server actions</a></h3>
+<p>The translations reside on the client side, so the <code>leptos_fluent::I18n</code>
+can not be accessed as context on server actions. Pass the translations
+as values if the bandwidth is not a problem or use your own statics on
+server side.</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use leptos::*;
+use leptos_fluent::{tr, Language};
+
+/// Server action showing client-side translated message on console
+#[server(ShowHelloWorld, "/api")]
+pub async fn show_hello_world(
+    translated_hello_world: String,
+    language: String,
+) -&gt; Result&lt;(), ServerFnError&gt; {
+    println!("{}", translated_hello_world);
+    println!("Language: {}", language);
+    Ok(())
+}
+
+fn render_language(lang: &amp;'static Language) -&gt; impl IntoView {
+    // Call on click to server action with a client-side translated
+    // "hello-world" message
+    view! {
+        &lt;div&gt;
+            &lt;input
+                id=lang
+                name="language"
+                value=lang
+                checked=lang.is_active()
+                type="radio"
+                on:click=move |_| {
+                    lang.activate();
+                    spawn_local(async {
+                        _ = show_hello_world(
+                            tr!("hello-world"),
+                            lang.name.to_string(),
+                        ).await;
+                    });
+                }
+            /&gt;
+            &lt;label for=lang&gt;{lang.name}&lt;/label&gt;
+        &lt;/div&gt;
+    }
+}
+<span class="boring">}</span></code></pre></pre>
 
                     </main>
 
