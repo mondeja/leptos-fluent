@@ -2,6 +2,12 @@
 
 ## Unreleased - [0.1.3]
 
+### New features
+
+- Add `initial_language_from_localstorage_to_cookie` parameter to
+  `leptos_fluent!` macro to set the initial language from local storage to
+  a cookie.
+
 ## 2024-06-22 - [0.1.2]
 
 ### New features

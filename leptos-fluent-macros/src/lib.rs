@@ -57,6 +57,7 @@ use quote::quote;
 ///         set_language_to_url_param: true,
 ///         localstorage_key: "language",
 ///         initial_language_from_localstorage: true,
+///         initial_language_from_localstorage_to_cookie: true,
 ///         set_language_to_localstorage: true,
 ///         initial_language_from_navigator: true,
 ///         initial_language_from_accept_language_header: true,
@@ -158,8 +159,11 @@ use quote::quote;
 /// - **`initial_language_from_localstorage`** (_`false`_): Load the initial language of the
 ///   user from [local storage] if not found in the URL param. Can be a literal boolean or an expression
 ///   that will be evaluated at runtime. It will only take effect on client-side.
-///   **`set_language_to_localstorage`** (_`false`_): Save the language of the user to [local storage] if
+/// - **`set_language_to_localstorage`** (_`false`_): Save the language of the user to [local storage] if
 ///   when setting the language. Can be a literal boolean or an expression that will be evaluated at
+///   runtime. It will only take effect on client-side.
+/// - **`initial_language_from_localstorage_to_cookie`** (_`false`_): Save the initial language of the user
+///   from [local storage] to a cookie. Can be a literal boolean or an expression that will be evaluated at
 ///   runtime. It will only take effect on client-side.
 /// - **`initial_language_from_navigator`** (_`false`_): Load the initial language of the user
 ///   from [`navigator.languages`] if not found in [local storage]. Can be a literal boolean or an
@@ -215,6 +219,8 @@ pub fn leptos_fluent(
         localstorage_key_expr,
         initial_language_from_localstorage_bool,
         initial_language_from_localstorage_expr,
+        initial_language_from_localstorage_to_cookie_bool,
+        initial_language_from_localstorage_to_cookie_expr,
         set_language_to_localstorage_bool,
         set_language_to_localstorage_expr,
         initial_language_from_navigator_bool,
@@ -554,18 +560,51 @@ pub fn leptos_fluent(
     };
 
     #[cfg(not(feature = "ssr"))]
-    let initial_language_from_localstorage_quote =
+    let initial_language_from_localstorage_quote = {
+        let set_cookie_quote = quote! {
+            ::leptos_fluent::cookie::set(
+                #cookie_name,
+                &l.id.to_string(),
+                &#cookie_attrs,
+            );
+        };
+
+        let initial_language_from_localstorage_to_cookie_quote =
+            match initial_language_from_localstorage_to_cookie_bool {
+                Some(lit) => match lit.value {
+                    true => set_cookie_quote,
+                    false => quote! {},
+                },
+                None => match initial_language_from_localstorage_to_cookie_expr
+                {
+                    Some(expr) => quote! {
+                        if #expr {
+                            #set_cookie_quote
+                        }
+                    },
+                    None => quote! {},
+                },
+            };
+
+        let localstorage_get_quote = quote! {
+            if let Some(l) = ::leptos_fluent::localstorage::get(#localstorage_key)
+            {
+                lang = ::leptos_fluent::language_from_str_between_languages(
+                    &l,
+                    &LANGUAGES
+                );
+
+                if let Some(l) = lang {
+                    #initial_language_from_localstorage_to_cookie_quote;
+                }
+            }
+        };
+
         match initial_language_from_localstorage_bool {
             Some(ref lit) => match lit.value {
                 true => quote! {
                     if lang.is_none() {
-                        if let Some(l) = ::leptos_fluent::localstorage::get(#localstorage_key)
-                        {
-                            lang = ::leptos_fluent::language_from_str_between_languages(
-                                &l,
-                                &LANGUAGES
-                            );
-                        }
+                        #localstorage_get_quote
                     }
                 },
                 false => quote! {},
@@ -573,23 +612,20 @@ pub fn leptos_fluent(
             None => match initial_language_from_localstorage_expr {
                 Some(expr) => quote! {
                     if #expr && lang.is_none() {
-                        if let Some(l) = ::leptos_fluent::localstorage::get(#localstorage_key)
-                        {
-                            lang = ::leptos_fluent::language_from_str_between_languages(
-                                &l,
-                                &LANGUAGES
-                            );
-                        }
+                        #localstorage_get_quote
                     }
                 },
                 None => quote! {},
             },
-        };
+        }
+    };
 
     #[cfg(feature = "ssr")]
     {
         _ = initial_language_from_localstorage_bool;
         _ = initial_language_from_localstorage_expr;
+        _ = initial_language_from_localstorage_to_cookie_bool;
+        _ = initial_language_from_localstorage_to_cookie_expr;
     }
 
     let sync_language_with_url_param_quote = {

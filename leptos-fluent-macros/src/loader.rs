@@ -186,6 +186,10 @@ pub(crate) struct I18nLoader {
     pub(crate) localstorage_key_expr: Option<syn::Expr>,
     pub(crate) initial_language_from_localstorage_bool: Option<syn::LitBool>,
     pub(crate) initial_language_from_localstorage_expr: Option<syn::Expr>,
+    pub(crate) initial_language_from_localstorage_to_cookie_bool:
+        Option<syn::LitBool>,
+    pub(crate) initial_language_from_localstorage_to_cookie_expr:
+        Option<syn::Expr>,
     pub(crate) set_language_to_localstorage_bool: Option<syn::LitBool>,
     pub(crate) set_language_to_localstorage_expr: Option<syn::Expr>,
     pub(crate) initial_language_from_navigator_bool: Option<syn::LitBool>,
@@ -252,6 +256,12 @@ impl Parse for I18nLoader {
             None;
         let mut initial_language_from_localstorage_expr: Option<syn::Expr> =
             None;
+        let mut initial_language_from_localstorage_to_cookie_bool: Option<
+            syn::LitBool,
+        > = None;
+        let mut initial_language_from_localstorage_to_cookie_expr: Option<
+            syn::Expr,
+        > = None;
         let mut set_language_to_localstorage_bool: Option<syn::LitBool> = None;
         let mut set_language_to_localstorage_expr: Option<syn::Expr> = None;
         let mut initial_language_from_navigator_bool: Option<syn::LitBool> =
@@ -378,6 +388,15 @@ impl Parse for I18nLoader {
                     &mut initial_language_from_localstorage_bool,
                     &mut initial_language_from_localstorage_expr,
                     "initial_language_from_localstorage",
+                ) {
+                    return Err(err);
+                }
+            } else if k == "initial_language_from_localstorage_to_cookie" {
+                if let Some(err) = parse_litbool_or_expr_param(
+                    &fields,
+                    &mut initial_language_from_localstorage_to_cookie_bool,
+                    &mut initial_language_from_localstorage_to_cookie_expr,
+                    "initial_language_from_localstorage_to_cookie",
                 ) {
                     return Err(err);
                 }
@@ -662,6 +681,8 @@ impl Parse for I18nLoader {
             localstorage_key_expr,
             initial_language_from_localstorage_bool,
             initial_language_from_localstorage_expr,
+            initial_language_from_localstorage_to_cookie_bool,
+            initial_language_from_localstorage_to_cookie_expr,
             set_language_to_localstorage_bool,
             set_language_to_localstorage_expr,
             initial_language_from_navigator_bool,
