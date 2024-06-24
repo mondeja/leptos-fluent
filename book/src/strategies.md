@@ -53,6 +53,7 @@ are available:
 | [URL query parameter] to [local storage] | `initial_language_from_url_param_to_localstorage` |
 | [URL query parameter] to [Cookie]        | `initial_language_from_url_param_to_cookie`       |
 | [Cookie] to [local storage]              | `initial_language_from_cookie_to_localstorage`    |
+| [Local storage] to [Cookie]              | `initial_language_from_localstorage_to_cookie`    |
 
 ## Client side effects
 
