@@ -84,7 +84,11 @@ fn render_language(lang: &'static Language) -> impl IntoView {
                 on:click=move |_| {
                     lang.activate();
                     spawn_local(async {
-                        _ = show_hello_world(tr!("hello-world"), lang.name.to_string()).await;
+                        _ = show_hello_world(
+                                tr!("hello-world"),
+                                tr!("language", { "lang" => lang.name.to_string() }),
+                            )
+                            .await;
                     });
                 }
 
@@ -102,7 +106,7 @@ pub async fn show_hello_world(
     language: String,
 ) -> Result<(), ServerFnError> {
     println!("{}", translated_hello_world);
-    println!("Language: {}", language);
+    println!("{}", language);
     Ok(())
 }
 
