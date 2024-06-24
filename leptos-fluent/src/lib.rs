@@ -254,15 +254,19 @@ use leptos::{
 };
 pub use leptos_fluent_macros::leptos_fluent;
 
-#[doc(hidden)]
+/// Direction of the text
 #[cfg_attr(debug_assertions, derive(Debug))]
 pub enum WritingDirection {
+    /// Left to right
     Ltr,
+    /// Right to left
     Rtl,
+    /// Auto
     Auto,
 }
 
 impl WritingDirection {
+    /// Get the string representation of the writing direction
     pub fn as_str(&self) -> &'static str {
         match self {
             WritingDirection::Ltr => "ltr",
