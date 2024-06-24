@@ -82,7 +82,7 @@ server side.
 
 ```rust
 use leptos::*;
-use leptos_fluent::{Language, tr};
+use leptos_fluent::{tr, Language};
 
 /// Server action showing client-side translated message on console
 #[server(ShowHelloWorld, "/api")]

@@ -79,6 +79,7 @@ fn render_language(lang: &'static Language) -> impl IntoView {
             <input
                 id=lang
                 name="language"
+                type="radio"
                 value=lang
                 checked=lang.is_active()
                 on:click=move |_| {
@@ -91,9 +92,8 @@ fn render_language(lang: &'static Language) -> impl IntoView {
                             .await;
                     });
                 }
-
-                type="radio"
             />
+
             <label for=lang>{lang.name}</label>
         </div>
     }
