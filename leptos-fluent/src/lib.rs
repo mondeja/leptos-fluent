@@ -446,6 +446,7 @@ impl FnOnce<(&'static Language,)> for I18n {
         self.language.set(&lang)
     }
 }
+
 #[cfg(feature = "nightly")]
 impl FnMut<(&'static Language,)> for I18n {
     #[inline]

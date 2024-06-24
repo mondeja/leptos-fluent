@@ -72,3 +72,52 @@ view! {
 
 fn render_language(lang: &'static Language) -> impl IntoView { ... }
 ```
+
+### How to manage translations on server actions
+
+The translations reside on the client side, so the `leptos_fluent::I18n`
+can not be accessed as context on server actions. Pass the translations
+as values if the bandwidth is not a problem or use your own statics on
+server side.
+
+```rust
+use leptos::*;
+use leptos_fluent::{tr, Language};
+
+/// Server action showing client-side translated message on console
+#[server(ShowHelloWorld, "/api")]
+pub async fn show_hello_world(
+    translated_hello_world: String,
+    language: String,
+) -> Result<(), ServerFnError> {
+    println!("{}", translated_hello_world);
+    println!("Language: {}", language);
+    Ok(())
+}
+
+fn render_language(lang: &'static Language) -> impl IntoView {
+    // Call on click to server action with a client-side translated
+    // "hello-world" message
+    view! {
+        <div>
+            <input
+                id=lang
+                name="language"
+                value=lang
+                checked=lang.is_active()
+                type="radio"
+                on:click=move |_| {
+                    lang.activate();
+                    spawn_local(async {
+                        _ = show_hello_world(
+                            tr!("hello-world"),
+                            lang.name.to_string(),
+                        ).await;
+                    });
+                }
+            />
+            <label for=lang>{lang.name}</label>
+        </div>
+    }
+}
+```

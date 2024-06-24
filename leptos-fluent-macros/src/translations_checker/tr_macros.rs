@@ -204,6 +204,11 @@ impl<'ast> TranslationsMacrosVisitor {
                         if *tr_macro_punct != '!' {
                             self.current_tr_macro = None;
                             self.current_tr_macro_punct = None;
+
+                            #[cfg(feature = "nightly")]
+                            {
+                                self.current_tr_macro_start = None;
+                            }
                             continue;
                         }
                     } else {
