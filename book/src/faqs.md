@@ -90,33 +90,34 @@ pub async fn show_hello_world(
     translated_hello_world: String,
     language: String,
 ) -> Result<(), ServerFnError> {
-    println!("{}", translated_hello_world);
-    println!("Language: {}", language);
+    println!("{} ({})", translated_hello_world, language);
     Ok(())
 }
 
 fn render_language(lang: &'static Language) -> impl IntoView {
     // Call on click to server action with a client-side translated
     // "hello-world" message
+    let on_click = move |_| {
+        lang.activate();
+        spawn_local(async {
+            _ = show_hello_world(
+                tr!("hello-world"),
+                lang.name.to_string(),
+            ).await;
+        });
+    };
+
     view! {
         <div>
+            <label for=lang>{lang.name}</label>
             <input
                 id=lang
                 name="language"
                 value=lang
                 checked=lang.is_active()
+                on:click=on_click
                 type="radio"
-                on:click=move |_| {
-                    lang.activate();
-                    spawn_local(async {
-                        _ = show_hello_world(
-                            tr!("hello-world"),
-                            lang.name.to_string(),
-                        ).await;
-                    });
-                }
             />
-            <label for=lang>{lang.name}</label>
         </div>
     }
 }
