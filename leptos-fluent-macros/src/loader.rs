@@ -198,6 +198,10 @@ pub(crate) struct I18nLoader {
         Option<syn::LitBool>,
     pub(crate) initial_language_from_navigator_to_localstorage_expr:
         Option<syn::Expr>,
+    pub(crate) initial_language_from_navigator_to_cookie_bool:
+        Option<syn::LitBool>,
+    pub(crate) initial_language_from_navigator_to_cookie_expr:
+        Option<syn::Expr>,
     pub(crate) initial_language_from_accept_language_header_bool:
         Option<syn::LitBool>,
     pub(crate) initial_language_from_accept_language_header_expr:
@@ -275,6 +279,12 @@ impl Parse for I18nLoader {
             syn::LitBool,
         > = None;
         let mut initial_language_from_navigator_to_localstorage_expr: Option<
+            syn::Expr,
+        > = None;
+        let mut initial_language_from_navigator_to_cookie_bool: Option<
+            syn::LitBool,
+        > = None;
+        let mut initial_language_from_navigator_to_cookie_expr: Option<
             syn::Expr,
         > = None;
         let mut initial_language_from_accept_language_header_bool: Option<
@@ -434,6 +444,15 @@ impl Parse for I18nLoader {
                     &mut initial_language_from_navigator_to_localstorage_bool,
                     &mut initial_language_from_navigator_to_localstorage_expr,
                     "initial_language_from_navigator_to_localstorage",
+                ) {
+                    return Err(err);
+                }
+            } else if k == "initial_language_from_navigator_to_cookie" {
+                if let Some(err) = parse_litbool_or_expr_param(
+                    &fields,
+                    &mut initial_language_from_navigator_to_cookie_bool,
+                    &mut initial_language_from_navigator_to_cookie_expr,
+                    "initial_language_from_navigator_to_cookie",
                 ) {
                     return Err(err);
                 }
@@ -708,6 +727,8 @@ impl Parse for I18nLoader {
             initial_language_from_navigator_expr,
             initial_language_from_navigator_to_localstorage_bool,
             initial_language_from_navigator_to_localstorage_expr,
+            initial_language_from_navigator_to_cookie_bool,
+            initial_language_from_navigator_to_cookie_expr,
             initial_language_from_accept_language_header_bool,
             initial_language_from_accept_language_header_expr,
             cookie_name_str,
