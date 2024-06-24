@@ -194,6 +194,10 @@ pub(crate) struct I18nLoader {
     pub(crate) set_language_to_localstorage_expr: Option<syn::Expr>,
     pub(crate) initial_language_from_navigator_bool: Option<syn::LitBool>,
     pub(crate) initial_language_from_navigator_expr: Option<syn::Expr>,
+    pub(crate) initial_language_from_navigator_to_localstorage_bool:
+        Option<syn::LitBool>,
+    pub(crate) initial_language_from_navigator_to_localstorage_expr:
+        Option<syn::Expr>,
     pub(crate) initial_language_from_accept_language_header_bool:
         Option<syn::LitBool>,
     pub(crate) initial_language_from_accept_language_header_expr:
@@ -267,6 +271,12 @@ impl Parse for I18nLoader {
         let mut initial_language_from_navigator_bool: Option<syn::LitBool> =
             None;
         let mut initial_language_from_navigator_expr: Option<syn::Expr> = None;
+        let mut initial_language_from_navigator_to_localstorage_bool: Option<
+            syn::LitBool,
+        > = None;
+        let mut initial_language_from_navigator_to_localstorage_expr: Option<
+            syn::Expr,
+        > = None;
         let mut initial_language_from_accept_language_header_bool: Option<
             syn::LitBool,
         > = None;
@@ -415,6 +425,15 @@ impl Parse for I18nLoader {
                     &mut initial_language_from_navigator_bool,
                     &mut initial_language_from_navigator_expr,
                     "initial_language_from_navigator",
+                ) {
+                    return Err(err);
+                }
+            } else if k == "initial_language_from_navigator_to_localstorage" {
+                if let Some(err) = parse_litbool_or_expr_param(
+                    &fields,
+                    &mut initial_language_from_navigator_to_localstorage_bool,
+                    &mut initial_language_from_navigator_to_localstorage_expr,
+                    "initial_language_from_navigator_to_localstorage",
                 ) {
                     return Err(err);
                 }
@@ -687,6 +706,8 @@ impl Parse for I18nLoader {
             set_language_to_localstorage_expr,
             initial_language_from_navigator_bool,
             initial_language_from_navigator_expr,
+            initial_language_from_navigator_to_localstorage_bool,
+            initial_language_from_navigator_to_localstorage_expr,
             initial_language_from_accept_language_header_bool,
             initial_language_from_accept_language_header_expr,
             cookie_name_str,

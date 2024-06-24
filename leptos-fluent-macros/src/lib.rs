@@ -168,6 +168,9 @@ use quote::quote;
 /// - **`initial_language_from_navigator`** (_`false`_): Load the initial language of the user
 ///   from [`navigator.languages`] if not found in [local storage]. Can be a literal boolean or an
 ///   expression that will be evaluated at runtime. It will only take effect on client-side.
+/// - **`initial_language_from_navigator_to_localstorage`** (_`false`_): Save the initial language of the user
+///   from [`navigator.languages`] to [local storage]. Can be a literal boolean or an expression that will be
+///   evaluated at runtime. It will only take effect on client-side.
 /// - **`initial_language_from_accept_language_header`** (_`false`_): Load the initial language of the user
 ///   from the `Accept-Language` header. Can be a literal boolean or an expression that will be evaluated at
 ///   runtime. It will only take effect on server-side.
@@ -225,6 +228,8 @@ pub fn leptos_fluent(
         set_language_to_localstorage_expr,
         initial_language_from_navigator_bool,
         initial_language_from_navigator_expr,
+        initial_language_from_navigator_to_localstorage_bool,
+        initial_language_from_navigator_to_localstorage_expr,
         initial_language_from_accept_language_header_bool,
         initial_language_from_accept_language_header_expr,
         cookie_name_str,
@@ -656,6 +661,32 @@ pub fn leptos_fluent(
 
     #[cfg(not(feature = "ssr"))]
     let initial_language_from_navigator_quote = {
+        let initial_language_from_navigator_to_localstorage_quote = {
+            let effect_quote = quote! {
+                ::leptos_fluent::localstorage::set(
+                    #localstorage_key,
+                    &l.id.to_string(),
+                );
+            };
+
+            match initial_language_from_navigator_to_localstorage_bool {
+                Some(lit) => match lit.value {
+                    true => effect_quote,
+                    false => quote! {},
+                },
+                None => {
+                    match initial_language_from_navigator_to_localstorage_expr {
+                        Some(expr) => quote! {
+                            if #expr {
+                                #effect_quote
+                            }
+                        },
+                        None => quote! {},
+                    }
+                }
+            }
+        };
+
         let window_navigator_languages_quote = quote! {
             let languages = window().navigator().languages().to_vec();
             for raw_language in languages {
@@ -668,6 +699,7 @@ pub fn leptos_fluent(
                     &LANGUAGES
                 ) {
                     lang = Some(l);
+                    #initial_language_from_navigator_to_localstorage_quote;
                     break;
                 }
             }
@@ -697,6 +729,8 @@ pub fn leptos_fluent(
     {
         _ = initial_language_from_navigator_bool;
         _ = initial_language_from_navigator_expr;
+        _ = initial_language_from_navigator_to_localstorage_bool;
+        _ = initial_language_from_navigator_to_localstorage_expr;
     }
 
     // Accept-Language header

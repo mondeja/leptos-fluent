@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## Unreleased - [0.1.4]
+
+### New features
+
+- Add `initial_language_from_navigator_to_localstorage` parameter to
+  `leptos_fluent!` macro to set the initial language from the browser language
+  to local storage.
+
 ## 2024-06-24 - [0.1.3]
 
 ### New features
@@ -271,6 +279,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.1.4]: https://github.com/mondeja/leptos-fluent/compare/v0.1.3...master
 [0.1.3]: https://github.com/mondeja/leptos-fluent/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/mondeja/leptos-fluent/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/mondeja/leptos-fluent/compare/v0.1.0...v0.1.1
