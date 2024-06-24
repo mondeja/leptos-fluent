@@ -1,5 +1,7 @@
 #![deny(missing_docs)]
 #![forbid(unsafe_code)]
+#![cfg_attr(feature = "nightly", feature(fn_traits))]
+#![cfg_attr(feature = "nightly", feature(unboxed_closures))]
 //! [![Crates.io](https://img.shields.io/crates/v/leptos-fluent?logo=rust)](https://crates.io/crates/leptos-fluent)
 //! [![License](https://img.shields.io/crates/l/leptos-fluent?logo=mit)](https://github.com/mondeja/leptos-fluent/blob/master/LICENSE.md)
 //! [![Tests](https://img.shields.io/github/actions/workflow/status/mondeja/leptos-fluent/ci.yml?label=tests&logo=github)](https://github.com/mondeja/leptos-fluent/actions)
@@ -399,6 +401,66 @@ impl core::fmt::Debug for I18n {
             .field("language", &self.language.get())
             .field("languages", &self.languages)
             .finish()
+    }
+}
+
+// get language
+#[cfg(feature = "nightly")]
+impl FnOnce<()> for I18n {
+    type Output = &'static Language;
+    #[inline]
+    extern "rust-call" fn call_once(self, _args: ()) -> Self::Output {
+        self.language.get()
+    }
+}
+
+#[cfg(feature = "nightly")]
+impl FnMut<()> for I18n {
+    #[inline]
+    extern "rust-call" fn call_mut(&mut self, _args: ()) -> Self::Output {
+        self.language.get()
+    }
+}
+
+#[cfg(feature = "nightly")]
+impl Fn<()> for I18n {
+    #[inline]
+    extern "rust-call" fn call(&self, _args: ()) -> Self::Output {
+        self.language.get()
+    }
+}
+
+// set language
+#[cfg(feature = "nightly")]
+impl FnOnce<(&'static Language,)> for I18n {
+    type Output = ();
+    #[inline]
+    extern "rust-call" fn call_once(
+        self,
+        (lang,): (&'static Language,),
+    ) -> Self::Output {
+        self.language.set(&lang)
+    }
+}
+#[cfg(feature = "nightly")]
+impl FnMut<(&'static Language,)> for I18n {
+    #[inline]
+    extern "rust-call" fn call_mut(
+        &mut self,
+        (lang,): (&'static Language,),
+    ) -> Self::Output {
+        self.language.set(&lang)
+    }
+}
+
+#[cfg(feature = "nightly")]
+impl Fn<(&'static Language,)> for I18n {
+    #[inline]
+    extern "rust-call" fn call(
+        &self,
+        (lang,): (&'static Language,),
+    ) -> Self::Output {
+        self.language.set(&lang)
     }
 }
 

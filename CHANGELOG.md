@@ -7,6 +7,9 @@
 - Add `initial_language_from_localstorage_to_cookie` parameter to
   `leptos_fluent!` macro to set the initial language from local storage to
   a cookie.
+- Allow to call `leptos_fluent::I18n` context to get and set the current active
+  language with `i18n()` to get and `i18n(lang)` to set when the feature
+  `nightly` is enabled.
 
 ## 2024-06-22 - [0.1.2]
 
