@@ -1,6 +1,6 @@
 use fluent_templates::static_loader;
 use leptos::*;
-use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, tr};
+use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, tr, Language};
 use leptos_meta::*;
 use leptos_router::*;
 
@@ -60,30 +60,50 @@ fn HomePage() -> impl IntoView {
     view! {
         <h1>{move_tr!("welcome-to-leptos")}</h1>
         <fieldset>
-
             {move || {
-                i18n.languages
-                    .iter()
-                    .map(|lang| {
-                        view! {
-                            <div>
-                                <input
-                                    type="radio"
-                                    id=lang
-                                    name="language"
-                                    value=lang
-                                    checked=lang.is_active()
-                                    on:click=move |_| lang.activate()
-                                />
-                                <label for=lang>{lang.name}</label>
-                            </div>
-                        }
-                    })
-                    .collect::<Vec<_>>()
+                i18n.languages.iter().map(|lang| render_language(lang)).collect::<Vec<_>>()
             }}
 
         </fieldset>
     }
+}
+
+fn render_language(lang: &'static Language) -> impl IntoView {
+    // Passed as atrribute, `Language` is converted to their code,
+    // so `<input id=lang` becomes `<input id=lang.id.to_string()`
+
+    // Call on click to server action with a client-side translated
+    // "hello-world" message
+    view! {
+        <div>
+            <input
+                id=lang
+                name="language"
+                value=lang
+                checked=lang.is_active()
+                on:click=move |_| {
+                    lang.activate();
+                    spawn_local(async {
+                        show_hello_world(tr!("hello-world"), lang.name.to_string()).await.unwrap();
+                    });
+                }
+
+                type="radio"
+            />
+            <label for=lang>{lang.name}</label>
+        </div>
+    }
+}
+
+/// Server action showing client-side translated message on console
+#[server(ShowHelloWorld, "/api")]
+pub async fn show_hello_world(
+    translated_hello_world: String,
+    language: String,
+) -> Result<(), ServerFnError> {
+    println!("{}", translated_hello_world);
+    println!("Language: {}", language);
+    Ok(())
 }
 
 /// 404 - Not Found
