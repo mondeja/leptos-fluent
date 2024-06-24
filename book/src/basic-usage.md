@@ -194,15 +194,21 @@ To update the language, use `set` method of `language` field or just
 [`lang.activate()`] (new in v0.1.1):
 
 ```rust
-expect_i18n().language.set(lang)
+expect_i18n().language.set(lang);
 
-lang.activate()  // New in v0.1.1
+lang.activate();  // New in v0.1.1
+
+// features = ["nightly"]
+let i18n = leptos_fluent::expect_i18n();
+i18n(lang);
 ```
 
 To get the current active language, use `get` method of `language` field:
 
 ```rust
 i18n.language.get()
+
+i18n() // features = ["nightly"]
 ```
 
 To get the available languages, iterate over the `languages` field:
