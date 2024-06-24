@@ -571,7 +571,7 @@ pub fn leptos_fluent(
         let initial_language_from_localstorage_to_cookie_quote =
             match initial_language_from_localstorage_to_cookie_bool {
                 Some(lit) => match lit.value {
-                    true => quote! { #set_cookie_quote },
+                    true => set_cookie_quote,
                     false => quote! {},
                 },
                 None => match initial_language_from_localstorage_to_cookie_expr
