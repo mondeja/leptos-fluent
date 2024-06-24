@@ -159,7 +159,7 @@ use quote::quote;
 /// - **`initial_language_from_localstorage`** (_`false`_): Load the initial language of the
 ///   user from [local storage] if not found in the URL param. Can be a literal boolean or an expression
 ///   that will be evaluated at runtime. It will only take effect on client-side.
-///   **`set_language_to_localstorage`** (_`false`_): Save the language of the user to [local storage] if
+/// - **`set_language_to_localstorage`** (_`false`_): Save the language of the user to [local storage] if
 ///   when setting the language. Can be a literal boolean or an expression that will be evaluated at
 ///   runtime. It will only take effect on client-side.
 /// - **`initial_language_from_localstorage_to_cookie`** (_`false`_): Save the initial language of the user
