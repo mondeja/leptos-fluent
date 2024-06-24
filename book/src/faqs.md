@@ -105,6 +105,7 @@ fn render_language(lang: &'static Language) -> impl IntoView {
                 name="language"
                 value=lang
                 checked=lang.is_active()
+                type="radio"
                 on:click=move |_| {
                     lang.activate();
                     spawn_local(async {
@@ -114,7 +115,6 @@ fn render_language(lang: &'static Language) -> impl IntoView {
                         ).await;
                     });
                 }
-                type="radio"
             />
             <label for=lang>{lang.name}</label>
         </div>
