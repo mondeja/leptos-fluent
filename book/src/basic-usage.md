@@ -134,12 +134,12 @@ move_tr!("language-selected-is", { "lang" => i18n.language.get().name })
 Additionally, you can use the [`tr!`] macro to translate a string inside
 a reactive context. Note that if you're not inside a reactive context,
 the translation won't be updated on the fly when the language changes.
-This can lead to errors in console output like:
+This can lead to warnings in console output like:
 
-```text
-At <file>.rs:ln, you access a signal or memo (defined at <file>.rs:ln)
-outside of a reactive context. This might mean your app is not responding
-to changes in signal values in the way you expect.
+```admonish warning
+At `./path/to/file.rs:ln`, you access a signal or memo (defined at
+`./path/to/file.rs:ln`) outside of a reactive context. This might mean your
+app is not responding to changes in signal values in the way you expect.
 ```
 
 Can be fixed by replacing calls to [`tr!`] with [`move_tr!`] or wrapping the
@@ -174,8 +174,7 @@ It is exported as [`i18n`] too:
 let i18n = leptos_fluent::i18n();
 ```
 
-With the function [`use_i18n`] context you'll get an `Option` with the current
-i18n context:
+The function [`use_i18n`] returns an `Option` with the current i18n context:
 
 ```rust
 let i18n = leptos_fluent::use_i18n().expect("No `leptos_fluent::I18n` context found");
@@ -193,16 +192,17 @@ The i18n context has the following fields:
 ### Update language
 
 To update the language, use `set` method of [`language`] field or just
-[`lang.activate`] (new in v0.1.1):
+[`lang.activate`]:
 
 ```rust
 expect_i18n().language.set(lang);
 
-lang.activate();  // New in v0.1.1
+lang.activate();
+```
 
-// features = ["nightly"]
-let i18n = leptos_fluent::expect_i18n();
-i18n(lang);
+```admonish tip
+When `nightly` feature is enabled, you update it passing new to the context
+as a function with `(leptos_fluent::i18n())(lang)`.
 ```
 
 ### Get active language

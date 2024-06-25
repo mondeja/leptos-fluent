@@ -67,7 +67,9 @@ leptos-fluent = { version = "0.1", features = ["system"] }
 fluent-templates = "0.9"
 ```
 
-See the [GTK example].
+```admonish example
+See the [GTK example](https://github.com/mondeja/leptos-fluent/tree/master/examples/system-gtk).
+```
 
 ## Language files
 
@@ -77,13 +79,15 @@ use other formats to load your custom languages, you can enable the
 
 ```toml
 [dependencies]
+fluent-templates = "0.9"
 leptos-fluent = {
   version = "0.1", features = ["json5"], default-features = false
 }
-fluent-templates = "0.9"
 ```
 
-See [Languages].
+```admonish tip
+See [Languages](https://mondeja.github.io/leptos-fluent/languages.html).
+```
 
 ## Features
 
@@ -98,6 +102,4 @@ See [Languages].
 - **JSON5 languages file**: `json5`
 
 [`fluent-templates`]: https://github.com/XAMPPRocky/fluent-templates
-[`leptos_fluent!`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.leptos_fluent.html
-[GTK example]: https://github.com/mondeja/leptos-fluent/tree/master/examples/system-gtk
-[Languages]: https://mondeja.github.io/leptos-fluent/languages.html
+[`leptos_fluent!`]: https://mondeja.github.io/leptos-fluent/leptos_fluent.html

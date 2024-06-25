@@ -31,7 +31,7 @@ found will be used. The order of precedence is:
   2. [Cookie].
   3. Browser [local storage].
   4. Browser language from [`navigator.languages`].
-- **Desktop** (`system` feature)
+- **Desktop** ([`system` feature][desktop-applications])
   1. Data file.
   2. System language.
 
@@ -47,7 +47,7 @@ following strategies are available:
 | [Cookie]                | `set_language_to_cookie`       |
 | Browser [local storage] | `set_language_to_localstorage` |
 
-### Desktop applications (`system`)
+### Desktop applications ([`system`][desktop-applications])
 
 | Strategy  | [`leptos_fluent!`]          |
 | :-------- | :-------------------------- |
@@ -68,7 +68,7 @@ are available:
 | [`navigator.languages`] to [local storage] | `initial_language_from_navigator_to_localstorage` |
 | [`navigator.languages`] to [cookie]        | `initial_language_from_navigator_to_cookie`       |
 
-### Desktop applications (`system`)
+### Desktop applications ([`system`][desktop-applications])
 
 | Strategy                     | [`leptos_fluent!`]                          |
 | :--------------------------- | :------------------------------------------ |
@@ -98,16 +98,17 @@ The names of the settings can be configured using the following parameters:
 | Browser [local storage] | `localstorage_key` | `"lang"`      |
 | [URL parameter]         | `url_param`        | `"lang"`      |
 
-### Desktop applications (`system`)
+### Desktop applications ([`system`][desktop-applications])
 
 | Strategy  | [`leptos_fluent!`] | Default value     |
 | :-------- | :----------------- | :---------------- |
 | Data file | `data_file_key`    | `"leptos-fluent"` |
 
-[`leptos_fluent!`]: https://docs.rs/leptos-fluent-macros/latest/leptos_fluent_macros/macro.leptos_fluent.html
+[`leptos_fluent!`]: https://mondeja.github.io/leptos-fluent/leptos_fluent.html
 [local storage]: https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
 [`navigator.languages`]: https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages
 [`Accept-Language`]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language
 [Cookie]: https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie
 [Cookie attributes]: https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie#write_a_new_cookie
 [URL parameter]: https://developer.mozilla.org/es/docs/Web/API/URLSearchParams
+[desktop-applications]: https://mondeja.github.io/leptos-fluent/install.html#desktop-applications

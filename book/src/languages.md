@@ -145,4 +145,4 @@ watch-additional-files = ["examples/csr/locales"]
 [ISO 639-1 code]: https://en.wikipedia.org/wiki/ISO_639-1
 [`leptos_fluent::I18n::languages`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.languages
 [`cargo leptos`]: https://github.com/leptos-rs/cargo-leptos
-[`leptos_fluent!`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.leptos_fluent.html
+[`leptos_fluent!`]: https://mondeja.github.io/leptos-fluent/leptos_fluent.html

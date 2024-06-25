@@ -82,12 +82,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install mdbook
-        run: cargo binstall -y mdbook
+        run: cargo binstall -y mdbook mdbook-admonish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Build book
         run: |
           cd book
+          mdbook-admonish install .
           mdbook build
 
   unit-tests:
@@ -346,12 +347,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install mdbook
-        run: cargo binstall -y mdbook
+        run: cargo binstall -y mdbook mdbook-admonish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Build book
         run: |
           cd book
+          mdbook-admonish install .
           mdbook build
       - name: Deploy book
         uses: peaceiris/actions-gh-pages@v3

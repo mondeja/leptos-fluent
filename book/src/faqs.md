@@ -45,14 +45,14 @@ From fluent-templates `v0.9.5` onwards you can get it from your translations.
 let fallback_language = expect_i18n().translations.get()[0].fallback();
 ```
 
-### Why examples don't use `<For/>` component?
+### Why examples don't use [`<For/>`] component?
 
-There are some cases in which the `For` component is not reproducible between
+There are some cases in which the [`<For/>`] component is not reproducible between
 SSR and hydrate modes leading to different renders, so decided to use a
 simple vector to not bring confusion to main examples.
 
-In any case, the `<For/>` component is secure on CSR contexts and
-`leptos_fluent::Language`s implement `Hash` and `Eq` traits to be
+In any case, the [`<For/>`] component is secure on CSR contexts and
+[`leptos_fluent::Language`]s implement `Hash` and `Eq` traits to be
 able to be passed directly to `key`s properties trigerring reactivity
 depending on the current active language.
 
@@ -74,7 +74,7 @@ fn render_language(lang: &'static Language) -> impl IntoView { ... }
 
 ### How to manage translations on server actions
 
-The translations reside on the client side, so the `leptos_fluent::I18n`
+The translations reside on the client side, so the [`leptos_fluent::I18n`]
 can not be accessed as context on server actions. Pass the translations
 as values if the bandwidth is not a problem or use your own statics on
 server side.
@@ -147,3 +147,6 @@ fn LanguageSelector() -> impl IntoView { ... }
 ```
 
 [`leptos_fluent::SsrHtmlTag`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.SsrHtmlTag.html
+[`<For/>`]: https://docs.rs/leptos/latest/leptos/fn.For.html
+[`leptos_fluent::Language`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html
+[`leptos_fluent::I18n`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html

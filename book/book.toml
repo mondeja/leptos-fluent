@@ -17,7 +17,19 @@ build-dir = "dist"
 site-url = "/leptos-fluent/"
 git-repository-url = "https://github.com/mondeja/leptos-fluent/tree/master/book"
 edit-url-template = "https://github.com/mondeja/leptos-fluent/edit/master/book/{path}"
+additional-css = ["./mdbook-admonish.css"]
 
 [output.html.playground]
 editable = true
 line-numbers = true
+
+[preprocessor.admonish]
+on_failure = "bail"
+command = "mdbook-admonish"
+assets_version = "3.0.2" # do not edit: managed by `mdbook-admonish install`
+
+[preprocessor.admonish.default]
+collapsible = false
+
+[preprocessor.admonish.renderer.test]
+render_mode = "strip"
