@@ -6,6 +6,12 @@
 
 - Add `initial_language_from_system` parameter to `leptos_fluent!` macro to set
   the initial language from the system language. Useful for desktop applications.
+  Must be enabled the new feature `system` to use it.
+- Add new feature `system` to enable functionalities that require system
+  information. Useful on non wasm targets like desktop applications.
+  See [GTK example].
+
+[GTK example]: https://github.com/mondeja/leptos-fluent/tree/master/examples/system-gtk
 
 ## 2024-06-25 - [0.1.4]
 
