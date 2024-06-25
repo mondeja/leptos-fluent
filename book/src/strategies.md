@@ -9,13 +9,15 @@ All the features of the framework are optional, following a declarative
 
 The initial language of the user can be set in different ways:
 
-| Strategy                                   | CSR | SSR | [`leptos_fluent!`] parameter                   |
-| :----------------------------------------- | :-: | :-: | :--------------------------------------------- |
-| [URL parameter]                            | ✅  | ✅  | `initial_language_from_url_param`              |
-| [Cookie]                                   | ✅  | ✅  | `initial_language_from_cookie`                 |
-| Browser [local storage]                    | ✅  | ❌  | `initial_language_from_localstorage`           |
-| Browser language ([`navigator.languages`]) | ✅  | ❌  | `initial_language_from_navigator`              |
-| [`Accept-Language`] header                 | ❌  | ✅  | `initial_language_from_accept_language_header` |
+| Strategy                                   | CSR | SSR | Desktop | [`leptos_fluent!`]                             |
+| :----------------------------------------- | :-: | :-: | :-----: | :--------------------------------------------- |
+| [URL parameter]                            | ✅  | ✅  |   ❌    | `initial_language_from_url_param`              |
+| [Cookie]                                   | ✅  | ✅  |   ❌    | `initial_language_from_cookie`                 |
+| Browser [local storage]                    | ✅  | ❌  |   ❌    | `initial_language_from_localstorage`           |
+| Browser language ([`navigator.languages`]) | ✅  | ❌  |   ❌    | `initial_language_from_navigator`              |
+| [`Accept-Language`] header                 | ❌  | ✅  |   ❌    | `initial_language_from_accept_language_header` |
+| System language                            | ❌  | ❌  |   ✅    | `initial_language_from_system`                 |
+| Data file                                  | ❌  | ❌  |   ✅    | `initial_language_from_data_file`              |
 
 All of them can be used at the same time or just one of them. The first setting
 found will be used. The order of precedence is:
@@ -29,6 +31,9 @@ found will be used. The order of precedence is:
   2. [Cookie].
   3. Browser [local storage].
   4. Browser language from [`navigator.languages`].
+- **Desktop** (`system` feature)
+  1. Data file.
+  2. System language.
 
 ## Updating the language on the client
 
@@ -36,11 +41,17 @@ When the user changes the language and `I18n::language.set` is called, the
 framework can perform a side effect to update the language in the client. The
 following strategies are available:
 
-| Strategy                | [`leptos_fluent!`] parameter   |
+| Strategy                | [`leptos_fluent!`]             |
 | :---------------------- | :----------------------------- |
 | [URL parameter]         | `set_language_to_url_param`    |
 | [Cookie]                | `set_language_to_cookie`       |
 | Browser [local storage] | `set_language_to_localstorage` |
+
+### Desktop applications (`system`)
+
+| Strategy  | [`leptos_fluent!`]          |
+| :-------- | :-------------------------- |
+| Data file | `set_language_to_data_file` |
 
 ### Updating the language from initialization on the client
 
@@ -48,7 +59,7 @@ When a language is loaded from initialization, the framework can perform a side
 effect to persistently storage the language in the client. The following strategies
 are available:
 
-| Strategy                                   | [`leptos_fluent!`] parameter                      |
+| Strategy                                   | [`leptos_fluent!`]                                |
 | :----------------------------------------- | :------------------------------------------------ |
 | [URL parameter] to [local storage]         | `initial_language_from_url_param_to_localstorage` |
 | [URL parameter] to [cookie]                | `initial_language_from_url_param_to_cookie`       |
@@ -57,15 +68,21 @@ are available:
 | [`navigator.languages`] to [local storage] | `initial_language_from_navigator_to_localstorage` |
 | [`navigator.languages`] to [cookie]        | `initial_language_from_navigator_to_cookie`       |
 
+### Desktop applications (`system`)
+
+| Strategy                     | [`leptos_fluent!`]                          |
+| :--------------------------- | :------------------------------------------ |
+| System language to data file | `initial_language_from_system_to_data_file` |
+
 ## Client side effects
 
 When the user updates the language, the framework can perform side effects to
 update the language in the client. The following side effects are available:
 
-| Side effect                     | [`leptos_fluent!`] parameter |
-| :------------------------------ | :--------------------------- |
-| [`<html lang="...">`] attribute | `sync_html_tag_lang`         |
-| [`<html dir="...">`] attribute  | `sync_html_tag_dir`          |
+| Side effect                     | [`leptos_fluent!`]   |
+| :------------------------------ | :------------------- |
+| [`<html lang="...">`] attribute | `sync_html_tag_lang` |
+| [`<html dir="...">`] attribute  | `sync_html_tag_dir`  |
 
 [`<html lang="...">`]: https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/lang
 [`<html dir="...">`]: https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/dir
@@ -74,12 +91,18 @@ update the language in the client. The following side effects are available:
 
 The names of the settings can be configured using the following parameters:
 
-| Strategy                | [`leptos_fluent!`] parameter | Default value |
-| :---------------------- | :--------------------------- | :------------ |
-| [Cookie]                | `cookie_name`                | `"lf-lang"`   |
-| [Cookie attributes]     | `cookie_attrs`               | `""`          |
-| Browser [local storage] | `localstorage_key`           | `"lang"`      |
-| [URL parameter]         | `url_param`                  | `"lang"`      |
+| Strategy                | [`leptos_fluent!`] | Default value |
+| :---------------------- | :----------------- | :------------ |
+| [Cookie]                | `cookie_name`      | `"lf-lang"`   |
+| [Cookie attributes]     | `cookie_attrs`     | `""`          |
+| Browser [local storage] | `localstorage_key` | `"lang"`      |
+| [URL parameter]         | `url_param`        | `"lang"`      |
+
+### Desktop applications (`system`)
+
+| Strategy  | [`leptos_fluent!`] | Default value     |
+| :-------- | :----------------- | :---------------- |
+| Data file | `data_file_key`    | `"leptos-fluent"` |
 
 [`leptos_fluent!`]: https://docs.rs/leptos-fluent-macros/latest/leptos_fluent_macros/macro.leptos_fluent.html
 [local storage]: https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
@@ -89,9 +112,9 @@ The names of the settings can be configured using the following parameters:
 [Cookie attributes]: https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie#write_a_new_cookie
 [URL parameter]: https://developer.mozilla.org/es/docs/Web/API/URLSearchParams
 
-# Common configurations
+## Common configurations
 
-## Local storage from navigator (CSR)
+### Local storage from navigator (CSR)
 
 ```rust
 leptos_fluent! {{
@@ -107,7 +130,7 @@ leptos_fluent! {{
 }}
 ```
 
-## Cookie from navigator and header (SSR + CSR)
+### Cookie from navigator and header (SSR + CSR)
 
 ```rust
 leptos_fluent! {{
@@ -121,5 +144,20 @@ leptos_fluent! {{
     initial_language_from_url_param: true,
     initial_language_from_url_param_to_cookie: true,
     initial_language_from_accept_language_header: true,
+}}
+```
+
+### Data files on Desktop applications (`system`)
+
+```rust
+leptos_fluent! {{
+    locales: "./locales",
+    translations: [TRANSLATIONS],
+
+    initial_language_from_system: true,
+    initial_language_from_system_to_data_file: true,
+    initial_language_from_data_file: true,
+    set_language_to_data_file: true,
+    data_file_key: "system-language-example",
 }}
 ```

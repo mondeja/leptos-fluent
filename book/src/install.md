@@ -55,6 +55,20 @@ ssr = [
 watch-additional-files = ["locales"]
 ```
 
+## Desktop applications
+
+**leptos-fluent** can be installed on non-wasm targets, like desktop
+applications. You need to install **leptos-fluent** and [`fluent-templates`]
+and enable the feature `system`:
+
+```toml
+[dependencies]
+leptos-fluent = { version = "0.1", features = ["system"] }
+fluent-templates = "0.9"
+```
+
+See the [GTK example].
+
 ## Features
 
 - **Server Side Rendering**: `ssr`
@@ -62,9 +76,11 @@ watch-additional-files = ["locales"]
 - **Actix Web integration**: `actix`
 - **Axum integration**: `axum`
 - **Nightly toolchain**: `nightly`
+- **Desktop applications**: `system`
 - **JSON languages file**: `json` (enabled by default)
 - **YAML languages file**: `yaml`
 - **JSON5 languages file**: `json5`
 
 [`fluent-templates`]: https://github.com/XAMPPRocky/fluent-templates
 [`leptos_fluent!`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.leptos_fluent.html
+[GTK example]: https://github.com/mondeja/leptos-fluent/tree/master/examples/system-gtk

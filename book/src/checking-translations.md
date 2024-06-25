@@ -11,7 +11,6 @@ For single crate projects, it would be something like:
 ```rust
 leptos_fluent! {{
     check_translations: "./src/**/*.rs",
-    // ...
 }}
 ```
 

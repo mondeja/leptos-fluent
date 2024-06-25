@@ -122,3 +122,27 @@ fn render_language(lang: &'static Language) -> impl IntoView {
     }
 }
 ```
+
+### How to change `<html>` attributes on SSR
+
+Use the component `leptos_fluent::SsrHtmlTag`:
+
+```rust
+use leptos::*;
+use leptos_fluent::{leptos_fluent, SsrHtmlTag};
+
+#[component]
+pub fn App() -> impl IntoView {
+    leptos_fluent!{{
+        // ... options
+    }};
+
+    view! {
+        <SsrHtmlTag/>
+        <LanguageSelector/>
+    }
+}
+
+#[component]
+fn LanguageSelector() -> impl IntoView { ... }
+```
