@@ -29,6 +29,7 @@
         <link rel="stylesheet" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="./mdbook-admonish.css">
 
     </head>
     <body class="sidebar-visible no-js">
@@ -88,7 +89,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="intro.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">User guide</li><li class="chapter-item expanded "><a href="install.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="basic-usage.html"><strong aria-hidden="true">2.</strong> Basic usage</a></li><li class="chapter-item expanded "><a href="strategies.html"><strong aria-hidden="true">3.</strong> Strategies</a></li><li class="chapter-item expanded "><a href="languages.html" class="active"><strong aria-hidden="true">4.</strong> Languages</a></li><li class="chapter-item expanded "><a href="checking-translations.html"><strong aria-hidden="true">5.</strong> Checking translations</a></li><li class="chapter-item expanded "><a href="faqs.html"><strong aria-hidden="true">6.</strong> FAQs</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="intro.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">User guide</li><li class="chapter-item expanded "><a href="install.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="basic-usage.html"><strong aria-hidden="true">2.</strong> Basic usage</a></li><li class="chapter-item expanded "><a href="strategies.html"><strong aria-hidden="true">3.</strong> Strategies</a></li><li class="chapter-item expanded "><a href="languages.html" class="active"><strong aria-hidden="true">4.</strong> Languages</a></li><li class="chapter-item expanded "><a href="checking-translations.html"><strong aria-hidden="true">5.</strong> Checking translations</a></li><li class="chapter-item expanded "><a href="faqs.html"><strong aria-hidden="true">6.</strong> FAQs</a></li><li class="chapter-item expanded affix "><li class="part-title">Reference</li><li class="chapter-item expanded "><a href="leptos_fluent.html"><strong aria-hidden="true">7.</strong> leptos_fluent!</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -216,11 +217,21 @@ as an <a href="https://en.wikipedia.org/wiki/ISO_639-1">ISO 639-1 code</a> and a
 <p>This standard enforces that an user will always be able to select their
 language in their own language, and not in the current language of the
 application.</p>
-<p>Note that the order of the languages will be defined based on the alphabetical
+<div id="admonition-order" class="admonition admonish-abstract" role="note" aria-labelledby="admonition-order-title">
+<div class="admonition-title">
+<div id="admonition-order-title">
+<p>Order</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-order"></a>
+</div>
+<div>
+<p>The order of the languages will be defined based on the alphabetical
 order of their names, not their codes.</p>
+</div>
+</div>
 <h2 id="the-languages-file"><a class="header" href="#the-languages-file">The languages file</a></h2>
 <p>The languages array can be fully customized by defining a <code>languages</code> parameter
-in the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.leptos_fluent.html"><code>leptos_fluent!</code></a> macro pointing to a languages file. This file must
+in the <a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a> macro pointing to a languages file. This file must
 be relative to the <em>Cargo.toml</em> file.</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -236,12 +247,24 @@ be relative to the <em>Cargo.toml</em> file.</p>
 </code></pre>
 <p>The languages file must expose an array of arrays with the structure:</p>
 <pre><code class="language-json5">[
-  // Code,     Name,            "ltr"/"rtl"/"auto" (optional)
+  // Code, Name,            "ltr"/"rtl"/"auto" (optional)
   ["code", "Language name", "Writing direction"],
 ]
 </code></pre>
-<p>The order of the languages in <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.languages"><code>leptos_fluent::I18n::languages</code></a> will be
-the same as in the file regardless of the alphabetical order of the names.</p>
+<div id="admonition-order-1" class="admonition admonish-abstract" role="note" aria-labelledby="admonition-order-1-title">
+<div class="admonition-title">
+<div id="admonition-order-1-title">
+<p>Order</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-order-1"></a>
+</div>
+<div>
+<p>The order of the languages in
+<a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.languages"><code>leptos_fluent::I18n::languages</code></a>
+will be the same as in the file regardless of the alphabetical order
+of the names.</p>
+</div>
+</div>
 <p>The first in the languages file will used as the initial of the user when any
 other initialization value is discovered. Use the same as the one configured
 as <code>fallback_language</code> in <code>static_loader!</code>.</p>
@@ -281,8 +304,8 @@ leptos-fluent = { version = "*", default-features = false, features = ["json5"] 
 <li><code>yaml</code>: YAML</li>
 <li><code>json5</code>: JSON5</li>
 </ul>
-<h2 id="tracking-locales-files-with-cargo-leptos"><a class="header" href="#tracking-locales-files-with-cargo-leptos">Tracking locales files with <code>cargo leptos</code></a></h2>
-<p>Using <a href="https://github.com/leptos-rs/cargo-leptos"><code>cargo-leptos</code></a> the <em>locales/</em> folder must be manually
+<h2 id="tracking-locales-files-with-cargo-leptos"><a class="header" href="#tracking-locales-files-with-cargo-leptos">Tracking locales files with <a href="https://github.com/leptos-rs/cargo-leptos"><code>cargo leptos</code></a></a></h2>
+<p>Using <a href="https://github.com/leptos-rs/cargo-leptos"><code>cargo leptos</code></a> the <em>locales/</em> folder must be manually
 configured to be watched:</p>
 <pre><code class="language-toml"># Relative to Cargo.toml file
 [package.metadata.leptos]

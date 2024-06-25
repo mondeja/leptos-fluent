@@ -29,6 +29,7 @@
         <link rel="stylesheet" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="./mdbook-admonish.css">
 
     </head>
     <body class="sidebar-visible no-js">
@@ -88,7 +89,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="intro.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">User guide</li><li class="chapter-item expanded "><a href="install.html" class="active"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="basic-usage.html"><strong aria-hidden="true">2.</strong> Basic usage</a></li><li class="chapter-item expanded "><a href="strategies.html"><strong aria-hidden="true">3.</strong> Strategies</a></li><li class="chapter-item expanded "><a href="languages.html"><strong aria-hidden="true">4.</strong> Languages</a></li><li class="chapter-item expanded "><a href="checking-translations.html"><strong aria-hidden="true">5.</strong> Checking translations</a></li><li class="chapter-item expanded "><a href="faqs.html"><strong aria-hidden="true">6.</strong> FAQs</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="intro.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">User guide</li><li class="chapter-item expanded "><a href="install.html" class="active"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="basic-usage.html"><strong aria-hidden="true">2.</strong> Basic usage</a></li><li class="chapter-item expanded "><a href="strategies.html"><strong aria-hidden="true">3.</strong> Strategies</a></li><li class="chapter-item expanded "><a href="languages.html"><strong aria-hidden="true">4.</strong> Languages</a></li><li class="chapter-item expanded "><a href="checking-translations.html"><strong aria-hidden="true">5.</strong> Checking translations</a></li><li class="chapter-item expanded "><a href="faqs.html"><strong aria-hidden="true">6.</strong> FAQs</a></li><li class="chapter-item expanded affix "><li class="part-title">Reference</li><li class="chapter-item expanded "><a href="leptos_fluent.html"><strong aria-hidden="true">7.</strong> leptos_fluent!</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -180,6 +181,14 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="installation"><a class="header" href="#installation">Installation</a></h1>
+<ul>
+<li><a href="#csr">CSR</a></li>
+<li><a href="#ssr">SSR</a></li>
+<li><a href="#desktop-applications">Desktop applications</a></li>
+<li><a href="#nightly-toolchain">Nightly toolchain</a></li>
+<li><a href="#language-files">Language files</a></li>
+<li><a href="#features">Features</a></li>
+</ul>
 <h2 id="csr"><a class="header" href="#csr">CSR</a></h2>
 <p>For client side rendering apps you only need to install <strong>leptos-fluent</strong> and
 <a href="https://github.com/XAMPPRocky/fluent-templates"><code>fluent-templates</code></a>:</p>
@@ -192,7 +201,7 @@ fluent-templates = "0.9"
 <summary>Minimal</summary>
 <p>Using <code>default-features = false</code> the <code>json</code> default feature of
 <strong>leptos-fluent</strong> will not be enabled, so the <code>languages</code> parameter
-of <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.leptos_fluent.html"><code>leptos_fluent!</code></a> macro will not be available.</p>
+of <a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a> macro will not be available.</p>
 <pre><code class="language-toml">[dependencies]
 leptos-fluent = { version = "0.1", default-features = false }
 fluent-templates = "0.9"
@@ -220,6 +229,53 @@ ssr = [
 [package.metadata.leptos]
 watch-additional-files = ["locales"]
 </code></pre>
+<h2 id="desktop-applications"><a class="header" href="#desktop-applications">Desktop applications</a></h2>
+<p><strong>leptos-fluent</strong> can be installed on non-wasm targets, like desktop
+applications. You need to install <strong>leptos-fluent</strong>, <a href="https://github.com/XAMPPRocky/fluent-templates"><code>fluent-templates</code></a>
+and enable the <code>system</code> feature:</p>
+<pre><code class="language-toml">[dependencies]
+leptos-fluent = { version = "0.1", features = ["system"] }
+fluent-templates = "0.9"
+</code></pre>
+<div id="admonition-example" class="admonition admonish-example" role="note" aria-labelledby="admonition-example-title">
+<div class="admonition-title">
+<div id="admonition-example-title">
+<p>Example</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-example"></a>
+</div>
+<div>
+<p>See the <a href="https://github.com/mondeja/leptos-fluent/tree/master/examples/system-gtk">GTK example</a>.</p>
+</div>
+</div>
+<h2 id="nightly-toolchain"><a class="header" href="#nightly-toolchain">Nightly toolchain</a></h2>
+<p><strong>leptos-fluent</strong> builds nightly functionalities by enabling the <code>nightly</code>
+feature:</p>
+<pre><code class="language-toml">[dependencies]
+leptos-fluent = { version = "0.1", features = ["nightly"] }
+fluent-templates = "0.9"
+</code></pre>
+<h2 id="language-files"><a class="header" href="#language-files">Language files</a></h2>
+<p>By default, <strong>leptos-fluent</strong> supports JSON languages files. If you want to
+use other formats to load your custom languages, you can enable the
+<code>json5</code> or <code>yaml</code> features:</p>
+<pre><code class="language-toml">[dependencies]
+fluent-templates = "0.9"
+leptos-fluent = {
+  version = "0.1", features = ["json5"], default-features = false
+}
+</code></pre>
+<div id="admonition-tip" class="admonition admonish-tip" role="note" aria-labelledby="admonition-tip-title">
+<div class="admonition-title">
+<div id="admonition-tip-title">
+<p>Tip</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-tip"></a>
+</div>
+<div>
+<p>See <a href="https://mondeja.github.io/leptos-fluent/languages.html"><strong>4. Languages</strong></a>.</p>
+</div>
+</div>
 <h2 id="features"><a class="header" href="#features">Features</a></h2>
 <ul>
 <li><strong>Server Side Rendering</strong>: <code>ssr</code></li>
@@ -227,6 +283,7 @@ watch-additional-files = ["locales"]
 <li><strong>Actix Web integration</strong>: <code>actix</code></li>
 <li><strong>Axum integration</strong>: <code>axum</code></li>
 <li><strong>Nightly toolchain</strong>: <code>nightly</code></li>
+<li><strong>Desktop applications</strong>: <code>system</code></li>
 <li><strong>JSON languages file</strong>: <code>json</code> (enabled by default)</li>
 <li><strong>YAML languages file</strong>: <code>yaml</code></li>
 <li><strong>JSON5 languages file</strong>: <code>json5</code></li>

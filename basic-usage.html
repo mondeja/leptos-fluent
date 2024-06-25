@@ -29,6 +29,7 @@
         <link rel="stylesheet" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="./mdbook-admonish.css">
 
     </head>
     <body class="sidebar-visible no-js">
@@ -88,7 +89,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="intro.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">User guide</li><li class="chapter-item expanded "><a href="install.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="basic-usage.html" class="active"><strong aria-hidden="true">2.</strong> Basic usage</a></li><li class="chapter-item expanded "><a href="strategies.html"><strong aria-hidden="true">3.</strong> Strategies</a></li><li class="chapter-item expanded "><a href="languages.html"><strong aria-hidden="true">4.</strong> Languages</a></li><li class="chapter-item expanded "><a href="checking-translations.html"><strong aria-hidden="true">5.</strong> Checking translations</a></li><li class="chapter-item expanded "><a href="faqs.html"><strong aria-hidden="true">6.</strong> FAQs</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="intro.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">User guide</li><li class="chapter-item expanded "><a href="install.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="basic-usage.html" class="active"><strong aria-hidden="true">2.</strong> Basic usage</a></li><li class="chapter-item expanded "><a href="strategies.html"><strong aria-hidden="true">3.</strong> Strategies</a></li><li class="chapter-item expanded "><a href="languages.html"><strong aria-hidden="true">4.</strong> Languages</a></li><li class="chapter-item expanded "><a href="checking-translations.html"><strong aria-hidden="true">5.</strong> Checking translations</a></li><li class="chapter-item expanded "><a href="faqs.html"><strong aria-hidden="true">6.</strong> FAQs</a></li><li class="chapter-item expanded affix "><li class="part-title">Reference</li><li class="chapter-item expanded "><a href="leptos_fluent.html"><strong aria-hidden="true">7.</strong> leptos_fluent!</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -180,6 +181,20 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="basic-usage"><a class="header" href="#basic-usage">Basic usage</a></h1>
+<ul>
+<li><a href="#minimal-skeleton">Minimal skeleton</a></li>
+<li><a href="#translating-messages">Translating messages</a></li>
+<li><a href="#retrieving-the-leptos_fluenti18n-context">Retrieving the <code>leptos_fluent::I18n</code> context</a></li>
+<li><a href="#using-the-leptos_fluenti18n-context">Using the <code>leptos_fluent::I18n</code> context</a>
+<ul>
+<li><a href="#update-language">Update language</a></li>
+<li><a href="#get-active-language">Get active language</a></li>
+<li><a href="#get-available-languages">Get available languages</a></li>
+<li><a href="#check-if-a-language-is-active">Check if a language is active</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="minimal-skeleton"><a class="header" href="#minimal-skeleton">Minimal skeleton</a></h2>
 <p>The most basic CSR app is reproduced here:</p>
 <pre><code class="language-plaintext">.
 ├── 📄 Cargo.toml
@@ -300,13 +315,22 @@ move_tr!("language-selected-is", { "lang" =&gt; i18n.language.get().name })
 <p>Additionally, you can use the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.tr.html"><code>tr!</code></a> macro to translate a string inside
 a reactive context. Note that if you're not inside a reactive context,
 the translation won't be updated on the fly when the language changes.
-This can lead to errors in console output like:</p>
-<pre><code class="language-text">At &lt;file&gt;.rs:ln, you access a signal or memo (defined at &lt;file&gt;.rs:ln)
-outside of a reactive context. This might mean your app is not responding
-to changes in signal values in the way you expect.
-</code></pre>
-<p>Can be fixed by replacing calls to <code>tr!</code> with <code>move_tr!</code> or wrapping the
-<code>tr!</code> calls in a reactive context.</p>
+This can lead to warnings in console output like:</p>
+<div id="admonition-warning" class="admonition admonish-warning" role="note" aria-labelledby="admonition-warning-title">
+<div class="admonition-title">
+<div id="admonition-warning-title">
+<p>Warning</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-warning"></a>
+</div>
+<div>
+<p>At <code>./path/to/file.rs:ln</code>, you access a signal or memo (defined at
+<code>./path/to/file.rs:ln</code>) outside of a reactive context. This might mean your
+app is not responding to changes in signal values in the way you expect.</p>
+</div>
+</div>
+<p>Can be fixed by replacing calls to <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.tr.html"><code>tr!</code></a> with <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.move_tr.html"><code>move_tr!</code></a> or wrapping the
+<a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.tr.html"><code>tr!</code></a> calls in a reactive context.</p>
 <p>The previous code <em>could</em> be rewritten as:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -314,8 +338,8 @@ to changes in signal values in the way you expect.
 
 move || tr!("language-selected-is", { "lang" =&gt; i18n.language.get().name })
 <span class="boring">}</span></code></pre></pre>
-<p>The main difference is that <code>move_tr!</code> encapsulates the movement in a
-<code>leptos::Signal</code> (wich is copyable), strictly would be rewritten as:</p>
+<p>The main difference is that <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.move_tr.html"><code>move_tr!</code></a> encapsulates the movement in a
+<a href="https://docs.rs/leptos/latest/leptos/struct.Signal.html"><code>leptos::Signal</code></a>, strictly would be rewritten as:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>leptos::Signal::derive(move || tr!("select-a-language"))
@@ -326,13 +350,12 @@ move || tr!("language-selected-is", { "lang" =&gt; i18n.language.get().name })
 </span><span class="boring">fn main() {
 </span>let i18n = leptos_fluent::expect_i18n();
 <span class="boring">}</span></code></pre></pre>
-<p>It is exported as <code>i18n()</code> too:</p>
+<p>It is exported as <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.i18n.html"><code>i18n</code></a> too:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let i18n = leptos_fluent::i18n();
 <span class="boring">}</span></code></pre></pre>
-<p>With the function <code>use_i18n()</code> context you'll get an <code>Option</code> with the current
-i18n context:</p>
+<p>The function <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.use_i18n.html"><code>use_i18n</code></a> returns an <code>Option</code> with the current i18n context:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let i18n = leptos_fluent::use_i18n().expect("No `leptos_fluent::I18n` context found");
@@ -346,34 +369,51 @@ i18n context:</p>
 the translations.</li>
 </ul>
 <h3 id="update-language"><a class="header" href="#update-language">Update language</a></h3>
-<p>To update the language, use <code>set</code> method of <code>language</code> field or just
-<a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html#method.activate"><code>lang.activate()</code></a> (new in v0.1.1):</p>
+<p>To update the language, use <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html#method.activate"><code>lang.activate</code></a> or the <code>set</code> method of <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.language"><code>language</code></a>:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>expect_i18n().language.set(lang);
+</span>lang.activate();
 
-lang.activate();  // New in v0.1.1
-
-// features = ["nightly"]
-let i18n = leptos_fluent::expect_i18n();
-i18n(lang);
+expect_i18n().language.set(lang);
 <span class="boring">}</span></code></pre></pre>
+<div id="admonition-nightly" class="admonition admonish-tip" role="note" aria-labelledby="admonition-nightly-title">
+<div class="admonition-title">
+<div id="admonition-nightly-title">
+<p>Nightly</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-nightly"></a>
+</div>
+<div>
+<p>When <code>nightly</code> feature is enabled, you update it passing a new language to the
+context as a function with <code>(leptos_fluent::i18n())(lang)</code>.</p>
+</div>
+</div>
 <h3 id="get-active-language"><a class="header" href="#get-active-language">Get active language</a></h3>
-<p>To get the current active language, use <code>get</code> method of <code>language</code> field:</p>
+<p>To get the current active language, use <code>get</code> method of <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.language"><code>language</code></a> field:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>i18n.language.get()
-
-i18n() // features = ["nightly"]
 <span class="boring">}</span></code></pre></pre>
+<div id="admonition-nightly-1" class="admonition admonish-tip" role="note" aria-labelledby="admonition-nightly-1-title">
+<div class="admonition-title">
+<div id="admonition-nightly-1-title">
+<p>Nightly</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-nightly-1"></a>
+</div>
+<div>
+<p>When <code>nightly</code> enabled, you can get the active language with
+<code>(leptos_fluent::i18n())()</code>.</p>
+</div>
+</div>
 <h3 id="get-available-languages"><a class="header" href="#get-available-languages">Get available languages</a></h3>
-<p>To get the available languages, iterate over the <code>languages</code> field:</p>
+<p>To get the available languages, iterate over the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.languages"><code>languages</code></a> field:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>i18n.languages.iter()
 <span class="boring">}</span></code></pre></pre>
 <h3 id="check-if-a-language-is-active"><a class="header" href="#check-if-a-language-is-active">Check if a language is active</a></h3>
-<p>To check if a language is the active one, use <code>is_active</code> method of a
+<p>To check if a language is the active one, use <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html#method.is_active"><code>is_active</code></a> method of a
 <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html"><code>leptos_fluent::Language</code></a> struct:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {

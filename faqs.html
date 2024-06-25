@@ -29,6 +29,7 @@
         <link rel="stylesheet" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="./mdbook-admonish.css">
 
     </head>
     <body class="sidebar-visible no-js">
@@ -88,7 +89,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="intro.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">User guide</li><li class="chapter-item expanded "><a href="install.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="basic-usage.html"><strong aria-hidden="true">2.</strong> Basic usage</a></li><li class="chapter-item expanded "><a href="strategies.html"><strong aria-hidden="true">3.</strong> Strategies</a></li><li class="chapter-item expanded "><a href="languages.html"><strong aria-hidden="true">4.</strong> Languages</a></li><li class="chapter-item expanded "><a href="checking-translations.html"><strong aria-hidden="true">5.</strong> Checking translations</a></li><li class="chapter-item expanded "><a href="faqs.html" class="active"><strong aria-hidden="true">6.</strong> FAQs</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="intro.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">User guide</li><li class="chapter-item expanded "><a href="install.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="basic-usage.html"><strong aria-hidden="true">2.</strong> Basic usage</a></li><li class="chapter-item expanded "><a href="strategies.html"><strong aria-hidden="true">3.</strong> Strategies</a></li><li class="chapter-item expanded "><a href="languages.html"><strong aria-hidden="true">4.</strong> Languages</a></li><li class="chapter-item expanded "><a href="checking-translations.html"><strong aria-hidden="true">5.</strong> Checking translations</a></li><li class="chapter-item expanded "><a href="faqs.html" class="active"><strong aria-hidden="true">6.</strong> FAQs</a></li><li class="chapter-item expanded affix "><li class="part-title">Reference</li><li class="chapter-item expanded "><a href="leptos_fluent.html"><strong aria-hidden="true">7.</strong> leptos_fluent!</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -181,20 +182,40 @@
                     <main>
                         <!-- markdownlint-disable MD001 -->
 <h1 id="faqs"><a class="header" href="#faqs">FAQs</a></h1>
+<ul>
+<li><a href="#how-to-get-unic_langidlanguageidentifier-if-not-installed">How to get <code>unic_langid::LanguageIdentifier</code> if not installed?</a></li>
+<li><a href="#how-to-get-the-i18n-context-at-initialization">How to get the i18n context at initialization?</a></li>
+<li><a href="#custom-cookie-attributes-are-invalid">Custom cookie attributes are invalid</a></li>
+<li><a href="#how-to-get-the-fallback-language">How to get the fallback language</a></li>
+<li><a href="#why-examples-dont-use-for-component">Why examples don't use <code>&lt;For/&gt;</code> component?</a></li>
+<li><a href="#how-to-manage-translations-on-server-actions">How to manage translations on server actions</a></li>
+<li><a href="#how-to-change-html-attributes-on-ssr">How to change <code>&lt;html&gt;</code> attributes on SSR</a></li>
+</ul>
 <h3 id="how-to-get-unic_langidlanguageidentifier-if-not-installed"><a class="header" href="#how-to-get-unic_langidlanguageidentifier-if-not-installed">How to get <code>unic_langid::LanguageIdentifier</code> if not installed?</a></h3>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>use fluent_templates::LanguageIdentifier;
 <span class="boring">}</span></code></pre></pre>
-<p><code>fluent-templates</code> also depends externally on <a href="https://docs.rs/fluent-bundle/latest/fluent_bundle/"><code>fluent-bundle</code></a> whichs
-provides utilities for parsing the Fluent syntax.</p>
+<div id="admonition-tip" class="admonition admonish-tip" role="note" aria-labelledby="admonition-tip-title">
+<div class="admonition-title">
+<div id="admonition-tip-title">
+<p>Tip</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-tip"></a>
+</div>
+<div>
+<p><code>fluent-templates</code> also depends externally on
+<a href="https://docs.rs/fluent-bundle/latest/fluent_bundle/"><code>fluent-bundle</code></a>
+whichs provides utilities for parsing the Fluent syntax.</p>
+</div>
+</div>
 <h3 id="how-to-get-the-i18n-context-at-initialization"><a class="header" href="#how-to-get-the-i18n-context-at-initialization">How to get the i18n context at initialization?</a></h3>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>use leptos_fluent::leptos_fluent;
 
-let i18n = leptos_fluent!{{
-    // ... options
+let i18n = leptos_fluent! {{
+    // ...
 }};
 
 leptos::logging::log!("i18n context: {i18n:?}");
@@ -206,8 +227,7 @@ leptos::logging::log!("i18n context: {i18n:?}");
 </span>let attrs = "SameSite=Strict; MyCustomAttr=MyCustomValue;";
 leptos_fluent! {{
     cookie_attrs: attrs,
-
-    // ... other options
+    // ...
 }}
 <span class="boring">}</span></code></pre></pre>
 <h3 id="how-to-get-the-fallback-language"><a class="header" href="#how-to-get-the-fallback-language">How to get the fallback language</a></h3>
@@ -216,12 +236,22 @@ leptos_fluent! {{
 </span><span class="boring">fn main() {
 </span>let fallback_language = expect_i18n().translations.get()[0].fallback();
 <span class="boring">}</span></code></pre></pre>
-<h3 id="why-examples-dont-use-for-component"><a class="header" href="#why-examples-dont-use-for-component">Why examples don't use <code>&lt;For/&gt;</code> component?</a></h3>
-<p>There are some cases in which the <code>For</code> component is not reproducible between
+<h3 id="why-examples-dont-use-for-component"><a class="header" href="#why-examples-dont-use-for-component">Why examples don't use <a href="https://docs.rs/leptos/latest/leptos/fn.For.html"><code>&lt;For/&gt;</code></a> component?</a></h3>
+<div id="admonition-bug" class="admonition admonish-bug" role="note" aria-labelledby="admonition-bug-title">
+<div class="admonition-title">
+<div id="admonition-bug-title">
+<p>Bug</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-bug"></a>
+</div>
+<div>
+<p>There are some cases in which the <a href="https://docs.rs/leptos/latest/leptos/fn.For.html"><code>&lt;For/&gt;</code></a> component is not reproducible between
 SSR and hydrate modes leading to different renders, so decided to use a
 simple vector to not bring confusion to main examples.</p>
-<p>In any case, the <code>&lt;For/&gt;</code> component is secure on CSR contexts and
-<code>leptos_fluent::Language</code>s implement <code>Hash</code> and <code>Eq</code> traits to be
+</div>
+</div>
+<p>In any case, the <a href="https://docs.rs/leptos/latest/leptos/fn.For.html"><code>&lt;For/&gt;</code></a> component is secure on CSR contexts and
+<a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html"><code>leptos_fluent::Language</code></a>s implement <code>Hash</code> and <code>Eq</code> traits to be
 able to be passed directly to <code>key</code>s properties trigerring reactivity
 depending on the current active language.</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
@@ -241,7 +271,7 @@ view! {
 fn render_language(lang: &amp;'static Language) -&gt; impl IntoView { ... }
 <span class="boring">}</span></code></pre></pre>
 <h3 id="how-to-manage-translations-on-server-actions"><a class="header" href="#how-to-manage-translations-on-server-actions">How to manage translations on server actions</a></h3>
-<p>The translations reside on the client side, so the <code>leptos_fluent::I18n</code>
+<p>The translations reside on the client side, so the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html"><code>leptos_fluent::I18n</code></a>
 can not be accessed as context on server actions. Pass the translations
 as values if the bandwidth is not a problem or use your own statics on
 server side.</p>
@@ -288,6 +318,28 @@ fn render_language(lang: &amp;'static Language) -&gt; impl IntoView {
     }
 }
 <span class="boring">}</span></code></pre></pre>
+<h3 id="how-to-change-html-attributes-on-ssr"><a class="header" href="#how-to-change-html-attributes-on-ssr">How to change <code>&lt;html&gt;</code> attributes on SSR</a></h3>
+<p>Use the component <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.SsrHtmlTag.html"><code>leptos_fluent::SsrHtmlTag</code></a>:</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use leptos::*;
+use leptos_fluent::{leptos_fluent, SsrHtmlTag};
+
+#[component]
+pub fn App() -&gt; impl IntoView {
+    leptos_fluent! {{
+        // ...
+    }};
+
+    view! {
+        &lt;SsrHtmlTag/&gt;
+        &lt;LanguageSelector/&gt;
+    }
+}
+
+#[component]
+fn LanguageSelector() -&gt; impl IntoView { ... }
+<span class="boring">}</span></code></pre></pre>
 
                     </main>
 
@@ -297,6 +349,9 @@ fn render_language(lang: &amp;'static Language) -&gt; impl IntoView {
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
+                            <a rel="next prefetch" href="leptos_fluent.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -308,6 +363,9 @@ fn render_language(lang: &amp;'static Language) -&gt; impl IntoView {
                         <i class="fa fa-angle-left"></i>
                     </a>
 
+                    <a rel="next prefetch" href="leptos_fluent.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
             </nav>
 
         </div>
