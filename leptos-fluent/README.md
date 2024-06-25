@@ -95,7 +95,7 @@ fn App() -> impl IntoView {
         // Check translations correctness in the specified files.
         check_translations: "./src/**/*.rs",
 
-        // All next options are all opt-in and can be enabled
+        // Next options are all opt-in and can be enabled
         // separately as needed.
 
         // Client side options
