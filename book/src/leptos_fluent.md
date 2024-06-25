@@ -94,7 +94,7 @@ leptos_fluent! {{
 ```
 
 Must be the same identifier used in the [`fluent_templates::static_loader!`]
-macro, which returns [`once_cell:sync::Lazy`]`<[`StaticLoader`]>`.
+macro, which returns an [`once_cell:sync::Lazy`] variable.
 
 ### `locales`
 

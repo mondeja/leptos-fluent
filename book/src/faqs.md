@@ -2,6 +2,8 @@
 
 # FAQs
 
+<!-- toc -->
+
 ### How to get `unic_langid::LanguageIdentifier` if not installed?
 
 ```rust
