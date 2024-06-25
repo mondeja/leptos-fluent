@@ -5,7 +5,7 @@
 ### New features
 
 - Add `leptos_fluent::SsrHtmlTag` component to render it on SSR to sync
-  global attribute of `<html>` tag with the current language.
+  global attributes of `<html>` tag with the current language.
 - Add new feature `system` to enable functionalities that require system
   information. Useful on non wasm targets like desktop applications.
   See [GTK example].
