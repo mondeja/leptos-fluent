@@ -428,7 +428,11 @@ pub fn leptos_fluent(
                 false => quote! {},
             },
             None => match set_language_to_data_file_expr {
-                Some(_) => effect_quote,
+                Some(ref expr) => quote! {
+                    if #expr {
+                        #effect_quote
+                    }
+                },
                 None => quote! {},
             },
         }
