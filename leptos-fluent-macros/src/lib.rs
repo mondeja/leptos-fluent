@@ -189,6 +189,9 @@ use quote::quote;
 ///   from the cookie to [local storage]. Can be a literal boolean or an expression that will be evaluated at runtime.
 /// - **`set_language_to_cookie`** (_`false`_): Save the language of the user to a cookie when setting the language.
 ///   Can be a literal boolean or an expression that will be evaluated at runtime. It will only take effect on client-side.
+/// - **`initial_language_from_system`** (_`false`_): Load the initial language of the user from the system language
+///   on non wasm targets. Can be a literal boolean or an expression that will be evaluated at runtime. It will only
+///   take effect on client side of desktop applications. The feature `system` must be enabled to use this option.
 ///
 /// [`fluent_templates::static_loader!`]: https://docs.rs/fluent-templates/latest/fluent_templates/macro.static_loader.html
 /// [`once_cell:sync::Lazy`]: https://docs.rs/once_cell/latest/once_cell/sync/struct.Lazy.html
@@ -275,7 +278,7 @@ pub fn leptos_fluent(
     };
 
     // discover from system language (desktop apps)
-    #[cfg(not(feature = "ssr"))]
+    #[cfg(all(feature = "system", not(feature = "ssr")))]
     let initial_language_from_system_quote = {
         let effect_quote = quote! {
             if let Ok(l) = ::leptos_fluent::current_locale() {
@@ -302,7 +305,7 @@ pub fn leptos_fluent(
         }
     };
 
-    #[cfg(feature = "ssr")]
+    #[cfg(any(not(feature = "system"), feature = "ssr"))]
     {
         _ = initial_language_from_system_bool;
         _ = initial_language_from_system_expr;

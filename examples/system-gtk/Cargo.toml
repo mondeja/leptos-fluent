@@ -6,5 +6,5 @@ edition = "2021"
 [dependencies]
 leptos = { version = "0.6.12", features = ["csr"] }
 gtk = { version = "0.8.2", package = "gtk4" }
-leptos-fluent = { path = "../../leptos-fluent", default-features = false }
+leptos-fluent = { path = "../../leptos-fluent", default-features = false, features = ["system"] }
 fluent-templates = "0.9"

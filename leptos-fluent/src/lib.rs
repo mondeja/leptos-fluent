@@ -251,7 +251,7 @@ pub mod localstorage;
 #[doc(hidden)]
 pub mod url;
 
-#[doc(hidden)]
+#[cfg(feature = "system")]
 pub use current_locale::current_locale;
 #[doc(hidden)]
 pub use web_sys;
