@@ -21,7 +21,7 @@ pub(crate) fn build_files_tracker_quote(
             proc_macro::tracked_path::path(core_locales_file_path);
         }
 
-        "".parse::<proc_macro2::TokenStream>().ok().unwrap()
+        "".parse::<proc_macro2::TokenStream>().unwrap()
     }
 
     #[cfg(not(feature = "nightly"))]
