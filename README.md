@@ -128,6 +128,12 @@ fn App() -> impl IntoView {
         // Get the initial language from `navigator.languages` if not
         // found in the local storage.
         initial_language_from_navigator: true,
+        // Set the discovered initial language of the user from
+        // the navigator to local storage.
+        initial_language_from_navigator_to_localstorage: true,
+        // Set the discovered initial language of the user from
+        // the navigator to a cookie.
+        initial_language_from_navigator_to_cookie: true,
         // Attributes to set for the language cookie.
         // By default is `""`.
         cookie_attrs: "SameSite=Strict; Secure; Path=/; Max-Age=600",
