@@ -58,7 +58,7 @@ watch-additional-files = ["locales"]
 ## Desktop applications
 
 **leptos-fluent** can be installed on non-wasm targets, like desktop
-applications. You need to install **leptos-fluent** and [`fluent-templates`]
+applications. You need to install **leptos-fluent**, [`fluent-templates`]
 and enable the feature `system`:
 
 ```toml
