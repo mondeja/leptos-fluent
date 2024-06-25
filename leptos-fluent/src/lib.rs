@@ -647,7 +647,7 @@ pub fn l(
 #[cfg(feature = "ssr")]
 pub fn SsrHtmlTag() -> impl IntoView {
     let ssr_lang = expect_i18n().language.get_untracked();
-    view! { <Html lang=ssr_lang.id.to_string() dir=ssr_lang.dir.to_string()/> }
+    view! { <Html lang=ssr_lang.id.to_string() dir=ssr_lang.dir.as_str()/> }
 }
 
 /// Reactive HTML tag to set attributes on SSR
