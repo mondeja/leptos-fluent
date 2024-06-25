@@ -236,7 +236,9 @@ pub(crate) struct I18nLoader {
     pub(crate) initial_language_from_data_file_bool: Option<syn::LitBool>,
     #[cfg(feature = "system")]
     pub(crate) initial_language_from_data_file_expr: Option<syn::Expr>,
+    #[cfg(feature = "system")]
     pub(crate) data_file_key_str: Option<syn::LitStr>,
+    #[cfg(feature = "system")]
     pub(crate) data_file_key_expr: Option<syn::Expr>,
     pub(crate) fluent_file_paths: FluentFilePaths,
 }
@@ -914,7 +916,9 @@ impl Parse for I18nLoader {
             initial_language_from_data_file_bool,
             #[cfg(feature = "system")]
             initial_language_from_data_file_expr,
+            #[cfg(feature = "system")]
             data_file_key_str,
+            #[cfg(feature = "system")]
             data_file_key_expr,
         })
     }
