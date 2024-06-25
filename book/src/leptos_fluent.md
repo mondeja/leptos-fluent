@@ -254,9 +254,9 @@ the inner array with the direction of the language, which can be `"auto"`,
 `"ltr"`, or `"rtl"`. For automatic languages will be defined depending on the language.
 
 ```admonish example
-- Arabic: `"rtl"`
-- English: `"ltr"`
-- Japanese: `"auto"`
+- Arabic (`ar`): `"rtl"`
+- English (`en`): `"ltr"`
+- Japanese (`ja`): `"auto"`
 ```
 
 <!-- markdownlint-disable MD013 -->
@@ -266,7 +266,7 @@ the inner array with the direction of the language, which can be `"auto"`,
 <!-- markdownlint-enable MD013 -->
 
 Set the name of the URL parameter that will be used to manage the current
-language. By default it is `"lang"`.
+language.
 
 ```rust
 leptos_fluent! {{
@@ -325,7 +325,7 @@ leptos_fluent! {{
 
 <!-- markdownlint-enable MD013 -->
 
-Key to manage the current language in [local storage]. By default it is `"lang"`.
+Key to manage the current language in [local storage].
 
 ```rust
 leptos_fluent! {{
@@ -433,7 +433,7 @@ leptos_fluent! {{
 
 <!-- markdownlint-enable MD013 -->
 
-[Cookie attributes] to set on the language cookie. By default it is `""` (empty).
+[Cookie attributes] to set on the language cookie.
 
 ```rust
 leptos_fluent! {{
@@ -553,7 +553,7 @@ leptos_fluent! {{
 <!-- markdownlint-enable MD013 -->
 
 Key to manage the current language in the data file. It should be unique
-per application. By default it is `"leptos-fluent"`.
+per application.
 
 ```rust
 leptos_fluent! {{
