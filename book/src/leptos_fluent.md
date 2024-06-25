@@ -1,4 +1,4 @@
-<!-- markdownlint-disable MD033 -->
+<!-- markdownlint-disable MD033 MD038 -->
 
 # `leptos_fluent!`
 
@@ -251,12 +251,19 @@ leptos_fluent! {{
 
 For custom languages from a languages file, you can specify a third element in
 the inner array with the direction of the language, which can be `"auto"`,
-`"ltr"`, or `"rtl"`.
+`"ltr"`, or `"rtl"`. For automatic languages will be defined depending on the language.
 
-For automatic languages will be defined depending on the language. For example,
-Arabic will be `"rtl"`, English will be `"ltr"` and Japanese will be `"auto"`.
+```admonish example
+- Arabic: `"rtl"`
+- English `"ltr"`
+- Japanese `"auto"`
+```
 
-### <span style="opacity:.5">CSR + SSR </span> | `url_param`
+<!-- markdownlint-disable MD013 -->
+
+### <span style="opacity:.5">CSR + SSR </span> | `url_param: `<span style="color: #b5bd68;font-size: 16px; opacity:.9;">"lang"</span>
+
+<!-- markdownlint-enable MD013 -->
 
 Set the name of the URL parameter that will be used to manage the current
 language. By default it is `"lang"`.
@@ -270,7 +277,7 @@ leptos_fluent! {{
 
 ### <span style="opacity:.5">CSR + SSR </span> | `initial_language_from_url_param`
 
-Set the initial language from the URL parameter.
+Set initial language from the URL parameter.
 
 ```rust
 leptos_fluent! {{
@@ -281,7 +288,7 @@ leptos_fluent! {{
 
 ### <span style="opacity:.5">CSR </span> | `initial_language_from_url_param_to_localstorage`
 
-Set the initial language from the URL parameter and save it in the local storage.
+Set initial language from the URL parameter and save it in the [local storage].
 
 ```rust
 leptos_fluent! {{
@@ -303,7 +310,7 @@ leptos_fluent! {{
 
 ### <span style="opacity:.5">CSR </span> | `set_language_to_url_param`
 
-Set the current language to the URL parameter.
+Set current language to the URL parameter.
 
 ```rust
 leptos_fluent! {{
@@ -312,10 +319,13 @@ leptos_fluent! {{
 }}
 ```
 
-### <span style="opacity:.5">CSR </span> | `localstorage_key`
+<!-- markdownlint-disable MD013 -->
 
-Key to manage the current language in the local storage. By default it is
-`"lang"`.
+### <span style="opacity:.5">CSR </span> | `localstorage_key: `<span style="color: #b5bd68;font-size: 16px; opacity:.9;">"lang"</span>
+
+<!-- markdownlint-enable MD013 -->
+
+Key to manage the current language in [local storage]. By default it is `"lang"`.
 
 ```rust
 leptos_fluent! {{
@@ -326,7 +336,7 @@ leptos_fluent! {{
 
 ### <span style="opacity:.5">CSR </span> | `initial_language_from_localstorage`
 
-Get the initial language from the local storage.
+Get the initial language from [local storage].
 
 ```rust
 leptos_fluent! {{
@@ -401,7 +411,11 @@ leptos_fluent! {{
 }}
 ```
 
-### <span style="opacity:.5">CSR + SSR </span> | `cookie_name`
+<!-- markdownlint-disable MD013 -->
+
+### <span style="opacity:.5">CSR + SSR </span> | `cookie_name: `<span style="color: #b5bd68;font-size: 16px; opacity:.9;">"lf-lang"</span>
+
+<!-- markdownlint-enable MD013 -->
 
 Name of the cookie that will be used to manage the current language. By default
 it is `"lf-lang"`.
@@ -413,7 +427,11 @@ leptos_fluent! {{
 }}
 ```
 
-### <span style="opacity:.5">CSR </span> | `cookie_attrs`
+<!-- markdownlint-disable MD013 -->
+
+### <span style="opacity:.5">CSR </span> | `cookie_attrs: `<span style="color: #b5bd68;font-size: 16px; opacity:.9;">""</span>
+
+<!-- markdownlint-enable MD013 -->
 
 [Cookie attributes] to set on the language cookie. By default it is `""` (empty).
 
@@ -530,7 +548,7 @@ leptos_fluent! {{
 
 <!-- markdownlint-disable MD013 -->
 
-### <a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><span style="opacity:.9;color: #de935f;font-size: 11px; right: -2px; top: -12px;position:relative; transform: rotate(-45deg);display:inline-block">feat</span></a><span style="opacity:.5;padding-right: -10px">system</span> | `data_file_key`
+### <a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><span style="opacity:.9;color: #de935f;font-size: 11px; right: -2px; top: -12px;position:relative; transform: rotate(-45deg);display:inline-block">feat</span></a><span style="opacity:.5;padding-right: -10px">system</span> | `data_file_key: `<span style="color: #b5bd68;font-size: 16px; opacity:.9;">"leptos-fluent"</span>
 
 <!-- markdownlint-enable MD013 -->
 
