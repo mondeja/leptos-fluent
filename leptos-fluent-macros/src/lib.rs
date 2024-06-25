@@ -29,6 +29,8 @@ use quote::quote;
 
 /// Create the i18n context for internationalization.
 ///
+/// [Reference](https://mondeja.github.io/leptos-fluent/leptos_fluent.html)
+///
 /// # Example
 ///
 /// ```rust,ignore
@@ -73,148 +75,8 @@ use quote::quote;
 /// }
 /// ```
 ///
-/// ## Arguments
-///
-/// - **`translations` \***: Translations to be used by your application. This
-///   must be the same identifier used in the [`fluent_templates::static_loader!`]
-///   macro, which returns [`once_cell:sync::Lazy`]`<[`StaticLoader`]>`.
-/// - **`locales`**: Path to the locales folder, which must contain the translations
-///   for each language in your application. Is expected to be a path relative from
-///   `Cargo.toml` file, the same used in the [`fluent_templates::static_loader!`]
-///   macro.
-/// - **`core_locales`**: Path to the core locales file, which must contain a shared
-///   translation for all languages. Is expected to be a path relative from `Cargo.toml`,
-///   the same used in the [`fluent_templates::static_loader!`] macro.
-/// - **`check_translations`**: Path to the files to check if all translations are
-///   being used and their placeholders are correct. Is expected to be a glob pattern
-///   relative from `Cargo.toml` file. Tipically, you should use `"./src/**/*.rs"` for
-///   a single crate or something like `"../{app,components}/src/**/*.rs"` to match
-///   multiple crates in a workspace.
-/// - **`languages`**: Path to a languages file, which should an array of arrays
-///   where each inner array contains a language identifier and a language name,
-///   respectively. The language identifier should be a valid language tag, such as
-///   `en-US`, `en`, `es-ES`, etc. Is expected to be a path relative from `Cargo.toml`
-///   file.
-///   By default, the languages file should be a JSON with a *.json* extension because
-///   the `json` feature is enabled. For example:
-///   ```json
-///   [
-///     ["en-US", "English (United States)"],
-///     ["es-ES", "Español (España)"]
-///   ]
-///   ```
-///   You can set `default-features = false` and enable the `yaml` or the `json5` feature
-///   to be able to use a YAML or JSON5 file. For example:
-///   ```yaml
-///   # locales/languages.yaml
-///   - - en-US
-///     - English (United States)
-///   - - es-ES
-///     - Español (España)
-///   ```
-///   ```json5
-///   // locales/languages.json5
-///   [
-///     ["en-US", "English (United States)"],
-///     ["es-ES", "Español (España)"]
-///   ]
-///   ```
-///   You can define a third element in the inner array with the direction of the language,
-///   to use it in the [`<html dir="...">` attribute] (see `sync_html_tag_dir`). For example:
-///   ```json
-///   [
-///     ["en-US", "English (United States)", "ltr"],
-///     ["es-ES", "Español (España)", "auto"],
-///     ["ar", "العربية", "rtl"],
-///     ["it", "Italiano"]
-///   ]
-///   ```
-/// - **`sync_html_tag_lang`** (_`false`_): Synchronize the global [`<html lang="...">` attribute]
-///   with current language using [`leptos::create_effect`]. Can be a literal boolean or an
-///   expression that will be evaluated at runtime.
-/// - **`sync_html_tag_dir`** (_`false`_): Synchronize the global [`<html dir="...">` attribute]
-///   with current language using [`leptos::create_effect`]. Can be a literal boolean or an
-///   expression that will be evaluated at runtime. For custom languages from a languages file,
-///   you can specify a third element in the inner array with the direction of the language,
-///   which can be `"auto"`, `"ltr"`, or `"rtl"`. For automatic languages will be defined depending
-///   on the language. For example, Arabic will be `"rtl"`, English will be `"ltr"` and Japanese
-///   will be `"auto"`.
-/// - **`url_param`** (_`"lang"`_): The parameter name to manage the language in a URL parameter.
-///   Can be a literal string or an expression that will be evaluated at runtime. It will take effect
-///   on client-side and server side.
-/// - **`initial_language_from_url_param`** (_`false`_): Load the initial language of the user
-///   from a URL parameter. Can be a literal boolean or an expression that will be evaluated at
-///   runtime. It will take effect on client-side and server side.
-/// - **`set_language_to_url_param`** (_`false`_): Save the language of the user to an URL parameter
-///   when setting the language. Can be a literal boolean or an expression that will be evaluated at
-///   runtime. It will only take effect on client-side.
-/// - **`initial_language_from_url_param_to_localstorage`** (_`false`_): Save the initial language
-///   of the user from the URL to [local storage]. Can be a literal boolean or an expression that will
-///   be evaluated at runtime. It will only take effect on client-side.
-/// - **`initial_language_from_url_param_to_cookie`** (_`false`_): Save the initial language of the user
-///   from the URL to a cookie. Can be a literal boolean or an expression that will be evaluated at runtime.
-/// - **`localstorage_key`** (_`"lang"`_): The [local storage] field to get and save the current language
-///   of the user. Can be a literal string or an expression that will be evaluated at runtime.
-///   It will only take effect on client-side.
-/// - **`initial_language_from_localstorage`** (_`false`_): Load the initial language of the
-///   user from [local storage] if not found in the URL param. Can be a literal boolean or an expression
-///   that will be evaluated at runtime. It will only take effect on client-side.
-/// - **`set_language_to_localstorage`** (_`false`_): Save the language of the user to [local storage] if
-///   when setting the language. Can be a literal boolean or an expression that will be evaluated at
-///   runtime. It will only take effect on client-side.
-/// - **`initial_language_from_localstorage_to_cookie`** (_`false`_): Save the initial language of the user
-///   from [local storage] to a cookie. Can be a literal boolean or an expression that will be evaluated at
-///   runtime. It will only take effect on client-side.
-/// - **`initial_language_from_navigator`** (_`false`_): Load the initial language of the user
-///   from [`navigator.languages`] if not found in [local storage]. Can be a literal boolean or an
-///   expression that will be evaluated at runtime. It will only take effect on client-side.
-/// - **`initial_language_from_navigator_to_localstorage`** (_`false`_): Save the initial language of the user
-///   from [`navigator.languages`] to [local storage]. Can be a literal boolean or an expression that will be
-///   evaluated at runtime. It will only take effect on client-side.
-/// - **`initial_language_from_navigator_to_cookie`** (_`false`_): Save the initial language of the user
-///   from [`navigator.languages`] to a cookie. Can be a literal boolean or an expression that will be evaluated
-///   at runtime. It will only take effect on client-side.
-/// - **`initial_language_from_accept_language_header`** (_`false`_): Load the initial language of the user
-///   from the `Accept-Language` header. Can be a literal boolean or an expression that will be evaluated at
-///   runtime. It will only take effect on server-side.
-/// - **`cookie_name`** (_`"lf-lang"`_): The cookie name to manage language in a cookie. Can be a literal string or an
-///   expression that will be evaluated at runtime. It will take effect on client-side and server side.
-/// - **`cookie_attrs`** (_`""`_): The [attributes][cookie-attributes] to set in the cookie. Can be a literal string or an expression
-///   that will be evaluated at runtime. For example, `"SameSite=Strict; Secure; path=/; max-age=600"`.
-///   It will take effect on client-side.
-/// - **`initial_language_from_cookie`** (_`false`_): Load the initial language of the user from a cookie.
-///   Can be a literal boolean or an expression that will be evaluated at runtime. It will take effect on client-side
-///   and server side.
-/// - **`initial_language_from_cookie_to_localstorage`** (_`false`_): Save the initial language of the user
-///   from the cookie to [local storage]. Can be a literal boolean or an expression that will be evaluated at runtime.
-/// - **`set_language_to_cookie`** (_`false`_): Save the language of the user to a cookie when setting the language.
-///   Can be a literal boolean or an expression that will be evaluated at runtime. It will only take effect on client-side.
-/// - **`initial_language_from_system`** (_`false`_): Load the initial language of the user from the system language
-///   on non wasm targets. Can be a literal boolean or an expression that will be evaluated at runtime. It will only
-///   take effect on client side of desktop applications. The feature `system` must be enabled to use this option.
-/// - **`initial_language_from_system_to_data_file`** (_`false`_): Save the initial language of the user from the system
-///   language to a data file. Can be a literal boolean or an expression that will be evaluated at runtime.
-///   It will only take effect on client side of desktop applications. The feature `system` must be enabled to use
-///   this option.
-/// - **`initial_language_from_data_file`** (_`false`_): Load the initial language of the user from a data file.
-///   Can be a literal boolean or an expression that will be evaluated at runtime. It will only take effect on client
-///   side of desktop applications. The feature `system` must be enabled to use this option.
-/// - **`data_file_key`** (_`"leptos-fluent"`_): The key to store the language in the data file. Can be a literal string
-///   or an expression that will be evaluated at runtime. It will only take effect on client side of desktop applications.
-///   The feature `system` must be enabled to use this option.
-/// - **`set_language_to_data_file`** (_`false`_): Save the language of the user to a data file when setting the language.
-///   Can be a literal boolean or an expression that will be evaluated at runtime. It will only take effect on client side
-///   of desktop applications. The feature `system` must be enabled to use this option.
-///
-/// [`fluent_templates::static_loader!`]: https://docs.rs/fluent-templates/latest/fluent_templates/macro.static_loader.html
-/// [`once_cell:sync::Lazy`]: https://docs.rs/once_cell/latest/once_cell/sync/struct.Lazy.html
-/// [`StaticLoader`]: https://docs.rs/fluent-templates/latest/fluent_templates/struct.StaticLoader.html
-/// [`<html lang="...">` attribute]: https://developer.mozilla.org/es/docs/Web/HTML/Global_attributes/lang
-/// [`<html dir="...">` attribute]: https://developer.mozilla.org/es/docs/Web/HTML/Global_attributes/dir
-/// [local storage]: https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
-/// [`navigator.languages`]: https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages
-/// [`leptos::create_effect`]: https://docs.rs/leptos/latest/leptos/fn.create_effect.html
-/// [cookie-attributes]: https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie#write_a_new_cookie
+/// See the reference with all the parameters explained in detail at
+/// https://mondeja.github.io/leptos-fluent/leptos_fluent.html
 #[proc_macro]
 pub fn leptos_fluent(
     input: proc_macro::TokenStream,
