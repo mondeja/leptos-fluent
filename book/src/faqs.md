@@ -18,7 +18,7 @@ provides utilities for parsing the Fluent syntax.
 ```rust
 use leptos_fluent::leptos_fluent;
 
-let i18n = leptos_fluent!{{
+let i18n = leptos_fluent! {{
     // ... options
 }};
 
@@ -133,7 +133,7 @@ use leptos_fluent::{leptos_fluent, SsrHtmlTag};
 
 #[component]
 pub fn App() -> impl IntoView {
-    leptos_fluent!{{
+    leptos_fluent! {{
         // ... options
     }};
 
