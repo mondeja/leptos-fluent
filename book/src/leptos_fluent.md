@@ -17,7 +17,7 @@ leptos_fluent! {{
 ### `translations`
 
 Set the translations to be used in the application. It must be a reference
-to a static array of `fluent_templates::StaticLoader` instances.
+to a static array of [`fluent_templates::static_loader!`] instances.
 
 ```rust
 use fluent_templates::static_loader;
@@ -37,10 +37,14 @@ leptos_fluent! {{
 }}
 ```
 
+Must be the same identifier used in the [`fluent_templates::static_loader!`]
+macro, which returns [`once_cell:sync::Lazy`]`<[`StaticLoader`]>`.
+
 ### `locales`
 
 Set the path to the locales directory which contain the Fluent
-files for the translations. Must be relative to the _Cargo.toml_ file.
+files for the translations. Must be relative to the _Cargo.toml_ file, the same
+used in the [`fluent_templates::static_loader!`] macro.
 
 ```rust
 leptos_fluent! {{
@@ -53,8 +57,8 @@ leptos_fluent! {{
 ### `core_locales`
 
 Common locale resources that are shared across all locales.
-Must be relative to the _Cargo.toml_ file. Indicate the same as
-in `core_locales` option of `static_loader!`:
+Must be relative to the _Cargo.toml_ file, the same
+used in the [`fluent_templates::static_loader!`] macro:
 
 ```rust
 static_loader! {
@@ -72,7 +76,7 @@ leptos_fluent! {{
 }}
 ```
 
-### `languages`
+### `languages` (see [Languages])
 
 Path to a file containing the list of languages supported by the application.
 Must be relative to the _Cargo.toml_ file.
@@ -86,7 +90,50 @@ leptos_fluent! {{
 }}
 ```
 
-See [Languages].
+The languages file should contain an array of arrays where each inner array
+contains a language identifier and a language name, respectively, at least.
+
+The language identifier should be a valid language tag, such as `en-US`, `en`,
+`es-ES`, etc. By default, the languages file should be a JSON with a `.json`
+extension because the `json` feature is enabled. For example:
+
+```json
+[
+  ["en-US", "English (United States)"],
+  ["es-ES", "Español (España)"]
+]
+```
+
+You can set `default-features = false` and enable the `yaml` or the `json5` feature
+to be able to use a YAML or JSON5 file. For example:
+
+```yaml
+# locales/languages.yaml
+- - en-US
+  - English (United States)
+- - es-ES
+  - Español (España)
+```
+
+```json5
+// locales/languages.json5
+[
+  ["en-US", "English (United States)"],
+  ["es-ES", "Español (España)"],
+]
+```
+
+You can define a third element in the inner array with the direction of the language,
+to use it in the [`<html dir="...">` attribute] (see `sync_html_tag_dir`). For example:
+
+```json
+[
+  ["en-US", "English (United States)", "ltr"],
+  ["es-ES", "Español (España)", "auto"],
+  ["ar", "العربية", "rtl"],
+  ["it", "Italiano"]
+]
+```
 
 ### `check_translations`
 
@@ -117,8 +164,9 @@ leptos_fluent! {{
 
 ### <span style="opacity:.5">CSR </span> | `sync_html_tag_lang`
 
-Synchronize the `lang` attribute of the `<html>` tag with the current locale.
-It is useful for SEO purposes.
+Synchronize the global [`<html lang="...">` attribute] with current language
+using [`leptos::create_effect`]. Can be a literal boolean or an expression
+that will be evaluated at runtime.
 
 ```rust
 leptos_fluent! {{
@@ -129,8 +177,10 @@ leptos_fluent! {{
 
 ### <span style="opacity:.5">CSR </span> | `sync_html_tag_dir`
 
-Synchronize the `dir` attribute of the `<html>` tag with the writing direction
-of the current locale.
+Synchronize the global [`<html dir="...">` attribute] with current language
+using [`leptos::create_effect`].
+
+Can be a literal boolean or an expression that will be evaluated at runtime.
 
 ```rust
 leptos_fluent! {{
@@ -138,6 +188,13 @@ leptos_fluent! {{
     sync_html_tag_dir: true,
 }}
 ```
+
+For custom languages from a languages file, you can specify a third element in
+the inner array with the direction of the language, which can be `"auto"`,
+`"ltr"`, or `"rtl"`.
+
+For automatic languages will be defined depending on the language. For example,
+Arabic will be `"rtl"`, English will be `"ltr"` and Japanese will be `"auto"`.
 
 ### <span style="opacity:.5">CSR + SSR </span> | `url_param`
 
@@ -242,7 +299,7 @@ leptos_fluent! {{
 
 ### <span style="opacity:.5">CSR </span> | `initial_language_from_navigator`
 
-Get the initial language from the navigator.
+Get the initial language from [`navigator.languages`].
 
 ```rust
 leptos_fluent! {{
@@ -253,7 +310,7 @@ leptos_fluent! {{
 
 ### <span style="opacity:.5">CSR </span> | `initial_language_from_navigator_to_localstorage`
 
-Get the initial language from the navigator and save it in the local storage.
+Get the initial language from [`navigator.languages`] and save it in the [local storage].
 
 ```rust
 leptos_fluent! {{
@@ -264,7 +321,7 @@ leptos_fluent! {{
 
 ### <span style="opacity:.5">CSR </span> | `initial_language_from_navigator_to_cookie`
 
-Get the initial language from the navigator and save it in a cookie.
+Get the initial language from [`navigator.languages`] and save it in a cookie.
 
 ```rust
 leptos_fluent! {{
@@ -307,6 +364,17 @@ leptos_fluent! {{
 }}
 ```
 
+If the passed value is an expression the cookie will not be validated at
+compile time:
+
+```rust
+let attrs = "SameSite=Strict; Secure; MyCustomCookie=value"
+leptos_fluent! {{
+    // ...
+    cookie_attrs: attrs,
+}}
+```
+
 ### <span style="opacity:.5">CSR + SSR </span> | `initial_language_from_cookie`
 
 Get the initial language from the cookie.
@@ -320,7 +388,7 @@ leptos_fluent! {{
 
 ### <span style="opacity:.5">CSR </span> | `initial_language_from_cookie_to_localstorage`
 
-Get the initial language from the cookie and save it in the local storage.
+Get the initial language from the cookie and save it in the [local storage].
 
 ```rust
 leptos_fluent! {{
@@ -340,7 +408,11 @@ leptos_fluent! {{
 }}
 ```
 
-### <span style="opacity:.5">system</span> | `initial_language_from_system`
+<!-- markdownlint-disable MD013 -->
+
+### <a href="https://mondeja.github.io/leptos-fluent/install.html#features"><span style="opacity:.9;color: #de935f;font-size: 11px; right: -2px; top: -12px;position:relative; transform: rotate(-45deg);display:inline-block">feat</span></a><span style="opacity:.5;padding-right: -10px">system</span> | `initial_language_from_system`
+
+<!-- markdownlint-enable MD013 -->
 
 Get the initial language from the system.
 
@@ -351,7 +423,11 @@ leptos_fluent! {{
 }}
 ```
 
-### <span style="opacity:.5">system</span> | `initial_language_from_data_file`
+<!-- markdownlint-disable MD013 -->
+
+### <a href="https://mondeja.github.io/leptos-fluent/install.html#features"><span style="opacity:.9;color: #de935f;font-size: 11px; right: -2px; top: -12px;position:relative; transform: rotate(-45deg);display:inline-block">feat</span></a><span style="opacity:.5;padding-right: -10px">system</span> | `initial_language_from_data_file`
+
+<!-- markdownlint-enable MD013 -->
 
 Get the initial language from a data file.
 
@@ -362,7 +438,11 @@ leptos_fluent! {{
 }}
 ```
 
-### <span style="opacity:.5">system</span> | `initial_language_from_system_to_data_file`
+<!-- markdownlint-disable MD013 -->
+
+### <a href="https://mondeja.github.io/leptos-fluent/install.html#features"><span style="opacity:.9;color: #de935f;font-size: 11px; right: -2px; top: -12px;position:relative; transform: rotate(-45deg);display:inline-block">feat</span></a><span style="opacity:.5;padding-right: -10px">system</span> | `initial_language_from_system_to_data_file`
+
+<!-- markdownlint-enable MD013 -->
 
 Get the initial language from the system and save it in a data file.
 
@@ -373,7 +453,11 @@ leptos_fluent! {{
 }}
 ```
 
-### <span style="opacity:.5">system</span> | `set_language_to_data_file`
+<!-- markdownlint-disable MD013 -->
+
+### <a href="https://mondeja.github.io/leptos-fluent/install.html#features"><span style="opacity:.9;color: #de935f;font-size: 11px; right: -2px; top: -12px;position:relative; transform: rotate(-45deg);display:inline-block">feat</span></a><span style="opacity:.5;padding-right: -10px">system</span> | `set_language_to_data_file`
+
+<!-- markdownlint-enable MD013 -->
 
 Set the current language to a data file.
 
@@ -384,7 +468,11 @@ leptos_fluent! {{
 }}
 ```
 
-### <span style="opacity:.5">system</span> | `data_file_key`
+<!-- markdownlint-disable MD013 -->
+
+### <a href="https://mondeja.github.io/leptos-fluent/install.html#features"><span style="opacity:.9;color: #de935f;font-size: 11px; right: -2px; top: -12px;position:relative; transform: rotate(-45deg);display:inline-block">feat</span></a><span style="opacity:.5;padding-right: -10px">system</span> | `data_file_key`
+
+<!-- markdownlint-enable MD013 -->
 
 Key to manage the current language in the data file. It should be unique
 per application. By default it is `"leptos-fluent"`.
@@ -397,4 +485,11 @@ leptos_fluent! {{
 ```
 
 [Languages]: https://mondeja.github.io/leptos-fluent/languages.html
-[Cookie attributes]: https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie#write_a_new_cookie
+[`fluent_templates::static_loader!`]: https://docs.rs/fluent-templates/latest/fluent_templates/macro.static_loader.html
+[`once_cell:sync::Lazy`]: https://docs.rs/once_cell/latest/once_cell/sync/struct.Lazy.html
+[`<html lang="...">` attribute]: https://developer.mozilla.org/es/docs/Web/HTML/Global_attributes/lang
+[`<html dir="...">` attribute]: https://developer.mozilla.org/es/docs/Web/HTML/Global_attributes/dir
+[local storage]: https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
+[`navigator.languages`]: https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages
+[`leptos::create_effect`]: https://docs.rs/leptos/latest/leptos/fn.create_effect.html
+[cookie attributes]: https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie#write_a_new_cookie
