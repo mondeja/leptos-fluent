@@ -255,8 +255,8 @@ the inner array with the direction of the language, which can be `"auto"`,
 
 ```admonish example
 - Arabic: `"rtl"`
-- English `"ltr"`
-- Japanese `"auto"`
+- English: `"ltr"`
+- Japanese: `"auto"`
 ```
 
 <!-- markdownlint-disable MD013 -->
