@@ -4,14 +4,14 @@
 
 ### New features
 
+- Add `leptos_fluent::SsrHtmlTag` component to render it on SSR to sync
+  global attribute of `<html>` tag with the current language.
 - Add new feature `system` to enable functionalities that require system
   information. Useful on non wasm targets like desktop applications.
   See [GTK example].
 - Add `initial_language_from_system` parameter to `leptos_fluent!` macro to set
   the initial language from the system language. Useful for desktop
   applications. Must be enabled the new feature `system` to use it.
-- Add `leptos_fluent::SsrHtmlTag` component to render it on SSR to sync
-  global attribute of `<html>` tag with the current language.
 - Add `initial_language_from_data_file` parameter to `leptos_fluent!` macro to
   set the initial language from a data file when using `system` feature.
 - Add `set_language_to_data_file` parameter to `leptos_fluent!` macro to set
