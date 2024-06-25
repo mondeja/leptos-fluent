@@ -1,5 +1,9 @@
 # Basic usage
 
+<!-- toc -->
+
+## Minimal skeleton
+
 The most basic CSR app is reproduced here:
 
 ```plaintext

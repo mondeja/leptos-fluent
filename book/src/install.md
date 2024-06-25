@@ -1,5 +1,7 @@
 # Installation
 
+<!-- toc -->
+
 ## CSR
 
 For client side rendering apps you only need to install **leptos-fluent** and
@@ -86,7 +88,7 @@ leptos-fluent = {
 ```
 
 ```admonish tip
-See [Languages](https://mondeja.github.io/leptos-fluent/languages.html).
+See [**4. Languages**](https://mondeja.github.io/leptos-fluent/languages.html).
 ```
 
 ## Features

@@ -1,9 +1,11 @@
 <!-- markdownlint-disable MD013 -->
 
-# Features
+# Strategies
 
 All the features of the framework are optional, following a declarative
 "opt-in" configuration method.
+
+<!-- toc -->
 
 ## Loading the initial language of the user
 
@@ -53,7 +55,7 @@ following strategies are available:
 | :-------- | :-------------------------- |
 | Data file | `set_language_to_data_file` |
 
-### Updating the language from initialization on the client
+## Updating the language from initialization on the client
 
 When a language is loaded from initialization, the framework can perform a side
 effect to persistently storage the language in the client. The following strategies

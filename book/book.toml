@@ -33,3 +33,7 @@ collapsible = false
 
 [preprocessor.admonish.renderer.test]
 render_mode = "strip"
+
+[preprocessor.toc]
+command = "mdbook-toc"
+renderer = ["html"]

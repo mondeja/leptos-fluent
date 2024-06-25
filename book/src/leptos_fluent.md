@@ -12,6 +12,8 @@ leptos_fluent! {{
 }}
 ```
 
+<!-- toc -->
+
 ## Common configurations
 
 ### <span style="opacity:.5">CSR </span> | Local storage from navigator
@@ -130,7 +132,7 @@ leptos_fluent! {{
 }}
 ```
 
-### `languages` (see [Languages])
+### `languages`
 
 Path to a file containing the list of languages supported by the application.
 Must be relative to the _Cargo.toml_ file.
@@ -142,6 +144,10 @@ leptos_fluent! {{
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     translations: [TRANSLATIONS],
 }}
+```
+
+```admonish tip
+See [**4. Languages**](https://mondeja.github.io/leptos-fluent/languages.html)
 ```
 
 The languages file should contain an array of arrays where each inner array
@@ -386,7 +392,7 @@ leptos_fluent! {{
 
 ### <span style="opacity:.5">SSR </span> | `initial_language_from_accept_language_header`
 
-Get the initial language from the `Accept-Language` header.
+Get the initial language from the [`Accept-Language`] header.
 
 ```rust
 leptos_fluent! {{
@@ -409,7 +415,7 @@ leptos_fluent! {{
 
 ### <span style="opacity:.5">CSR </span> | `cookie_attrs`
 
-[Cookie attributes] to set on the language cookie. By default it is `""` (empty):
+[Cookie attributes] to set on the language cookie. By default it is `""` (empty).
 
 ```rust
 leptos_fluent! {{
@@ -538,7 +544,6 @@ leptos_fluent! {{
 }}
 ```
 
-[Languages]: https://mondeja.github.io/leptos-fluent/languages.html
 [`fluent_templates::static_loader!`]: https://docs.rs/fluent-templates/latest/fluent_templates/macro.static_loader.html
 [`once_cell:sync::Lazy`]: https://docs.rs/once_cell/latest/once_cell/sync/struct.Lazy.html
 [`<html lang="...">` attribute]: https://developer.mozilla.org/es/docs/Web/HTML/Global_attributes/lang
@@ -547,3 +552,4 @@ leptos_fluent! {{
 [`navigator.languages`]: https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages
 [`leptos::create_effect`]: https://docs.rs/leptos/latest/leptos/fn.create_effect.html
 [cookie attributes]: https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie#write_a_new_cookie
+[`Accept-Language`]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language
