@@ -5,6 +5,7 @@ Cargo.lock -diff
 /README.md -diff
 /leptos-fluent-macros/README.md -diff
 /leptos-fluent/README.md -diff
+/book/mdbook-admonish.css -diff
 
 # Don't export/archive these files
 .github            export-ignore
