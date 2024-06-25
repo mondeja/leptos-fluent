@@ -68,7 +68,7 @@ The languages file must expose an array of arrays with the structure:
 
 ```json5
 [
-  // Code,     Name,            "ltr"/"rtl"/"auto" (optional)
+  // Code, Name,            "ltr"/"rtl"/"auto" (optional)
   ["code", "Language name", "Writing direction"],
 ]
 ```

@@ -69,6 +69,22 @@ fluent-templates = "0.9"
 
 See the [GTK example].
 
+## Language files
+
+By default, **leptos-fluent** supports JSON languages files. If you want to
+use other formats to load your custom languages, you can enable the
+`json5` or `yaml` features:
+
+```toml
+[dependencies]
+leptos-fluent = {
+  version = "0.1", features = ["json5"], default-features = false
+}
+fluent-templates = "0.9"
+```
+
+See [Languages].
+
 ## Features
 
 - **Server Side Rendering**: `ssr`
@@ -84,3 +100,4 @@ See the [GTK example].
 [`fluent-templates`]: https://github.com/XAMPPRocky/fluent-templates
 [`leptos_fluent!`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.leptos_fluent.html
 [GTK example]: https://github.com/mondeja/leptos-fluent/tree/master/examples/system-gtk
+[Languages]: https://mondeja.github.io/leptos-fluent/languages.html
