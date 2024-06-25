@@ -256,6 +256,22 @@ pub fn leptos_fluent(
         initial_language_from_system_bool,
         #[cfg(feature = "system")]
         initial_language_from_system_expr,
+        #[cfg(feature = "system")]
+        initial_language_from_system_to_data_file_bool,
+        #[cfg(feature = "system")]
+        initial_language_from_system_to_data_file_expr,
+        #[cfg(feature = "system")]
+        set_language_to_data_file_bool,
+        #[cfg(feature = "system")]
+        set_language_to_data_file_expr,
+        #[cfg(feature = "system")]
+        initial_language_from_data_file_bool,
+        #[cfg(feature = "system")]
+        initial_language_from_data_file_expr,
+        #[cfg(feature = "system")]
+        data_file_key_str,
+        #[cfg(feature = "system")]
+        data_file_key_expr,
     } = syn::parse_macro_input!(input as I18nLoader);
 
     let n_languages = languages.len();
@@ -279,26 +295,69 @@ pub fn leptos_fluent(
         &::leptos_fluent::i18n().language.get()
     };
 
+    #[cfg(feature = "system")]
+    let data_file_key = match data_file_key_str {
+        Some(lit) => quote! { #lit },
+        None => match data_file_key_expr {
+            Some(expr) => quote! { #expr },
+            None => quote! { "leptos-fluent" },
+        },
+    };
+
     // discover from system language (desktop apps)
     #[cfg(all(feature = "system", not(feature = "ssr")))]
     let initial_language_from_system_quote = {
+        let initial_language_from_system_to_data_file_quote =
+            match initial_language_from_system_to_data_file_bool {
+                Some(lit) => match lit.value {
+                    true => quote! {
+                       if !#data_file_key.is_empty() {
+                           ::leptos_fluent::data_file::set(
+                               #data_file_key,
+                               &l.id.to_string(),
+                           );
+                       }
+                    },
+                    false => quote! {},
+                },
+                None => match initial_language_from_system_to_data_file_expr {
+                    Some(expr) => quote! {
+                        if #expr && !#data_file_key.is_empty() {
+                            ::leptos_fluent::data_file::set(
+                                #data_file_key,
+                                &l.id.to_string(),
+                            );
+                        }
+                    },
+                    None => quote! {},
+                },
+            };
+
         let effect_quote = quote! {
             if let Ok(l) = ::leptos_fluent::current_locale() {
                 lang = ::leptos_fluent::l(
                     &l,
                     &LANGUAGES
                 );
+
+                if let Some(l) = lang {
+                    #initial_language_from_system_to_data_file_quote
+                }
             }
         };
 
         match initial_language_from_system_bool {
             Some(lit) => match lit.value {
-                true => effect_quote,
+                true => quote! {
+                    if lang.is_none() {
+                        #effect_quote
+                    }
+                },
                 false => quote! {},
             },
             None => match initial_language_from_system_expr {
                 Some(expr) => quote! {
-                    if #expr {
+                    if #expr && lang.is_none() {
                         #effect_quote
                     }
                 },
@@ -314,6 +373,108 @@ pub fn leptos_fluent(
     {
         _ = initial_language_from_system_bool;
         _ = initial_language_from_system_expr;
+        _ = initial_language_from_system_to_data_file_bool;
+        _ = initial_language_from_system_to_data_file_expr;
+    }
+
+    #[cfg(feature = "system")]
+    let sync_language_with_data_file_quote = {
+        let set_language_to_data_file_quote =
+            match set_language_to_data_file_bool {
+                Some(ref lit) => match lit.value {
+                    true => quote! { #data_file_key },
+                    false => quote! { "" },
+                },
+                None => match set_language_to_data_file_expr {
+                    Some(ref expr) => quote! {
+                        if #expr {
+                            #data_file_key
+                        } else {
+                            ""
+                        }
+                    },
+                    None => quote! { "" },
+                },
+            };
+
+        let effect_quote = quote! {
+            ::leptos::create_effect(move |_| {
+                if #set_language_to_data_file_quote.is_empty() {
+                    return;
+                }
+                ::leptos_fluent::data_file::set(
+                    #set_language_to_data_file_quote,
+                    #get_language_quote.id.to_string(),
+                );
+            });
+        };
+
+        match set_language_to_data_file_bool {
+            Some(lit) => match lit.value {
+                true => effect_quote,
+                false => quote! {},
+            },
+            None => match set_language_to_data_file_expr {
+                Some(_) => effect_quote,
+                None => quote! {},
+            },
+        }
+    };
+
+    #[cfg(not(feature = "system"))]
+    let sync_language_with_data_file_quote = quote! {};
+
+    #[cfg(all(feature = "system", not(feature = "ssr")))]
+    let initial_language_from_data_file_quote = {
+        let initial_language_from_data_file_quote =
+            match initial_language_from_data_file_bool {
+                Some(ref lit) => match lit.value() {
+                    true => quote! { #data_file_key },
+                    false => quote! { "" },
+                },
+                None => match initial_language_from_data_file_expr {
+                    Some(ref expr) => quote! { #expr },
+                    None => quote! { "" },
+                },
+            };
+
+        let effect_quote = quote! {
+            if #initial_language_from_data_file_quote.is_empty() {
+                return;
+            }
+            if let Some(l) = ::leptos_fluent::data_file::get(
+                #initial_language_from_data_file_quote
+            ) {
+                lang = ::leptos_fluent::l(
+                    &l,
+                    &LANGUAGES
+                );
+            }
+        };
+
+        match initial_language_from_data_file_bool {
+            Some(lit) => match lit.value() {
+                true => effect_quote,
+                false => quote! {},
+            },
+            None => match initial_language_from_data_file_expr {
+                Some(expr) => quote! {
+                    if #expr {
+                        #effect_quote
+                    }
+                },
+                None => quote! {},
+            },
+        }
+    };
+
+    #[cfg(all(not(feature = "system"), not(feature = "ssr")))]
+    let initial_language_from_data_file_quote = quote! {};
+
+    #[cfg(all(feature = "system", feature = "ssr"))]
+    {
+        _ = initial_language_from_data_file_bool;
+        _ = initial_language_from_data_file_expr;
     }
 
     #[cfg(not(feature = "ssr"))]
@@ -1117,6 +1278,7 @@ pub fn leptos_fluent(
     let initial_language_quote = {
         #[cfg(not(feature = "ssr"))]
         quote! {
+            #initial_language_from_data_file_quote
             #initial_language_from_system_quote
             #initial_language_from_url_param_quote
             #initial_language_from_cookie_quote
@@ -1170,6 +1332,7 @@ pub fn leptos_fluent(
             #sync_language_with_localstorage_quote
             #sync_language_with_url_param_quote
             #sync_language_with_cookie_quote
+            #sync_language_with_data_file_quote
             #files_tracker_quote
 
             i18n

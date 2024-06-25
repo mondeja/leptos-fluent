@@ -24,10 +24,15 @@ web-sys = { version = ">=0.1", features = [
 ] }
 wasm-bindgen = ">=0.1"
 current_locale = { version = "0.1", optional = true }
+directories = { version = "5", optional = true }
 
 [features]
 default = ["json"]
-system = ["dep:current_locale", "leptos-fluent-macros/system"]
+system = [
+  "dep:current_locale",
+  "dep:directories",
+  "leptos-fluent-macros/system"
+]
 nightly = ["leptos-fluent-macros/nightly"]
 hydrate = ["leptos-fluent-macros/hydrate"]
 ssr = ["leptos-fluent-macros/ssr", "dep:leptos_meta"]
