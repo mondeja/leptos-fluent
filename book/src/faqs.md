@@ -8,10 +8,11 @@
 use fluent_templates::LanguageIdentifier;
 ```
 
-`fluent-templates` also depends externally on [`fluent-bundle`] whichs
-provides utilities for parsing the Fluent syntax.
-
-[`fluent-bundle`]: https://docs.rs/fluent-bundle/latest/fluent_bundle/
+```admonish tip
+`fluent-templates` also depends externally on
+[`fluent-bundle`](https://docs.rs/fluent-bundle/latest/fluent_bundle/)
+whichs provides utilities for parsing the Fluent syntax.
+```
 
 ### How to get the i18n context at initialization?
 
@@ -47,9 +48,11 @@ let fallback_language = expect_i18n().translations.get()[0].fallback();
 
 ### Why examples don't use [`<For/>`] component?
 
+```admonish bug
 There are some cases in which the [`<For/>`] component is not reproducible between
 SSR and hydrate modes leading to different renders, so decided to use a
 simple vector to not bring confusion to main examples.
+```
 
 In any case, the [`<For/>`] component is secure on CSR contexts and
 [`leptos_fluent::Language`]s implement `Hash` and `Eq` traits to be

@@ -191,18 +191,17 @@ The i18n context has the following fields:
 
 ### Update language
 
-To update the language, use `set` method of [`language`] field or just
-[`lang.activate`]:
+To update the language, use [`lang.activate`] or the `set` method of [`language`]:
 
 ```rust
-expect_i18n().language.set(lang);
-
 lang.activate();
+
+expect_i18n().language.set(lang);
 ```
 
-```admonish tip
-When `nightly` feature is enabled, you update it passing new to the context
-as a function with `(leptos_fluent::i18n())(lang)`.
+```admonish tip title='Nightly'
+When `nightly` feature is enabled, you update it passing a new language to the
+context as a function with `(leptos_fluent::i18n())(lang)`.
 ```
 
 ### Get active language
@@ -211,8 +210,11 @@ To get the current active language, use `get` method of [`language`] field:
 
 ```rust
 i18n.language.get()
+```
 
-i18n() // features = ["nightly"]
+```admonish tip title='Nightly'
+When `nightly` enabled, you can get the active language with
+`(leptos_fluent::i18n())()`.
 ```
 
 ### Get available languages

@@ -64,10 +64,10 @@ The mechanism of translations checking needs to know where reside the calls to
 This is performed by parsing the source code looking for these macros
 invocations.
 
-```admonish note
-This is the main reason why **leptos-fluent** doesn't provide
-ways to translate directly using methods of the [`leptos_fluent::I18n`]
-context, as it would be impossible to extract the translations at compile time.
+```admonish note title='Why macros'
+**leptos-fluent** doesn't provide ways to translate directly using
+[`leptos_fluent::I18n`] context methods, as it would be impossible to extract
+the translations at compile time.
 ```
 
 The only limitation for checking translations with glob patterns is that the
