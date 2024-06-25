@@ -340,7 +340,7 @@ leptos_fluent! {{
 }}
 ```
 
-### <span style="opacity:.5">Desktop (system) </span> | `initial_language_from_system`
+### <span style="opacity:.5">system</span> | `initial_language_from_system`
 
 Get the initial language from the system.
 
@@ -351,7 +351,7 @@ leptos_fluent! {{
 }}
 ```
 
-### <span style="opacity:.5">Desktop (system) </span> | `initial_language_from_data_file`
+### <span style="opacity:.5">system</span> | `initial_language_from_data_file`
 
 Get the initial language from a data file.
 
@@ -362,7 +362,7 @@ leptos_fluent! {{
 }}
 ```
 
-### <span style="opacity:.5">Desktop (system) </span> | `initial_language_from_system_to_data_file`
+### <span style="opacity:.5">system</span> | `initial_language_from_system_to_data_file`
 
 Get the initial language from the system and save it in a data file.
 
@@ -373,7 +373,7 @@ leptos_fluent! {{
 }}
 ```
 
-### <span style="opacity:.5">Desktop (system) </span> | `set_language_to_data_file`
+### <span style="opacity:.5">system</span> | `set_language_to_data_file`
 
 Set the current language to a data file.
 
@@ -384,7 +384,7 @@ leptos_fluent! {{
 }}
 ```
 
-### <span style="opacity:.5">Desktop (system) </span> | `data_file_key`
+### <span style="opacity:.5">system</span> | `data_file_key`
 
 Key to manage the current language in the data file. It should be unique
 per application. By default it is `"leptos-fluent"`.
