@@ -61,7 +61,7 @@ watch-additional-files = ["locales"]
 
 **leptos-fluent** can be installed on non-wasm targets, like desktop
 applications. You need to install **leptos-fluent**, [`fluent-templates`]
-and enable the feature `system`:
+and enable the `system` feature:
 
 ```toml
 [dependencies]
@@ -71,6 +71,17 @@ fluent-templates = "0.9"
 
 ```admonish example
 See the [GTK example](https://github.com/mondeja/leptos-fluent/tree/master/examples/system-gtk).
+```
+
+## Nightly toolchain
+
+**leptos-fluent** builds nightly functionalities by enabling the `nightly`
+feature:
+
+```toml
+[dependencies]
+leptos-fluent = { version = "0.1", features = ["nightly"] }
+fluent-templates = "0.9"
 ```
 
 ## Language files
