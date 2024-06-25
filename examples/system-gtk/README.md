@@ -9,6 +9,6 @@ sudo apt install libgtk-4-dev
 ## Build and run
 
 ```sh
-cd examples/gtk
+cd examples/system-gtk
 cargo run
 ```
