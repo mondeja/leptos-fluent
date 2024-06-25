@@ -12,6 +12,60 @@ leptos_fluent! {{
 }}
 ```
 
+## Common configurations
+
+### <span style="opacity:.5">CSR </span> | Local storage from navigator
+
+```rust
+leptos_fluent! {{
+    locales: "./locales",
+    translations: [TRANSLATIONS],
+
+    set_language_to_localstorage: true,
+    initial_language_from_localstorage: true,
+    initial_language_from_navigator: true,
+    initial_language_from_navigator_to_localstorage: true,
+    initial_language_from_url_param: true,
+    initial_language_from_url_param_to_localstorage: true,
+}}
+```
+
+### <span style="opacity:.5">CSR + SSR </span> | Cookie from navigator and header
+
+```rust
+leptos_fluent! {{
+    locales: "./locales",
+    translations: [TRANSLATIONS],
+
+    set_language_to_cookie: true,
+    initial_language_from_cookie: true,
+    initial_language_from_navigator: true,
+    initial_language_from_navigator_to_cookie: true,
+    initial_language_from_url_param: true,
+    initial_language_from_url_param_to_cookie: true,
+    initial_language_from_accept_language_header: true,
+}}
+```
+
+<!-- markdownlint-disable MD013 -->
+
+### <a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><span style="opacity:.9;color: #de935f;font-size: 11px; right: -2px; top: -12px;position:relative; transform: rotate(-45deg);display:inline-block">feat</span></a><span style="opacity:.5;padding-right: -10px">system</span> | Data files on Desktop applications
+
+<!-- markdownlint-enable MD013 -->
+
+```rust
+leptos_fluent! {{
+    locales: "./locales",
+    translations: [TRANSLATIONS],
+
+    initial_language_from_system: true,
+    initial_language_from_system_to_data_file: true,
+    initial_language_from_data_file: true,
+    set_language_to_data_file: true,
+    data_file_key: "system-language-example",
+}}
+```
+
 ## Parameters
 
 ### `translations`
@@ -410,7 +464,7 @@ leptos_fluent! {{
 
 <!-- markdownlint-disable MD013 -->
 
-### <a href="https://mondeja.github.io/leptos-fluent/install.html#features"><span style="opacity:.9;color: #de935f;font-size: 11px; right: -2px; top: -12px;position:relative; transform: rotate(-45deg);display:inline-block">feat</span></a><span style="opacity:.5;padding-right: -10px">system</span> | `initial_language_from_system`
+### <a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><span style="opacity:.9;color: #de935f;font-size: 11px; right: -2px; top: -12px;position:relative; transform: rotate(-45deg);display:inline-block">feat</span></a><span style="opacity:.5;padding-right: -10px">system</span> | `initial_language_from_system`
 
 <!-- markdownlint-enable MD013 -->
 
@@ -425,7 +479,7 @@ leptos_fluent! {{
 
 <!-- markdownlint-disable MD013 -->
 
-### <a href="https://mondeja.github.io/leptos-fluent/install.html#features"><span style="opacity:.9;color: #de935f;font-size: 11px; right: -2px; top: -12px;position:relative; transform: rotate(-45deg);display:inline-block">feat</span></a><span style="opacity:.5;padding-right: -10px">system</span> | `initial_language_from_data_file`
+### <a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><span style="opacity:.9;color: #de935f;font-size: 11px; right: -2px; top: -12px;position:relative; transform: rotate(-45deg);display:inline-block">feat</span></a><span style="opacity:.5;padding-right: -10px">system</span> | `initial_language_from_data_file`
 
 <!-- markdownlint-enable MD013 -->
 
@@ -440,7 +494,7 @@ leptos_fluent! {{
 
 <!-- markdownlint-disable MD013 -->
 
-### <a href="https://mondeja.github.io/leptos-fluent/install.html#features"><span style="opacity:.9;color: #de935f;font-size: 11px; right: -2px; top: -12px;position:relative; transform: rotate(-45deg);display:inline-block">feat</span></a><span style="opacity:.5;padding-right: -10px">system</span> | `initial_language_from_system_to_data_file`
+### <a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><span style="opacity:.9;color: #de935f;font-size: 11px; right: -2px; top: -12px;position:relative; transform: rotate(-45deg);display:inline-block">feat</span></a><span style="opacity:.5;padding-right: -10px">system</span> | `initial_language_from_system_to_data_file`
 
 <!-- markdownlint-enable MD013 -->
 
@@ -455,7 +509,7 @@ leptos_fluent! {{
 
 <!-- markdownlint-disable MD013 -->
 
-### <a href="https://mondeja.github.io/leptos-fluent/install.html#features"><span style="opacity:.9;color: #de935f;font-size: 11px; right: -2px; top: -12px;position:relative; transform: rotate(-45deg);display:inline-block">feat</span></a><span style="opacity:.5;padding-right: -10px">system</span> | `set_language_to_data_file`
+### <a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><span style="opacity:.9;color: #de935f;font-size: 11px; right: -2px; top: -12px;position:relative; transform: rotate(-45deg);display:inline-block">feat</span></a><span style="opacity:.5;padding-right: -10px">system</span> | `set_language_to_data_file`
 
 <!-- markdownlint-enable MD013 -->
 
@@ -470,7 +524,7 @@ leptos_fluent! {{
 
 <!-- markdownlint-disable MD013 -->
 
-### <a href="https://mondeja.github.io/leptos-fluent/install.html#features"><span style="opacity:.9;color: #de935f;font-size: 11px; right: -2px; top: -12px;position:relative; transform: rotate(-45deg);display:inline-block">feat</span></a><span style="opacity:.5;padding-right: -10px">system</span> | `data_file_key`
+### <a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><span style="opacity:.9;color: #de935f;font-size: 11px; right: -2px; top: -12px;position:relative; transform: rotate(-45deg);display:inline-block">feat</span></a><span style="opacity:.5;padding-right: -10px">system</span> | `data_file_key`
 
 <!-- markdownlint-enable MD013 -->
 
