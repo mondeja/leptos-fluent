@@ -643,6 +643,18 @@ pub fn l(
 }
 
 /// Reactive HTML tag to set attributes on SSR
+///
+/// Currently there is not a way to set the `dir` and `lang` attributes
+/// of `<html>` tags on SSR. This components updates it on SSR. Must be
+/// rendered in a view.
+///
+/// ```rust,ignore
+/// use leptos_fluent::SsrHtmlTag;
+///
+/// view! {
+///     <SsrHtmlTag/>
+/// }
+/// ```
 #[component(transparent)]
 #[cfg(feature = "ssr")]
 pub fn SsrHtmlTag() -> impl IntoView {
