@@ -249,6 +249,8 @@ pub fn leptos_fluent(
         set_language_to_cookie_expr,
         fluent_file_paths,
         core_locales_path,
+        initial_language_from_system_bool,
+        initial_language_from_system_expr,
     } = syn::parse_macro_input!(input as I18nLoader);
 
     let n_languages = languages.len();
@@ -261,14 +263,50 @@ pub fn leptos_fluent(
         &core_locales_path,
     );
 
+    // Less code possible on nightly
     #[cfg(feature = "nightly")]
     let get_language_quote = quote! {
         &(::leptos_fluent::i18n())()
     };
+
     #[cfg(not(feature = "nightly"))]
     let get_language_quote = quote! {
         &::leptos_fluent::i18n().language.get()
     };
+
+    // discover from system language (desktop apps)
+    #[cfg(not(feature = "ssr"))]
+    let initial_language_from_system_quote = {
+        let effect_quote = quote! {
+            if let Ok(l) = ::leptos_fluent::current_locale() {
+                lang = ::leptos_fluent::l(
+                    &l,
+                    &LANGUAGES
+                );
+            }
+        };
+
+        match initial_language_from_system_bool {
+            Some(lit) => match lit.value {
+                true => effect_quote,
+                false => quote! {},
+            },
+            None => match initial_language_from_system_expr {
+                Some(expr) => quote! {
+                    if #expr {
+                        #effect_quote
+                    }
+                },
+                None => quote! {},
+            },
+        }
+    };
+
+    #[cfg(feature = "ssr")]
+    {
+        _ = initial_language_from_system_bool;
+        _ = initial_language_from_system_expr;
+    }
 
     #[cfg(not(feature = "ssr"))]
     let sync_html_tag_lang_quote = {
@@ -1071,6 +1109,7 @@ pub fn leptos_fluent(
     let initial_language_quote = {
         #[cfg(not(feature = "ssr"))]
         quote! {
+            #initial_language_from_system_quote
             #initial_language_from_url_param_quote
             #initial_language_from_cookie_quote
             #initial_language_from_localstorage_quote

@@ -185,6 +185,7 @@ jobs:
           - csr-complete
           - ssr-hydrate-actix
           - ssr-hydrate-axum
+          - system-gtk
     steps:
       - uses: actions/checkout@v4
       - name: Get toolchain
@@ -228,6 +229,11 @@ jobs:
         run: |
           cd examples/${{ matrix.example }}
           cargo leptos build --release
+      - name: Build with cargo
+        if: startsWith(matrix.example, 'system')
+        run: |
+          cd examples/${{ matrix.example }}
+          cargo build --release
 
   test-release-leptos-fluent-macros:
     needs:

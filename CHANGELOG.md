@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## Unreleased - [0.1.5]
+
+### New features
+
+- Add `initial_language_from_system` parameter to `leptos_fluent!` macro to set
+  the initial language from the system language. Useful for desktop applications.
+
 ## 2024-06-25 - [0.1.4]
 
 ### New features
@@ -281,6 +288,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.1.5]: https://github.com/mondeja/leptos-fluent/compare/v0.1.4...master
 [0.1.4]: https://github.com/mondeja/leptos-fluent/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/mondeja/leptos-fluent/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/mondeja/leptos-fluent/compare/v0.1.1...v0.1.2

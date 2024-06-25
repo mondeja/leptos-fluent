@@ -1,0 +1,10 @@
+[package]
+name = "leptos-fluent-gtk-example"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+leptos = { version = "0.6.12", features = ["csr"] }
+gtk = { version = "0.8.2", package = "gtk4" }
+leptos-fluent = { path = "../../leptos-fluent", default-features = false }
+fluent-templates = "0.9"

@@ -252,6 +252,8 @@ pub mod localstorage;
 pub mod url;
 
 #[doc(hidden)]
+pub use current_locale::current_locale;
+#[doc(hidden)]
 pub use web_sys;
 
 use core::hash::{Hash, Hasher};
