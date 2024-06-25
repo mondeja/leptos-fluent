@@ -171,7 +171,8 @@ fn App() -> impl IntoView {
         initial_language_from_system_to_data_file: true,
         // Get the initial language from a data file.
         initial_language_from_data_file: true,
-        // Key to use in the data file.
+        // Key to use to name the data file. Must be unique per translations
+        // state instance. By default is `"leptos-fluent"`.
         data_file_key: "my-app",
         // Set the language selected to a data file.
         set_language_to_data_file: true,
