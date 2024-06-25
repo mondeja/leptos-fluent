@@ -19,7 +19,7 @@ provides utilities for parsing the Fluent syntax.
 use leptos_fluent::leptos_fluent;
 
 let i18n = leptos_fluent! {{
-    // ... options
+    // ...
 }};
 
 leptos::logging::log!("i18n context: {i18n:?}");
@@ -33,8 +33,7 @@ Use an expression to set the cookie attributes and will not be validated.
 let attrs = "SameSite=Strict; MyCustomAttr=MyCustomValue;";
 leptos_fluent! {{
     cookie_attrs: attrs,
-
-    // ... other options
+    // ...
 }}
 ```
 
@@ -134,7 +133,7 @@ use leptos_fluent::{leptos_fluent, SsrHtmlTag};
 #[component]
 pub fn App() -> impl IntoView {
     leptos_fluent! {{
-        // ... options
+        // ...
     }};
 
     view! {

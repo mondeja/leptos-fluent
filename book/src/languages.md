@@ -122,9 +122,9 @@ Available features for languages file formats are:
 - `yaml`: YAML
 - `json5`: JSON5
 
-## Tracking locales files with `cargo leptos`
+## Tracking locales files with [`cargo leptos`]
 
-Using [`cargo-leptos`] the _locales/_ folder must be manually
+Using [`cargo leptos`] the _locales/_ folder must be manually
 configured to be watched:
 
 ```toml
@@ -144,5 +144,5 @@ watch-additional-files = ["examples/csr/locales"]
 
 [ISO 639-1 code]: https://en.wikipedia.org/wiki/ISO_639-1
 [`leptos_fluent::I18n::languages`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.languages
-[`cargo-leptos`]: https://github.com/leptos-rs/cargo-leptos
+[`cargo leptos`]: https://github.com/leptos-rs/cargo-leptos
 [`leptos_fluent!`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.leptos_fluent.html
