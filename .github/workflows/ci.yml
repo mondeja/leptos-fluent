@@ -10,6 +10,23 @@ on:
   workflow_dispatch:
 
 jobs:
+  check-toolchain-is-stable:
+    name: Check toolchain is stable
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get toolchain
+        id: toolchain
+        uses: ./.github/actions/get-toolchain
+      - name: Check toolchain
+        run: |
+          channel="${{ steps.toolchain.outputs.channel }}"
+          if [ "$channel" != "stable" ]; then
+            echo "Toolchain is not stable"
+            exit 1
+          fi
+          echo "channel=$channel" >> $GITHUB_OUTPUT
+
   qa:
     name: QA
     runs-on: ubuntu-latest
