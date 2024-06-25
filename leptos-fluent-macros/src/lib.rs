@@ -192,6 +192,19 @@ use quote::quote;
 /// - **`initial_language_from_system`** (_`false`_): Load the initial language of the user from the system language
 ///   on non wasm targets. Can be a literal boolean or an expression that will be evaluated at runtime. It will only
 ///   take effect on client side of desktop applications. The feature `system` must be enabled to use this option.
+/// - **`initial_language_from_system_to_data_file`** (_`false`_): Save the initial language of the user from the system
+///   language to a data file. Can be a literal boolean or an expression that will be evaluated at runtime.
+///   It will only take effect on client side of desktop applications. The feature `system` must be enabled to use
+///   this option.
+/// - **`initial_language_from_data_file`** (_`false`_): Load the initial language of the user from a data file.
+///   Can be a literal boolean or an expression that will be evaluated at runtime. It will only take effect on client
+///   side of desktop applications. The feature `system` must be enabled to use this option.
+/// - **`data_file_key`** (_`"leptos-fluent"`_): The key to store the language in the data file. Can be a literal string
+///   or an expression that will be evaluated at runtime. It will only take effect on client side of desktop applications.
+///   The feature `system` must be enabled to use this option.
+/// - **`set_language_to_data_file`** (_`false`_): Save the language of the user to a data file when setting the language.
+///   Can be a literal boolean or an expression that will be evaluated at runtime. It will only take effect on client side
+///   of desktop applications. The feature `system` must be enabled to use this option.
 ///
 /// [`fluent_templates::static_loader!`]: https://docs.rs/fluent-templates/latest/fluent_templates/macro.static_loader.html
 /// [`once_cell:sync::Lazy`]: https://docs.rs/once_cell/latest/once_cell/sync/struct.Lazy.html
@@ -433,7 +446,13 @@ pub fn leptos_fluent(
                     false => quote! { "" },
                 },
                 None => match initial_language_from_data_file_expr {
-                    Some(ref expr) => quote! { #expr },
+                    Some(ref expr) => quote! {
+                        if #expr {
+                            #data_file_key
+                        } else {
+                            ""
+                        }
+                    },
                     None => quote! { "" },
                 },
             };
