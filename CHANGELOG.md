@@ -10,8 +10,17 @@
 - Add `initial_language_from_system` parameter to `leptos_fluent!` macro to set
   the initial language from the system language. Useful for desktop
   applications. Must be enabled the new feature `system` to use it.
-- Expose `leptos_fluent::SsrHtmlTag` component to render it on SSR to sync
+- Add `leptos_fluent::SsrHtmlTag` component to render it on SSR to sync
   global attribute of `<html>` tag with the current language.
+- Add `initial_language_from_data_file` parameter to `leptos_fluent!` macro to
+  set the initial language from a data file when using `system` feature.
+- Add `set_language_to_data_file` parameter to `leptos_fluent!` macro to set
+  the current language to a data file when using `system` feature.
+- Add `data_file_key` parameter to `leptos_fluent!` macro to specify the file
+  key to store the current language when using `system` feature.
+- Add `initial_language_from_system_to_data_file` parameter to `leptos_fluent!`
+  macro to set the initial language from the system language to a data file
+  when using `system` feature.
 
 [GTK example]: https://github.com/mondeja/leptos-fluent/tree/master/examples/system-gtk
 

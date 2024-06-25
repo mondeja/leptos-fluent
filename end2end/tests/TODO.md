@@ -9,3 +9,7 @@
 - `initial_language_from_navigator_to_localstorage`
 - `initial_language_from_navigator_to_cookie`
 - `initial_language_from_system`
+- `set_language_to_data_file`
+- `initial_language_from_data_file`
+- `data_file_key`
+- `initial_language_from_system_to_data_file`
