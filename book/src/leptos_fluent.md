@@ -288,7 +288,7 @@ leptos_fluent! {{
 
 ### <span style="opacity:.5">CSR </span> | `initial_language_from_url_param_to_localstorage`
 
-Set initial language from the URL parameter and save it in the [local storage].
+Get initial language from the URL parameter and save it to [local storage].
 
 ```rust
 leptos_fluent! {{
@@ -299,7 +299,7 @@ leptos_fluent! {{
 
 ### <span style="opacity:.5">CSR </span> | `initial_language_from_url_param_to_cookie`
 
-Set the initial language from the URL parameter and save it in a cookie.
+Get the initial language from the URL parameter and save it to a cookie.
 
 ```rust
 leptos_fluent! {{
@@ -347,7 +347,7 @@ leptos_fluent! {{
 
 ### <span style="opacity:.5">CSR </span> | `initial_language_from_localstorage_to_cookie`
 
-Get the initial language from the local storage and save it in a cookie.
+Get the initial language from [local storage] and save it to a cookie.
 
 ```rust
 leptos_fluent! {{
@@ -358,7 +358,7 @@ leptos_fluent! {{
 
 ### <span style="opacity:.5">CSR </span> | `set_language_to_localstorage`
 
-Set the current language to the local storage.
+Set the current language to [local storage].
 
 ```rust
 leptos_fluent! {{
