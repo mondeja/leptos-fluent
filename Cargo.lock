@@ -1764,6 +1764,7 @@ dependencies = [
  "fluent-templates",
  "leptos",
  "leptos-fluent-macros",
+ "leptos_meta",
  "wasm-bindgen",
  "web-sys",
 ]
