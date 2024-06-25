@@ -236,9 +236,7 @@ pub(crate) struct I18nLoader {
     pub(crate) initial_language_from_data_file_bool: Option<syn::LitBool>,
     #[cfg(feature = "system")]
     pub(crate) initial_language_from_data_file_expr: Option<syn::Expr>,
-    #[cfg(feature = "system")]
     pub(crate) data_file_key_str: Option<syn::LitStr>,
-    #[cfg(feature = "system")]
     pub(crate) data_file_key_expr: Option<syn::Expr>,
     pub(crate) fluent_file_paths: FluentFilePaths,
 }
@@ -355,9 +353,7 @@ impl Parse for I18nLoader {
         let mut initial_language_from_data_file_expr: Option<
             syn::Expr,
         > = None;
-        #[cfg(feature = "system")]
         let mut data_file_key_str: Option<syn::LitStr> = None;
-        #[cfg(feature = "system")]
         let mut data_file_key_expr: Option<syn::Expr> = None;
 
         while !fields.is_empty() {
@@ -659,7 +655,6 @@ impl Parse for I18nLoader {
                     ));
                 }
             } else if k == "data_file_key" {
-                #[cfg(feature = "system")]
                 {
                     if let Some(err) = parse_litstr_or_expr_param(
                         &fields,
@@ -669,18 +664,6 @@ impl Parse for I18nLoader {
                     ) {
                         return Err(err);
                     }
-                }
-
-                #[cfg(not(feature = "system"))]
-                {
-                    return Err(syn::Error::new(
-                        k.span(),
-                        concat!(
-                            "The parameter 'data_file_key' of",
-                            " leptos_fluent! macro requires the feature",
-                            " 'system' enabled.",
-                        ),
-                    ));
                 }
             } else {
                 return Err(syn::Error::new(
@@ -931,9 +914,7 @@ impl Parse for I18nLoader {
             initial_language_from_data_file_bool,
             #[cfg(feature = "system")]
             initial_language_from_data_file_expr,
-            #[cfg(feature = "system")]
             data_file_key_str,
-            #[cfg(feature = "system")]
             data_file_key_expr,
         })
     }
