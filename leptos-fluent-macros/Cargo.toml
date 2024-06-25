@@ -2,7 +2,7 @@
 name = "leptos-fluent-macros"
 description = "Macros for leptos-fluent"
 edition.workspace = true
-version = "0.1.4"
+version = "0.1.5"
 license = "MIT"
 documentation.workspace = true
 repository.workspace = true
@@ -39,6 +39,7 @@ axum = []
 json = ["dep:serde", "dep:serde_json"]
 yaml = ["dep:serde", "dep:serde_yaml"]
 json5 = ["dep:serde", "dep:json5"]
+system = []
 
 [package.metadata.cargo-all-features]
 skip_feature_sets = [

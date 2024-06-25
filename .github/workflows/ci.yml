@@ -38,6 +38,10 @@ jobs:
             ~/.cargo/git
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/Cargo.lock') }}
+      - name: Install libgtk
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-4-dev
       - name: Lint
         if: matrix.process == 'lint'
         uses: nick-fields/retry@v3
@@ -185,6 +189,7 @@ jobs:
           - csr-complete
           - ssr-hydrate-actix
           - ssr-hydrate-axum
+          - system-gtk
     steps:
       - uses: actions/checkout@v4
       - name: Get toolchain
@@ -228,6 +233,16 @@ jobs:
         run: |
           cd examples/${{ matrix.example }}
           cargo leptos build --release
+      - name: Install libgtk
+        if: endsWith(matrix.example, 'gtk')
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-4-dev
+      - name: Build with cargo
+        if: startsWith(matrix.example, 'system')
+        run: |
+          cd examples/${{ matrix.example }}
+          cargo build --release
 
   test-release-leptos-fluent-macros:
     needs:

@@ -189,6 +189,9 @@ use quote::quote;
 ///   from the cookie to [local storage]. Can be a literal boolean or an expression that will be evaluated at runtime.
 /// - **`set_language_to_cookie`** (_`false`_): Save the language of the user to a cookie when setting the language.
 ///   Can be a literal boolean or an expression that will be evaluated at runtime. It will only take effect on client-side.
+/// - **`initial_language_from_system`** (_`false`_): Load the initial language of the user from the system language
+///   on non wasm targets. Can be a literal boolean or an expression that will be evaluated at runtime. It will only
+///   take effect on client side of desktop applications. The feature `system` must be enabled to use this option.
 ///
 /// [`fluent_templates::static_loader!`]: https://docs.rs/fluent-templates/latest/fluent_templates/macro.static_loader.html
 /// [`once_cell:sync::Lazy`]: https://docs.rs/once_cell/latest/once_cell/sync/struct.Lazy.html
@@ -249,6 +252,8 @@ pub fn leptos_fluent(
         set_language_to_cookie_expr,
         fluent_file_paths,
         core_locales_path,
+        initial_language_from_system_bool,
+        initial_language_from_system_expr,
     } = syn::parse_macro_input!(input as I18nLoader);
 
     let n_languages = languages.len();
@@ -261,14 +266,53 @@ pub fn leptos_fluent(
         &core_locales_path,
     );
 
+    // Less code possible on nightly
     #[cfg(feature = "nightly")]
     let get_language_quote = quote! {
         &(::leptos_fluent::i18n())()
     };
+
     #[cfg(not(feature = "nightly"))]
     let get_language_quote = quote! {
         &::leptos_fluent::i18n().language.get()
     };
+
+    // discover from system language (desktop apps)
+    #[cfg(all(feature = "system", not(feature = "ssr")))]
+    let initial_language_from_system_quote = {
+        let effect_quote = quote! {
+            if let Ok(l) = ::leptos_fluent::current_locale() {
+                lang = ::leptos_fluent::l(
+                    &l,
+                    &LANGUAGES
+                );
+            }
+        };
+
+        match initial_language_from_system_bool {
+            Some(lit) => match lit.value {
+                true => effect_quote,
+                false => quote! {},
+            },
+            None => match initial_language_from_system_expr {
+                Some(expr) => quote! {
+                    if #expr {
+                        #effect_quote
+                    }
+                },
+                None => quote! {},
+            },
+        }
+    };
+
+    #[cfg(all(not(feature = "system"), not(feature = "ssr")))]
+    let initial_language_from_system_quote = quote! {};
+
+    #[cfg(any(not(feature = "system"), feature = "ssr"))]
+    {
+        _ = initial_language_from_system_bool;
+        _ = initial_language_from_system_expr;
+    }
 
     #[cfg(not(feature = "ssr"))]
     let sync_html_tag_lang_quote = {
@@ -1071,6 +1115,7 @@ pub fn leptos_fluent(
     let initial_language_quote = {
         #[cfg(not(feature = "ssr"))]
         quote! {
+            #initial_language_from_system_quote
             #initial_language_from_url_param_quote
             #initial_language_from_cookie_quote
             #initial_language_from_localstorage_quote
