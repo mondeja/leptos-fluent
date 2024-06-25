@@ -11,7 +11,6 @@ For single crate projects, it would be something like:
 ```rust
 leptos_fluent! {{
     check_translations: "./src/**/*.rs",
-    // ...
 }}
 ```
 
@@ -65,9 +64,11 @@ The mechanism of translations checking needs to know where reside the calls to
 This is performed by parsing the source code looking for these macros
 invocations.
 
-This is the main reason why **leptos-fluent** doesn't provide
-ways to translate directly using methods of the [`leptos_fluent::I18n`]
-context, as it would be impossible to extract the translations at compile time.
+```admonish note title='Why macros'
+**leptos-fluent** doesn't provide ways to translate directly using
+[`leptos_fluent::I18n`] context methods, as it would be impossible to extract
+the translations at compile time.
+```
 
 The only limitation for checking translations with glob patterns is that the
 [`tr!`] and [`move_tr!`] macros that consume each context must be in
@@ -77,4 +78,4 @@ separation of contexts in the codebase.
 [`tr!`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.tr.html
 [`move_tr!`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.move_tr.html
 [`leptos_fluent::I18n`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html
-[`leptos_fluent!`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.leptos_fluent.html
+[`leptos_fluent!`]: https://mondeja.github.io/leptos-fluent/leptos_fluent.html

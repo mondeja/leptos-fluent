@@ -41,8 +41,10 @@ This standard enforces that an user will always be able to select their
 language in their own language, and not in the current language of the
 application.
 
-Note that the order of the languages will be defined based on the alphabetical
+```admonish abstract title='Order'
+The order of the languages will be defined based on the alphabetical
 order of their names, not their codes.
+```
 
 ## The languages file
 
@@ -68,13 +70,17 @@ The languages file must expose an array of arrays with the structure:
 
 ```json5
 [
-  // Code,     Name,            "ltr"/"rtl"/"auto" (optional)
+  // Code, Name,            "ltr"/"rtl"/"auto" (optional)
   ["code", "Language name", "Writing direction"],
 ]
 ```
 
-The order of the languages in [`leptos_fluent::I18n::languages`] will be
-the same as in the file regardless of the alphabetical order of the names.
+```admonish abstract title='Order'
+The order of the languages in
+[`leptos_fluent::I18n::languages`](https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.languages)
+will be the same as in the file regardless of the alphabetical order
+of the names.
+```
 
 The first in the languages file will used as the initial of the user when any
 other initialization value is discovered. Use the same as the one configured
@@ -122,9 +128,9 @@ Available features for languages file formats are:
 - `yaml`: YAML
 - `json5`: JSON5
 
-## Tracking locales files with `cargo leptos`
+## Tracking locales files with [`cargo leptos`]
 
-Using [`cargo-leptos`] the _locales/_ folder must be manually
+Using [`cargo leptos`] the _locales/_ folder must be manually
 configured to be watched:
 
 ```toml
@@ -143,6 +149,5 @@ watch-additional-files = ["examples/csr/locales"]
 ```
 
 [ISO 639-1 code]: https://en.wikipedia.org/wiki/ISO_639-1
-[`leptos_fluent::I18n::languages`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.languages
-[`cargo-leptos`]: https://github.com/leptos-rs/cargo-leptos
-[`leptos_fluent!`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.leptos_fluent.html
+[`cargo leptos`]: https://github.com/leptos-rs/cargo-leptos
+[`leptos_fluent!`]: https://mondeja.github.io/leptos-fluent/leptos_fluent.html

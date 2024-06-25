@@ -161,6 +161,21 @@ fn App() -> impl IntoView {
         url_param: "lang",
         // Discover the initial language of the user from an URL parameter.
         initial_language_from_url_param: true,
+
+        // Desktop applications (feature `system`)
+        // ---------------------------------------
+        // Set the initial language from the system locale.
+        initial_language_from_system: true,
+        // Set the discovered initial language of the user from
+        // the system locale to a data file.
+        initial_language_from_system_to_data_file: true,
+        // Get the initial language from a data file.
+        initial_language_from_data_file: true,
+        // Key to use to name the data file. Should be unique per
+        // application. By default is `"leptos-fluent"`.
+        data_file_key: "my-app",
+        // Set the language selected to a data file.
+        set_language_to_data_file: true,
     }};
 
     view! {
@@ -188,9 +203,7 @@ fn TranslatableComponent() -> impl IntoView {
 
 #[component]
 fn LanguageSelector() -> impl IntoView {
-    // Use `expect_i18n()` to get the current i18n context:
-    let i18n = expect_i18n();
-
+    // `expect_i18n()` to get the i18n context
     // `i18n.languages` is a static array with the available languages
     // `i18n.language.get()` to get the current language
     // `lang.activate()` to set the current language
@@ -199,7 +212,7 @@ fn LanguageSelector() -> impl IntoView {
     view! {
         <fieldset>
             {
-                move || i18n.languages.iter().map(|lang| {
+                move || expect_i18n().languages.iter().map(|lang| {
                     view! {
                         <div>
                             <input
@@ -227,6 +240,7 @@ fn LanguageSelector() -> impl IntoView {
 - **Actix Web integration**: `actix`
 - **Axum integration**: `axum`
 - **Nightly toolchain**: `nightly`
+- **Desktop applications**: `system`
 - **JSON languages file**: `json` (enabled by default)
 - **YAML languages file**: `yaml`
 - **JSON5 languages file**: `json5`
@@ -240,7 +254,7 @@ fn LanguageSelector() -> impl IntoView {
 
 [leptos]: https://leptos.dev/
 [fluent-templates]: https://github.com/XAMPPRocky/fluent-templates
-[quickstart]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.leptos_fluent.html
+[quickstart]: https://mondeja.github.io/leptos-fluent/leptos_fluent.html
 [examples]: https://github.com/mondeja/leptos-fluent/tree/master/examples
 [book]: https://mondeja.github.io/leptos-fluent/
 [documentation]: https://docs.rs/leptos-fluent

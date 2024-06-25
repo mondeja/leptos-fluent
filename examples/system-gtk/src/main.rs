@@ -25,11 +25,11 @@ fn main() {
         translations: [TRANSLATIONS],
         locales: "./locales",
         check_translations: "./src/**/*.rs",
-        initial_language_from_system: true,
-        set_language_to_data_file: true,
         initial_language_from_data_file: true,
-        data_file_key: "gtk-example",
+        initial_language_from_system: true,
         initial_language_from_system_to_data_file: true,
+        set_language_to_data_file: true,
+        data_file_key: "leptos-fluent-gtk-example",
     }};
 
     // Run the application

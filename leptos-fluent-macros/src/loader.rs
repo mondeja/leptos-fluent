@@ -355,9 +355,7 @@ impl Parse for I18nLoader {
         let mut initial_language_from_data_file_expr: Option<
             syn::Expr,
         > = None;
-        #[cfg(feature = "system")]
         let mut data_file_key_str: Option<syn::LitStr> = None;
-        #[cfg(feature = "system")]
         let mut data_file_key_expr: Option<syn::Expr> = None;
 
         while !fields.is_empty() {
@@ -586,6 +584,30 @@ impl Parse for I18nLoader {
                         ),
                     ));
                 }
+            } else if k == "initial_language_from_data_file" {
+                #[cfg(feature = "system")]
+                {
+                    if let Some(err) = parse_litbool_or_expr_param(
+                        &fields,
+                        &mut initial_language_from_data_file_bool,
+                        &mut initial_language_from_data_file_expr,
+                        "initial_language_from_data_file",
+                    ) {
+                        return Err(err);
+                    }
+                }
+
+                #[cfg(not(feature = "system"))]
+                {
+                    return Err(syn::Error::new(
+                        k.span(),
+                        concat!(
+                            "The parameter 'initial_language_from_data_file' of",
+                            " leptos_fluent! macro requires the feature",
+                            " 'system' enabled.",
+                        ),
+                    ));
+                }
             } else if k == "initial_language_from_system_to_data_file" {
                 #[cfg(feature = "system")]
                 {
@@ -634,32 +656,7 @@ impl Parse for I18nLoader {
                         ),
                     ));
                 }
-            } else if k == "initial_language_from_data_file" {
-                #[cfg(feature = "system")]
-                {
-                    if let Some(err) = parse_litbool_or_expr_param(
-                        &fields,
-                        &mut initial_language_from_data_file_bool,
-                        &mut initial_language_from_data_file_expr,
-                        "initial_language_from_data_file",
-                    ) {
-                        return Err(err);
-                    }
-                }
-
-                #[cfg(not(feature = "system"))]
-                {
-                    return Err(syn::Error::new(
-                        k.span(),
-                        concat!(
-                            "The parameter 'initial_language_from_data_file' of",
-                            " leptos_fluent! macro requires the feature",
-                            " 'system' enabled.",
-                        ),
-                    ));
-                }
             } else if k == "data_file_key" {
-                #[cfg(feature = "system")]
                 {
                     if let Some(err) = parse_litstr_or_expr_param(
                         &fields,
@@ -669,18 +666,6 @@ impl Parse for I18nLoader {
                     ) {
                         return Err(err);
                     }
-                }
-
-                #[cfg(not(feature = "system"))]
-                {
-                    return Err(syn::Error::new(
-                        k.span(),
-                        concat!(
-                            "The parameter 'data_file_key' of",
-                            " leptos_fluent! macro requires the feature",
-                            " 'system' enabled.",
-                        ),
-                    ));
                 }
             } else {
                 return Err(syn::Error::new(

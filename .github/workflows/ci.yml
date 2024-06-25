@@ -10,6 +10,22 @@ on:
   workflow_dispatch:
 
 jobs:
+  check-toolchain-is-stable:
+    name: Check toolchain is stable
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get toolchain
+        id: toolchain
+        uses: ./.github/actions/get-toolchain
+      - name: Check toolchain
+        run: |
+          if [ "${{ steps.toolchain.outputs.channel }}" != "stable" ]; then
+            echo 'Toolchain is not "stable", is "${{ steps.toolchain.outputs.channel }}". Check the file rust-toolchain.toml'
+            exit 1
+          fi
+          echo "channel=$channel" >> $GITHUB_OUTPUT
+
   qa:
     name: QA
     runs-on: ubuntu-latest
@@ -82,12 +98,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install mdbook
-        run: cargo binstall -y mdbook
+        run: cargo binstall -y mdbook mdbook-admonish mdbook-toc
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Build book
         run: |
           cd book
+          mdbook-admonish install .
           mdbook build
 
   unit-tests:
@@ -346,12 +363,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install mdbook
-        run: cargo binstall -y mdbook
+        run: cargo binstall -y mdbook mdbook-admonish mdbook-toc
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Build book
         run: |
           cd book
+          mdbook-admonish install .
           mdbook build
       - name: Deploy book
         uses: peaceiris/actions-gh-pages@v3

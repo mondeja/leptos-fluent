@@ -1,5 +1,7 @@
 # Installation
 
+<!-- toc -->
+
 ## CSR
 
 For client side rendering apps you only need to install **leptos-fluent** and
@@ -55,6 +57,51 @@ ssr = [
 watch-additional-files = ["locales"]
 ```
 
+## Desktop applications
+
+**leptos-fluent** can be installed on non-wasm targets, like desktop
+applications. You need to install **leptos-fluent**, [`fluent-templates`]
+and enable the `system` feature:
+
+```toml
+[dependencies]
+leptos-fluent = { version = "0.1", features = ["system"] }
+fluent-templates = "0.9"
+```
+
+```admonish example
+See the [GTK example](https://github.com/mondeja/leptos-fluent/tree/master/examples/system-gtk).
+```
+
+## Nightly toolchain
+
+**leptos-fluent** builds nightly functionalities by enabling the `nightly`
+feature:
+
+```toml
+[dependencies]
+leptos-fluent = { version = "0.1", features = ["nightly"] }
+fluent-templates = "0.9"
+```
+
+## Language files
+
+By default, **leptos-fluent** supports JSON languages files. If you want to
+use other formats to load your custom languages, you can enable the
+`json5` or `yaml` features:
+
+```toml
+[dependencies]
+fluent-templates = "0.9"
+leptos-fluent = {
+  version = "0.1", features = ["json5"], default-features = false
+}
+```
+
+```admonish tip
+See [**4. Languages**](https://mondeja.github.io/leptos-fluent/languages.html).
+```
+
 ## Features
 
 - **Server Side Rendering**: `ssr`
@@ -62,9 +109,10 @@ watch-additional-files = ["locales"]
 - **Actix Web integration**: `actix`
 - **Axum integration**: `axum`
 - **Nightly toolchain**: `nightly`
+- **Desktop applications**: `system`
 - **JSON languages file**: `json` (enabled by default)
 - **YAML languages file**: `yaml`
 - **JSON5 languages file**: `json5`
 
 [`fluent-templates`]: https://github.com/XAMPPRocky/fluent-templates
-[`leptos_fluent!`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.leptos_fluent.html
+[`leptos_fluent!`]: https://mondeja.github.io/leptos-fluent/leptos_fluent.html

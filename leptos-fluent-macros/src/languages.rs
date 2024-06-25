@@ -459,6 +459,8 @@ fn language_name_from_language_code(
     if use_country_code {
         let c = code.to_string().to_lowercase().replace('_', "-");
         match c.as_str() {
+            // lang (3 letter) -> number
+            "jbo-001" => return "Lojban (World)",
             // lang (2 letter) -> country (2 letter)
             "af-na" => return "Afrikaans (Namibia)",
             "af-za" => return "Afrikaans (South Africa)",
@@ -499,8 +501,8 @@ fn language_name_from_language_code(
             "bm-ml" => return "ߓߊߡߊߣߊߣߞߊߣ (ߞߊ߲ߞߊ߲)",
             "bn-bd" => return "বাংলা (বাংলাদেশ)",
             "bn-in" => return "বাংলা (ভারত)",
-            "bo-cn" => return "བོད་སྐད་ (ཀྲུང་ཧྭ)",
-            "bo-in" => return "བོད་སྐད་ (ཀྲུང་ཧྭ)", // TODO: The same as bo-cn, looks bad
+            "bo-cn" => return "བོད་སྐད་ (རྒྱ་ནག)",
+            "bo-in" => return "བོད་སྐད་ (཭ི་ཝི)",
             "br-fr" => return "Brezhoneg (Frañs)",
             "bs-ba" => return "Bosanski (Bosna i Hercegovina)",
             "ca-ad" => return "Català (Andorra)",
@@ -821,7 +823,7 @@ fn language_name_from_language_code(
             "it-va" => return "Italiano (Città del Vaticano)",
             "iu-ca" => return "ᐃᓄᒃᑎᑐᑦ (Canada)",
             "ja-jp" => return "日本語 (日本)",
-            "jv-id" => return "Basa Jawa (Indonesia)", // TODO: check this
+            "jv-id" => return "ꦧꦱꦗꦮ (Indonesia)", // TODO: check this
             "ka-ge" => return "ქართული (საქართველო)",
             "ki-ke" => return "Gĩkũyũ (Kenya)",
             "kk-kz" => return "Қазақ тілі (Қазақстан)",
@@ -831,7 +833,7 @@ fn language_name_from_language_code(
             "ko-kp" => return "한국어(북한)",
             "ks-in" => return "कश्मीरी (भारत)",
             "ku-tr" => return "Kurdî (Tirkiye)",
-            "kw-gb" => return "Cornish (United Kingdom)", // TODO: check this
+            "kw-gb" => return "Cornish (United Kingdom)",
             "ky-kg" => return "Кыргызстандык (Кыргызстан)",
             "lb-lu" => return "Lëtzebuergesch (Lëtzebuerg)",
             "lg-ug" => return "Luganda (Yuganda)", // TODO: check this
@@ -868,7 +870,7 @@ fn language_name_from_language_code(
             "nn-no" => return "Norsk nynorsk (Noreg)",
             "nr-za" => return "isiNdebele (South Africa)",
             "ny-mw" => return "Chichewa (Malawi)",
-            "oc-fr" => return "Occitan (France)", // TODO: Check this
+            "oc-fr" => return "Occitan (France)",
             "os-ge" => return "Ирон æвзаг (Росси)",
             "om-et" => return "Afaan Oromoo (Itoophiyaa)",
             "om-ke" => return "Afaan Oromoo (Keeniyaa)",
@@ -1013,8 +1015,8 @@ fn language_name_from_language_code(
             "bm-mli" => return "ߓߊߡߊߣߊߣߞߊߣ (ߞߊ߲ߞߊ߲)",
             "bn-bgd" => return "বাংলা (বাংলাদেশ)",
             "bn-ind" => return "বাংলা (ভারত)",
-            "bo-chn" => return "བོད་སྐད་ (ཀྲུང་ཧྭ)",
-            "bo-ind" => return "བོད་སྐད་ (ཀྲུང་ཧྭ)", // TODO: The same as bo-cn, looks bad
+            "bo-chn" => return "བོད་སྐད་ (རྒྱ་ནག)",
+            "bo-ind" => return "བོད་སྐད་ (཭ི་ཝི)",
             "br-fra" => return "Brezhoneg (Frañs)",
             "bs-bih" => return "Bosanski (Bosna i Hercegovina)",
             "ca-and" => return "Català (Andorra)",
@@ -1343,7 +1345,7 @@ fn language_name_from_language_code(
             "io-001" => return "Ido",
             "iu-can" => return "ᐃᓄᒃᑎᑐᑦ (Canada)",
             "ja-jpn" => return "日本語 (日本)",
-            "jv-idn" => return "Basa Jawa (Indonesia)", // TODO: check this
+            "jv-idn" => return "ꦧꦱꦗꦮ (Indonesia)", // TODO: check this
             "ka-geo" => return "ქართული (საქართველო)",
             "ki-ken" => return "Gĩkũyũ (Kenya)",
             "kk-kaz" => return "Қазақ тілі (Қазақстан)",
@@ -1353,7 +1355,7 @@ fn language_name_from_language_code(
             "ko-prk" => return "한국어(북한)",
             "ks-ind" => return "कश्मीरी (भारत)",
             "ku-tur" => return "Kurdî (Tirkiye)",
-            "kw-gbr" => return "Cornish (United Kingdom)", // TODO: check this
+            "kw-gbr" => return "Cornish (United Kingdom)",
             "ky-kgz" => return "Кыргызстандык (Кыргызстан)",
             "lb-lux" => return "Lëtzebuergesch (Lëtzebuerg)",
             "lg-uga" => return "Luganda (Yuganda)", // TODO: check this
@@ -1390,7 +1392,7 @@ fn language_name_from_language_code(
             "nn-nor" => return "Norsk nynorsk (Noreg)",
             "nr-zaf" => return "isiNdebele (South Africa)",
             "ny-mwi" => return "Chichewa (Malawi)",
-            "oc-fra" => return "Occitan (France)", // TODO: Check this
+            "oc-fra" => return "Occitan (France)",
             "om-eth" => return "Afaan Oromoo (Itoophiyaa)",
             "om-ken" => return "Afaan Oromoo (Keeniyaa)",
             "or-ind" => return "ଓଡ଼ିଆ (ଭାରତ)",
@@ -1501,119 +1503,218 @@ fn language_name_from_language_code(
             //   Chakma language, an Indo-Aryan language spoken in Bangladesh
             //   TODO: How is written "Bangladesh" in Chakma language?
             "cpp-bd" => return "𑄌𑄋𑄴𑄟𑄳𑄦 𑄞𑄌𑄴 (Bangladesh)",
+            "agq-CM" => return "Aghem (Cameroon)",
+            "ksf-CM" => return "Bafia (Cameroon)",
+            "bas-CM" => return "Ɓasaá (Cameroon)",
+            "dua-CM" => return "Duala (Cameroon)",
+            "ewo-CM" => return "Ewondo (Cameroon)",
+            "kkj-CM" => return "Kako (Cameroon)",
+            "nmg-CM" => return "Kwasio (Cameroon)",
+            "mgo-CM" => return "Metaʼ (Cameroon)",
+            "mua-CM" => return "Mundang (Cameroon)",
+            "nnh-CM" => return "Ngiemboon (Cameroon)",
+            "jgo-CM" => return "Ngomba (Cameroon)",
+            "yav-CM" => return "Yɔɔŋmbɔ (Cameroon)",
+            "moh-CA" => return "Mohawk (Canada)",
+            "kea-CV" => return "Kabuverdianu (Cabo Verde)",
+            "arn-CL" => return "Mapudungun (Chile)",
+            "yue-CN" => return "粤语 (中国)",
+            "byn-ER" => return "Blin (Eritrea)",
+            "gez-ER" => return "ግዕዝ (ኤርትራ)",
+            "tig-ER" => return "Tigre (Eritrea)",
+            "gez-ET" => return "ግዕዝ (ኤርትራ)",
+            "wal-ET" => return "Wolaytta (Ethiopia)",
+            "smn-FI" => return "anarâškielâ (Suopma)",
+            "gsw-FR" => return "Elsässisch (Frankreich)",
+            "ksh-DE" => return "Kölsch (Deutschland)",
+            "nds-DE" => return "Plattdüütsch (Deutschland)",
+            "dsb-DE" => return "Niedersorbisch (Deutschland)",
+            "hsb-DE" => return "Hornjoserbšćina (Němska)",
+            "gaa-GH" => return "Ga (Ghana)",
+            "kpe-GN" => return "Kpelle (Guinea)",
+            "nqo-GN" => return "N'Ko (Guinea)",
+            "yue-HK" => return "粤语 (中国)",
+            "brx-IN" => return "बोड़ो (भारत)",
+            "ccp-IN" => return "बोड़ो (भारत)", // TODO: same as brx-IN
+            "kok-IN" => return "कोंकणी (भारत)",
+            "mni-IN" => return "Manipuri (India)",
+            "sat-IN" => return "Santali (India)",
+            "ckb-IR" => return "کوردی (ایران)",
+            "mzn-IR" => return "مازِرونی (ایران)",
+            "lrc-IR" => return "لۊری شومالی (ایران)",
+            "ckb-IQ" => return "کوردی (ایران)",
+            "lrc-IQ" => return "لۊری شومالی (ایران)",
+            "syr-IQ" => return "ܣܘܪܝܝܐ (ܩܕܝܫܐ)",
+            "fur-IT" => return "Friulian (Italy)", // TODO: check
+            "scn-IT" => return "Sicilian (Italy)", // TODO: check
+            "ebu-KE" => return "Kĩembu (Kenya)",
+            "guz-KE" => return "Ekegusii (Kenya)",
+            "kln-KE" => return "Kalenjin (Kenya)",
+            "kam-KE" => return "Kikamba (Kenya)",
+            "luo-KE" => return "Dholuo (Kenya)",
+            "luy-KE" => return "Luyia (Kenya)",
+            "mas-KE" => return "Maa (Kenya)",
+            "mer-KE" => return "Kĩmĩrũ (Kenya)",
+            "saq-KE" => return "Kisampur (Kenya)",
+            "dav-KE" => return "Kitaita (Kenya)",
+            "teo-KE" => return "Kiteso (Kenya)",
+            "kpe-LR" => return "Kpelle (Liberia)",
+            "vai-LR" => return "ꕙꔤ (ꕞꔤꔫꕩ)",
+            "gsw-LI" => return "Elsässisch (Liechtenstein)",
+            "khq-ML" => return "Koyra ciini (Maali)",
+            "ses-ML" => return "Koyraboro senni (Maali)",
+            "mfe-MU" => return "kreol morisien (Moris)",
+            "tzm-MA" => return "ⵜⴰⵎⴰⵣⵉⵖⵜ (ⵍⵎⴰⵣⵉⵖ)",
+            "zgh-MA" => return "ⵜⴰⵎⴰⵣⵉⵖⵜ (ⵍⵎⴰⵣⵉⵖ)",
+            "shi-MA" => return "ⵜⴰⵎⴰⵣⵉⵖⵜ (ⵍⵎⴰⵣⵉⵖ)",
+            "mgh-MZ" => return "Makua (Moçambique)",
+            "seh-MZ" => return "sena (Moçambique)",
+            "naq-NA" => return "Khoekhoegowab (Namibiab)",
+            "nds-NL" => return "Plattdüütsch (Nederland)",
+            "twq-NE" => return "Tasawaq senni (Nižer)",
+            "dje-NE" => return "Zarmaciine (Nižer)",
+            "kaj-NG" => return "Kaje (Najeriya)",
+            "kcg-NG" => return "Tyap (Najeriya)",
+            "ceb-PH" => return "Cebuano (Pilipinas)",
+            "fil-PH" => return "Filipino (Pilipinas)",
+            "myv-RU" => return "эрзянь (Россия)",
+            "sah-RU" => return "саха тыла (Россия)",
+            "dyo-SN" => return "joola (Senegal)",
+            "nso-ZA" => return "Sesotho sa Leboa (Afrika Borwa)",
+            "nus-SS" => return "Thok Nath (SS)",
+            "ast-ES" => return "asturianu (España)",
+            "gsw-CH" => return "Elsässisch (Schweiz)",
+            "wae-CH" => return "Walser (Schweiz)",
+            "syr-SY" => return "ܣܘܪܝܝܐ (ܣܘܪܝܐ)",
+            "trv-TW" => return "Sakizaya (Taiwan)",
+            "asa-TZ" => return "Kipare (Tanzania)",
+            "bez-TZ" => return "Hibena (Tanzania)",
+            "lag-TZ" => return "Kɨlaangi (Tanzania)",
+            "jmc-TZ" => return "Kimachame (Tanzania)",
+            "kde-TZ" => return "Chimakonde (Tanzania)",
+            "mas-TZ" => return "Maa (Tanzania)",
+            "rof-TZ" => return "Kihorombo (Tanzania)",
+            "rwk-TZ" => return "Kiruwa (Tanzania)",
+            "sbp-TZ" => return "Ishisangu (Tanzania)",
+            "ksb-TZ" => return "Kishambaa (Tanzania)",
+            "vun-TZ" => return "Kyuk (Tanzania)",
+            "cgg-UG" => return "Rukiga (Uganda)",
+            "nyn-UG" => return "Runyankore (Uganda)",
+            "xog-UG" => return "Olusoga (Uganda)",
+            "teo-UG" => return "Kiteso (Uganda)",
+            "chr-US" => return "ᏣᎳᎩ (ᎠᎹᏂᏟ)",
+            "haw-US" => return "ʻŌlelo Hawaiʻi (ʻAmelika Hui Pū ʻIa)",
+            "lkt-US" => return "Lakȟólʼiyapi (Mílahaŋska Tȟamákȟočhe)",
+            "bem-ZM" => return "Ichibemba (Zambia)",
 
             // lang (3 letter) -> country (3 letter)
             "kab-dza" => return "θɐqβæjlɪθ (Asenǧaq n Dzayer)",
             "cpp-bgd" => return "𑄌𑄋𑄴𑄟𑄳𑄦 𑄞𑄌𑄴 (Bangladesh)",
+            "agq-CMR" => return "Aghem (Cameroon)",
+            "ksf-CMR" => return "Bafia (Cameroon)",
+            "bas-CMR" => return "Ɓasaá (Cameroon)",
+            "dua-CMR" => return "Duala (Cameroon)",
+            "ewo-CMR" => return "Ewondo (Cameroon)",
+            "kkj-CMR" => return "Kako (Cameroon)",
+            "nmg-CMR" => return "Kwasio (Cameroon)",
+            "mgo-CMR" => return "Metaʼ (Cameroon)",
+            "mua-CMR" => return "Mundang (Cameroon)",
+            "nnh-CMR" => return "Ngiemboon (Cameroon)",
+            "jgo-CMR" => return "Ngomba (Cameroon)",
+            "yav-CMR" => return "Yɔɔŋmbɔ (Cameroon)",
+            "moh-CAN" => return "Mohawk (Canada)",
+            "kea-CPV" => return "Kabuverdianu (Cabo Verde)",
+            "arn-CHL" => return "Mapudungun (Chile)",
+            "yue-CHN" => return "粤语 (中国)",
+            "byn-ERI" => return "Blin (Eritrea)",
+            "gez-ERI" => return "ግዕዝ (ኤርትራ)",
+            "tig-ERI" => return "Tigre (Eritrea)",
+            "gez-ETH" => return "ግዕዝ (ኤርትራ)",
+            "wal-ETH" => return "Wolaytta (Ethiopia)",
+            "smn-FIN" => return "anarâškielâ (Suopma)",
+            "gsw-FRA" => return "Elsässisch (Frankreich)",
+            "ksh-DEU" => return "Kölsch (Deutschland)",
+            "nds-DEU" => return "Plattdüütsch (Deutschland)",
+            "dsb-DEU" => return "Niedersorbisch (Deutschland)",
+            "hsb-DEU" => return "Hornjoserbšćina (Němska)",
+            "gaa-GHA" => return "Ga (Ghana)",
+            "kpe-GIN" => return "Kpelle (Guinea)",
+            "nqo-GIN" => return "N'Ko (Guinea)",
+            "yue-HKG" => return "粤语 (中国)",
+            "brx-IND" => return "बोड़ो (भारत)",
+            "ccp-IND" => return "बोड़ो (भारत)", // TODO: same as brx-IND
+            "kok-IND" => return "कोंकणी (भारत)",
+            "mni-IND" => return "Manipuri (India)",
+            "sat-IND" => return "Santali (India)",
+            "ckb-IRN" => return "کوردی (ایران)",
+            "mzn-IRN" => return "مازِرونی (ایران)",
+            "lrc-IRN" => return "لۊری شومالی (ایران)",
+            "ckb-IRQ" => return "کوردی (ایران)",
+            "lrc-IRQ" => return "لۊری شومالی (ایران)",
+            "syr-IRQ" => return "ܣܘܪܝܝܐ (ܩܕܝܫܐ)",
+            "fur-ITA" => return "Friulian (Italy)", // TODO: check
+            "scn-ITA" => return "Sicilian (Italy)", // TODO: check
+            "ebu-KEN" => return "Kĩembu (Kenya)",
+            "guz-KEN" => return "Ekegusii (Kenya)",
+            "kln-KEN" => return "Kalenjin (Kenya)",
+            "kam-KEN" => return "Kikamba (Kenya)",
+            "luo-KEN" => return "Dholuo (Kenya)",
+            "luy-KEN" => return "Luyia (Kenya)",
+            "mas-KEN" => return "Maa (Kenya)",
+            "mer-KEN" => return "Kĩmĩrũ (Kenya)",
+            "saq-KEN" => return "Kisampur (Kenya)",
+            "dav-KEN" => return "Kitaita (Kenya)",
+            "teo-KEN" => return "Kiteso (Kenya)",
+            "kpe-LBR" => return "Kpelle (Liberia)",
+            "vai-LBR" => return "ꕙꔤ (ꕞꔤꔫꕩ)",
+            "gsw-LIE" => return "Elsässisch (Liechtenstein)",
+            "khq-MLI" => return "Koyra ciini (Maali)",
+            "ses-MLI" => return "Koyraboro senni (Maali)",
+            "mfe-MUS" => return "kreol morisien (Moris)",
+            "tzm-MAR" => return "ⵜⴰⵎⴰⵣⵉⵖⵜ (ⵍⵎⴰⵣⵉⵖ)",
+            "zgh-MAR" => return "ⵜⴰⵎⴰⵣⵉⵖⵜ (ⵍⵎⴰⵣⵉⵖ)",
+            "shi-MAR" => return "ⵜⴰⵎⴰⵣⵉⵖⵜ (ⵍⵎⴰⵣⵉⵖ)",
+            "mgh-MOZ" => return "Makua (Moçambique)",
+            "seh-MOZ" => return "sena (Moçambique)",
+            "naq-NAM" => return "Khoekhoegowab (Namibiab)",
+            "nds-NLD" => return "Plattdüütsch (Nederland)",
+            "twq-NER" => return "Tasawaq senni (Nižer)",
+            "dje-NER" => return "Zarmaciine (Nižer)",
+            "kaj-NGA" => return "Kaje (Najeriya)",
+            "kcg-NGA" => return "Tyap (Najeriya)",
+            "ceb-PHL" => return "Cebuano (Pilipinas)",
+            "fil-PHL" => return "Filipino (Pilipinas)",
+            "myv-RUS" => return "эрзянь (Россия)",
+            "sah-RUS" => return "саха тыла (Россия)",
+            "dyo-SEN" => return "joola (Senegal)",
+            "nso-ZAF" => return "Sesotho sa Leboa (Afrika Borwa)",
+            "nus-SSD" => return "Thok Nath (SS)",
+            "ast-ESP" => return "asturianu (España)",
+            "gsw-CHE" => return "Elsässisch (Schweiz)",
+            "wae-CHE" => return "Walser (Schweiz)",
+            "syr-SYR" => return "ܣܘܪܝܝܐ (ܣܘܪܝܐ)",
+            "trv-TWN" => return "Sakizaya (Taiwan)",
+            "asa-TZA" => return "Kipare (Tanzania)",
+            "bez-TZA" => return "Hibena (Tanzania)",
+            "lag-TZA" => return "Kɨlaangi (Tanzania)",
+            "jmc-TZA" => return "Kimachame (Tanzania)",
+            "kde-TZA" => return "Chimakonde (Tanzania)",
+            "mas-TZA" => return "Maa (Tanzania)",
+            "rof-TZA" => return "Kihorombo (Tanzania)",
+            "rwk-TZA" => return "Kiruwa (Tanzania)",
+            "sbp-TZA" => return "Ishisangu (Tanzania)",
+            "ksb-TZA" => return "Kishambaa (Tanzania)",
+            "vun-TZA" => return "Kyuk (Tanzania)",
+            "cgg-UGA" => return "Rukiga (Uganda)",
+            "nyn-UGA" => return "Runyankore (Uganda)",
+            "xog-UGA" => return "Olusoga (Uganda)",
+            "teo-UGA" => return "Kiteso (Uganda)",
+            "chr-USA" => return "ᏣᎳᎩ (ᎠᎹᏂᏟ)",
+            "haw-USA" => return "ʻŌlelo Hawaiʻi (ʻAmelika Hui Pū ʻIa)",
+            "lkt-USA" => return "Lakȟólʼiyapi (Mílahaŋska Tȟamákȟočhe)",
+            "bem-ZMB" => return "Ichibemba (Zambia)",
 
             // Followed this table: https://www.fincher.org/Utilities/CountryLanguageList.shtml
-            //
-            // TODO:
-            // - Next dialects are iso639-3 codes. Investigate them:
-            //    + 'agq-CM' and 'agq-CMR'
-            //    + 'ksf-CM' and 'ksf-CMR'
-            //    + 'bas-CM' and 'bas-CMR'
-            //    + 'dua-CM' and 'dua-CMR'
-            //    + 'ewo-CM' and 'ewo-CMR'
-            //    + 'kkj-CM' and 'kkj-CMR'
-            //    + 'nmg-CM' and 'nmg-CMR'
-            //    + 'mgo-CM' and 'mgo-CMR'
-            //    + 'mua-CM' and 'mua-CMR'
-            //    + 'nnh-CM' and 'nnh-CMR'
-            //    + 'jgo-CM' and 'jgo-CMR'
-            //    + 'yav-CM' and 'yav-CMR'
-            //    + 'moh-CA' and 'moh-CAN'
-            //    + 'kea-CV' and 'kea-CPV'
-            //    + 'arn-CL' and 'arn-CHL'
-            //    + 'yue-CN' and 'yue-CHN'
-            //    + 'byn-ER' and 'byn-ERI'
-            //    + 'gez-ER' and 'gez-ERI'
-            //    + 'tig-ER' and 'tig-ERI'
-            //    + 'gez-ET' and 'gez-ETH'
-            //    + 'wal-ET' and 'wal-ETH'
-            //    + 'smn-FI' and 'smn-FIN'
-            //    + 'gsw-FR' and 'gsw-FRA'
-            //    + 'ksh-DE' and 'ksh-DEU'
-            //    + 'nds-DE' and 'nds-DEU'
-            //    + 'dsb-DE' and 'dsb-DEU'
-            //    + 'hsb-DE' and 'hsb-DEU'
-            //    + 'gaa-GH' and 'gaa-GHA'
-            //    + 'kpe-GN' and 'kpe-GIN'
-            //    + 'nqo-GN' and 'nqo-GIN'
-            //    + 'yue-HK' and 'yue-HKG'
-            //    + 'brx-IN' and 'brx-IND'
-            //    + 'ccp-IN' and 'ccp-IND'
-            //    + 'kok-IN' and 'kok-IND'
-            //    + 'mni-IN' and 'mni-IND'
-            //    + 'sat-IN' and 'sat-IND'
-            //    + 'ckb-IR' and 'ckb-IRN'
-            //    + 'mzn-IR' and 'mzn-IRN'
-            //    + 'lrc-IR' and 'lrc-IRN'
-            //    + 'ckb-IQ' and 'ckb-IRQ'
-            //    + 'lrc-IQ' and 'lrc-IRQ'
-            //    + 'syr-IQ' and 'syr-IRQ'
-            //    + 'fur-IT' and 'fur-ITA'
-            //    + 'scn-IT' and 'scn-ITA'
-            //    + 'ebu-KE' and 'ebu-KEN'
-            //    + 'guz-KE' and 'guz-KEN'
-            //    + 'kln-KE' and 'kln-KEN'
-            //    + 'kam-KE' and 'kam-KEN'
-            //    + 'luo-KE' and 'luo-KEN'
-            //    + 'luy-KE' and 'luy-KEN'
-            //    + 'mas-KE' and 'mas-KEN'
-            //    + 'mer-KE' and 'mer-KEN'
-            //    + 'saq-KE' and 'saq-KEN'
-            //    + 'dav-KE' and 'dav-KEN'
-            //    + 'teo-KE' and 'teo-KEN'
-            //    + 'kpe-LR' and 'kpe-LBR'
-            //    + 'vai-LR' and 'vai-LBR'
-            //    + 'gsw-LI' and 'gsw-LIE'
-            //    + 'khq-ML' and 'khq-MLI'
-            //    + 'ses-ML' and 'ses-MLI'
-            //    + 'mfe-MU' and 'mfe-MUS'
-            //    + 'tzm-MA' and 'tzm-MAR'
-            //    + 'zgh-MA' and 'zgh-MAR'
-            //    + 'shi-MA' and 'shi-MAR'
-            //    + 'mgh-MZ' and 'mgh-MOZ'
-            //    + 'seh-MZ' and 'seh-MOZ'
-            //    + 'naq-NA' and 'naq-NAM'
-            //    + 'nds-NL' and 'nds-NLD'
-            //    + 'twq-NE' and 'twq-NER'
-            //    + 'dje-NE' and 'dje-NER'
-            //    + 'kaj-NG' and 'kaj-NGA'
-            //    + 'kcg-NG' and 'kcg-NGA'
-            //    + 'ceb-PH' and 'ceb-PHL'
-            //    + 'fil-PH' and 'fil-PHL'
-            //    + 'myv-RU' and 'myv-RUS'
-            //    + 'sah-RU' and 'sah-RUS'
-            //    + 'dyo-SN' and 'dyo-SEN'
-            //    + 'nso-ZA' and 'nso-ZAF'
-            //    + 'nus-SS' and 'nus-SSD'
-            //    + 'ast-ES' and 'ast-ESP'
-            //    + 'gsw-CH' and 'gsw-CHE'
-            //    + 'wae-CH' and 'wae-CHE'
-            //    + 'syr-SY' and 'syr-SYR'
-            //    + 'trv-TW' and 'trv-TWN'
-            //    + 'asa-TZ' and 'asa-TZA'
-            //    + 'bez-TZ' and 'bez-TZA'
-            //    + 'lag-TZ' and 'lag-TZA'
-            //    + 'jmc-TZ' and 'jmc-TZA'
-            //    + 'kde-TZ' and 'kde-TZA'
-            //    + 'mas-TZ' and 'mas-TZA'
-            //    + 'rof-TZ' and 'rof-TZA'
-            //    + 'rwk-TZ' and 'rwk-TZA'
-            //    + 'sbp-TZ' and 'sbp-TZA'
-            //    + 'ksb-TZ' and 'ksb-TZA'
-            //    + 'vun-TZ' and 'vun-TZA'
-            //    + 'cgg-UG' and 'cgg-UGA'
-            //    + 'nyn-UG' and 'nyn-UGA'
-            //    + 'xog-UG' and 'xog-UGA'
-            //    + 'teo-UG' and 'teo-UGA'
-            //    + 'chr-US' and 'chr-USA'
-            //    + 'haw-US' and 'haw-USA'
-            //    + 'lkt-US' and 'lkt-USA'
-            //    + 'jbo-001'
-            //    + 'bem-ZM' and 'bem-ZMB'
             _ => {}
         }
     }

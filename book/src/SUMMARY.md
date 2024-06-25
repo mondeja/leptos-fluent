@@ -12,3 +12,7 @@
 - [Languages](./languages.md)
 - [Checking translations](./checking-translations.md)
 - [FAQs](./faqs.md)
+
+# Reference
+
+- [`leptos_fluent!`](./leptos_fluent.md)

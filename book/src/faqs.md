@@ -2,24 +2,27 @@
 
 # FAQs
 
+<!-- toc -->
+
 ### How to get `unic_langid::LanguageIdentifier` if not installed?
 
 ```rust
 use fluent_templates::LanguageIdentifier;
 ```
 
-`fluent-templates` also depends externally on [`fluent-bundle`] whichs
-provides utilities for parsing the Fluent syntax.
-
-[`fluent-bundle`]: https://docs.rs/fluent-bundle/latest/fluent_bundle/
+```admonish tip
+`fluent-templates` also depends externally on
+[`fluent-bundle`](https://docs.rs/fluent-bundle/latest/fluent_bundle/)
+whichs provides utilities for parsing the Fluent syntax.
+```
 
 ### How to get the i18n context at initialization?
 
 ```rust
 use leptos_fluent::leptos_fluent;
 
-let i18n = leptos_fluent!{{
-    // ... options
+let i18n = leptos_fluent! {{
+    // ...
 }};
 
 leptos::logging::log!("i18n context: {i18n:?}");
@@ -33,8 +36,7 @@ Use an expression to set the cookie attributes and will not be validated.
 let attrs = "SameSite=Strict; MyCustomAttr=MyCustomValue;";
 leptos_fluent! {{
     cookie_attrs: attrs,
-
-    // ... other options
+    // ...
 }}
 ```
 
@@ -46,14 +48,16 @@ From fluent-templates `v0.9.5` onwards you can get it from your translations.
 let fallback_language = expect_i18n().translations.get()[0].fallback();
 ```
 
-### Why examples don't use `<For/>` component?
+### Why examples don't use [`<For/>`] component?
 
-There are some cases in which the `For` component is not reproducible between
+```admonish bug
+There are some cases in which the [`<For/>`] component is not reproducible between
 SSR and hydrate modes leading to different renders, so decided to use a
 simple vector to not bring confusion to main examples.
+```
 
-In any case, the `<For/>` component is secure on CSR contexts and
-`leptos_fluent::Language`s implement `Hash` and `Eq` traits to be
+In any case, the [`<For/>`] component is secure on CSR contexts and
+[`leptos_fluent::Language`]s implement `Hash` and `Eq` traits to be
 able to be passed directly to `key`s properties trigerring reactivity
 depending on the current active language.
 
@@ -75,7 +79,7 @@ fn render_language(lang: &'static Language) -> impl IntoView { ... }
 
 ### How to manage translations on server actions
 
-The translations reside on the client side, so the `leptos_fluent::I18n`
+The translations reside on the client side, so the [`leptos_fluent::I18n`]
 can not be accessed as context on server actions. Pass the translations
 as values if the bandwidth is not a problem or use your own statics on
 server side.
@@ -122,3 +126,32 @@ fn render_language(lang: &'static Language) -> impl IntoView {
     }
 }
 ```
+
+### How to change `<html>` attributes on SSR
+
+Use the component [`leptos_fluent::SsrHtmlTag`]:
+
+```rust
+use leptos::*;
+use leptos_fluent::{leptos_fluent, SsrHtmlTag};
+
+#[component]
+pub fn App() -> impl IntoView {
+    leptos_fluent! {{
+        // ...
+    }};
+
+    view! {
+        <SsrHtmlTag/>
+        <LanguageSelector/>
+    }
+}
+
+#[component]
+fn LanguageSelector() -> impl IntoView { ... }
+```
+
+[`<For/>`]: https://docs.rs/leptos/latest/leptos/fn.For.html
+[`leptos_fluent::SsrHtmlTag`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.SsrHtmlTag.html
+[`leptos_fluent::Language`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html
+[`leptos_fluent::I18n`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html
