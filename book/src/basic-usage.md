@@ -190,6 +190,8 @@ The i18n context has the following fields:
 - [`translations`]: A signal to the vector of [fluent-templates] loaders that stores
   the translations.
 
+### Update language
+
 To update the language, use `set` method of `language` field or just
 [`lang.activate()`] (new in v0.1.1):
 
@@ -203,6 +205,8 @@ let i18n = leptos_fluent::expect_i18n();
 i18n(lang);
 ```
 
+### Get active language
+
 To get the current active language, use `get` method of `language` field:
 
 ```rust
@@ -211,11 +215,15 @@ i18n.language.get()
 i18n() // features = ["nightly"]
 ```
 
+### Get available languages
+
 To get the available languages, iterate over the `languages` field:
 
 ```rust
 i18n.languages.iter()
 ```
+
+### Check if a language is active
 
 To check if a language is the active one, use `is_active` method of a
 [`leptos_fluent::Language`] struct:

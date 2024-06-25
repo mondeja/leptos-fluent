@@ -88,3 +88,38 @@ The names of the settings can be configured using the following parameters:
 [Cookie]: https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie
 [Cookie attributes]: https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie#write_a_new_cookie
 [URL parameter]: https://developer.mozilla.org/es/docs/Web/API/URLSearchParams
+
+# Common configurations
+
+## Local storage from navigator (CSR)
+
+```rust
+leptos_fluent! {{
+    locales: "./locales",
+    translations: [TRANSLATIONS],
+
+    set_language_to_localstorage: true,
+    initial_language_from_localstorage: true,
+    initial_language_from_navigator: true,
+    initial_language_from_navigator_to_localstorage: true,
+    initial_language_from_url_param: true,
+    initial_language_from_url_param_to_localstorage: true,
+}}
+```
+
+## Cookie from navigator and header (SSR + CSR)
+
+```rust
+leptos_fluent! {{
+    locales: "./locales",
+    translations: [TRANSLATIONS],
+
+    set_language_to_cookie: true,
+    initial_language_from_cookie: true,
+    initial_language_from_navigator: true,
+    initial_language_from_navigator_to_cookie: true,
+    initial_language_from_url_param: true,
+    initial_language_from_url_param_to_cookie: true,
+    initial_language_from_accept_language_header: true,
+}}
+```
