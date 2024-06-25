@@ -200,27 +200,29 @@ to use it in the [`<html dir="...">` attribute] (see `sync_html_tag_dir`). For e
 Check the translations at compile time. It is useful to ensure that all
 translations are correct and that there are no missing translations.
 
-Must be a glob relative to the _Cargo.toml_ file. For single crate projects:
+Must be a [glob] relative to the _Cargo.toml_ file.
 
-```rust
-leptos_fluent! {{
-    locales: "./locales",
-    translations: [TRANSLATIONS],
-    check_translations: "./src/**/*.rs",
-    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-}}
-```
+- For single crate projects:
 
-For workspace projects:
+  ```rust
+  leptos_fluent! {{
+      locales: "./locales",
+      translations: [TRANSLATIONS],
+      check_translations: "./src/**/*.rs",
+      // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  }}
+  ```
 
-```rust
-leptos_fluent! {{
-    locales: "./locales",
-    translations: [TRANSLATIONS],
-    check_translations: "../{app,components}/src/**/*.rs",
-    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-}}
-```
+- For workspace projects:
+
+  ```rust
+  leptos_fluent! {{
+      locales: "./locales",
+      translations: [TRANSLATIONS],
+      check_translations: "../{app,components}/src/**/*.rs",
+      // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  }}
+  ```
 
 ### <span style="opacity:.5">CSR </span> | `sync_html_tag_lang`
 
@@ -265,7 +267,7 @@ the inner array with the direction of the language, which can be `"auto"`,
 
 <!-- markdownlint-enable MD013 -->
 
-Set the name of the URL parameter that will be used to manage the current
+Set the name of the [URL parameter] that will be used to manage the current
 language.
 
 ```rust
@@ -277,7 +279,7 @@ leptos_fluent! {{
 
 ### <span style="opacity:.5">CSR + SSR </span> | `initial_language_from_url_param`
 
-Set initial language from the URL parameter.
+Set initial language from the [URL parameter].
 
 ```rust
 leptos_fluent! {{
@@ -288,7 +290,7 @@ leptos_fluent! {{
 
 ### <span style="opacity:.5">CSR </span> | `initial_language_from_url_param_to_localstorage`
 
-Get initial language from the URL parameter and save it to [local storage].
+Get initial language from the [URL parameter] and save it to [local storage].
 
 ```rust
 leptos_fluent! {{
@@ -299,7 +301,7 @@ leptos_fluent! {{
 
 ### <span style="opacity:.5">CSR </span> | `initial_language_from_url_param_to_cookie`
 
-Get the initial language from the URL parameter and save it to a cookie.
+Get the initial language from the [URL parameter] and save it to a cookie.
 
 ```rust
 leptos_fluent! {{
@@ -310,7 +312,7 @@ leptos_fluent! {{
 
 ### <span style="opacity:.5">CSR </span> | `set_language_to_url_param`
 
-Set current language to the URL parameter.
+Set current language to the [URL parameter].
 
 ```rust
 leptos_fluent! {{
@@ -571,3 +573,5 @@ leptos_fluent! {{
 [`leptos::create_effect`]: https://docs.rs/leptos/latest/leptos/fn.create_effect.html
 [cookie attributes]: https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie#write_a_new_cookie
 [`Accept-Language`]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language
+[glob]: https://docs.rs/globwalk/latest/globwalk/fn.glob.html
+[URL parameter]: https://developer.mozilla.org/es/docs/Web/API/URLSearchParams
