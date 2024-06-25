@@ -92,7 +92,7 @@
 //!         // Check translations correctness in the specified files.
 //!         check_translations: "./src/**/*.rs",
 //!
-//!         // All next options are all opt-in and can be enabled
+//!         // Next options are all opt-in and can be enabled
 //!         // separately as needed.
 //!
 //!         // Client side options
@@ -125,6 +125,12 @@
 //!         // Get the initial language from `navigator.languages` if not
 //!         // found in the local storage.
 //!         initial_language_from_navigator: true,
+//!         // Set the discovered initial language of the user from
+//!         // the navigator to local storage.
+//!         initial_language_from_navigator_to_localstorage: true,
+//!         // Set the discovered initial language of the user from
+//!         // the navigator to a cookie.
+//!         initial_language_from_navigator_to_cookie: true,
 //!         // Attributes to set for the language cookie.
 //!         // By default is `""`.
 //!         cookie_attrs: "SameSite=Strict; Secure; Path=/; Max-Age=600",
