@@ -263,10 +263,14 @@ use fluent_templates::{
     LanguageIdentifier, StaticLoader,
 };
 use leptos::{
-    use_context, Attribute, IntoAttribute, Oco, RwSignal, Signal, SignalGet,
-    SignalSet, SignalWith,
+    component, use_context, Attribute, IntoAttribute, IntoView, Oco, RwSignal,
+    Signal, SignalGet, SignalSet, SignalWith,
 };
+#[cfg(feature = "ssr")]
+use leptos::{view, SignalGetUntracked};
 pub use leptos_fluent_macros::leptos_fluent;
+#[cfg(feature = "ssr")]
+use leptos_meta::Html;
 
 /// Direction of the text
 #[cfg_attr(debug_assertions, derive(Debug))]
@@ -637,6 +641,31 @@ pub fn l(
 ) -> Option<&'static Language> {
     language_from_str_between_languages(code, languages)
 }
+
+/// Reactive HTML tag to set attributes on SSR
+///
+/// Currently there is not a way to set the `dir` and `lang` attributes
+/// of `<html>` tags on SSR. This components updates it on SSR. Must be
+/// rendered in a view.
+///
+/// ```rust,ignore
+/// use leptos_fluent::SsrHtmlTag;
+///
+/// view! {
+///     <SsrHtmlTag/>
+/// }
+/// ```
+#[component(transparent)]
+#[cfg(feature = "ssr")]
+pub fn SsrHtmlTag() -> impl IntoView {
+    let lang = expect_i18n().language.get_untracked();
+    view! { <Html lang=lang.id.to_string() dir=lang.dir.as_str()/> }
+}
+
+/// Reactive HTML tag to set attributes on SSR
+#[component(transparent)]
+#[cfg(not(feature = "ssr"))]
+pub fn SsrHtmlTag() -> impl IntoView {}
 
 #[cfg(test)]
 mod test {
