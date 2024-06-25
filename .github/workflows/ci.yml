@@ -229,6 +229,11 @@ jobs:
         run: |
           cd examples/${{ matrix.example }}
           cargo leptos build --release
+      - name: Install dependencies
+        if: endsWith(matrix.example, 'gtk')
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-4-dev
       - name: Build with cargo
         if: startsWith(matrix.example, 'system')
         run: |

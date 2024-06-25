@@ -8,3 +8,4 @@
 - `cookie_attrs`
 - `initial_language_from_navigator_to_localstorage`
 - `initial_language_from_navigator_to_cookie`
+- `initial_language_from_system`
