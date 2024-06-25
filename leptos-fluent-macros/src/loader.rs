@@ -584,6 +584,30 @@ impl Parse for I18nLoader {
                         ),
                     ));
                 }
+            } else if k == "initial_language_from_data_file" {
+                #[cfg(feature = "system")]
+                {
+                    if let Some(err) = parse_litbool_or_expr_param(
+                        &fields,
+                        &mut initial_language_from_data_file_bool,
+                        &mut initial_language_from_data_file_expr,
+                        "initial_language_from_data_file",
+                    ) {
+                        return Err(err);
+                    }
+                }
+
+                #[cfg(not(feature = "system"))]
+                {
+                    return Err(syn::Error::new(
+                        k.span(),
+                        concat!(
+                            "The parameter 'initial_language_from_data_file' of",
+                            " leptos_fluent! macro requires the feature",
+                            " 'system' enabled.",
+                        ),
+                    ));
+                }
             } else if k == "initial_language_from_system_to_data_file" {
                 #[cfg(feature = "system")]
                 {
@@ -627,30 +651,6 @@ impl Parse for I18nLoader {
                         k.span(),
                         concat!(
                             "The parameter 'set_language_to_data_file' of",
-                            " leptos_fluent! macro requires the feature",
-                            " 'system' enabled.",
-                        ),
-                    ));
-                }
-            } else if k == "initial_language_from_data_file" {
-                #[cfg(feature = "system")]
-                {
-                    if let Some(err) = parse_litbool_or_expr_param(
-                        &fields,
-                        &mut initial_language_from_data_file_bool,
-                        &mut initial_language_from_data_file_expr,
-                        "initial_language_from_data_file",
-                    ) {
-                        return Err(err);
-                    }
-                }
-
-                #[cfg(not(feature = "system"))]
-                {
-                    return Err(syn::Error::new(
-                        k.span(),
-                        concat!(
-                            "The parameter 'initial_language_from_data_file' of",
                             " leptos_fluent! macro requires the feature",
                             " 'system' enabled.",
                         ),
