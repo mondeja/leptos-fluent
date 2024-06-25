@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD033 -->
+
 # `leptos_fluent!`
 
 The `leptos_fluent!` macro is used to load the translations and set the current
@@ -113,7 +115,7 @@ leptos_fluent! {{
 }}
 ```
 
-### `sync_html_tag_lang` (CSR)
+### <span style="opacity:.5">CSR </span> | `sync_html_tag_lang`
 
 Synchronize the `lang` attribute of the `<html>` tag with the current locale.
 It is useful for SEO purposes.
@@ -125,7 +127,7 @@ leptos_fluent! {{
 }}
 ```
 
-### `sync_html_tag_dir` (CSR)
+### <span style="opacity:.5">CSR </span> | `sync_html_tag_dir`
 
 Synchronize the `dir` attribute of the `<html>` tag with the writing direction
 of the current locale.
@@ -137,7 +139,7 @@ leptos_fluent! {{
 }}
 ```
 
-### `url_param` (CSR + SSR)
+### <span style="opacity:.5">CSR + SSR </span> | `url_param`
 
 Set the name of the URL parameter that will be used to manage the current
 language. By default it is `"lang"`.
@@ -149,7 +151,7 @@ leptos_fluent! {{
 }}
 ```
 
-### `initial_language_from_url_param` (CSR + SSR)
+### <span style="opacity:.5">CSR + SSR </span> | `initial_language_from_url_param`
 
 Set the initial language from the URL parameter.
 
@@ -160,7 +162,7 @@ leptos_fluent! {{
 }}
 ```
 
-### `initial_language_from_url_param_to_localstorage` (CSR)
+### <span style="opacity:.5">CSR </span> | `initial_language_from_url_param_to_localstorage`
 
 Set the initial language from the URL parameter and save it in the local storage.
 
@@ -171,7 +173,7 @@ leptos_fluent! {{
 }}
 ```
 
-### `initial_language_from_url_param_to_cookie` (CSR)
+### <span style="opacity:.5">CSR </span> | `initial_language_from_url_param_to_cookie`
 
 Set the initial language from the URL parameter and save it in a cookie.
 
@@ -182,7 +184,7 @@ leptos_fluent! {{
 }}
 ```
 
-### `set_language_to_url_param` (CSR)
+### <span style="opacity:.5">CSR </span> | `set_language_to_url_param`
 
 Set the current language to the URL parameter.
 
@@ -193,7 +195,7 @@ leptos_fluent! {{
 }}
 ```
 
-### `localstorage_key` (CSR)
+### <span style="opacity:.5">CSR </span> | `localstorage_key`
 
 Key to manage the current language in the local storage. By default it is
 `"lang"`.
@@ -205,7 +207,7 @@ leptos_fluent! {{
 }}
 ```
 
-### `initial_language_from_localstorage` (CSR)
+### <span style="opacity:.5">CSR </span> | `initial_language_from_localstorage`
 
 Get the initial language from the local storage.
 
@@ -216,7 +218,7 @@ leptos_fluent! {{
 }}
 ```
 
-### `initial_language_from_localstorage_to_cookie` (CSR)
+### <span style="opacity:.5">CSR </span> | `initial_language_from_localstorage_to_cookie`
 
 Get the initial language from the local storage and save it in a cookie.
 
@@ -227,7 +229,7 @@ leptos_fluent! {{
 }}
 ```
 
-### `set_language_to_localstorage` (CSR)
+### <span style="opacity:.5">CSR </span> | `set_language_to_localstorage`
 
 Set the current language to the local storage.
 
@@ -238,7 +240,7 @@ leptos_fluent! {{
 }}
 ```
 
-### `initial_language_from_navigator` (CSR)
+### <span style="opacity:.5">CSR </span> | `initial_language_from_navigator`
 
 Get the initial language from the navigator.
 
@@ -249,7 +251,7 @@ leptos_fluent! {{
 }}
 ```
 
-### `initial_language_from_navigator_to_localstorage` (CSR)
+### <span style="opacity:.5">CSR </span> | `initial_language_from_navigator_to_localstorage`
 
 Get the initial language from the navigator and save it in the local storage.
 
@@ -260,7 +262,7 @@ leptos_fluent! {{
 }}
 ```
 
-### `initial_language_from_navigator_to_cookie` (CSR)
+### <span style="opacity:.5">CSR </span> | `initial_language_from_navigator_to_cookie`
 
 Get the initial language from the navigator and save it in a cookie.
 
@@ -271,7 +273,7 @@ leptos_fluent! {{
 }}
 ```
 
-### `initial_language_from_accept_language_header` (SSR)
+### <span style="opacity:.5">SSR </span> | `initial_language_from_accept_language_header`
 
 Get the initial language from the `Accept-Language` header.
 
@@ -282,7 +284,7 @@ leptos_fluent! {{
 }}
 ```
 
-### `cookie_name` (CSR + SSR)
+### <span style="opacity:.5">CSR + SSR </span> | `cookie_name`
 
 Name of the cookie that will be used to manage the current language. By default
 it is `"lf-lang"`.
@@ -294,7 +296,7 @@ leptos_fluent! {{
 }}
 ```
 
-### `cookie_attrs` (CSR)
+### <span style="opacity:.5">CSR </span> | `cookie_attrs`
 
 [Cookie attributes] to set on the language cookie. By default it is `""` (empty):
 
@@ -305,7 +307,7 @@ leptos_fluent! {{
 }}
 ```
 
-### `initial_language_from_cookie` (CSR + SSR)
+### <span style="opacity:.5">CSR + SSR </span> | `initial_language_from_cookie`
 
 Get the initial language from the cookie.
 
@@ -316,7 +318,7 @@ leptos_fluent! {{
 }}
 ```
 
-### `initial_language_from_cookie_to_localstorage` (CSR)
+### <span style="opacity:.5">CSR </span> | `initial_language_from_cookie_to_localstorage`
 
 Get the initial language from the cookie and save it in the local storage.
 
@@ -327,7 +329,7 @@ leptos_fluent! {{
 }}
 ```
 
-### `set_language_to_cookie` (CSR)
+### <span style="opacity:.5">CSR </span> | `set_language_to_cookie`
 
 Set the current language to the cookie.
 
@@ -338,7 +340,7 @@ leptos_fluent! {{
 }}
 ```
 
-### `initial_language_from_system` (Desktop, `system` feature)
+### <span style="opacity:.5">Desktop (system) </span> | `initial_language_from_system`
 
 Get the initial language from the system.
 
@@ -349,7 +351,7 @@ leptos_fluent! {{
 }}
 ```
 
-### `initial_language_from_data_file` (Desktop, `system` feature)
+### <span style="opacity:.5">Desktop (system) </span> | `initial_language_from_data_file`
 
 Get the initial language from a data file.
 
@@ -360,7 +362,7 @@ leptos_fluent! {{
 }}
 ```
 
-### `initial_language_from_system_to_data_file` (Desktop, `system` feature)
+### <span style="opacity:.5">Desktop (system) </span> | `initial_language_from_system_to_data_file`
 
 Get the initial language from the system and save it in a data file.
 
@@ -371,7 +373,7 @@ leptos_fluent! {{
 }}
 ```
 
-### `set_language_to_data_file`
+### <span style="opacity:.5">Desktop (system) </span> | `set_language_to_data_file`
 
 Set the current language to a data file.
 
@@ -382,7 +384,7 @@ leptos_fluent! {{
 }}
 ```
 
-### `data_file_key`
+### <span style="opacity:.5">Desktop (system) </span> | `data_file_key`
 
 Key to manage the current language in the data file. It should be unique
 per application. By default it is `"leptos-fluent"`.
