@@ -305,6 +305,9 @@ pub fn leptos_fluent(
         }
     };
 
+    #[cfg(all(not(feature = "system"), not(feature = "ssr")))]
+    let initial_language_from_system_quote = quote! {};
+
     #[cfg(any(not(feature = "system"), feature = "ssr"))]
     {
         _ = initial_language_from_system_bool;
