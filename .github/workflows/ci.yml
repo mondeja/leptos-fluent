@@ -38,6 +38,10 @@ jobs:
             ~/.cargo/git
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/Cargo.lock') }}
+      - name: Install libgtk
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-4-dev
       - name: Lint
         if: matrix.process == 'lint'
         uses: nick-fields/retry@v3
@@ -229,7 +233,7 @@ jobs:
         run: |
           cd examples/${{ matrix.example }}
           cargo leptos build --release
-      - name: Install dependencies
+      - name: Install libgtk
         if: endsWith(matrix.example, 'gtk')
         run: |
           sudo apt-get update
