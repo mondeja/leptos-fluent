@@ -218,7 +218,9 @@ pub(crate) struct I18nLoader {
         Option<syn::Expr>,
     pub(crate) set_language_to_cookie_bool: Option<syn::LitBool>,
     pub(crate) set_language_to_cookie_expr: Option<syn::Expr>,
+    #[cfg(feature = "system")]
     pub(crate) initial_language_from_system_bool: Option<syn::LitBool>,
+    #[cfg(feature = "system")]
     pub(crate) initial_language_from_system_expr: Option<syn::Expr>,
     pub(crate) fluent_file_paths: FluentFilePaths,
 }
@@ -309,7 +311,11 @@ impl Parse for I18nLoader {
         > = None;
         let mut set_language_to_cookie_bool: Option<syn::LitBool> = None;
         let mut set_language_to_cookie_expr: Option<syn::Expr> = None;
-        let mut initial_language_from_system_bool: Option<syn::LitBool> = None;
+        #[cfg(feature = "system")]
+        let mut initial_language_from_system_bool: Option<
+            syn::LitBool,
+        > = None;
+        #[cfg(feature = "system")]
         let mut initial_language_from_system_expr: Option<syn::Expr> = None;
 
         while !fields.is_empty() {
@@ -515,13 +521,28 @@ impl Parse for I18nLoader {
                     return Err(err);
                 }
             } else if k == "initial_language_from_system" {
-                if let Some(err) = parse_litbool_or_expr_param(
-                    &fields,
-                    &mut initial_language_from_system_bool,
-                    &mut initial_language_from_system_expr,
-                    "initial_language_from_system",
-                ) {
-                    return Err(err);
+                #[cfg(feature = "system")]
+                {
+                    if let Some(err) = parse_litbool_or_expr_param(
+                        &fields,
+                        &mut initial_language_from_system_bool,
+                        &mut initial_language_from_system_expr,
+                        "initial_language_from_system",
+                    ) {
+                        return Err(err);
+                    }
+                }
+
+                #[cfg(not(feature = "system"))]
+                {
+                    return Err(syn::Error::new(
+                        k.span(),
+                        concat!(
+                            "The parameter 'initial_language_from_system' of",
+                            " leptos_fluent! macro requires the feature",
+                            " 'system' enabled.",
+                        ),
+                    ));
                 }
             } else {
                 return Err(syn::Error::new(
@@ -756,7 +777,9 @@ impl Parse for I18nLoader {
             set_language_to_cookie_expr,
             fluent_file_paths: fluent_resources_and_file_paths.1,
             core_locales_path: core_locales_path_str,
+            #[cfg(feature = "system")]
             initial_language_from_system_bool,
+            #[cfg(feature = "system")]
             initial_language_from_system_expr,
         })
     }

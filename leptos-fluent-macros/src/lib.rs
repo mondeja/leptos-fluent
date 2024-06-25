@@ -252,7 +252,9 @@ pub fn leptos_fluent(
         set_language_to_cookie_expr,
         fluent_file_paths,
         core_locales_path,
+        #[cfg(feature = "system")]
         initial_language_from_system_bool,
+        #[cfg(feature = "system")]
         initial_language_from_system_expr,
     } = syn::parse_macro_input!(input as I18nLoader);
 
@@ -308,7 +310,7 @@ pub fn leptos_fluent(
     #[cfg(all(not(feature = "system"), not(feature = "ssr")))]
     let initial_language_from_system_quote = quote! {};
 
-    #[cfg(any(not(feature = "system"), feature = "ssr"))]
+    #[cfg(all(feature = "system", feature = "ssr"))]
     {
         _ = initial_language_from_system_bool;
         _ = initial_language_from_system_expr;
