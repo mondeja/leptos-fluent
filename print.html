@@ -445,6 +445,7 @@ i18n context:</p>
 <li><a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.translations"><code>translations</code></a>: A signal to the vector of <a href="https://docs.rs/fluent-templates/latest/fluent_templates">fluent-templates</a> loaders that stores
 the translations.</li>
 </ul>
+<h3 id="update-language"><a class="header" href="#update-language">Update language</a></h3>
 <p>To update the language, use <code>set</code> method of <code>language</code> field or just
 <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html#method.activate"><code>lang.activate()</code></a> (new in v0.1.1):</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
@@ -457,6 +458,7 @@ lang.activate();  // New in v0.1.1
 let i18n = leptos_fluent::expect_i18n();
 i18n(lang);
 <span class="boring">}</span></code></pre></pre>
+<h3 id="get-active-language"><a class="header" href="#get-active-language">Get active language</a></h3>
 <p>To get the current active language, use <code>get</code> method of <code>language</code> field:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -464,11 +466,13 @@ i18n(lang);
 
 i18n() // features = ["nightly"]
 <span class="boring">}</span></code></pre></pre>
+<h3 id="get-available-languages"><a class="header" href="#get-available-languages">Get available languages</a></h3>
 <p>To get the available languages, iterate over the <code>languages</code> field:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>i18n.languages.iter()
 <span class="boring">}</span></code></pre></pre>
+<h3 id="check-if-a-language-is-active"><a class="header" href="#check-if-a-language-is-active">Check if a language is active</a></h3>
 <p>To check if a language is the active one, use <code>is_active</code> method of a
 <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html"><code>leptos_fluent::Language</code></a> struct:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
@@ -547,7 +551,40 @@ update the language in the client. The following side effects are available:</p>
 <tr><td style="text-align: left">Browser <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">local storage</a></td><td style="text-align: left"><code>localstorage_key</code></td><td style="text-align: left"><code>"lang"</code></td></tr>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/es/docs/Web/API/URLSearchParams">URL parameter</a></td><td style="text-align: left"><code>url_param</code></td><td style="text-align: left"><code>"lang"</code></td></tr>
 </tbody></table>
-</div><div style="break-before: page; page-break-before: always;"></div><h1 id="languages"><a class="header" href="#languages">Languages</a></h1>
+</div>
+<h1 id="common-configurations"><a class="header" href="#common-configurations">Common configurations</a></h1>
+<h2 id="local-storage-from-navigator-csr"><a class="header" href="#local-storage-from-navigator-csr">Local storage from navigator (CSR)</a></h2>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>leptos_fluent! {{
+    locales: "./locales",
+    translations: [TRANSLATIONS],
+
+    set_language_to_localstorage: true,
+    initial_language_from_localstorage: true,
+    initial_language_from_navigator: true,
+    initial_language_from_navigator_to_localstorage: true,
+    initial_language_from_url_param: true,
+    initial_language_from_url_param_to_localstorage: true,
+}}
+<span class="boring">}</span></code></pre></pre>
+<h2 id="cookie-from-navigator-and-header-ssr--csr"><a class="header" href="#cookie-from-navigator-and-header-ssr--csr">Cookie from navigator and header (SSR + CSR)</a></h2>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>leptos_fluent! {{
+    locales: "./locales",
+    translations: [TRANSLATIONS],
+
+    set_language_to_cookie: true,
+    initial_language_from_cookie: true,
+    initial_language_from_navigator: true,
+    initial_language_from_navigator_to_cookie: true,
+    initial_language_from_url_param: true,
+    initial_language_from_url_param_to_cookie: true,
+    initial_language_from_accept_language_header: true,
+}}
+<span class="boring">}</span></code></pre></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="languages"><a class="header" href="#languages">Languages</a></h1>
 <p><strong>leptos-fluent</strong> follows a default strategy to generate the languages
 of the application. This strategy is based on the <em>locales/</em> directory.</p>
 <p>Giving the next directory structure:</p>

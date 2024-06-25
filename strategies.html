@@ -252,6 +252,39 @@ update the language in the client. The following side effects are available:</p>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/es/docs/Web/API/URLSearchParams">URL parameter</a></td><td style="text-align: left"><code>url_param</code></td><td style="text-align: left"><code>"lang"</code></td></tr>
 </tbody></table>
 </div>
+<h1 id="common-configurations"><a class="header" href="#common-configurations">Common configurations</a></h1>
+<h2 id="local-storage-from-navigator-csr"><a class="header" href="#local-storage-from-navigator-csr">Local storage from navigator (CSR)</a></h2>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>leptos_fluent! {{
+    locales: "./locales",
+    translations: [TRANSLATIONS],
+
+    set_language_to_localstorage: true,
+    initial_language_from_localstorage: true,
+    initial_language_from_navigator: true,
+    initial_language_from_navigator_to_localstorage: true,
+    initial_language_from_url_param: true,
+    initial_language_from_url_param_to_localstorage: true,
+}}
+<span class="boring">}</span></code></pre></pre>
+<h2 id="cookie-from-navigator-and-header-ssr--csr"><a class="header" href="#cookie-from-navigator-and-header-ssr--csr">Cookie from navigator and header (SSR + CSR)</a></h2>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>leptos_fluent! {{
+    locales: "./locales",
+    translations: [TRANSLATIONS],
+
+    set_language_to_cookie: true,
+    initial_language_from_cookie: true,
+    initial_language_from_navigator: true,
+    initial_language_from_navigator_to_cookie: true,
+    initial_language_from_url_param: true,
+    initial_language_from_url_param_to_cookie: true,
+    initial_language_from_accept_language_header: true,
+}}
+<span class="boring">}</span></code></pre></pre>
+
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
