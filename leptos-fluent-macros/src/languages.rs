@@ -499,8 +499,8 @@ fn language_name_from_language_code(
             "bm-ml" => return "ߓߊߡߊߣߊߣߞߊߣ (ߞߊ߲ߞߊ߲)",
             "bn-bd" => return "বাংলা (বাংলাদেশ)",
             "bn-in" => return "বাংলা (ভারত)",
-            "bo-cn" => return "བོད་སྐད་ (ཀྲུང་ཧྭ)",
-            "bo-in" => return "བོད་སྐད་ (ཀྲུང་ཧྭ)", // TODO: The same as bo-cn, looks bad
+            "bo-cn" => return "བོད་སྐད་ (རྒྱ་ནག)",
+            "bo-in" => return "བོད་སྐད་ (཭ི་ཝི)",
             "br-fr" => return "Brezhoneg (Frañs)",
             "bs-ba" => return "Bosanski (Bosna i Hercegovina)",
             "ca-ad" => return "Català (Andorra)",
@@ -821,7 +821,7 @@ fn language_name_from_language_code(
             "it-va" => return "Italiano (Città del Vaticano)",
             "iu-ca" => return "ᐃᓄᒃᑎᑐᑦ (Canada)",
             "ja-jp" => return "日本語 (日本)",
-            "jv-id" => return "Basa Jawa (Indonesia)", // TODO: check this
+            "jv-id" => return "ꦧꦱꦗꦮ (Indonesia)", // TODO: check this
             "ka-ge" => return "ქართული (საქართველო)",
             "ki-ke" => return "Gĩkũyũ (Kenya)",
             "kk-kz" => return "Қазақ тілі (Қазақстан)",
@@ -831,7 +831,7 @@ fn language_name_from_language_code(
             "ko-kp" => return "한국어(북한)",
             "ks-in" => return "कश्मीरी (भारत)",
             "ku-tr" => return "Kurdî (Tirkiye)",
-            "kw-gb" => return "Cornish (United Kingdom)", // TODO: check this
+            "kw-gb" => return "Cornish (United Kingdom)",
             "ky-kg" => return "Кыргызстандык (Кыргызстан)",
             "lb-lu" => return "Lëtzebuergesch (Lëtzebuerg)",
             "lg-ug" => return "Luganda (Yuganda)", // TODO: check this
@@ -868,7 +868,7 @@ fn language_name_from_language_code(
             "nn-no" => return "Norsk nynorsk (Noreg)",
             "nr-za" => return "isiNdebele (South Africa)",
             "ny-mw" => return "Chichewa (Malawi)",
-            "oc-fr" => return "Occitan (France)", // TODO: Check this
+            "oc-fr" => return "Occitan (France)",
             "os-ge" => return "Ирон æвзаг (Росси)",
             "om-et" => return "Afaan Oromoo (Itoophiyaa)",
             "om-ke" => return "Afaan Oromoo (Keeniyaa)",
@@ -1013,8 +1013,8 @@ fn language_name_from_language_code(
             "bm-mli" => return "ߓߊߡߊߣߊߣߞߊߣ (ߞߊ߲ߞߊ߲)",
             "bn-bgd" => return "বাংলা (বাংলাদেশ)",
             "bn-ind" => return "বাংলা (ভারত)",
-            "bo-chn" => return "བོད་སྐད་ (ཀྲུང་ཧྭ)",
-            "bo-ind" => return "བོད་སྐད་ (ཀྲུང་ཧྭ)", // TODO: The same as bo-cn, looks bad
+            "bo-chn" => return "བོད་སྐད་ (རྒྱ་ནག)",
+            "bo-ind" => return "བོད་སྐད་ (཭ི་ཝི)",
             "br-fra" => return "Brezhoneg (Frañs)",
             "bs-bih" => return "Bosanski (Bosna i Hercegovina)",
             "ca-and" => return "Català (Andorra)",
@@ -1343,7 +1343,7 @@ fn language_name_from_language_code(
             "io-001" => return "Ido",
             "iu-can" => return "ᐃᓄᒃᑎᑐᑦ (Canada)",
             "ja-jpn" => return "日本語 (日本)",
-            "jv-idn" => return "Basa Jawa (Indonesia)", // TODO: check this
+            "jv-idn" => return "ꦧꦱꦗꦮ (Indonesia)", // TODO: check this
             "ka-geo" => return "ქართული (საქართველო)",
             "ki-ken" => return "Gĩkũyũ (Kenya)",
             "kk-kaz" => return "Қазақ тілі (Қазақстан)",
@@ -1353,7 +1353,7 @@ fn language_name_from_language_code(
             "ko-prk" => return "한국어(북한)",
             "ks-ind" => return "कश्मीरी (भारत)",
             "ku-tur" => return "Kurdî (Tirkiye)",
-            "kw-gbr" => return "Cornish (United Kingdom)", // TODO: check this
+            "kw-gbr" => return "Cornish (United Kingdom)",
             "ky-kgz" => return "Кыргызстандык (Кыргызстан)",
             "lb-lux" => return "Lëtzebuergesch (Lëtzebuerg)",
             "lg-uga" => return "Luganda (Yuganda)", // TODO: check this
@@ -1390,7 +1390,7 @@ fn language_name_from_language_code(
             "nn-nor" => return "Norsk nynorsk (Noreg)",
             "nr-zaf" => return "isiNdebele (South Africa)",
             "ny-mwi" => return "Chichewa (Malawi)",
-            "oc-fra" => return "Occitan (France)", // TODO: Check this
+            "oc-fra" => return "Occitan (France)",
             "om-eth" => return "Afaan Oromoo (Itoophiyaa)",
             "om-ken" => return "Afaan Oromoo (Keeniyaa)",
             "or-ind" => return "ଓଡ଼ିଆ (ଭାରତ)",
