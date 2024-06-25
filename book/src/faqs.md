@@ -151,7 +151,7 @@ pub fn App() -> impl IntoView {
 fn LanguageSelector() -> impl IntoView { ... }
 ```
 
-[`leptos_fluent::SsrHtmlTag`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.SsrHtmlTag.html
 [`<For/>`]: https://docs.rs/leptos/latest/leptos/fn.For.html
+[`leptos_fluent::SsrHtmlTag`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.SsrHtmlTag.html
 [`leptos_fluent::Language`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html
 [`leptos_fluent::I18n`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html
