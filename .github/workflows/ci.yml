@@ -20,9 +20,8 @@ jobs:
         uses: ./.github/actions/get-toolchain
       - name: Check toolchain
         run: |
-          channel="${{ steps.toolchain.outputs.channel }}"
-          if [ "$channel" != "stable" ]; then
-            echo "Toolchain is not stable"
+          if [ "${{ steps.toolchain.outputs.channel }}" != "stable" ]; then
+            echo 'Toolchain is not "stable", is "${{ steps.toolchain.outputs.channel }}". Check the file rust-toolchain.toml'
             exit 1
           fi
           echo "channel=$channel" >> $GITHUB_OUTPUT
