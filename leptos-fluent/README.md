@@ -203,7 +203,7 @@ fn TranslatableComponent() -> impl IntoView {
 
 #[component]
 fn LanguageSelector() -> impl IntoView {
-    // `expect_i18n()` to get the current i18n context
+    // `expect_i18n()` to get the i18n context
     // `i18n.languages` is a static array with the available languages
     // `i18n.language.get()` to get the current language
     // `lang.activate()` to set the current language
