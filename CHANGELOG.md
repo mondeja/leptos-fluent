@@ -24,6 +24,11 @@
 
 [GTK example]: https://github.com/mondeja/leptos-fluent/tree/master/examples/system-gtk
 
+### Enhancements
+
+- Use files tracker API instead of `include_bytes!` quirk to track files
+  when `nightly` feature is enabled.
+
 ## 2024-06-25 - [0.1.4]
 
 ### New features

@@ -19,16 +19,14 @@ leptos = "0.6"
 leptos_meta = "0.6"
 leptos_axum = { version = "0.6", optional = true }
 leptos_router = "0.6"
-leptos-fluent = { path = "../../leptos-fluent", features = ["yaml"], default-features = false}
+leptos-fluent = { path = "../../leptos-fluent", features = [
+  "yaml"
+], default-features = false }
 fluent-templates = "0.9"
 wasm-bindgen = "=0.2.92"
 
 [features]
-csr = [
-  "leptos/csr",
-  "leptos_meta/csr",
-  "leptos_router/csr",
-]
+csr = ["leptos/csr", "leptos_meta/csr", "leptos_router/csr"]
 hydrate = [
   "leptos/hydrate",
   "leptos_meta/hydrate",
@@ -77,9 +75,4 @@ lib-features = ["hydrate"]
 lib-profile-release = "wasm-release"
 
 [package.metadata.cargo-all-features]
-skip_feature_sets = [
-  [],
-  ["csr", "ssr"],
-  ["csr", "hydrate"],
-  ["ssr", "hydrate"],
-]
+skip_feature_sets = [[], ["csr", "ssr"], ["csr", "hydrate"], ["ssr", "hydrate"]]
