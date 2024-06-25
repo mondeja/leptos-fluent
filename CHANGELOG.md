@@ -8,8 +8,10 @@
   information. Useful on non wasm targets like desktop applications.
   See [GTK example].
 - Add `initial_language_from_system` parameter to `leptos_fluent!` macro to set
-  the initial language from the system language. Useful for desktop applications.
-  Must be enabled the new feature `system` to use it.
+  the initial language from the system language. Useful for desktop
+  applications. Must be enabled the new feature `system` to use it.
+- Expose `leptos_fluent::SsrHtmlTag` component to render it on SSR to sync
+  global attribute of `<html>` tag with the current language.
 
 [GTK example]: https://github.com/mondeja/leptos-fluent/tree/master/examples/system-gtk
 
