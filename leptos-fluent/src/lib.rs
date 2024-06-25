@@ -259,12 +259,11 @@ pub use web_sys;
 use core::hash::{Hash, Hasher};
 use core::str::FromStr;
 use fluent_templates::{
-    fluent_bundle::FluentValue, loader::Loader, once_cell::sync::Lazy,
-    LanguageIdentifier, StaticLoader,
+    fluent_bundle::FluentValue, loader::Loader, once_cell::sync::Lazy, LanguageIdentifier,
+    StaticLoader,
 };
 use leptos::{
-    use_context, Attribute, IntoAttribute, Oco, RwSignal, Signal, SignalGet,
-    SignalSet, SignalWith,
+    use_context, Attribute, IntoAttribute, Oco, RwSignal, Signal, SignalGet, SignalSet, SignalWith,
 };
 pub use leptos_fluent_macros::leptos_fluent;
 
@@ -405,6 +404,25 @@ pub struct I18n {
     /// Signal with a vector of fluent-templates static loaders.
     pub translations: Signal<Vec<&'static Lazy<StaticLoader>>>,
 }
+use leptos::component;
+/// SSR Html Tag component
+#[cfg(feature = "ssr")]
+#[component(transparent)]
+pub fn SsrHtmlTag() -> impl leptos::IntoView {
+    use leptos::{view, SignalGetUntracked};
+    use leptos_meta::Html;
+    let ssr_lang = expect_i18n().language.get_untracked();
+    view! {
+        <Html
+            lang=ssr_lang.id.to_string()
+            dir=ssr_lang.dir.to_string()
+        />
+    }
+}
+/// Stub: SSR Html Tag component
+#[cfg(not(feature = "ssr"))]
+#[component(transparent)]
+pub fn SsrHtmlTag() -> impl leptos::IntoView {}
 
 #[cfg(debug_assertions)]
 impl core::fmt::Debug for I18n {
@@ -447,10 +465,7 @@ impl Fn<()> for I18n {
 impl FnOnce<(&'static Language,)> for I18n {
     type Output = ();
     #[inline]
-    extern "rust-call" fn call_once(
-        self,
-        (lang,): (&'static Language,),
-    ) -> Self::Output {
+    extern "rust-call" fn call_once(self, (lang,): (&'static Language,)) -> Self::Output {
         self.language.set(&lang)
     }
 }
@@ -458,10 +473,7 @@ impl FnOnce<(&'static Language,)> for I18n {
 #[cfg(feature = "nightly")]
 impl FnMut<(&'static Language,)> for I18n {
     #[inline]
-    extern "rust-call" fn call_mut(
-        &mut self,
-        (lang,): (&'static Language,),
-    ) -> Self::Output {
+    extern "rust-call" fn call_mut(&mut self, (lang,): (&'static Language,)) -> Self::Output {
         self.language.set(&lang)
     }
 }
@@ -469,10 +481,7 @@ impl FnMut<(&'static Language,)> for I18n {
 #[cfg(feature = "nightly")]
 impl Fn<(&'static Language,)> for I18n {
     #[inline]
-    extern "rust-call" fn call(
-        &self,
-        (lang,): (&'static Language,),
-    ) -> Self::Output {
+    extern "rust-call" fn call(&self, (lang,): (&'static Language,)) -> Self::Output {
         self.language.set(&lang)
     }
 }
@@ -486,17 +495,15 @@ pub fn use_i18n() -> Option<I18n> {
 /// Expect the current context for localization.
 #[inline(always)]
 pub fn expect_i18n() -> I18n {
-    use_context::<I18n>().expect(
-        "I18n context is missing, use the leptos_fluent!{} macro to provide it.",
-    )
+    use_context::<I18n>()
+        .expect("I18n context is missing, use the leptos_fluent!{} macro to provide it.")
 }
 
 /// Expect the current context for localization.
 #[inline(always)]
 pub fn i18n() -> I18n {
-    use_context::<I18n>().expect(
-        "I18n context is missing, use the leptos_fluent!{} macro to provide it.",
-    )
+    use_context::<I18n>()
+        .expect("I18n context is missing, use the leptos_fluent!{} macro to provide it.")
 }
 
 #[doc(hidden)]
@@ -525,9 +532,7 @@ pub fn tr_with_args_impl(
     let lang_id = i18n.language.get().id.clone();
     let found = i18n.translations.with(|translations| {
         for tr in translations {
-            if let Some(result) =
-                tr.try_lookup_with_args(&lang_id, text_id, args)
-            {
+            if let Some(result) = tr.try_lookup_with_args(&lang_id, text_id, args) {
                 return Some(result);
             }
         }
@@ -608,13 +613,12 @@ pub fn language_from_str_between_languages(
         {
             Some(lang) => Some(lang),
             None => {
-                let lazy_target_lang =
-                    LanguageIdentifier::from_raw_parts_unchecked(
-                        target_lang.language,
-                        None,
-                        None,
-                        None,
-                    );
+                let lazy_target_lang = LanguageIdentifier::from_raw_parts_unchecked(
+                    target_lang.language,
+                    None,
+                    None,
+                    None,
+                );
                 match languages
                     .iter()
                     .find(|lang| lang.id.matches(&lazy_target_lang, true, true))
@@ -631,10 +635,7 @@ pub fn language_from_str_between_languages(
 // Used by `leptos_fluent!` macro
 #[doc(hidden)]
 #[inline(always)]
-pub fn l(
-    code: &str,
-    languages: &'static [&Language],
-) -> Option<&'static Language> {
+pub fn l(code: &str, languages: &'static [&Language]) -> Option<&'static Language> {
     language_from_str_between_languages(code, languages)
 }
 
