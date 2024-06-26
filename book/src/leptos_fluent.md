@@ -75,6 +75,8 @@ leptos_fluent! {{
 There is four kind of parameters for all the possible configurations and are
 executed in the next order:
 
+### Order
+
 1. Get the initial languaje from a target: `initial_language_from_*`
 2. Obtain the initial language and set to a target: `initial_language_from_*_to_*`
 3. Synchronize the current language with a target: `set_language_to_*`
@@ -98,7 +100,9 @@ leptos_fluent! {{
 ```
 ````
 
-Targets are read-write and sources are read-only.
+### Sources and targets
+
+Sources are read-only and targets are read-write.
 
 - Sources: `navigator`, `system`, `accept_language_header`
 - Targets: `cookie_name`, `localstorage_key`, `url_param`, `data_file`
