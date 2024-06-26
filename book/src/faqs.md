@@ -4,7 +4,7 @@
 
 <!-- toc -->
 
-### How to get `unic_langid::LanguageIdentifier` if not installed?
+### How to get [`LanguageIdentifier`] if not installed?
 
 ```rust
 use fluent_templates::LanguageIdentifier;
@@ -16,7 +16,9 @@ use fluent_templates::LanguageIdentifier;
 whichs provides utilities for parsing the Fluent syntax.
 ```
 
-### How to get the i18n context at initialization?
+[`LanguageIdentifier`]: https://docs.rs/unic-langid/latest/unic_langid/struct.LanguageIdentifier.html
+
+### How to get the [i18n context] at initialization?
 
 ```rust
 use leptos_fluent::leptos_fluent;
@@ -28,7 +30,9 @@ let i18n = leptos_fluent! {{
 leptos::logging::log!("i18n context: {i18n:?}");
 ```
 
-### Custom cookie attributes are invalid
+[i18n context]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html
+
+### Custom [cookie attributes] are invalid
 
 Use an expression to set the cookie attributes and will not be validated.
 
@@ -39,6 +43,8 @@ leptos_fluent! {{
     // ...
 }}
 ```
+
+[cookie attributes]: https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie#write_a_new_cookie
 
 ### How to get the fallback language
 
@@ -79,10 +85,9 @@ fn render_language(lang: &'static Language) -> impl IntoView { ... }
 
 ### How to manage translations on server actions
 
-The translations reside on the client side, so the [`leptos_fluent::I18n`]
-can not be accessed as context on server actions. Pass the translations
-as values if the bandwidth is not a problem or use your own statics on
-server side.
+The translations reside on the client side, so the [`I18n`] can not be
+accessed as context on server actions. Pass the translations as values
+if the bandwidth is not a problem or use your own statics on server side.
 
 ```rust
 use leptos::*;
@@ -154,4 +159,4 @@ fn LanguageSelector() -> impl IntoView { ... }
 [`<For/>`]: https://docs.rs/leptos/latest/leptos/fn.For.html
 [`leptos_fluent::SsrHtmlTag`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.SsrHtmlTag.html
 [`leptos_fluent::Language`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html
-[`leptos_fluent::I18n`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html
+[`I18n`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html
