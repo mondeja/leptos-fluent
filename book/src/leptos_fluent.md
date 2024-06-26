@@ -29,6 +29,7 @@ leptos_fluent! {{
     initial_language_from_navigator_to_localstorage: true,
     initial_language_from_url_param: true,
     initial_language_from_url_param_to_localstorage: true,
+    localstorage_key: "lang",
 }}
 ```
 
@@ -46,6 +47,7 @@ leptos_fluent! {{
     initial_language_from_url_param: true,
     initial_language_from_url_param_to_cookie: true,
     initial_language_from_accept_language_header: true,
+    cookie_name: "lf-lang",
 }}
 ```
 
@@ -67,6 +69,45 @@ leptos_fluent! {{
     data_file_key: "system-language-example",
 }}
 ```
+
+## Processing steps
+
+There is four kind of parameters for all the possible configurations and are
+executed in the next order:
+
+### Order
+
+1. Get the initial languaje from a target: `initial_language_from_*`
+2. Obtain the initial language and set to a target: `initial_language_from_*_to_*`
+3. Synchronize the current language with a target: `set_language_to_*`
+4. The name of a source or a target: `cookie_name`, `localstorage_key`, `navigator`...
+
+### Sources and targets
+
+Sources are read-only and targets are read-write.
+
+- Sources: `navigator`, `system`, `accept_language_header`
+- Targets: `cookie_name`, `localstorage_key`, `url_param`, `data_file`
+
+### Commented example
+
+````admonish example
+```rust
+leptos_fluent! {{
+    // ..
+    // Get the initial language from the source operative system
+    initial_language_from_system: true,
+    // and set to the target file.
+    initial_language_from_system_to_data_file: true,
+    // If a target data file exists, get the initial language from it.
+    initial_language_from_data_file: true,
+    // When the language is updated, set it to the file.
+    set_language_to_data_file: true,
+    // Unique file name to set the language for this app:
+    data_file_key: "system-language-example",
+}};
+```
+````
 
 ## Parameters
 
@@ -164,8 +205,8 @@ extension because the `json` feature is enabled. For example:
 ]
 ```
 
-You can set `default-features = false` and enable the `yaml` or the `json5` feature
-to be able to use a YAML or JSON5 file. For example:
+Set `default-features = false` and enable the `yaml` or the `json5` feature
+to use a YAML or JSON5 files. For example:
 
 ```yaml
 # locales/languages.yaml
@@ -183,8 +224,9 @@ to be able to use a YAML or JSON5 file. For example:
 ]
 ```
 
-You can define a third element in the inner array with the direction of the language,
-to use it in the [`<html dir="...">` attribute] (see `sync_html_tag_dir`). For example:
+Define a third element in the inner array with the direction of the language,
+to use it in the [`<html dir="...">` attribute] (see [`sync_html_tag_dir`]).
+For example:
 
 ```json
 [
@@ -251,9 +293,10 @@ leptos_fluent! {{
 }}
 ```
 
-For custom languages from a languages file, you can specify a third element in
+For custom languages from a languages file, specify a third element in
 the inner array with the direction of the language, which can be `"auto"`,
-`"ltr"`, or `"rtl"`. For automatic languages will be defined depending on the language.
+`"ltr"`, or `"rtl"`. Discovered languages will be defined depending on the
+language.
 
 ```admonish example
 - Arabic (`ar`): `"rtl"`
@@ -267,8 +310,7 @@ the inner array with the direction of the language, which can be `"auto"`,
 
 <!-- markdownlint-enable MD013 -->
 
-Set the name of the [URL parameter] that will be used to manage the current
-language.
+Name of [URL parameter] used to manage the current language.
 
 ```rust
 leptos_fluent! {{
@@ -279,7 +321,7 @@ leptos_fluent! {{
 
 ### <span style="opacity:.5">CSR + SSR </span> | `initial_language_from_url_param`
 
-Set initial language from the [URL parameter].
+Set initial language from [URL parameter].
 
 ```rust
 leptos_fluent! {{
@@ -290,7 +332,7 @@ leptos_fluent! {{
 
 ### <span style="opacity:.5">CSR </span> | `initial_language_from_url_param_to_localstorage`
 
-Get initial language from the [URL parameter] and save it to [local storage].
+Get initial language from [URL parameter] and save it to [local storage].
 
 ```rust
 leptos_fluent! {{
@@ -301,7 +343,7 @@ leptos_fluent! {{
 
 ### <span style="opacity:.5">CSR </span> | `initial_language_from_url_param_to_cookie`
 
-Get the initial language from the [URL parameter] and save it to a cookie.
+Get initial language from [URL parameter] and save it to a [cookie].
 
 ```rust
 leptos_fluent! {{
@@ -312,7 +354,7 @@ leptos_fluent! {{
 
 ### <span style="opacity:.5">CSR </span> | `set_language_to_url_param`
 
-Set current language to the [URL parameter].
+Synchronize current language with [URL parameter].
 
 ```rust
 leptos_fluent! {{
@@ -327,7 +369,7 @@ leptos_fluent! {{
 
 <!-- markdownlint-enable MD013 -->
 
-Key to manage the current language in [local storage].
+[Local storage] key to manage the current language.
 
 ```rust
 leptos_fluent! {{
@@ -338,7 +380,7 @@ leptos_fluent! {{
 
 ### <span style="opacity:.5">CSR </span> | `initial_language_from_localstorage`
 
-Get the initial language from [local storage].
+Get initial language from [local storage].
 
 ```rust
 leptos_fluent! {{
@@ -349,7 +391,7 @@ leptos_fluent! {{
 
 ### <span style="opacity:.5">CSR </span> | `initial_language_from_localstorage_to_cookie`
 
-Get the initial language from [local storage] and save it to a cookie.
+Get initial language from [local storage] and save it to a [cookie].
 
 ```rust
 leptos_fluent! {{
@@ -393,7 +435,7 @@ leptos_fluent! {{
 
 ### <span style="opacity:.5">CSR </span> | `initial_language_from_navigator_to_cookie`
 
-Get the initial language from [`navigator.languages`] and save it in a cookie.
+Get the initial language from [`navigator.languages`] and save it in a [cookie].
 
 ```rust
 leptos_fluent! {{
@@ -419,7 +461,7 @@ leptos_fluent! {{
 
 <!-- markdownlint-enable MD013 -->
 
-Name of the cookie that will be used to manage the current language. By default
+Name of the [cookie] that will be used to manage the current language. By default
 it is `"lf-lang"`.
 
 ```rust
@@ -435,7 +477,7 @@ leptos_fluent! {{
 
 <!-- markdownlint-enable MD013 -->
 
-[Cookie attributes] to set on the language cookie.
+[Cookie attributes] to set on the language [cookie].
 
 ```rust
 leptos_fluent! {{
@@ -444,8 +486,7 @@ leptos_fluent! {{
 }}
 ```
 
-If the passed value is an expression the cookie will not be validated at
-compile time:
+If value is an expression the [cookie] will not be validated at compile time:
 
 ```rust
 let attrs = "SameSite=Strict; Secure; MyCustomCookie=value"
@@ -575,3 +616,5 @@ leptos_fluent! {{
 [`Accept-Language`]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language
 [glob]: https://docs.rs/globwalk/latest/globwalk/fn.glob.html
 [URL parameter]: https://developer.mozilla.org/es/docs/Web/API/URLSearchParams
+[`sync_html_tag_dir`]: #csr---sync_html_tag_dir
+[cookie]: https://developer.mozilla.org/docs/Web/HTTP/Cookies

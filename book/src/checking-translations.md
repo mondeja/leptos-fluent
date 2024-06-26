@@ -54,7 +54,7 @@ error: Translations check failed:
 
 ## Why glob patterns to Rust files?
 
-**leptos-fluent** provides a [`leptos_fluent::I18n`] context to Leptos when
+**leptos-fluent** provides a [`I18n`] context to Leptos when
 the macro [`leptos_fluent!`] is called. So multiple instances of a context
 with different localization files and strategies can be initialized in
 different component trees. This is useful, for example, in a multi page app.
@@ -66,7 +66,7 @@ invocations.
 
 ```admonish note title='Why macros'
 **leptos-fluent** doesn't provide ways to translate directly using
-[`leptos_fluent::I18n`] context methods, as it would be impossible to extract
+[`I18n`] context methods, as it would be impossible to extract
 the translations at compile time.
 ```
 
@@ -77,5 +77,5 @@ separation of contexts in the codebase.
 
 [`tr!`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.tr.html
 [`move_tr!`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.move_tr.html
-[`leptos_fluent::I18n`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html
+[`I18n`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html
 [`leptos_fluent!`]: https://mondeja.github.io/leptos-fluent/leptos_fluent.html

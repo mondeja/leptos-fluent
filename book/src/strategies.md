@@ -1,4 +1,4 @@
-<!-- markdownlint-disable MD013 -->
+<!-- markdownlint-disable MD013 MD033 -->
 
 # Strategies
 
@@ -18,7 +18,7 @@ The initial language of the user can be set in different ways:
 | Browser [local storage]                    | ✅  | ❌  |   ❌    | `initial_language_from_localstorage`           |
 | Browser language ([`navigator.languages`]) | ✅  | ❌  |   ❌    | `initial_language_from_navigator`              |
 | [`Accept-Language`] header                 | ❌  | ✅  |   ❌    | `initial_language_from_accept_language_header` |
-| System language                            | ❌  | ❌  |   ✅    | `initial_language_from_system`                 |
+| [System language]                          | ❌  | ❌  |   ✅    | `initial_language_from_system`                 |
 | Data file                                  | ❌  | ❌  |   ✅    | `initial_language_from_data_file`              |
 
 All of them can be used at the same time or just one of them. The first setting
@@ -35,9 +35,9 @@ found will be used. The order of precedence is:
   4. Browser language from [`navigator.languages`].
 - **Desktop** ([`system` feature][desktop-applications])
   1. Data file.
-  2. System language.
+  2. [System language].
 
-## Updating the language on the client
+## <span style="opacity:.5">CSR </span> | Updating the language on the client
 
 When the user changes the language and `I18n::language.set` is called, the
 framework can perform a side effect to update the language in the client. The
@@ -49,13 +49,13 @@ following strategies are available:
 | [Cookie]                | `set_language_to_cookie`       |
 | Browser [local storage] | `set_language_to_localstorage` |
 
-### Desktop applications ([`system`][desktop-applications])
+### <a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Desktop applications
 
 | Strategy  | [`leptos_fluent!`]          |
 | :-------- | :-------------------------- |
 | Data file | `set_language_to_data_file` |
 
-## Updating the language from initialization on the client
+## <span style="opacity:.5">CSR </span> | Updating the language from initialization on the client
 
 When a language is loaded from initialization, the framework can perform a side
 effect to persistently storage the language in the client. The following strategies
@@ -70,13 +70,13 @@ are available:
 | [`navigator.languages`] to [local storage] | `initial_language_from_navigator_to_localstorage` |
 | [`navigator.languages`] to [cookie]        | `initial_language_from_navigator_to_cookie`       |
 
-### Desktop applications ([`system`][desktop-applications])
+### <a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Desktop applications
 
-| Strategy                     | [`leptos_fluent!`]                          |
-| :--------------------------- | :------------------------------------------ |
-| System language to data file | `initial_language_from_system_to_data_file` |
+| Strategy                       | [`leptos_fluent!`]                          |
+| :----------------------------- | :------------------------------------------ |
+| [System language] to data file | `initial_language_from_system_to_data_file` |
 
-## Client side effects
+## <span style="opacity:.5">CSR </span> | Client side effects
 
 When the user updates the language, the framework can perform side effects to
 update the language in the client. The following side effects are available:
@@ -89,7 +89,7 @@ update the language in the client. The following side effects are available:
 [`<html lang="...">`]: https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/lang
 [`<html dir="...">`]: https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/dir
 
-## Configuring names
+## <span style="opacity:.5">CSR + SSR </span> | Names
 
 The names of the settings can be configured using the following parameters:
 
@@ -100,7 +100,7 @@ The names of the settings can be configured using the following parameters:
 | Browser [local storage] | `localstorage_key` | `"lang"`      |
 | [URL parameter]         | `url_param`        | `"lang"`      |
 
-### Desktop applications ([`system`][desktop-applications])
+### <a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Desktop applications
 
 | Strategy  | [`leptos_fluent!`] | Default value     |
 | :-------- | :----------------- | :---------------- |
@@ -114,3 +114,4 @@ The names of the settings can be configured using the following parameters:
 [Cookie attributes]: https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie#write_a_new_cookie
 [URL parameter]: https://developer.mozilla.org/es/docs/Web/API/URLSearchParams
 [desktop-applications]: https://mondeja.github.io/leptos-fluent/install.html#desktop-applications
+[System language]: https://github.com/i509VCB/current_locale

@@ -140,11 +140,13 @@ a reactive context. Note that if you're not inside a reactive context,
 the translation won't be updated on the fly when the language changes.
 This can lead to warnings in console output like:
 
-```admonish warning
+````admonish warning
+```shell
 At `./path/to/file.rs:ln`, you access a signal or memo (defined at
 `./path/to/file.rs:ln`) outside of a reactive context. This might mean your
 app is not responding to changes in signal values in the way you expect.
 ```
+````
 
 Can be fixed by replacing calls to [`tr!`] with [`move_tr!`] or wrapping the
 [`tr!`] calls in a reactive context.
@@ -164,7 +166,7 @@ The main difference is that [`move_tr!`] encapsulates the movement in a
 leptos::Signal::derive(move || tr!("select-a-language"))
 ```
 
-## Retrieving the [`leptos_fluent::I18n`] context
+## Retrieving the [`I18n`] context
 
 Use the [`expect_i18n`] function to get the current i18n context:
 
@@ -172,7 +174,7 @@ Use the [`expect_i18n`] function to get the current i18n context:
 let i18n = leptos_fluent::expect_i18n();
 ```
 
-It is exported as [`i18n`] too:
+It is exported as [`i18n`-f] too:
 
 ```rust
 let i18n = leptos_fluent::i18n();
@@ -181,10 +183,10 @@ let i18n = leptos_fluent::i18n();
 The function [`use_i18n`] returns an `Option` with the current i18n context:
 
 ```rust
-let i18n = leptos_fluent::use_i18n().expect("No `leptos_fluent::I18n` context found");
+let i18n = leptos_fluent::use_i18n().expect("No `I18n` context found");
 ```
 
-## Using the [`leptos_fluent::I18n`] context
+## Using the [`I18n`] context
 
 The i18n context has the following fields:
 
@@ -203,23 +205,32 @@ lang.activate();
 expect_i18n().language.set(lang);
 ```
 
-```admonish tip title='Nightly'
+````admonish tip title='Nightly'
 When `nightly` feature is enabled, you update it passing a new language to the
-context as a function with `(leptos_fluent::i18n())(lang)`.
+context as a function with:
+
+```rust
+let i18n = leptos_fluent::i18n();
+i18n(lang);
 ```
+````
 
 ### Get active language
 
 To get the current active language, use `get` method of [`language`] field:
 
 ```rust
-i18n.language.get()
+let lang = i18n.language.get();
 ```
 
-```admonish tip title='Nightly'
-When `nightly` enabled, you can get the active language with
-`(leptos_fluent::i18n())()`.
+````admonish tip title='Nightly'
+When `nightly` enabled, you can get the active language with:
+
+```rust
+let i18n = leptos_fluent::i18n();
+let lang = i18n();
 ```
+````
 
 ### Get available languages
 
@@ -240,7 +251,7 @@ lang.is_active()
 
 [`tr!`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.tr.html
 [`move_tr!`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.move_tr.html
-[`leptos_fluent::I18n`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html
+[`I18n`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html
 [`leptos_fluent::Language`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html
 [`lang.activate`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html#method.activate
 [`language`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.language
@@ -249,6 +260,6 @@ lang.is_active()
 [fluent-templates]: https://docs.rs/fluent-templates/latest/fluent_templates
 [`leptos::Signal`]: https://docs.rs/leptos/latest/leptos/struct.Signal.html
 [`expect_i18n`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.expect_i18n.html
-[`i18n`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.i18n.html
+[`i18n`-f]: https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.i18n.html
 [`use_i18n`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.use_i18n.html
 [`is_active`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html#method.is_active
