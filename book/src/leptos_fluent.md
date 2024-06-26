@@ -1,4 +1,4 @@
-<!-- markdownlint-disable MD033 MD038 -->
+<!-- markdownlint-disable MD033 MD038 MD048 -->
 
 # `leptos_fluent!`
 
@@ -81,7 +81,6 @@ executed in the next order:
 4. The name of a source: `cookie_name`, `localstorage_key`, `navigator`...
 
 ````admonish example
-
 ```rust
 leptos_fluent!{{
     // ..
@@ -97,7 +96,6 @@ leptos_fluent!{{
     data_file_key: "system-language-example",
 }};
 ```
-
 ````
 
 ## Parameters

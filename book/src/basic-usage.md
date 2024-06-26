@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD048 -->
+
 # Basic usage
 
 <!-- toc -->
@@ -140,11 +142,13 @@ a reactive context. Note that if you're not inside a reactive context,
 the translation won't be updated on the fly when the language changes.
 This can lead to warnings in console output like:
 
-```admonish warning
+````admonish warning
+```shell
 At `./path/to/file.rs:ln`, you access a signal or memo (defined at
 `./path/to/file.rs:ln`) outside of a reactive context. This might mean your
 app is not responding to changes in signal values in the way you expect.
 ```
+````
 
 Can be fixed by replacing calls to [`tr!`] with [`move_tr!`] or wrapping the
 [`tr!`] calls in a reactive context.
@@ -203,23 +207,32 @@ lang.activate();
 expect_i18n().language.set(lang);
 ```
 
-```admonish tip title='Nightly'
+````admonish tip title='Nightly'
 When `nightly` feature is enabled, you update it passing a new language to the
-context as a function with `(leptos_fluent::i18n())(lang)`.
+context as a function with:
+
+```rust
+let i18n = leptos_fluent::i18n();
+i18n(lang);
 ```
+````
 
 ### Get active language
 
 To get the current active language, use `get` method of [`language`] field:
 
 ```rust
-i18n.language.get()
+let lang = i18n.language.get();
 ```
 
-```admonish tip title='Nightly'
-When `nightly` enabled, you can get the active language with
-`(leptos_fluent::i18n())()`.
+````admonish tip title='Nightly'
+When `nightly` enabled, you can get the active language with:
+
+```rust
+let i18n = leptos_fluent::i18n();
+let lang = i18n();
 ```
+````
 
 ### Get available languages
 
