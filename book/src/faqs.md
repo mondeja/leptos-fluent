@@ -48,7 +48,7 @@ leptos_fluent! {{
 
 ### How to get the fallback language
 
-From fluent-templates `v0.9.5` onwards you can get it from your translations.
+From fluent-templates `v0.9.5` onwards can be obtained from your translations.
 
 ```rust
 let fallback_language = expect_i18n().translations.get()[0].fallback();

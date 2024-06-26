@@ -4,8 +4,7 @@
 
 ## CSR
 
-For client side rendering apps you only need to install **leptos-fluent** and
-[`fluent-templates`]:
+For client side rendering apps install **leptos-fluent** and [`fluent-templates`]:
 
 ```toml
 [dependencies]
@@ -34,9 +33,9 @@ fluent-templates = "0.9"
 
 ## SSR
 
-For server side rendering apps you need to install **leptos-fluent**,
-[`fluent-templates`] and activate the `hydrate`, `ssr` and `actix`/`axum`
-features in their respective feature set of your app.
+For server side rendering apps install **leptos-fluent**, [`fluent-templates`]
+and activate the `hydrate`, `ssr` and `actix`/`axum` features in their
+respective features set.
 
 ```toml
 [dependencies]
@@ -86,9 +85,9 @@ fluent-templates = "0.9"
 
 ## Language files
 
-By default, **leptos-fluent** supports JSON languages files. If you want to
-use other formats to load your custom languages, you can enable the
-`json5` or `yaml` features:
+By default, **leptos-fluent** supports JSON languages files. To use other
+formats to load custom languages, the `json5` or `yaml` features can be
+enabled:
 
 ```toml
 [dependencies]

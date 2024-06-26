@@ -1,7 +1,7 @@
 # Checking translations
 
-To check that the translations of your application are correct at compile time,
-you can set the `check_translations` parameter in the [`leptos_fluent!`] macro to
+To check that the translations of the app are correct at compile time,
+set the `check_translations` parameter in the [`leptos_fluent!`] macro to
 a glob pattern that matches the Rust files that you want to check.
 
 The pattern must be relative to the location of the _Cargo.toml_ file.

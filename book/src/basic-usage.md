@@ -135,8 +135,8 @@ move_tr!("select-a-language")
 move_tr!("language-selected-is", { "lang" => i18n.language.get().name })
 ```
 
-Additionally, you can use the [`tr!`] macro to translate a string inside
-a reactive context. Note that if you're not inside a reactive context,
+Additionally, use the [`tr!`] macro to translate a string inside
+a reactive context. Note that if is not inside a reactive context,
 the translation won't be updated on the fly when the language changes.
 This can lead to warnings in console output like:
 
@@ -206,7 +206,7 @@ expect_i18n().language.set(lang);
 ```
 
 ````admonish tip title='Nightly'
-When `nightly` feature is enabled, you update it passing a new language to the
+When `nightly` feature is enabled, can be updated passing a new language to the
 context as a function with:
 
 ```rust
@@ -225,7 +225,7 @@ let lang = i18n.language.get();
 ```
 
 ````admonish tip title='Nightly'
-When `nightly` enabled, you can get the active language with:
+When `nightly` enabled, can get the active language with:
 
 ```rust
 let i18n = leptos_fluent::i18n();
