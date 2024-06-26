@@ -34,6 +34,14 @@ pub fn LanguageSelector() -> impl IntoView {
                     .map(|lang| {
                         view! {
                             <div>
+                                <input
+                                    type="radio"
+                                    id=lang
+                                    name="language"
+                                    value=lang
+                                    checked=lang.is_active()
+                                    on:click=move |_| lang.activate()
+                                />
                                 <label for=lang>
                                     {format!(
                                         "{}{}",
@@ -45,14 +53,6 @@ pub fn LanguageSelector() -> impl IntoView {
                                     )}
 
                                 </label>
-                                <input
-                                    type="radio"
-                                    id=lang
-                                    name="language"
-                                    value=lang
-                                    checked=lang.is_active()
-                                    on:click=move |_| lang.activate()
-                                />
                             </div>
                         }
                     })
