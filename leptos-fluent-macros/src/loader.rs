@@ -433,7 +433,7 @@ impl Parse for I18nLoader {
                                 " '#[cfg(feature = \"nightly\")] key: value'.\n\n",
                                 " Found expression: {:?}",
                             ),
-                            expr,
+                            expr.to_token_stream(),
                         )
                     ));
                 }
