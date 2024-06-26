@@ -21,7 +21,7 @@ fn main() {
     // Connect to "activate" signal of `app`
     app.connect_activate(build_ui);
 
-    leptos_fluent! {{
+    let i18n = leptos_fluent! {{
         translations: [TRANSLATIONS],
         locales: "./locales",
         check_translations: "./src/**/*.rs",
@@ -30,7 +30,13 @@ fn main() {
         initial_language_from_system_to_data_file: true,
         set_language_to_data_file: true,
         data_file_key: "leptos-fluent-gtk-example",
+        provide_meta_context: true,
     }};
+
+    #[allow(clippy::print_stdout)]
+    {
+        println!("Macro parameters: {:?}", i18n.meta().unwrap());
+    }
 
     // Run the application
     app.run();

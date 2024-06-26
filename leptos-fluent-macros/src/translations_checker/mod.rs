@@ -101,11 +101,7 @@ fn check_tr_macros_against_fluent_entries(
                                     r#" "{}" of locale "{}"."#,
                                 ),
                                 placeable,
-                                format_macro_call(
-                                    &tr_macro.name,
-                                    &tr_macro.message_name,
-                                    !tr_macro.placeables.is_empty(),
-                                ),
+                                format_macro_call(tr_macro),
                                 macro_location(tr_macro),
                                 tr_macro.message_name,
                                 lang,
@@ -128,11 +124,7 @@ fn check_tr_macros_against_fluent_entries(
                             r#" not found in files for locale "{}"."#,
                         ),
                         tr_macro.message_name,
-                        format_macro_call(
-                            &tr_macro.name,
-                            &tr_macro.message_name,
-                            !tr_macro.placeables.is_empty(),
-                        ),
+                        format_macro_call(tr_macro),
                         macro_location(tr_macro),
                         lang,
                     )
@@ -145,11 +137,7 @@ fn check_tr_macros_against_fluent_entries(
                             " regular expression '[a-zA-Z][a-zA-Z0-9_-]+'.",
                         ),
                         tr_macro.message_name,
-                        format_macro_call(
-                            &tr_macro.name,
-                            &tr_macro.message_name,
-                            !tr_macro.placeables.is_empty(),
-                        ),
+                        format_macro_call(tr_macro),
                         macro_location(tr_macro),
                         lang,
                     )
@@ -189,11 +177,7 @@ fn check_fluent_entries_against_tr_macros(
                                     placeable,
                                     entry.message_name,
                                     lang,
-                                    format_macro_call(
-                                        &tr_macro.name,
-                                        &tr_macro.message_name,
-                                        !tr_macro.placeables.is_empty(),
-                                    ),
+                                    format_macro_call(tr_macro),
                                     macro_location(tr_macro),
                                 )
                             );
@@ -218,12 +202,10 @@ fn check_fluent_entries_against_tr_macros(
     error_messages
 }
 
-fn format_macro_call(
-    macro_name: &str,
-    message_name: &str,
-    has_placeables: bool,
-) -> String {
-    if has_placeables {
+fn format_macro_call(tr_macro: &TranslationMacro) -> String {
+    let macro_name = &tr_macro.name;
+    let message_name = &tr_macro.message_name;
+    if !tr_macro.placeables.is_empty() {
         return format!(r#"`{macro_name}!("{message_name}", {{ ... }})`"#);
     }
     format!(r#"`{macro_name}!("{message_name}")`"#)
