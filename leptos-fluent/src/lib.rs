@@ -291,7 +291,7 @@ pub use leptos_fluent_macros::leptos_fluent;
 use leptos_meta::Html;
 
 /// Direction of the text
-#[cfg_attr(debug_assertions, derive(Debug))]
+#[derive(Debug)]
 pub enum WritingDirection {
     /// Left to right
     Ltr,
