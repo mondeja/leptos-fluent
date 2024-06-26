@@ -82,7 +82,7 @@ executed in the next order:
 
 ````admonish example
 ```rust
-leptos_fluent!{{
+leptos_fluent! {{
     // ..
     // Get the initial language from the operative system language
     initial_language_from_system: true,
