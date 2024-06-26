@@ -190,8 +190,7 @@
 <li><a href="#features">Features</a></li>
 </ul>
 <h2 id="csr"><a class="header" href="#csr">CSR</a></h2>
-<p>For client side rendering apps you only need to install <strong>leptos-fluent</strong> and
-<a href="https://github.com/XAMPPRocky/fluent-templates"><code>fluent-templates</code></a>:</p>
+<p>For client side rendering apps install <strong>leptos-fluent</strong> and <a href="https://github.com/XAMPPRocky/fluent-templates"><code>fluent-templates</code></a>:</p>
 <pre><code class="language-toml">[dependencies]
 leptos-fluent = "0.1"
 fluent-templates = "0.9"
@@ -209,9 +208,9 @@ fluent-templates = "0.9"
 </details>
 <!-- markdownlint-enable MD033 -->
 <h2 id="ssr"><a class="header" href="#ssr">SSR</a></h2>
-<p>For server side rendering apps you need to install <strong>leptos-fluent</strong>,
-<a href="https://github.com/XAMPPRocky/fluent-templates"><code>fluent-templates</code></a> and activate the <code>hydrate</code>, <code>ssr</code> and <code>actix</code>/<code>axum</code>
-features in their respective feature set of your app.</p>
+<p>For server side rendering apps install <strong>leptos-fluent</strong>, <a href="https://github.com/XAMPPRocky/fluent-templates"><code>fluent-templates</code></a>
+and activate the <code>hydrate</code>, <code>ssr</code> and <code>actix</code>/<code>axum</code> features in their
+respective features set.</p>
 <pre><code class="language-toml">[dependencies]
 leptos-fluent = "0.1"
 fluent-templates = "0.9"
@@ -256,9 +255,9 @@ leptos-fluent = { version = "0.1", features = ["nightly"] }
 fluent-templates = "0.9"
 </code></pre>
 <h2 id="language-files"><a class="header" href="#language-files">Language files</a></h2>
-<p>By default, <strong>leptos-fluent</strong> supports JSON languages files. If you want to
-use other formats to load your custom languages, you can enable the
-<code>json5</code> or <code>yaml</code> features:</p>
+<p>By default, <strong>leptos-fluent</strong> supports JSON languages files. To use other
+formats to load custom languages, the <code>json5</code> or <code>yaml</code> features can be
+enabled:</p>
 <pre><code class="language-toml">[dependencies]
 fluent-templates = "0.9"
 leptos-fluent = {

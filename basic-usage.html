@@ -312,8 +312,8 @@ translation and an optional object with the variables to interpolate:</p>
 
 move_tr!("language-selected-is", { "lang" =&gt; i18n.language.get().name })
 <span class="boring">}</span></code></pre></pre>
-<p>Additionally, you can use the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.tr.html"><code>tr!</code></a> macro to translate a string inside
-a reactive context. Note that if you're not inside a reactive context,
+<p>Additionally, use the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.tr.html"><code>tr!</code></a> macro to translate a string inside
+a reactive context. Note that if is not inside a reactive context,
 the translation won't be updated on the fly when the language changes.
 This can lead to warnings in console output like:</p>
 <div id="admonition-warning" class="admonition admonish-warning" role="note" aria-labelledby="admonition-warning-title">
@@ -385,7 +385,7 @@ expect_i18n().language.set(lang);
 <a class="admonition-anchor-link" href="#admonition-nightly"></a>
 </div>
 <div>
-<p>When <code>nightly</code> feature is enabled, you update it passing a new language to the
+<p>When <code>nightly</code> feature is enabled, can be updated passing a new language to the
 context as a function with:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -409,7 +409,7 @@ let lang = i18n.language.get();
 <a class="admonition-anchor-link" href="#admonition-nightly-1"></a>
 </div>
 <div>
-<p>When <code>nightly</code> enabled, you can get the active language with:</p>
+<p>When <code>nightly</code> enabled, can get the active language with:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let i18n = leptos_fluent::i18n();

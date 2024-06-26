@@ -238,8 +238,7 @@ development environment and contribute to the project.</p>
 <li><a href="install.html#features">Features</a></li>
 </ul>
 <h2 id="csr"><a class="header" href="#csr">CSR</a></h2>
-<p>For client side rendering apps you only need to install <strong>leptos-fluent</strong> and
-<a href="https://github.com/XAMPPRocky/fluent-templates"><code>fluent-templates</code></a>:</p>
+<p>For client side rendering apps install <strong>leptos-fluent</strong> and <a href="https://github.com/XAMPPRocky/fluent-templates"><code>fluent-templates</code></a>:</p>
 <pre><code class="language-toml">[dependencies]
 leptos-fluent = "0.1"
 fluent-templates = "0.9"
@@ -257,9 +256,9 @@ fluent-templates = "0.9"
 </details>
 <!-- markdownlint-enable MD033 -->
 <h2 id="ssr"><a class="header" href="#ssr">SSR</a></h2>
-<p>For server side rendering apps you need to install <strong>leptos-fluent</strong>,
-<a href="https://github.com/XAMPPRocky/fluent-templates"><code>fluent-templates</code></a> and activate the <code>hydrate</code>, <code>ssr</code> and <code>actix</code>/<code>axum</code>
-features in their respective feature set of your app.</p>
+<p>For server side rendering apps install <strong>leptos-fluent</strong>, <a href="https://github.com/XAMPPRocky/fluent-templates"><code>fluent-templates</code></a>
+and activate the <code>hydrate</code>, <code>ssr</code> and <code>actix</code>/<code>axum</code> features in their
+respective features set.</p>
 <pre><code class="language-toml">[dependencies]
 leptos-fluent = "0.1"
 fluent-templates = "0.9"
@@ -304,9 +303,9 @@ leptos-fluent = { version = "0.1", features = ["nightly"] }
 fluent-templates = "0.9"
 </code></pre>
 <h2 id="language-files"><a class="header" href="#language-files">Language files</a></h2>
-<p>By default, <strong>leptos-fluent</strong> supports JSON languages files. If you want to
-use other formats to load your custom languages, you can enable the
-<code>json5</code> or <code>yaml</code> features:</p>
+<p>By default, <strong>leptos-fluent</strong> supports JSON languages files. To use other
+formats to load custom languages, the <code>json5</code> or <code>yaml</code> features can be
+enabled:</p>
 <pre><code class="language-toml">[dependencies]
 fluent-templates = "0.9"
 leptos-fluent = {
@@ -468,8 +467,8 @@ translation and an optional object with the variables to interpolate:</p>
 
 move_tr!("language-selected-is", { "lang" =&gt; i18n.language.get().name })
 <span class="boring">}</span></code></pre></pre>
-<p>Additionally, you can use the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.tr.html"><code>tr!</code></a> macro to translate a string inside
-a reactive context. Note that if you're not inside a reactive context,
+<p>Additionally, use the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.tr.html"><code>tr!</code></a> macro to translate a string inside
+a reactive context. Note that if is not inside a reactive context,
 the translation won't be updated on the fly when the language changes.
 This can lead to warnings in console output like:</p>
 <div id="admonition-warning" class="admonition admonish-warning" role="note" aria-labelledby="admonition-warning-title">
@@ -541,7 +540,7 @@ expect_i18n().language.set(lang);
 <a class="admonition-anchor-link" href="basic-usage.html#admonition-nightly"></a>
 </div>
 <div>
-<p>When <code>nightly</code> feature is enabled, you update it passing a new language to the
+<p>When <code>nightly</code> feature is enabled, can be updated passing a new language to the
 context as a function with:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -565,7 +564,7 @@ let lang = i18n.language.get();
 <a class="admonition-anchor-link" href="basic-usage.html#admonition-nightly-1"></a>
 </div>
 <div>
-<p>When <code>nightly</code> enabled, you can get the active language with:</p>
+<p>When <code>nightly</code> enabled, can get the active language with:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let i18n = leptos_fluent::i18n();
@@ -615,7 +614,7 @@ let lang = i18n();
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/es/docs/Web/API/URLSearchParams">URL parameter</a></td><td style="text-align: center">✅</td><td style="text-align: center">✅</td><td style="text-align: center">❌</td><td style="text-align: left"><code>initial_language_from_url_param</code></td></tr>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie">Cookie</a></td><td style="text-align: center">✅</td><td style="text-align: center">✅</td><td style="text-align: center">❌</td><td style="text-align: left"><code>initial_language_from_cookie</code></td></tr>
 <tr><td style="text-align: left">Browser <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">local storage</a></td><td style="text-align: center">✅</td><td style="text-align: center">❌</td><td style="text-align: center">❌</td><td style="text-align: left"><code>initial_language_from_localstorage</code></td></tr>
-<tr><td style="text-align: left">Browser language (<a href="https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a>)</td><td style="text-align: center">✅</td><td style="text-align: center">❌</td><td style="text-align: center">❌</td><td style="text-align: left"><code>initial_language_from_navigator</code></td></tr>
+<tr><td style="text-align: left">Browser <a href="https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a></td><td style="text-align: center">✅</td><td style="text-align: center">❌</td><td style="text-align: center">❌</td><td style="text-align: left"><code>initial_language_from_navigator</code></td></tr>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language"><code>Accept-Language</code></a> header</td><td style="text-align: center">❌</td><td style="text-align: center">✅</td><td style="text-align: center">❌</td><td style="text-align: left"><code>initial_language_from_accept_language_header</code></td></tr>
 <tr><td style="text-align: left"><a href="https://github.com/i509VCB/current_locale">System language</a></td><td style="text-align: center">❌</td><td style="text-align: center">❌</td><td style="text-align: center">✅</td><td style="text-align: left"><code>initial_language_from_system</code></td></tr>
 <tr><td style="text-align: left">Data file</td><td style="text-align: center">❌</td><td style="text-align: center">❌</td><td style="text-align: center">✅</td><td style="text-align: left"><code>initial_language_from_data_file</code></td></tr>
@@ -636,7 +635,7 @@ found will be used. The order of precedence is:</p>
 <li><a href="https://developer.mozilla.org/es/docs/Web/API/URLSearchParams">URL parameter</a>.</li>
 <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie">Cookie</a>.</li>
 <li>Browser <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">local storage</a>.</li>
-<li>Browser language from <a href="https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a>.</li>
+<li>Browser <a href="https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a>.</li>
 </ol>
 </li>
 <li><strong>Desktop</strong> (<a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><code>system</code> feature</a>)
@@ -836,8 +835,8 @@ workspace <em>Cargo.toml</em> file:</p>
 watch-additional-files = ["examples/csr/locales"]
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="checking-translations"><a class="header" href="#checking-translations">Checking translations</a></h1>
-<p>To check that the translations of your application are correct at compile time,
-you can set the <code>check_translations</code> parameter in the <a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a> macro to
+<p>To check that the translations of the app are correct at compile time,
+set the <code>check_translations</code> parameter in the <a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a> macro to
 a glob pattern that matches the Rust files that you want to check.</p>
 <p>The pattern must be relative to the location of the <em>Cargo.toml</em> file.</p>
 <p>For single crate projects, it would be something like:</p>
@@ -952,7 +951,7 @@ leptos_fluent! {{
 }}
 <span class="boring">}</span></code></pre></pre>
 <h3 id="how-to-get-the-fallback-language"><a class="header" href="#how-to-get-the-fallback-language">How to get the fallback language</a></h3>
-<p>From fluent-templates <code>v0.9.5</code> onwards you can get it from your translations.</p>
+<p>From fluent-templates <code>v0.9.5</code> onwards can be obtained from your translations.</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let fallback_language = expect_i18n().translations.get()[0].fallback();
