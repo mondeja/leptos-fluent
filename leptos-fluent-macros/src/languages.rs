@@ -1,33 +1,65 @@
 use std::fs;
 use std::path::PathBuf;
 
+type BuiltLanguagesFileLanguage = (String, String, String, Option<String>);
+
 #[cfg(any(feature = "json", feature = "yaml", feature = "json5"))]
 #[derive(serde::Deserialize)]
 #[serde(untagged)]
-enum LanguagesFileLanguage {
-    CodeName(String, String),
+enum RawLanguagesFileLanguage {
+    Basic(String, String),
     CodeNameDir(String, String, String),
+    CodeNameDirFlag(String, String, String, String),
 }
 
 #[cfg(any(feature = "json", feature = "yaml", feature = "json5"))]
-fn set_dir_to_languages_from_languages_file(
-    languages: &[LanguagesFileLanguage],
-) -> Vec<(String, String, String)> {
+fn fill_languages_file(
+    languages: &[RawLanguagesFileLanguage],
+) -> Vec<(String, String, String, Option<String>)> {
     let mut locales = vec![];
     for tuple in languages {
         match tuple {
-            LanguagesFileLanguage::CodeName(lang_code, lang_name) => {
+            RawLanguagesFileLanguage::Basic(lang_code, lang_name) => {
                 locales.push((
                     lang_code.to_owned(),
                     lang_name.to_owned(),
                     iso639_to_dir(&code_to_iso639(lang_code)).to_string(),
+                    match code_to_country_code(lang_code) {
+                        Some(country_code) => {
+                            country_code_to_emoji_flag(&country_code)
+                        }
+                        None => None,
+                    },
                 ));
             }
-            LanguagesFileLanguage::CodeNameDir(lang_code, lang_name, dir) => {
+            RawLanguagesFileLanguage::CodeNameDir(
+                lang_code,
+                lang_name,
+                dir,
+            ) => {
                 locales.push((
                     lang_code.to_owned(),
                     lang_name.to_owned(),
                     dir.to_owned(),
+                    match code_to_country_code(lang_code) {
+                        Some(country_code) => {
+                            country_code_to_emoji_flag(&country_code)
+                        }
+                        None => None,
+                    },
+                ));
+            }
+            RawLanguagesFileLanguage::CodeNameDirFlag(
+                lang_code,
+                lang_name,
+                dir,
+                flag,
+            ) => {
+                locales.push((
+                    lang_code.to_owned(),
+                    lang_name.to_owned(),
+                    dir.to_owned(),
+                    Some(flag.to_owned()),
                 ));
             }
         }
@@ -37,21 +69,17 @@ fn set_dir_to_languages_from_languages_file(
 
 pub(crate) fn read_languages_file(
     path: &PathBuf,
-) -> Result<Vec<(String, String, String)>, String> {
+) -> Result<Vec<BuiltLanguagesFileLanguage>, String> {
     #[cfg(feature = "json")]
     {
         let file_extension = path.extension().unwrap_or_default();
         if file_extension == "json" {
             match fs::read_to_string(path) {
                 Ok(content) => {
-                    match serde_json::from_str::<Vec<LanguagesFileLanguage>>(
+                    match serde_json::from_str::<Vec<RawLanguagesFileLanguage>>(
                         content.as_str(),
                     ) {
-                        Ok(languages) => {
-                            Ok(set_dir_to_languages_from_languages_file(
-                                &languages,
-                            ))
-                        }
+                        Ok(languages) => Ok(fill_languages_file(&languages)),
                         Err(e) => Err(format!(
                             "Invalid JSON in languages file {}: {}",
                             path.to_string_lossy(),
@@ -83,14 +111,10 @@ pub(crate) fn read_languages_file(
         if file_extension == "yaml" || file_extension == "yml" {
             match fs::read_to_string(path) {
                 Ok(content) => {
-                    match serde_yaml::from_str::<Vec<LanguagesFileLanguage>>(
+                    match serde_yaml::from_str::<Vec<RawLanguagesFileLanguage>>(
                         content.as_str(),
                     ) {
-                        Ok(languages) => {
-                            Ok(set_dir_to_languages_from_languages_file(
-                                &languages,
-                            ))
-                        }
+                        Ok(languages) => Ok(fill_languages_file(&languages)),
                         Err(e) => Err(format!(
                             "Invalid YAML in languages file {}: {}",
                             path.to_string_lossy(),
@@ -125,14 +149,10 @@ pub(crate) fn read_languages_file(
         if file_extension == "json5" {
             match fs::read_to_string(path) {
                 Ok(content) => {
-                    match json5::from_str::<Vec<LanguagesFileLanguage>>(
+                    match json5::from_str::<Vec<RawLanguagesFileLanguage>>(
                         content.as_str(),
                     ) {
-                        Ok(languages) => {
-                            Ok(set_dir_to_languages_from_languages_file(
-                                &languages,
-                            ))
-                        }
+                        Ok(languages) => Ok(fill_languages_file(&languages)),
                         Err(e) => Err(format!(
                             "Invalid JSON5 in languages file {}: {}",
                             path.to_string_lossy(),
@@ -171,7 +191,7 @@ pub(crate) fn read_languages_file(
 
 pub(crate) fn read_locales_folder(
     path: &PathBuf,
-) -> Vec<(String, String, String)> {
+) -> Vec<(String, String, String, Option<String>)> {
     let mut iso639_language_codes = vec![];
     let mut entries = vec![];
     for entry in fs::read_dir(path).expect("Couldn't read locales folder") {
@@ -203,21 +223,30 @@ pub(crate) fn read_locales_folder(
         let lang_name =
             language_name_from_language_code(&lang_code, use_country_code);
         let lang_dir = iso639_to_dir(&iso639_code);
-        locales.push((lang_code, lang_name.to_string(), lang_dir.to_string()));
+        let flag = match code_to_country_code(&lang_code) {
+            Some(country_code) => country_code_to_emoji_flag(&country_code),
+            None => None,
+        };
+        locales.push((
+            lang_code,
+            lang_name.to_string(),
+            lang_dir.to_string(),
+            flag,
+        ));
     }
     locales.sort_by(|a, b| a.1.cmp(&b.1));
     locales
 }
 
 pub(crate) fn build_languages_quote(
-    languages: &[(String, String, String)],
+    languages: &[(String, String, String, Option<String>)],
 ) -> proc_macro2::TokenStream {
     format!(
         "[{}]",
         languages
             .iter()
-            .map(|(id, name, dir)| generate_code_for_static_language(
-                id, name, dir
+            .map(|(id, name, dir, flag)| generate_code_for_static_language(
+                id, name, dir, flag
             ))
             .collect::<Vec<String>>()
             .join(",")
@@ -230,13 +259,15 @@ fn generate_code_for_static_language(
     id: &str,
     name: &str,
     dir: &str,
+    flag: &Option<String>,
 ) -> String {
     format!(
         concat!(
             "&::leptos_fluent::Language{{",
             "id: ::fluent_templates::loader::langid!(\"{}\"),",
             "name: \"{}\",",
-            "dir: {}",
+            "dir: {},",
+            "flag: {}",
             "}}",
         ),
         id,
@@ -245,6 +276,10 @@ fn generate_code_for_static_language(
             "ltr" => "&::leptos_fluent::WritingDirection::Ltr",
             "rtl" => "&::leptos_fluent::WritingDirection::Rtl",
             _ => "&::leptos_fluent::WritingDirection::Auto",
+        },
+        match flag {
+            Some(f) => format!("Some(\"{f}\")"),
+            None => "None".to_string(),
         }
     )
 }
@@ -258,6 +293,17 @@ fn code_to_iso639(code: &str) -> String {
         return code.to_lowercase();
     };
     code.split(splitter).collect::<Vec<&str>>()[0].to_string()
+}
+
+fn code_to_country_code(code: &str) -> Option<String> {
+    let splitter = if code.contains('_') {
+        '_'
+    } else if code.contains('-') {
+        '-'
+    } else {
+        return None;
+    };
+    Some(code.split(splitter).collect::<Vec<&str>>()[1].to_string())
 }
 
 /// Convert an ISO-639 language code to a directionality string.
@@ -1906,4 +1952,260 @@ fn language_name_from_language_code(
         "zu" => "isiZulu",
         _ => panic!("Language name for language code '{code}' not found",),
     }
+}
+
+pub fn country_code_to_emoji_flag(code: &str) -> Option<String> {
+    match code.to_uppercase().as_str() {
+        "AD" => Some("🇦🇩"),
+        "AE" => Some("🇦🇪"),
+        "AF" => Some("🇦🇫"),
+        "AG" => Some("🇦🇬"),
+        "AI" => Some("🇦🇮"),
+        "AL" => Some("🇦🇱"),
+        "AM" => Some("🇦🇲"),
+        "AO" => Some("🇦🇴"),
+        "AQ" => Some("🇦🇶"),
+        "AR" => Some("🇦🇷"),
+        "AS" => Some("🇦🇸"),
+        "AT" => Some("🇦🇹"),
+        "AU" => Some("🇦🇺"),
+        "AW" => Some("🇦🇼"),
+        "AX" => Some("🇦🇽"),
+        "AZ" => Some("🇦🇿"),
+        "BA" => Some("🇧🇦"),
+        "BB" => Some("🇧🇧"),
+        "BD" => Some("🇧🇩"),
+        "BE" => Some("🇧🇪"),
+        "BF" => Some("🇧🇫"),
+        "BG" => Some("🇧🇬"),
+        "BH" => Some("🇧🇭"),
+        "BI" => Some("🇧🇮"),
+        "BJ" => Some("🇧🇯"),
+        "BL" => Some("🇧🇱"),
+        "BM" => Some("🇧🇲"),
+        "BN" => Some("🇧🇳"),
+        "BO" => Some("🇧🇴"),
+        "BQ" => Some("🇧🇶"),
+        "BR" => Some("🇧🇷"),
+        "BS" => Some("🇧🇸"),
+        "BT" => Some("🇧🇹"),
+        "BV" => Some("🇧🇻"),
+        "BW" => Some("🇧🇼"),
+        "BY" => Some("🇧🇾"),
+        "BZ" => Some("🇧🇿"),
+        "CA" => Some("🇨🇦"),
+        "CC" => Some("🇨🇨"),
+        "CD" => Some("🇨🇩"),
+        "CF" => Some("🇨🇫"),
+        "CG" => Some("🇨🇬"),
+        "CH" => Some("🇨🇭"),
+        "CI" => Some("🇨🇮"),
+        "CK" => Some("🇨🇰"),
+        "CL" => Some("🇨🇱"),
+        "CM" => Some("🇨🇲"),
+        "CN" => Some("🇨🇳"),
+        "CO" => Some("🇨🇴"),
+        "CR" => Some("🇨🇷"),
+        "CU" => Some("🇨🇺"),
+        "CV" => Some("🇨🇻"),
+        "CW" => Some("🇨🇼"),
+        "CX" => Some("🇨🇽"),
+        "CY" => Some("🇨🇾"),
+        "CZ" => Some("🇨🇿"),
+        "DE" => Some("🇩🇪"),
+        "DJ" => Some("🇩🇯"),
+        "DK" => Some("🇩🇰"),
+        "DM" => Some("🇩🇲"),
+        "DO" => Some("🇩🇴"),
+        "DZ" => Some("🇩🇿"),
+        "EC" => Some("🇪🇨"),
+        "EE" => Some("🇪🇪"),
+        "EG" => Some("🇪🇬"),
+        "EH" => Some("🇪🇭"),
+        "ER" => Some("🇪🇷"),
+        "ES" => Some("🇪🇸"),
+        "ET" => Some("🇪🇹"),
+        "FI" => Some("🇫🇮"),
+        "FJ" => Some("🇫🇯"),
+        "FK" => Some("🇫🇰"),
+        "FM" => Some("🇫🇲"),
+        "FO" => Some("🇫🇴"),
+        "FR" => Some("🇫🇷"),
+        "GA" => Some("🇬🇦"),
+        "GB" => Some("🇬🇧"),
+        "GD" => Some("🇬🇩"),
+        "GE" => Some("🇬🇪"),
+        "GF" => Some("🇬🇫"),
+        "GG" => Some("🇬🇬"),
+        "GH" => Some("🇬🇭"),
+        "GI" => Some("🇬🇮"),
+        "GL" => Some("🇬🇱"),
+        "GM" => Some("🇬🇲"),
+        "GN" => Some("🇬🇳"),
+        "GP" => Some("🇬🇵"),
+        "GQ" => Some("🇬🇶"),
+        "GR" => Some("🇬🇷"),
+        "GS" => Some("🇬🇸"),
+        "GT" => Some("🇬🇹"),
+        "GU" => Some("🇬🇺"),
+        "GW" => Some("🇬🇼"),
+        "GY" => Some("🇬🇾"),
+        "HK" => Some("🇭🇰"),
+        "HM" => Some("🇭🇲"),
+        "HN" => Some("🇭🇳"),
+        "HR" => Some("🇭🇷"),
+        "HT" => Some("🇭🇹"),
+        "HU" => Some("🇭🇺"),
+        "ID" => Some("🇮🇩"),
+        "IE" => Some("🇮🇪"),
+        "IL" => Some("🇮🇱"),
+        "IM" => Some("🇮🇲"),
+        "IN" => Some("🇮🇳"),
+        "IO" => Some("🇮🇴"),
+        "IQ" => Some("🇮🇶"),
+        "IR" => Some("🇮🇷"),
+        "IS" => Some("🇮🇸"),
+        "IT" => Some("🇮🇹"),
+        "JE" => Some("🇯🇪"),
+        "JM" => Some("🇯🇲"),
+        "JO" => Some("🇯🇴"),
+        "JP" => Some("🇯🇵"),
+        "KE" => Some("🇰🇪"),
+        "KG" => Some("🇰🇬"),
+        "KH" => Some("🇰🇭"),
+        "KI" => Some("🇰🇮"),
+        "KM" => Some("🇰🇲"),
+        "KN" => Some("🇰🇳"),
+        "KP" => Some("🇰🇵"),
+        "KR" => Some("🇰🇷"),
+        "KW" => Some("🇰🇼"),
+        "KY" => Some("🇰🇾"),
+        "KZ" => Some("🇰🇿"),
+        "LA" => Some("🇱🇦"),
+        "LB" => Some("🇱🇧"),
+        "LC" => Some("🇱🇨"),
+        "LI" => Some("🇱🇮"),
+        "LK" => Some("🇱🇰"),
+        "LR" => Some("🇱🇷"),
+        "LS" => Some("🇱🇸"),
+        "LT" => Some("🇱🇹"),
+        "LU" => Some("🇱🇺"),
+        "LV" => Some("🇱🇻"),
+        "LY" => Some("🇱🇾"),
+        "MA" => Some("🇲🇦"),
+        "MC" => Some("🇲🇨"),
+        "MD" => Some("🇲🇩"),
+        "ME" => Some("🇲🇪"),
+        "MF" => Some("🇲🇫"),
+        "MG" => Some("🇲🇬"),
+        "MH" => Some("🇲🇭"),
+        "MK" => Some("🇲🇰"),
+        "ML" => Some("🇲🇱"),
+        "MM" => Some("🇲🇲"),
+        "MN" => Some("🇲🇳"),
+        "MO" => Some("🇲🇴"),
+        "MP" => Some("🇲🇵"),
+        "MQ" => Some("🇲🇶"),
+        "MR" => Some("🇲🇷"),
+        "MS" => Some("🇲🇸"),
+        "MT" => Some("🇲🇹"),
+        "MU" => Some("🇲🇺"),
+        "MV" => Some("🇲🇻"),
+        "MW" => Some("🇲🇼"),
+        "MX" => Some("🇲🇽"),
+        "MY" => Some("🇲🇾"),
+        "MZ" => Some("🇲🇿"),
+        "NA" => Some("🇳🇦"),
+        "NC" => Some("🇳🇨"),
+        "NE" => Some("🇳🇪"),
+        "NF" => Some("🇳🇫"),
+        "NG" => Some("🇳🇬"),
+        "NI" => Some("🇳🇮"),
+        "NL" => Some("🇳🇱"),
+        "NO" => Some("🇳🇴"),
+        "NP" => Some("🇳🇵"),
+        "NR" => Some("🇳🇷"),
+        "NU" => Some("🇳🇺"),
+        "NZ" => Some("🇳🇿"),
+        "OM" => Some("🇴🇲"),
+        "PA" => Some("🇵🇦"),
+        "PE" => Some("🇵🇪"),
+        "PF" => Some("🇵🇫"),
+        "PG" => Some("🇵🇬"),
+        "PH" => Some("🇵🇭"),
+        "PK" => Some("🇵🇰"),
+        "PL" => Some("🇵🇱"),
+        "PM" => Some("🇵🇲"),
+        "PN" => Some("🇵🇳"),
+        "PR" => Some("🇵🇷"),
+        "PS" => Some("🇵🇸"),
+        "PT" => Some("🇵🇹"),
+        "PW" => Some("🇵🇼"),
+        "PY" => Some("🇵🇾"),
+        "QA" => Some("🇶🇦"),
+        "RE" => Some("🇷🇪"),
+        "RO" => Some("🇷🇴"),
+        "RS" => Some("🇷🇸"),
+        "RU" => Some("🇷🇺"),
+        "RW" => Some("🇷🇼"),
+        "SA" => Some("🇸🇦"),
+        "SB" => Some("🇸🇧"),
+        "SC" => Some("🇸🇨"),
+        "SD" => Some("🇸🇩"),
+        "SE" => Some("🇸🇪"),
+        "SG" => Some("🇸🇬"),
+        "SH" => Some("🇸🇭"),
+        "SI" => Some("🇸🇮"),
+        "SJ" => Some("🇸🇯"),
+        "SK" => Some("🇸🇰"),
+        "SL" => Some("🇸🇱"),
+        "SM" => Some("🇸🇲"),
+        "SN" => Some("🇸🇳"),
+        "SO" => Some("🇸🇴"),
+        "SR" => Some("🇸🇷"),
+        "SS" => Some("🇸🇸"),
+        "ST" => Some("🇸🇹"),
+        "SV" => Some("🇸🇻"),
+        "SX" => Some("🇸🇽"),
+        "SY" => Some("🇸🇾"),
+        "SZ" => Some("🇸🇿"),
+        "TC" => Some("🇹🇨"),
+        "TD" => Some("🇹🇩"),
+        "TF" => Some("🇹🇫"),
+        "TG" => Some("🇹🇬"),
+        "TH" => Some("🇹🇭"),
+        "TJ" => Some("🇹🇯"),
+        "TK" => Some("🇹🇰"),
+        "TL" => Some("🇹🇱"),
+        "TM" => Some("🇹🇲"),
+        "TN" => Some("🇹🇳"),
+        "TO" => Some("🇹🇴"),
+        "TR" => Some("🇹🇷"),
+        "TT" => Some("🇹🇹"),
+        "TV" => Some("🇹🇻"),
+        "TW" => Some("🇹🇼"),
+        "TZ" => Some("🇹🇿"),
+        "UA" => Some("🇺🇦"),
+        "UG" => Some("🇺🇬"),
+        "UM" => Some("🇺🇲"),
+        "US" => Some("🇺🇸"),
+        "UY" => Some("🇺🇾"),
+        "UZ" => Some("🇺🇿"),
+        "VA" => Some("🇻🇦"),
+        "VC" => Some("🇻🇨"),
+        "VE" => Some("🇻🇪"),
+        "VG" => Some("🇻🇬"),
+        "VI" => Some("🇻🇮"),
+        "VN" => Some("🇻🇳"),
+        "VU" => Some("🇻🇺"),
+        "WF" => Some("🇼🇫"),
+        "WS" => Some("🇼🇸"),
+        "YE" => Some("🇾🇪"),
+        "YT" => Some("🇾🇹"),
+        "ZA" => Some("🇿🇦"),
+        "ZM" => Some("🇿🇲"),
+        "ZW" => Some("🇿🇼"),
+        _ => None,
+    }
+    .map(|s| s.to_string())
 }
