@@ -1,5 +1,3 @@
-<!-- markdownlint-disable -->
-
 # Basic usage
 
 <!-- toc -->
