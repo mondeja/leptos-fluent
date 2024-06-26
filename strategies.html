@@ -180,26 +180,26 @@
 
                 <div id="content" class="content">
                     <main>
-                        <!-- markdownlint-disable MD013 -->
+                        <!-- markdownlint-disable MD013 MD033 -->
 <h1 id="strategies"><a class="header" href="#strategies">Strategies</a></h1>
 <p>All the features of the framework are optional, following a declarative
 "opt-in" configuration method.</p>
 <ul>
 <li><a href="#loading-the-initial-language-of-the-user">Loading the initial language of the user</a></li>
-<li><a href="#updating-the-language-on-the-client">Updating the language on the client</a>
+<li><a href="#csr---updating-the-language-on-the-client">CSR  | Updating the language on the client</a>
 <ul>
-<li><a href="#desktop-applications-system">Desktop applications (<code>system</code>)</a></li>
+<li><a href="#system--desktop-applications">system | Desktop applications</a></li>
 </ul>
 </li>
-<li><a href="#updating-the-language-from-initialization-on-the-client">Updating the language from initialization on the client</a>
+<li><a href="#csr---updating-the-language-from-initialization-on-the-client">CSR  | Updating the language from initialization on the client</a>
 <ul>
-<li><a href="#desktop-applications-system-1">Desktop applications (<code>system</code>)</a></li>
+<li><a href="#system--desktop-applications-1">system | Desktop applications</a></li>
 </ul>
 </li>
-<li><a href="#client-side-effects">Client side effects</a></li>
-<li><a href="#configuring-names">Configuring names</a>
+<li><a href="#csr---client-side-effects">CSR  | Client side effects</a></li>
+<li><a href="#csr--ssr---names">CSR + SSR  | Names</a>
 <ul>
-<li><a href="#desktop-applications-system-2">Desktop applications (<code>system</code>)</a></li>
+<li><a href="#system--desktop-applications-2">system | Desktop applications</a></li>
 </ul>
 </li>
 </ul>
@@ -211,7 +211,7 @@
 <tr><td style="text-align: left">Browser <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">local storage</a></td><td style="text-align: center">✅</td><td style="text-align: center">❌</td><td style="text-align: center">❌</td><td style="text-align: left"><code>initial_language_from_localstorage</code></td></tr>
 <tr><td style="text-align: left">Browser language (<a href="https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a>)</td><td style="text-align: center">✅</td><td style="text-align: center">❌</td><td style="text-align: center">❌</td><td style="text-align: left"><code>initial_language_from_navigator</code></td></tr>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language"><code>Accept-Language</code></a> header</td><td style="text-align: center">❌</td><td style="text-align: center">✅</td><td style="text-align: center">❌</td><td style="text-align: left"><code>initial_language_from_accept_language_header</code></td></tr>
-<tr><td style="text-align: left">System language</td><td style="text-align: center">❌</td><td style="text-align: center">❌</td><td style="text-align: center">✅</td><td style="text-align: left"><code>initial_language_from_system</code></td></tr>
+<tr><td style="text-align: left"><a href="https://github.com/i509VCB/current_locale">System language</a></td><td style="text-align: center">❌</td><td style="text-align: center">❌</td><td style="text-align: center">✅</td><td style="text-align: left"><code>initial_language_from_system</code></td></tr>
 <tr><td style="text-align: left">Data file</td><td style="text-align: center">❌</td><td style="text-align: center">❌</td><td style="text-align: center">✅</td><td style="text-align: left"><code>initial_language_from_data_file</code></td></tr>
 </tbody></table>
 </div>
@@ -236,11 +236,11 @@ found will be used. The order of precedence is:</p>
 <li><strong>Desktop</strong> (<a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><code>system</code> feature</a>)
 <ol>
 <li>Data file.</li>
-<li>System language.</li>
+<li><a href="https://github.com/i509VCB/current_locale">System language</a>.</li>
 </ol>
 </li>
 </ul>
-<h2 id="updating-the-language-on-the-client"><a class="header" href="#updating-the-language-on-the-client">Updating the language on the client</a></h2>
+<h2 id="csr---updating-the-language-on-the-client"><a class="header" href="#csr---updating-the-language-on-the-client"><span style="opacity:.5">CSR </span> | Updating the language on the client</a></h2>
 <p>When the user changes the language and <code>I18n::language.set</code> is called, the
 framework can perform a side effect to update the language in the client. The
 following strategies are available:</p>
@@ -250,12 +250,12 @@ following strategies are available:</p>
 <tr><td style="text-align: left">Browser <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">local storage</a></td><td style="text-align: left"><code>set_language_to_localstorage</code></td></tr>
 </tbody></table>
 </div>
-<h3 id="desktop-applications-system"><a class="header" href="#desktop-applications-system">Desktop applications (<a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><code>system</code></a>)</a></h3>
+<h3 id="system--desktop-applications"><a class="header" href="#system--desktop-applications"><a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Desktop applications</a></h3>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a></th></tr></thead><tbody>
 <tr><td style="text-align: left">Data file</td><td style="text-align: left"><code>set_language_to_data_file</code></td></tr>
 </tbody></table>
 </div>
-<h2 id="updating-the-language-from-initialization-on-the-client"><a class="header" href="#updating-the-language-from-initialization-on-the-client">Updating the language from initialization on the client</a></h2>
+<h2 id="csr---updating-the-language-from-initialization-on-the-client"><a class="header" href="#csr---updating-the-language-from-initialization-on-the-client"><span style="opacity:.5">CSR </span> | Updating the language from initialization on the client</a></h2>
 <p>When a language is loaded from initialization, the framework can perform a side
 effect to persistently storage the language in the client. The following strategies
 are available:</p>
@@ -268,12 +268,12 @@ are available:</p>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a> to <a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie">cookie</a></td><td style="text-align: left"><code>initial_language_from_navigator_to_cookie</code></td></tr>
 </tbody></table>
 </div>
-<h3 id="desktop-applications-system-1"><a class="header" href="#desktop-applications-system-1">Desktop applications (<a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><code>system</code></a>)</a></h3>
+<h3 id="system--desktop-applications-1"><a class="header" href="#system--desktop-applications-1"><a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Desktop applications</a></h3>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a></th></tr></thead><tbody>
-<tr><td style="text-align: left">System language to data file</td><td style="text-align: left"><code>initial_language_from_system_to_data_file</code></td></tr>
+<tr><td style="text-align: left"><a href="https://github.com/i509VCB/current_locale">System language</a> to data file</td><td style="text-align: left"><code>initial_language_from_system_to_data_file</code></td></tr>
 </tbody></table>
 </div>
-<h2 id="client-side-effects"><a class="header" href="#client-side-effects">Client side effects</a></h2>
+<h2 id="csr---client-side-effects"><a class="header" href="#csr---client-side-effects"><span style="opacity:.5">CSR </span> | Client side effects</a></h2>
 <p>When the user updates the language, the framework can perform side effects to
 update the language in the client. The following side effects are available:</p>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: left">Side effect</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a></th></tr></thead><tbody>
@@ -281,7 +281,7 @@ update the language in the client. The following side effects are available:</p>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/dir"><code>&lt;html dir="..."&gt;</code></a> attribute</td><td style="text-align: left"><code>sync_html_tag_dir</code></td></tr>
 </tbody></table>
 </div>
-<h2 id="configuring-names"><a class="header" href="#configuring-names">Configuring names</a></h2>
+<h2 id="csr--ssr---names"><a class="header" href="#csr--ssr---names"><span style="opacity:.5">CSR + SSR </span> | Names</a></h2>
 <p>The names of the settings can be configured using the following parameters:</p>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a></th><th style="text-align: left">Default value</th></tr></thead><tbody>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie">Cookie</a></td><td style="text-align: left"><code>cookie_name</code></td><td style="text-align: left"><code>"lf-lang"</code></td></tr>
@@ -290,7 +290,7 @@ update the language in the client. The following side effects are available:</p>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/es/docs/Web/API/URLSearchParams">URL parameter</a></td><td style="text-align: left"><code>url_param</code></td><td style="text-align: left"><code>"lang"</code></td></tr>
 </tbody></table>
 </div>
-<h3 id="desktop-applications-system-2"><a class="header" href="#desktop-applications-system-2">Desktop applications (<a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><code>system</code></a>)</a></h3>
+<h3 id="system--desktop-applications-2"><a class="header" href="#system--desktop-applications-2"><a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Desktop applications</a></h3>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a></th><th style="text-align: left">Default value</th></tr></thead><tbody>
 <tr><td style="text-align: left">Data file</td><td style="text-align: left"><code>data_file_key</code></td><td style="text-align: left"><code>"leptos-fluent"</code></td></tr>
 </tbody></table>

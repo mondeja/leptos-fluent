@@ -184,8 +184,8 @@
 <ul>
 <li><a href="#minimal-skeleton">Minimal skeleton</a></li>
 <li><a href="#translating-messages">Translating messages</a></li>
-<li><a href="#retrieving-the-leptos_fluenti18n-context">Retrieving the <code>leptos_fluent::I18n</code> context</a></li>
-<li><a href="#using-the-leptos_fluenti18n-context">Using the <code>leptos_fluent::I18n</code> context</a>
+<li><a href="#retrieving-the-i18n-context">Retrieving the <code>I18n</code> context</a></li>
+<li><a href="#using-the-i18n-context">Using the <code>I18n</code> context</a>
 <ul>
 <li><a href="#update-language">Update language</a></li>
 <li><a href="#get-active-language">Get active language</a></li>
@@ -324,9 +324,10 @@ This can lead to warnings in console output like:</p>
 <a class="admonition-anchor-link" href="#admonition-warning"></a>
 </div>
 <div>
-<p>At <code>./path/to/file.rs:ln</code>, you access a signal or memo (defined at
-<code>./path/to/file.rs:ln</code>) outside of a reactive context. This might mean your
-app is not responding to changes in signal values in the way you expect.</p>
+<pre><code class="language-shell">At `./path/to/file.rs:ln`, you access a signal or memo (defined at
+`./path/to/file.rs:ln`) outside of a reactive context. This might mean your
+app is not responding to changes in signal values in the way you expect.
+</code></pre>
 </div>
 </div>
 <p>Can be fixed by replacing calls to <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.tr.html"><code>tr!</code></a> with <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.move_tr.html"><code>move_tr!</code></a> or wrapping the
@@ -344,13 +345,13 @@ move || tr!("language-selected-is", { "lang" =&gt; i18n.language.get().name })
 </span><span class="boring">fn main() {
 </span>leptos::Signal::derive(move || tr!("select-a-language"))
 <span class="boring">}</span></code></pre></pre>
-<h2 id="retrieving-the-leptos_fluenti18n-context"><a class="header" href="#retrieving-the-leptos_fluenti18n-context">Retrieving the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html"><code>leptos_fluent::I18n</code></a> context</a></h2>
+<h2 id="retrieving-the-i18n-context"><a class="header" href="#retrieving-the-i18n-context">Retrieving the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html"><code>I18n</code></a> context</a></h2>
 <p>Use the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.expect_i18n.html"><code>expect_i18n</code></a> function to get the current i18n context:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let i18n = leptos_fluent::expect_i18n();
 <span class="boring">}</span></code></pre></pre>
-<p>It is exported as <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.i18n.html"><code>i18n</code></a> too:</p>
+<p>It is exported as <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.i18n.html"><code>i18n</code>-f</a> too:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let i18n = leptos_fluent::i18n();
@@ -358,9 +359,9 @@ move || tr!("language-selected-is", { "lang" =&gt; i18n.language.get().name })
 <p>The function <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.use_i18n.html"><code>use_i18n</code></a> returns an <code>Option</code> with the current i18n context:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>let i18n = leptos_fluent::use_i18n().expect("No `leptos_fluent::I18n` context found");
+</span>let i18n = leptos_fluent::use_i18n().expect("No `I18n` context found");
 <span class="boring">}</span></code></pre></pre>
-<h2 id="using-the-leptos_fluenti18n-context"><a class="header" href="#using-the-leptos_fluenti18n-context">Using the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html"><code>leptos_fluent::I18n</code></a> context</a></h2>
+<h2 id="using-the-i18n-context"><a class="header" href="#using-the-i18n-context">Using the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html"><code>I18n</code></a> context</a></h2>
 <p>The i18n context has the following fields:</p>
 <ul>
 <li><a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.language"><code>language</code></a>: A read-write signal with a pointer to the static current active language.</li>
@@ -385,14 +386,19 @@ expect_i18n().language.set(lang);
 </div>
 <div>
 <p>When <code>nightly</code> feature is enabled, you update it passing a new language to the
-context as a function with <code>(leptos_fluent::i18n())(lang)</code>.</p>
+context as a function with:</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let i18n = leptos_fluent::i18n();
+i18n(lang);
+<span class="boring">}</span></code></pre></pre>
 </div>
 </div>
 <h3 id="get-active-language"><a class="header" href="#get-active-language">Get active language</a></h3>
 <p>To get the current active language, use <code>get</code> method of <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.language"><code>language</code></a> field:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>i18n.language.get()
+</span>let lang = i18n.language.get();
 <span class="boring">}</span></code></pre></pre>
 <div id="admonition-nightly-1" class="admonition admonish-tip" role="note" aria-labelledby="admonition-nightly-1-title">
 <div class="admonition-title">
@@ -402,8 +408,12 @@ context as a function with <code>(leptos_fluent::i18n())(lang)</code>.</p>
 <a class="admonition-anchor-link" href="#admonition-nightly-1"></a>
 </div>
 <div>
-<p>When <code>nightly</code> enabled, you can get the active language with
-<code>(leptos_fluent::i18n())()</code>.</p>
+<p>When <code>nightly</code> enabled, you can get the active language with:</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let i18n = leptos_fluent::i18n();
+let lang = i18n();
+<span class="boring">}</span></code></pre></pre>
 </div>
 </div>
 <h3 id="get-available-languages"><a class="header" href="#get-available-languages">Get available languages</a></h3>
