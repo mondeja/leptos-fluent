@@ -39,13 +39,13 @@ pub(crate) fn build_files_tracker_quote(
         }
         if let Some(languages_file_path) = &languages_path {
             files_tracker_str.push_str(&format!(
-                "let languages = include_bytes!(\"{}\");",
+                "let l = include_bytes!(\"{}\");",
                 &escape_string(languages_file_path)
             ));
         }
         if let Some(core_locales_file_path) = &core_locales_path {
             files_tracker_str.push_str(&format!(
-                "let core_locales = include_bytes!(\"{}\");",
+                "let c = include_bytes!(\"{}\");",
                 &escape_string(core_locales_file_path)
             ));
         }
