@@ -174,7 +174,7 @@ Use the [`expect_i18n`] function to get the current i18n context:
 let i18n = leptos_fluent::expect_i18n();
 ```
 
-It is exported as [`i18n`-f] too:
+It is exported as [`i18n`][`i18n`-f] too:
 
 ```rust
 let i18n = leptos_fluent::i18n();
@@ -220,6 +220,7 @@ i18n(lang);
 To get the current active language, use `get` method of [`language`] field:
 
 ```rust
+let i18n = leptos_fluent::i18n();
 let lang = i18n.language.get();
 ```
 

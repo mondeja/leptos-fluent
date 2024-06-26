@@ -37,9 +37,8 @@ let LANGUAGES = [
 - `es-ES` is built with the name `"Español (España)"` because it's defined
   as an [ISO 639-1 code] and a region code.
 
-This standard enforces that an user will always be able to select their
-language in their own language, and not in the current language of the
-application.
+This enforces that an user will always be able to select their language in
+their own language, and not in the current language of the application.
 
 ```admonish abstract title='Order'
 The order of the languages will be defined based on the alphabetical
@@ -113,9 +112,9 @@ pub fn App() -> impl IntoView {
 
 ### File format
 
-By default, the `leptos-fluent/json` feature is enabled, which only
-allows to set the languages file in JSON format. If you want to use
-other formats, you can disable the feature and define other feature.
+By default, the `json` feature is enabled, which only allows to set the
+languages file in JSON format. To use other formats, disable the feature
+and enable another.
 
 ```toml
 [dependencies]
@@ -130,8 +129,7 @@ Available features for languages file formats are:
 
 ## Tracking locales files with [`cargo leptos`]
 
-Using [`cargo leptos`] the _locales/_ folder must be manually
-configured to be watched:
+Using [`cargo leptos`] the _locales/_ folder must be configured to be watched:
 
 ```toml
 # Relative to Cargo.toml file
