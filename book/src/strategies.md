@@ -11,15 +11,15 @@ All the features of the framework are optional, following a declarative
 
 The initial language of the user can be set in different ways:
 
-| Strategy                                   | CSR | SSR | Desktop | [`leptos_fluent!`]                             |
-| :----------------------------------------- | :-: | :-: | :-----: | :--------------------------------------------- |
-| [URL parameter]                            | ✅  | ✅  |   ❌    | `initial_language_from_url_param`              |
-| [Cookie]                                   | ✅  | ✅  |   ❌    | `initial_language_from_cookie`                 |
-| Browser [local storage]                    | ✅  | ❌  |   ❌    | `initial_language_from_localstorage`           |
-| Browser language ([`navigator.languages`]) | ✅  | ❌  |   ❌    | `initial_language_from_navigator`              |
-| [`Accept-Language`] header                 | ❌  | ✅  |   ❌    | `initial_language_from_accept_language_header` |
-| [System language]                          | ❌  | ❌  |   ✅    | `initial_language_from_system`                 |
-| Data file                                  | ❌  | ❌  |   ✅    | `initial_language_from_data_file`              |
+| Strategy                        | CSR | SSR | Desktop | [`leptos_fluent!`]                             |
+| :------------------------------ | :-: | :-: | :-----: | :--------------------------------------------- |
+| [URL parameter]                 | ✅  | ✅  |   ❌    | `initial_language_from_url_param`              |
+| [Cookie]                        | ✅  | ✅  |   ❌    | `initial_language_from_cookie`                 |
+| Browser [local storage]         | ✅  | ❌  |   ❌    | `initial_language_from_localstorage`           |
+| Browser [`navigator.languages`] | ✅  | ❌  |   ❌    | `initial_language_from_navigator`              |
+| [`Accept-Language`] header      | ❌  | ✅  |   ❌    | `initial_language_from_accept_language_header` |
+| [System language]               | ❌  | ❌  |   ✅    | `initial_language_from_system`                 |
+| Data file                       | ❌  | ❌  |   ✅    | `initial_language_from_data_file`              |
 
 All of them can be used at the same time or just one of them. The first setting
 found will be used. The order of precedence is:
@@ -32,7 +32,7 @@ found will be used. The order of precedence is:
   1. [URL parameter].
   2. [Cookie].
   3. Browser [local storage].
-  4. Browser language from [`navigator.languages`].
+  4. Browser [`navigator.languages`].
 - **Desktop** ([`system` feature][desktop-applications])
   1. Data file.
   2. [System language].
