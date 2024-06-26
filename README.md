@@ -103,73 +103,72 @@ fn App() -> impl IntoView {
         // Synchronize `<html lang="...">` attribute with the
         // current active language.
         sync_html_tag_lang: true,
-        // Synchronize `<html dir="...">` attribute setting `"ltr"`,
-        // `"rtl"` or `"auto"` depending on the current active language.
+        // Synchronize `<html dir="...">` attribute with `"ltr"`,
+        // `"rtl"` or `"auto"` depending on active language.
         sync_html_tag_dir: true,
-        // Update the language on URL parameter when the language changes.
+        // Update language on URL parameter when changes.
         set_language_to_url_param: true,
-        // Set the discovered initial language of the user from
-        // the URL in local storage.
+        // Set initial language of the user from
+        // URL in local storage.
         initial_language_from_url_param_to_localstorage: true,
-        // Set the discovered initial language of the user from
-        // the URL in a cookie.
+        // Set initial language of the user from
+        // URL in a cookie.
         initial_language_from_url_param_to_cookie: true,
-        // Name of the field in local storage to get and set the
-        // current language of the user. By default, it is `"lang"`.
+        // Key used to get and set the current language of the
+        user on local storage. By default is `"lang"`.
         localstorage_key: "language",
-        // Get the initial language from local storage if not found
+        // Get initial language from local storage if not found
         // in an URL param.
         initial_language_from_localstorage: true,
-        // Set the discovered initial language of the user from
+        // Set the initial language of the user from
         // local storage to a cookie.
         initial_language_from_localstorage_to_cookie: true,
-        // Update the language on local storage when the language changes.
+        // Update language on local storage when changes.
         set_language_to_localstorage: true,
-        // Get the initial language from `navigator.languages` if not
-        // found in the local storage.
+        // Get initial language from `navigator.languages`
+        // if not found in local storage.
         initial_language_from_navigator: true,
-        // Set the discovered initial language of the user from
+        // Set initial language of the user from
         // the navigator to local storage.
         initial_language_from_navigator_to_localstorage: true,
-        // Set the discovered initial language of the user from
+        // Set initial language of the user from
         // the navigator to a cookie.
         initial_language_from_navigator_to_cookie: true,
-        // Attributes to set for the language cookie.
+        // Attributes to set for language cookie.
         // By default is `""`.
-        cookie_attrs: "SameSite=Strict; Secure; Path=/; Max-Age=600",
-        // Update the language on cookie when the language changes.
+        cookie_attrs: "Secure; Path=/; Max-Age=600",
+        // Update language on cookie when the language changes.
         set_language_to_cookie: true,
-        // Set the discovered initial language of the user from
-        // a cookie to local storage.
+        // Set initial language from a cookie to local storage.
         initial_language_from_cookie_to_localstorage: true,
 
         // Server side options
         // -------------------
-        // Set the initial language from the `Accept-Language`
+        // Set initial language from the `Accept-Language`
         // header of the request.
         initial_language_from_accept_language_header: true,
 
         // Server and client side options
         // ------------------------------
-        // Name of the cookie to get and set the current language
-        // of the user. By default, it is `"lf-lang"`.
+        // Name of the cookie to get and set the current active
+        // language. By default, it is `"lf-lang"`.
         cookie_name: "lang",
-        // Get the initial language from cookie.
+        // Set initial language from cookie.
         initial_language_from_cookie: true,
-        // URL parameter to use when setting the language in the URL.
+        // URL parameter to use setting the language in the URL.
         // By default is `"lang"`.
         url_param: "lang",
-        // Discover the initial language of the user from an URL parameter.
+        // Set initial language of the user from an URL parameter.
         initial_language_from_url_param: true,
 
         // Desktop applications (feature `system`)
         // ---------------------------------------
-        // Set the initial language from the system locale.
+        // Set initial language from the system locale.
         initial_language_from_system: true,
-        // Set the discovered initial language of the user from
+        // Set initial language of the user from
         // the system locale to a data file.
         initial_language_from_system_to_data_file: true,
-        // Get the initial language from a data file.
+        // Get initial language from a data file.
         initial_language_from_data_file: true,
         // Key to use to name the data file. Should be unique per
         // application. By default is `"leptos-fluent"`.
