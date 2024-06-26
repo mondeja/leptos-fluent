@@ -726,8 +726,7 @@ pub fn SsrHtmlTag() -> impl IntoView {
 pub fn SsrHtmlTag() -> impl IntoView {}
 
 /// Parameters passed to `leptos_fluent!` macro at creation of `i18n` context
-#[cfg_attr(debug_assertions, derive(Debug))]
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 #[doc(hidden)]
 pub struct LeptosFluentMeta {
     pub locales: &'static str,
