@@ -43,7 +43,7 @@ ssr = [
 ]
 
 [package.metadata.leptos]
-# Additional files your application could depends on.
+# Additional files the application could depends on.
 # A change to any file in those directories will trigger a rebuild.
 watch-additional-files = ["examples/ssr-hydrate-actix/locales"]
 # The name used by wasm-bindgen/cargo-leptos for the JS/WASM bundle. Defaults to the crate name
