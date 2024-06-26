@@ -129,7 +129,7 @@ Available features for languages file formats are:
 
 ## Tracking locales files with [`cargo leptos`]
 
-Using [`cargo leptos`] the _locales/_ folder must be configured to be watched:
+Using [`cargo leptos`] watch of the _locales/_ folder for reloads:
 
 ```toml
 # Relative to Cargo.toml file
