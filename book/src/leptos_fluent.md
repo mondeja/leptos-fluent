@@ -1,4 +1,4 @@
-<!-- markdownlint-disable MD033 MD038 MD048 -->
+<!-- markdownlint-disable MD033 MD038 -->
 
 # `leptos_fluent!`
 

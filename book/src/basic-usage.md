@@ -1,4 +1,4 @@
-<!-- markdownlint-disable MD048 -->
+<!-- markdownlint-disable -->
 
 # Basic usage
 
