@@ -75,20 +75,20 @@ leptos_fluent! {{
 There is four kind of parameters for all the possible configurations and are
 executed in the next order:
 
-1. Get the initial languaje from a source: `initial_language_from_*`
-2. Convert the initial language and set to another source: `initial_language_from_*_to_*`
-3. Synchronize the current language with a source: `set_language_to_*`
-4. The name of a source: `cookie_name`, `localstorage_key`, `navigator`...
+1. Get the initial languaje from a target: `initial_language_from_*`
+2. Obtain the initial language and set to a target: `initial_language_from_*_to_*`
+3. Synchronize the current language with a target: `set_language_to_*`
+4. The name of a source or a target: `cookie_name`, `localstorage_key`, `navigator`...
 
 ````admonish example
 ```rust
 leptos_fluent! {{
     // ..
-    // Get the initial language from the operative system language
+    // Get the initial language from the source operative system
     initial_language_from_system: true,
-    // and set to a file.
+    // and set to the target file.
     initial_language_from_system_to_data_file: true,
-    // If a data file exists, get the initial language from it.
+    // If a target data file exists, get the initial language from it.
     initial_language_from_data_file: true,
     // When the language is updated, set it to the file.
     set_language_to_data_file: true,
@@ -97,6 +97,11 @@ leptos_fluent! {{
 }};
 ```
 ````
+
+Targets are read-write and sources are read-only.
+
+- Sources: `navigator`, `system`, `accept_language_header`
+- Targets: `cookie_name`, `localstorage_key`, `url_param`, `data_file`
 
 ## Parameters
 
