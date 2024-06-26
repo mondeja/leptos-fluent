@@ -178,8 +178,8 @@ fn exprpath_not_supported_error_message(
         concat!(
             "The parameter '{}' of",
             " leptos_fluent! macro does not accept an expression",
-            " path like '{}'. Maybe in the future.\n\n",
-            "Consider to put your configuration in a variable:\n\n",
+            " path like '{}'. Maybe in the future.",
+            " Consider to move your configuration to a variable:\n\n",
             "```rust\n",
             "{}
 {{
