@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## Unreleased - [0.1.6]
+
+### New features
+
+- Add `provide_meta_context` parameter to `leptos_fluent!` to provide meta
+  information about the macro caller arguments. Use, for example,
+  `leptos_fluent::i18n().meta().unwrap().cookie_name` to get the value
+  `cookie_name` used as parameter for the macro.
+
 ## 2024-06-26 - [0.1.5]
 
 ### New features
@@ -310,6 +319,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.1.6]: https://github.com/mondeja/leptos-fluent/compare/v0.1.5...master
 [0.1.5]: https://github.com/mondeja/leptos-fluent/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/mondeja/leptos-fluent/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/mondeja/leptos-fluent/compare/v0.1.2...v0.1.3

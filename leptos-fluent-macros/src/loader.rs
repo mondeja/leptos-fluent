@@ -160,10 +160,15 @@ impl Parse for Translations {
 }
 
 pub(crate) struct I18nLoader {
+    pub(crate) fluent_file_paths: FluentFilePaths,
+    pub(crate) translations: Translations,
     pub(crate) languages: Vec<(String, String, String)>,
     pub(crate) languages_path: Option<String>,
+    pub(crate) raw_languages_path: Option<String>,
+    pub(crate) locales_path: String,
     pub(crate) core_locales_path: Option<String>,
-    pub(crate) translations: Translations,
+    pub(crate) check_translations: Option<String>,
+    pub(crate) provide_meta_context: bool,
     pub(crate) sync_html_tag_lang_bool: Option<syn::LitBool>,
     pub(crate) sync_html_tag_lang_expr: Option<syn::Expr>,
     pub(crate) sync_html_tag_dir_bool: Option<syn::LitBool>,
@@ -240,7 +245,6 @@ pub(crate) struct I18nLoader {
     pub(crate) data_file_key_str: Option<syn::LitStr>,
     #[cfg(feature = "system")]
     pub(crate) data_file_key_expr: Option<syn::Expr>,
-    pub(crate) fluent_file_paths: FluentFilePaths,
 }
 
 impl Parse for I18nLoader {
@@ -255,7 +259,6 @@ impl Parse for I18nLoader {
         let mut languages_path: Option<syn::LitStr> = None;
         let mut core_locales_path: Option<syn::LitStr> = None;
         let mut translations: Option<Translations> = None;
-        #[cfg(not(feature = "ssr"))]
         let mut check_translations: Option<syn::LitStr> = None;
         let mut sync_html_tag_lang_bool: Option<syn::LitBool> = None;
         let mut sync_html_tag_lang_expr: Option<syn::Expr> = None;
@@ -357,6 +360,7 @@ impl Parse for I18nLoader {
         > = None;
         let mut data_file_key_str: Option<syn::LitStr> = None;
         let mut data_file_key_expr: Option<syn::Expr> = None;
+        let mut provide_meta_context: Option<syn::LitBool> = None;
 
         while !fields.is_empty() {
             let k = fields.parse::<Ident>()?;
@@ -371,14 +375,8 @@ impl Parse for I18nLoader {
             } else if k == "languages" {
                 languages_path = Some(fields.parse()?);
             } else if k == "check_translations" {
-                #[cfg(not(feature = "ssr"))]
                 {
                     check_translations = Some(fields.parse()?);
-                }
-
-                #[cfg(feature = "ssr")]
-                {
-                    _ = fields.parse::<syn::LitStr>()?;
                 }
             } else if k == "sync_html_tag_lang" {
                 if let Some(err) = parse_litbool_or_expr_param(
@@ -667,6 +665,8 @@ impl Parse for I18nLoader {
                         return Err(err);
                     }
                 }
+            } else if k == "provide_meta_context" {
+                provide_meta_context = Some(fields.parse()?);
             } else {
                 return Err(syn::Error::new(
                     k.span(),
@@ -700,7 +700,7 @@ impl Parse for I18nLoader {
 
         let languages_file = languages_path
             .as_ref()
-            .map(|languages| workspace_path.join(languages.value()));
+            .map(|langs| workspace_path.join(langs.value()));
 
         let locales_folder_path = locales_path
             .as_ref()
@@ -855,9 +855,18 @@ impl Parse for I18nLoader {
         }
 
         Ok(Self {
+            fluent_file_paths: fluent_resources_and_file_paths.1,
             translations,
             languages,
             languages_path: languages_file_path,
+            raw_languages_path: languages_path.map(|x| x.value()),
+            locales_path: locales_path.unwrap().value(),
+            core_locales_path: core_locales_path_str,
+            check_translations: check_translations.map(|x| x.value()),
+            provide_meta_context: match provide_meta_context {
+                Some(x) => x.value,
+                None => false,
+            },
             sync_html_tag_lang_bool,
             sync_html_tag_lang_expr,
             sync_html_tag_dir_bool,
@@ -898,8 +907,6 @@ impl Parse for I18nLoader {
             initial_language_from_cookie_to_localstorage_expr,
             set_language_to_cookie_bool,
             set_language_to_cookie_expr,
-            fluent_file_paths: fluent_resources_and_file_paths.1,
-            core_locales_path: core_locales_path_str,
             #[cfg(feature = "system")]
             initial_language_from_system_bool,
             #[cfg(feature = "system")]

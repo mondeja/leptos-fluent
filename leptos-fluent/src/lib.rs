@@ -428,6 +428,34 @@ pub struct I18n {
     pub translations: Signal<Vec<&'static Lazy<StaticLoader>>>,
 }
 
+impl I18n {
+    /// Returns a context with meta information about the i18n context.
+    ///
+    /// Useful to get at runtime the parameters that created the context
+    /// when invoking the `leptos_fluent!` macro. The context needs to be
+    /// created activating the `provide_meta_context` or this method will
+    /// raise an error message.
+    ///
+    /// ```rust,ignore
+    /// let i18n = leptos_fluent! {{
+    ///     // ...
+    ///     provide_meta_context: true,
+    /// }};
+    ///
+    /// leptos::logging::log!("Macro parameters: {:?}", i18n.meta().unwrap());
+    /// ```
+    pub fn meta(&self) -> Result<LeptosFluentMeta, String> {
+        leptos::use_context::<LeptosFluentMeta>().ok_or(
+            concat!(
+                "You need to call `leptos_fluent!` with the parameter",
+                " 'provide_meta_context' enabled to provide the meta context",
+                " for the macro."
+            )
+            .to_string(),
+        )
+    }
+}
+
 #[cfg(debug_assertions)]
 impl core::fmt::Debug for I18n {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
@@ -696,6 +724,48 @@ pub fn SsrHtmlTag() -> impl IntoView {
 #[component(transparent)]
 #[cfg(not(feature = "ssr"))]
 pub fn SsrHtmlTag() -> impl IntoView {}
+
+/// Parameters passed to `leptos_fluent!` macro at creation of `i18n` context
+#[cfg_attr(debug_assertions, derive(Debug))]
+#[derive(Clone)]
+#[doc(hidden)]
+pub struct LeptosFluentMeta {
+    pub locales: &'static str,
+    pub core_locales: Option<&'static str>,
+    pub languages: Option<&'static str>,
+    pub check_translations: Option<&'static str>,
+    pub provide_meta_context: bool,
+    pub sync_html_tag_lang: bool,
+    pub sync_html_tag_dir: bool,
+    pub url_param: &'static str,
+    pub initial_language_from_url_param: bool,
+    pub initial_language_from_url_param_to_localstorage: bool,
+    pub initial_language_from_url_param_to_cookie: bool,
+    pub set_language_to_url_param: bool,
+    pub localstorage_key: &'static str,
+    pub initial_language_from_localstorage: bool,
+    pub initial_language_from_localstorage_to_cookie: bool,
+    pub set_language_to_localstorage: bool,
+    pub initial_language_from_navigator: bool,
+    pub initial_language_from_navigator_to_localstorage: bool,
+    pub initial_language_from_navigator_to_cookie: bool,
+    pub initial_language_from_accept_language_header: bool,
+    pub cookie_name: &'static str,
+    pub cookie_attrs: &'static str,
+    pub initial_language_from_cookie: bool,
+    pub initial_language_from_cookie_to_localstorage: bool,
+    pub set_language_to_cookie: bool,
+    #[cfg(feature = "system")]
+    pub initial_language_from_system: bool,
+    #[cfg(feature = "system")]
+    pub initial_language_from_data_file: bool,
+    #[cfg(feature = "system")]
+    pub initial_language_from_system_to_data_file: bool,
+    #[cfg(feature = "system")]
+    pub set_language_to_data_file: bool,
+    #[cfg(feature = "system")]
+    pub data_file_key: &'static str,
+}
 
 #[cfg(test)]
 mod test {
