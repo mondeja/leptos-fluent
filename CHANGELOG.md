@@ -8,6 +8,8 @@
   information about the macro caller arguments. Use, for example,
   `leptos_fluent::i18n().meta().unwrap().cookie_name` to get the value
   `cookie_name` used as parameter for the macro.
+- Add `flag` field to `leptos_fluent::Language` storing emoji flag
+  automatic discovered for each language identifier with a country code.
 
 ## 2024-06-26 - [0.1.5]
 

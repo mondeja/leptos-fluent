@@ -333,6 +333,8 @@ pub struct Language {
     pub name: &'static str,
     /// Writing direction of the language
     pub dir: &'static WritingDirection,
+    /// Flag of the country of the language (if any) as emoji
+    pub flag: Option<&'static str>,
 }
 
 impl Language {

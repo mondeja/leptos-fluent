@@ -209,7 +209,7 @@ macro_rules! exprpath_not_supported {
 pub(crate) struct I18nLoader {
     pub(crate) fluent_file_paths: FluentFilePaths,
     pub(crate) translations: Translations,
-    pub(crate) languages: Vec<(String, String, String)>,
+    pub(crate) languages: Vec<(String, String, String, Option<String>)>,
     pub(crate) languages_path: Option<String>,
     pub(crate) raw_languages_path: Option<String>,
     pub(crate) locales_path: String,

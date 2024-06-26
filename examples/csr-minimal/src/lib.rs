@@ -5,7 +5,7 @@ use leptos_fluent::{expect_i18n, leptos_fluent, move_tr};
 static_loader! {
     pub static TRANSLATIONS = {
         locales: "./locales",
-        fallback_language: "en",
+        fallback_language: "en-US",
     };
 }
 
@@ -34,6 +34,17 @@ pub fn LanguageSelector() -> impl IntoView {
                     .map(|lang| {
                         view! {
                             <div>
+                                <label for=lang>
+                                    {format!(
+                                        "{}{}",
+                                        match lang.flag {
+                                            Some(flag) => format!("{flag} "),
+                                            None => "".to_string(),
+                                        },
+                                        lang.name,
+                                    )}
+
+                                </label>
                                 <input
                                     type="radio"
                                     id=lang
@@ -42,7 +53,6 @@ pub fn LanguageSelector() -> impl IntoView {
                                     checked=lang.is_active()
                                     on:click=move |_| lang.activate()
                                 />
-                                <label for=lang>{lang.name}</label>
                             </div>
                         }
                     })
