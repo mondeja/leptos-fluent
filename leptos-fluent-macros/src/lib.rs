@@ -1318,7 +1318,7 @@ pub fn leptos_fluent(
                 set_language_to_cookie_expr,
             );
 
-            let system_quotes = {
+            let system_quote = {
                 #[cfg(not(feature = "system"))]
                 quote! {}
 
@@ -1383,7 +1383,7 @@ pub fn leptos_fluent(
                     initial_language_from_cookie_to_localstorage: #initial_language_from_cookie_to_localstorage_quote,
                     set_language_to_cookie: #set_language_to_cookie_quote,
                     provide_meta_context: true,
-                    #system_quotes
+                    #system_quote
                 };
                 ::leptos::provide_context::<::leptos_fluent::LeptosFluentMeta>(meta);
             }
