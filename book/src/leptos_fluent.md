@@ -195,7 +195,7 @@ extension because the `json` feature is enabled. For example:
 ```
 
 Set `default-features = false` and enable the `yaml` or the `json5` feature
-to be able to use a YAML or JSON5 file. For example:
+to use a YAML or JSON5 files. For example:
 
 ```yaml
 # locales/languages.yaml
