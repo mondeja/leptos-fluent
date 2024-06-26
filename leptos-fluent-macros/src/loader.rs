@@ -4,11 +4,13 @@ use crate::{
     languages::{read_languages_file, read_locales_folder},
     FluentFilePaths,
 };
+use quote::ToTokens;
 use std::path::PathBuf;
 use syn::{
     braced,
     parse::{Parse, ParseStream},
-    token, Ident, Result,
+    spanned::Spanned,
+    token, Result,
 };
 
 fn parse_litstr_or_expr_param(
@@ -157,6 +159,51 @@ impl Parse for Translations {
 
         Ok(Self { simple, compound })
     }
+}
+
+fn format_exprpath(expr: &syn::Expr, k: &syn::Ident) -> String {
+    expr.to_token_stream()
+        .to_string()
+        .strip_suffix(&format!(" {k}"))
+        .unwrap()
+        .to_string()
+}
+
+fn exprpath_not_supported_error_message(
+    expr: &syn::Expr,
+    k: &syn::Ident,
+) -> String {
+    let exprpath_str = format_exprpath(expr, k);
+    format!(
+        concat!(
+            "The parameter '{}' of",
+            " leptos_fluent! macro does not accept an expression",
+            " path like '{}'. Maybe in the future.\n\n",
+            "Consider to put your configuration in a variable:\n\n",
+            "```rust\n",
+            "{}
+{{
+    let {}_dyn = ...;
+}}
+
+leptos_fluent! {{
+    // ...
+    {}: {}_dyn,
+}};",
+        ),
+        k, exprpath_str, exprpath_str, k, k, k,
+    )
+}
+
+macro_rules! exprpath_not_supported {
+    ($exprpath:ident, $k:ident) => {
+        if let Some(ref e) = $exprpath {
+            return Err(syn::Error::new(
+                e.span(),
+                exprpath_not_supported_error_message(e, &$k),
+            ));
+        }
+    };
 }
 
 pub(crate) struct I18nLoader {
@@ -363,21 +410,52 @@ impl Parse for I18nLoader {
         let mut provide_meta_context: Option<syn::LitBool> = None;
 
         while !fields.is_empty() {
-            let k = fields.parse::<Ident>()?;
+            let mut exprpath: Option<syn::Expr> = None;
+            let k;
+            if fields.peek(syn::Ident) && fields.peek2(syn::Token![:]) {
+                k = fields.parse::<syn::Ident>()?;
+                // expression:
+            } else {
+                let expr = fields.parse::<syn::Expr>()?;
+                if matches!(expr, syn::Expr::Path(_)) {
+                    let span = expr.span();
+                    let string = expr.to_token_stream().to_string();
+                    let ident = &string.split(' ').last().unwrap();
+                    exprpath = Some(expr);
+                    k = syn::Ident::new(ident, span);
+                } else {
+                    return Err(syn::Error::new(
+                        expr.span(),
+                        format!(
+                            concat!(
+                                "The line must be in the format 'key: value' or",
+                                " contain some configuration macro like",
+                                " '#[cfg(feature = \"nightly\")] key: value'.\n\n",
+                                " Found expression: {:?}",
+                            ),
+                            expr,
+                        )
+                    ));
+                }
+            }
+
             fields.parse::<syn::Token![:]>()?;
 
             if k == "translations" {
                 translations = Some(fields.parse()?);
+                exprpath_not_supported!(exprpath, k);
             } else if k == "locales" {
                 locales_path = Some(fields.parse()?);
+                exprpath_not_supported!(exprpath, k);
             } else if k == "core_locales" {
                 core_locales_path = Some(fields.parse()?);
+                exprpath_not_supported!(exprpath, k);
             } else if k == "languages" {
                 languages_path = Some(fields.parse()?);
+                exprpath_not_supported!(exprpath, k);
             } else if k == "check_translations" {
-                {
-                    check_translations = Some(fields.parse()?);
-                }
+                check_translations = Some(fields.parse()?);
+                exprpath_not_supported!(exprpath, k);
             } else if k == "sync_html_tag_lang" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
@@ -387,6 +465,7 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
+                exprpath_not_supported!(exprpath, k);
             } else if k == "sync_html_tag_dir" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
@@ -396,6 +475,7 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
+                exprpath_not_supported!(exprpath, k);
             } else if k == "url_param" {
                 if let Some(err) = parse_litstr_or_expr_param(
                     &fields,
@@ -405,6 +485,7 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
+                exprpath_not_supported!(exprpath, k);
             } else if k == "initial_language_from_url_param" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
@@ -414,6 +495,7 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
+                exprpath_not_supported!(exprpath, k);
             } else if k == "initial_language_from_url_param_to_localstorage" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
@@ -423,6 +505,7 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
+                exprpath_not_supported!(exprpath, k);
             } else if k == "initial_language_from_url_param_to_cookie" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
@@ -432,6 +515,7 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
+                exprpath_not_supported!(exprpath, k);
             } else if k == "set_language_to_url_param" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
@@ -441,6 +525,7 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
+                exprpath_not_supported!(exprpath, k);
             } else if k == "localstorage_key" {
                 if let Some(err) = parse_litstr_or_expr_param(
                     &fields,
@@ -450,6 +535,7 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
+                exprpath_not_supported!(exprpath, k);
             } else if k == "initial_language_from_localstorage" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
@@ -459,6 +545,7 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
+                exprpath_not_supported!(exprpath, k);
             } else if k == "initial_language_from_localstorage_to_cookie" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
@@ -468,6 +555,7 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
+                exprpath_not_supported!(exprpath, k);
             } else if k == "set_language_to_localstorage" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
@@ -477,6 +565,7 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
+                exprpath_not_supported!(exprpath, k);
             } else if k == "initial_language_from_navigator" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
@@ -486,6 +575,7 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
+                exprpath_not_supported!(exprpath, k);
             } else if k == "initial_language_from_navigator_to_localstorage" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
@@ -495,6 +585,7 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
+                exprpath_not_supported!(exprpath, k);
             } else if k == "initial_language_from_navigator_to_cookie" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
@@ -504,6 +595,7 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
+                exprpath_not_supported!(exprpath, k);
             } else if k == "initial_language_from_accept_language_header" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
@@ -513,6 +605,7 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
+                exprpath_not_supported!(exprpath, k);
             } else if k == "cookie_name" {
                 if let Some(err) = parse_litstr_or_expr_param(
                     &fields,
@@ -522,6 +615,7 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
+                exprpath_not_supported!(exprpath, k);
             } else if k == "cookie_attrs" {
                 if let Some(err) = parse_litstr_or_expr_param(
                     &fields,
@@ -531,6 +625,7 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
+                exprpath_not_supported!(exprpath, k);
             } else if k == "initial_language_from_cookie" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
@@ -540,6 +635,7 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
+                exprpath_not_supported!(exprpath, k);
             } else if k == "initial_language_from_cookie_to_localstorage" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
@@ -549,6 +645,7 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
+                exprpath_not_supported!(exprpath, k);
             } else if k == "set_language_to_cookie" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
@@ -558,6 +655,7 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
+                exprpath_not_supported!(exprpath, k);
             } else if k == "initial_language_from_system" {
                 #[cfg(feature = "system")]
                 {
@@ -569,6 +667,7 @@ impl Parse for I18nLoader {
                     ) {
                         return Err(err);
                     }
+                    exprpath_not_supported!(exprpath, k);
                 }
 
                 #[cfg(not(feature = "system"))]
@@ -593,6 +692,7 @@ impl Parse for I18nLoader {
                     ) {
                         return Err(err);
                     }
+                    exprpath_not_supported!(exprpath, k);
                 }
 
                 #[cfg(not(feature = "system"))]
@@ -617,6 +717,7 @@ impl Parse for I18nLoader {
                     ) {
                         return Err(err);
                     }
+                    exprpath_not_supported!(exprpath, k);
                 }
 
                 #[cfg(not(feature = "system"))]
@@ -641,6 +742,7 @@ impl Parse for I18nLoader {
                     ) {
                         return Err(err);
                     }
+                    exprpath_not_supported!(exprpath, k);
                 }
 
                 #[cfg(not(feature = "system"))]
@@ -665,12 +767,16 @@ impl Parse for I18nLoader {
                         return Err(err);
                     }
                 }
+                exprpath_not_supported!(exprpath, k);
             } else if k == "provide_meta_context" {
                 provide_meta_context = Some(fields.parse()?);
+                exprpath_not_supported!(exprpath, k);
             } else {
                 return Err(syn::Error::new(
                     k.span(),
-                    "Not a valid parameter for leptos_fluent! macro.",
+                    format!(
+                        "Not a valid parameter '{k}' for leptos_fluent! macro."
+                    ),
                 ));
             }
 
