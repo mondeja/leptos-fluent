@@ -279,7 +279,7 @@ watch-additional-files = ["locales"]
 </code></pre>
 <h2 id="desktop-applications"><a class="header" href="#desktop-applications">Desktop applications</a></h2>
 <p><strong>leptos-fluent</strong> can be installed on non-wasm targets, like desktop
-applications. You need to install <strong>leptos-fluent</strong>, <a href="https://github.com/XAMPPRocky/fluent-templates"><code>fluent-templates</code></a>
+applications. You need to install <code>leptos-fluent</code>, <a href="https://github.com/XAMPPRocky/fluent-templates"><code>fluent-templates</code></a>
 and enable the <code>system</code> feature:</p>
 <pre><code class="language-toml">[dependencies]
 leptos-fluent = { version = "0.1", features = ["system"] }
@@ -507,7 +507,7 @@ move || tr!("language-selected-is", { "lang" =&gt; i18n.language.get().name })
 </span><span class="boring">fn main() {
 </span>let i18n = leptos_fluent::expect_i18n();
 <span class="boring">}</span></code></pre></pre>
-<p>It is exported as <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.i18n.html"><code>i18n</code>-f</a> too:</p>
+<p>It is exported as <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.i18n.html"><code>i18n</code></a> too:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>let i18n = leptos_fluent::i18n();
@@ -554,7 +554,8 @@ i18n(lang);
 <p>To get the current active language, use <code>get</code> method of <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.language"><code>language</code></a> field:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>let lang = i18n.language.get();
+</span>let i18n = leptos_fluent::i18n();
+let lang = i18n.language.get();
 <span class="boring">}</span></code></pre></pre>
 <div id="admonition-nightly-1" class="admonition admonish-tip" role="note" aria-labelledby="admonition-nightly-1-title">
 <div class="admonition-title">
@@ -733,9 +734,8 @@ compile time:</p>
 <li><code>es-ES</code> is built with the name <code>"Español (España)"</code> because it's defined
 as an <a href="https://en.wikipedia.org/wiki/ISO_639-1">ISO 639-1 code</a> and a region code.</li>
 </ul>
-<p>This standard enforces that an user will always be able to select their
-language in their own language, and not in the current language of the
-application.</p>
+<p>This enforces that an user will always be able to select their language in
+their own language, and not in the current language of the application.</p>
 <div id="admonition-order" class="admonition admonish-abstract" role="note" aria-labelledby="admonition-order-title">
 <div class="admonition-title">
 <div id="admonition-order-title">
@@ -811,9 +811,9 @@ pub fn App() -&gt; impl IntoView {
 ]
 </code></pre>
 <h3 id="file-format"><a class="header" href="#file-format">File format</a></h3>
-<p>By default, the <code>leptos-fluent/json</code> feature is enabled, which only
-allows to set the languages file in JSON format. If you want to use
-other formats, you can disable the feature and define other feature.</p>
+<p>By default, the <code>json</code> feature is enabled, which only allows to set the
+languages file in JSON format. To use other formats, disable the feature
+and enable another.</p>
 <pre><code class="language-toml">[dependencies]
 leptos-fluent = { version = "*", default-features = false, features = ["json5"] }
 </code></pre>
@@ -824,8 +824,7 @@ leptos-fluent = { version = "*", default-features = false, features = ["json5"] 
 <li><code>json5</code>: JSON5</li>
 </ul>
 <h2 id="tracking-locales-files-with-cargo-leptos"><a class="header" href="#tracking-locales-files-with-cargo-leptos">Tracking locales files with <a href="https://github.com/leptos-rs/cargo-leptos"><code>cargo leptos</code></a></a></h2>
-<p>Using <a href="https://github.com/leptos-rs/cargo-leptos"><code>cargo leptos</code></a> the <em>locales/</em> folder must be manually
-configured to be watched:</p>
+<p>Using <a href="https://github.com/leptos-rs/cargo-leptos"><code>cargo leptos</code></a> watch of the <em>locales/</em> folder for reloads:</p>
 <pre><code class="language-toml"># Relative to Cargo.toml file
 [package.metadata.leptos]
 watch-additional-files = ["locales"]
