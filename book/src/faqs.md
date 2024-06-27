@@ -170,6 +170,30 @@ let i18n = leptos_fluent! {{
 println!("Macro parameters: {:?}", i18n.meta().unwrap());
 ```
 
+### Different [configuration conditional checks]
+
+`leptos_fluent!` macro does not allows to set the same macro parameter
+multiple times with different [configuration conditional checks], but
+the next approach can be used instead:
+
+```rust
+#[cfg(feature = "ssr")]
+let param = "ssr-lang";
+#[cfg(feature = "hydrate")]
+let param = "hydrate-lang";
+#[cfg(debug_assertions)]
+let param = "debug-lang";
+
+leptos_fluent! {{
+    // ...
+    #[cfg(any(feature = "ssr", feature = "hydrate", debug_assertions))]
+    url_param: param,
+    #[cfg(debug_assertions)]
+    initial_language_from_url_param: true,
+}}
+```
+
+[configuration conditional checks]: https://doc.rust-lang.org/rust-by-example/attribute/cfg.html
 [`<For/>`]: https://docs.rs/leptos/latest/leptos/fn.For.html
 [`leptos_fluent::SsrHtmlTag`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.SsrHtmlTag.html
 [`leptos_fluent::Language`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html
