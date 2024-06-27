@@ -207,12 +207,12 @@ pub fn leptos_fluent(
     #[cfg(feature = "system")]
     let data_file_key = match data_file_key_str {
         Some(ref lit) => match data_file_key_exprpath {
-            Some(exprpath) => quote! { #exprpath{#lit} },
+            Some(path) => quote! { #path{#lit} },
             None => quote! { #lit },
         },
         None => match data_file_key_expr {
             Some(ref expr) => match data_file_key_exprpath {
-                Some(exprpath) => quote! { #exprpath{#expr} },
+                Some(path) => quote! { #path{#expr} },
                 None => quote! { #expr },
             },
             None => quote! { "leptos-fluent" },
@@ -523,12 +523,12 @@ pub fn leptos_fluent(
 
     let url_param = match url_param_str {
         Some(ref lit) => match url_param_exprpath {
-            Some(exprpath) => quote! { #exprpath{#lit} },
+            Some(path) => quote! { #path{#lit} },
             None => quote! { #lit },
         },
         None => match url_param_expr {
             Some(ref expr) => match url_param_exprpath {
-                Some(exprpath) => quote! { #exprpath{#expr} },
+                Some(path) => quote! { #path{#expr} },
                 None => quote! { #expr },
             },
             None => quote! { "lang" },
@@ -581,12 +581,12 @@ pub fn leptos_fluent(
     ))]
     let cookie_name = match cookie_name_str {
         Some(ref lit) => match cookie_name_exprpath {
-            Some(exprpath) => quote! { #exprpath{#lit} },
+            Some(path) => quote! { #path{#lit} },
             None => quote! { #lit },
         },
         None => match cookie_name_expr {
             Some(ref expr) => match cookie_name_exprpath {
-                Some(exprpath) => quote! { #exprpath{#expr} },
+                Some(path) => quote! { #path{#expr} },
                 None => quote! { #expr },
             },
             None => quote! { "lf-lang" },
@@ -596,12 +596,12 @@ pub fn leptos_fluent(
     #[cfg(not(feature = "ssr"))]
     let cookie_attrs = match cookie_attrs_str {
         Some(ref lit) => match cookie_attrs_exprpath {
-            Some(exprpath) => quote! { #exprpath{#lit} },
+            Some(path) => quote! { #path{#lit} },
             None => quote! { #lit },
         },
         None => match cookie_attrs_expr {
             Some(ref expr) => match cookie_attrs_exprpath {
-                Some(exprpath) => quote! { #exprpath{#expr} },
+                Some(path) => quote! { #path{#expr} },
                 None => quote! { #expr },
             },
             None => quote! { "" },
