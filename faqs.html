@@ -190,6 +190,7 @@
 <li><a href="#why-examples-dont-use-for-component">Why examples don't use <code>&lt;For/&gt;</code> component?</a></li>
 <li><a href="#how-to-manage-translations-on-server-actions">How to manage translations on server actions</a></li>
 <li><a href="#how-to-change-html-attributes-on-ssr">How to change <code>&lt;html&gt;</code> attributes on SSR</a></li>
+<li><a href="#how-to-get-values-of-leptos_fluent-macro-at-runtime">How to get values of <code>leptos_fluent!</code> macro at runtime?</a></li>
 </ul>
 <h3 id="how-to-get-languageidentifier-if-not-installed"><a class="header" href="#how-to-get-languageidentifier-if-not-installed">How to get <a href="https://docs.rs/unic-langid/latest/unic_langid/struct.LanguageIdentifier.html"><code>LanguageIdentifier</code></a> if not installed?</a></h3>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
@@ -338,6 +339,18 @@ pub fn App() -&gt; impl IntoView {
 
 #[component]
 fn LanguageSelector() -&gt; impl IntoView { ... }
+<span class="boring">}</span></code></pre></pre>
+<h3 id="how-to-get-values-of-leptos_fluent-macro-at-runtime"><a class="header" href="#how-to-get-values-of-leptos_fluent-macro-at-runtime">How to get values of <code>leptos_fluent!</code> macro at runtime?</a></h3>
+<p>Use <code>provide_meta_context</code> at the macro initialization and get them
+with the method <code>I18n::meta</code>:</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let i18n = leptos_fluent! {{
+    // ...
+    provide_meta_context: true,
+}};
+
+println!("Macro parameters: {:?}", i18n.meta().unwrap());
 <span class="boring">}</span></code></pre></pre>
 
                     </main>

@@ -910,6 +910,7 @@ separation of contexts in the codebase.</p>
 <li><a href="faqs.html#why-examples-dont-use-for-component">Why examples don't use <code>&lt;For/&gt;</code> component?</a></li>
 <li><a href="faqs.html#how-to-manage-translations-on-server-actions">How to manage translations on server actions</a></li>
 <li><a href="faqs.html#how-to-change-html-attributes-on-ssr">How to change <code>&lt;html&gt;</code> attributes on SSR</a></li>
+<li><a href="faqs.html#how-to-get-values-of-leptos_fluent-macro-at-runtime">How to get values of <code>leptos_fluent!</code> macro at runtime?</a></li>
 </ul>
 <h3 id="how-to-get-languageidentifier-if-not-installed"><a class="header" href="#how-to-get-languageidentifier-if-not-installed">How to get <a href="https://docs.rs/unic-langid/latest/unic_langid/struct.LanguageIdentifier.html"><code>LanguageIdentifier</code></a> if not installed?</a></h3>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
@@ -1059,6 +1060,18 @@ pub fn App() -&gt; impl IntoView {
 #[component]
 fn LanguageSelector() -&gt; impl IntoView { ... }
 <span class="boring">}</span></code></pre></pre>
+<h3 id="how-to-get-values-of-leptos_fluent-macro-at-runtime"><a class="header" href="#how-to-get-values-of-leptos_fluent-macro-at-runtime">How to get values of <code>leptos_fluent!</code> macro at runtime?</a></h3>
+<p>Use <code>provide_meta_context</code> at the macro initialization and get them
+with the method <code>I18n::meta</code>:</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let i18n = leptos_fluent! {{
+    // ...
+    provide_meta_context: true,
+}};
+
+println!("Macro parameters: {:?}", i18n.meta().unwrap());
+<span class="boring">}</span></code></pre></pre>
 <div style="break-before: page; page-break-before: always;"></div><!-- markdownlint-disable MD033 MD038 -->
 <h1 id="leptos_fluent"><a class="header" href="#leptos_fluent"><code>leptos_fluent!</code></a></h1>
 <p>The <code>leptos_fluent!</code> macro is used to load the translations and set the current
@@ -1117,6 +1130,7 @@ locale. It is used in the root component of the application.</p>
 <li><a href="leptos_fluent.html#system--initial_language_from_system_to_data_file">system | <code>initial_language_from_system_to_data_file</code></a></li>
 <li><a href="leptos_fluent.html#system--set_language_to_data_file">system | <code>set_language_to_data_file</code></a></li>
 <li><a href="leptos_fluent.html#system--data_file_key-leptos-fluent">system | <code>data_file_key: </code>"leptos-fluent"</a></li>
+<li><a href="leptos_fluent.html#provide_meta_context"><code>provide_meta_context</code></a></li>
 </ul>
 </li>
 </ul>
@@ -1632,6 +1646,18 @@ per application.</p>
     // ...
     data_file_key: "my-app",
 }}
+<span class="boring">}</span></code></pre></pre>
+<h3 id="provide_meta_context"><a class="header" href="#provide_meta_context"><code>provide_meta_context</code></a></h3>
+<p>Provide the macro meta information at runtime as a context.
+Get it using <code>I18n::meta</code>:</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let i18n = leptos_fluent! {{
+    // ...
+    provide_meta_context: true,
+}};
+
+println!("Macro parameters: {:?}", i18n.meta().unwrap());
 <span class="boring">}</span></code></pre></pre>
 
                     </main>
