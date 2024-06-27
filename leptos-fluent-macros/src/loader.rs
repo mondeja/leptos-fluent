@@ -524,7 +524,13 @@ impl Parse for I18nLoader {
                 if matches!(expr, syn::Expr::Path(_)) {
                     let span = expr.span();
                     let string = expr.to_token_stream().to_string();
-                    let ident = &string.split(' ').last().unwrap();
+                    let splitter =
+                        if string.contains('\n') { "\n" } else { "] " };
+                    let ident = &string
+                        .split(splitter)
+                        .last()
+                        .unwrap()
+                        .replace('\n', " ");
                     k = syn::Ident::new(ident, span);
 
                     let new_expr_stream =
