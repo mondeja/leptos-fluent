@@ -287,9 +287,7 @@ pub fn leptos_fluent(
         };
 
         match initial_language_from_system_exprpath {
-            Some(ref path) => quote! {
-                #path{#quote}
-            },
+            Some(ref path) => quote! { #path{#quote} },
             None => quote,
         }
     };
@@ -463,9 +461,7 @@ pub fn leptos_fluent(
         };
 
         match sync_html_tag_lang_exprpath {
-            Some(ref path) => quote! {
-                #path{#quote}
-            },
+            Some(ref path) => quote! { #path{#quote} },
             None => quote,
         }
     };
@@ -511,9 +507,7 @@ pub fn leptos_fluent(
         };
 
         match sync_html_tag_dir_exprpath {
-            Some(ref path) => quote! {
-                #path{#quote}
-            },
+            Some(ref path) => quote! { #path{#quote} },
             None => quote,
         }
     };
@@ -575,9 +569,7 @@ pub fn leptos_fluent(
         };
 
         match set_language_to_localstorage_exprpath {
-            Some(ref path) => quote! {
-                #path{#quote}
-            },
+            Some(ref path) => quote! { #path{#quote} },
             None => quote,
         }
     };
@@ -876,9 +868,7 @@ pub fn leptos_fluent(
         };
 
         match initial_language_from_localstorage_exprpath {
-            Some(ref path) => quote! {
-                #path{#quote}
-            },
+            Some(ref path) => quote! { #path{#quote} },
             None => quote,
         }
     };
@@ -919,9 +909,7 @@ pub fn leptos_fluent(
         };
 
         match set_language_to_url_param_exprpath {
-            Some(ref path) => quote! {
-                #path{#quote}
-            },
+            Some(ref path) => quote! { #path{#quote} },
             None => quote,
         }
     };
@@ -1028,9 +1016,7 @@ pub fn leptos_fluent(
         };
 
         match initial_language_from_navigator_exprpath {
-            Some(ref path) => quote! {
-                #path{#quote}
-            },
+            Some(ref path) => quote! { #path{#quote} },
             None => quote,
         }
     };
@@ -1210,9 +1196,7 @@ pub fn leptos_fluent(
         };
 
         match initial_language_from_cookie_exprpath {
-            Some(ref path) => quote! {
-                #path{#quote}
-            },
+            Some(ref path) => quote! { #path{#quote} },
             None => quote,
         }
     };
@@ -1245,9 +1229,7 @@ pub fn leptos_fluent(
         };
 
         match set_language_to_cookie_exprpath {
-            Some(ref path) => quote! {
-                #path{#quote}
-            },
+            Some(ref path) => quote! { #path{#quote} },
             None => quote,
         }
     };
