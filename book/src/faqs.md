@@ -178,14 +178,16 @@ approach can be used instead:
 
 ```rust
 #[cfg(feature = "ssr")]
-let storage = true;
-#[cfg(not(feature = "hydrate"))]
-let storage = false;
+let param = "ssr-lang";
+#[cfg(feature = "hydrate")]
+let param = "hydrate-lang";
+#[cfg(debug_assertions)]
+let param = "debug-lang";
 
 leptos_fluent! {{
     // ...
-    #[cfg(any(feature = "ssr", feature = "hydrate"))]
-    initial_language_from_localstorage: storage,
+    #[cfg(any(feature = "ssr", feature = "hydrate", debug_assertions))]
+    url_param: param,
     #[cfg(debug_assertions)]
     initial_language_from_url_param: true,
 }}
