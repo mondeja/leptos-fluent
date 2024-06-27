@@ -628,8 +628,8 @@ impl Parse for I18nLoader {
                     return Err(err);
                 }
                 if exprpath.is_some() {
-                    initial_language_from_url_param_to_localstorage_exprpath =
-                        exprpath.clone();
+                    initial_language_from_url_param_to_localstorage_exprpath
+                        .clone_from(&exprpath);
                 }
             } else if k == "initial_language_from_url_param_to_cookie" {
                 if let Some(err) = parse_litbool_or_expr_param(
@@ -641,8 +641,8 @@ impl Parse for I18nLoader {
                     return Err(err);
                 }
                 if exprpath.is_some() {
-                    initial_language_from_url_param_to_cookie_exprpath =
-                        exprpath.clone();
+                    initial_language_from_url_param_to_cookie_exprpath
+                        .clone_from(&exprpath);
                 }
             } else if k == "set_language_to_url_param" {
                 if let Some(err) = parse_litbool_or_expr_param(
@@ -676,8 +676,8 @@ impl Parse for I18nLoader {
                     return Err(err);
                 }
                 if exprpath.is_some() {
-                    initial_language_from_localstorage_exprpath =
-                        exprpath.clone();
+                    initial_language_from_localstorage_exprpath
+                        .clone_from(&exprpath);
                 }
             } else if k == "initial_language_from_localstorage_to_cookie" {
                 if let Some(err) = parse_litbool_or_expr_param(
@@ -689,8 +689,8 @@ impl Parse for I18nLoader {
                     return Err(err);
                 }
                 if exprpath.is_some() {
-                    initial_language_from_localstorage_to_cookie_exprpath =
-                        exprpath.clone();
+                    initial_language_from_localstorage_to_cookie_exprpath
+                        .clone_from(&exprpath);
                 }
             } else if k == "set_language_to_localstorage" {
                 if let Some(err) = parse_litbool_or_expr_param(
@@ -726,8 +726,8 @@ impl Parse for I18nLoader {
                     return Err(err);
                 }
                 if exprpath.is_some() {
-                    initial_language_from_navigator_to_localstorage_exprpath =
-                        exprpath.clone();
+                    initial_language_from_navigator_to_localstorage_exprpath
+                        .clone_from(&exprpath);
                 }
             } else if k == "initial_language_from_navigator_to_cookie" {
                 if let Some(err) = parse_litbool_or_expr_param(
@@ -739,8 +739,8 @@ impl Parse for I18nLoader {
                     return Err(err);
                 }
                 if exprpath.is_some() {
-                    initial_language_from_navigator_to_cookie_exprpath =
-                        exprpath.clone();
+                    initial_language_from_navigator_to_cookie_exprpath
+                        .clone_from(&exprpath);
                 }
             } else if k == "initial_language_from_accept_language_header" {
                 if let Some(err) = parse_litbool_or_expr_param(
@@ -798,8 +798,8 @@ impl Parse for I18nLoader {
                     return Err(err);
                 }
                 if exprpath.is_some() {
-                    initial_language_from_cookie_to_localstorage_exprpath =
-                        exprpath.clone();
+                    initial_language_from_cookie_to_localstorage_exprpath
+                        .clone_from(&exprpath);
                 }
             } else if k == "set_language_to_cookie" {
                 if let Some(err) = parse_litbool_or_expr_param(
