@@ -161,19 +161,11 @@ impl Parse for Translations {
     }
 }
 
-fn format_exprpath(expr: &syn::Expr, k: &syn::Ident) -> String {
-    expr.to_token_stream()
-        .to_string()
-        .strip_suffix(&format!(" {k}"))
-        .unwrap()
-        .to_string()
-}
-
 fn exprpath_not_supported_error_message(
-    expr: &syn::Expr,
+    expr: &proc_macro2::TokenStream,
     k: &syn::Ident,
 ) -> String {
-    let exprpath_str = format_exprpath(expr, k);
+    let exprpath_str = expr.to_string();
     format!(
         concat!(
             "The parameter '{}' of",
@@ -183,7 +175,7 @@ fn exprpath_not_supported_error_message(
             "```rust\n",
             "{}
 {{
-    let {}_dyn = ...;
+    let {}_dyn = {{ ... }};
 }}
 
 leptos_fluent! {{
@@ -216,64 +208,99 @@ pub(crate) struct I18nLoader {
     pub(crate) core_locales_path: Option<String>,
     pub(crate) check_translations: Option<String>,
     pub(crate) provide_meta_context: bool,
+    pub(crate) provide_meta_context_exprpath: Option<proc_macro2::TokenStream>,
     pub(crate) sync_html_tag_lang_bool: Option<syn::LitBool>,
     pub(crate) sync_html_tag_lang_expr: Option<syn::Expr>,
+    pub(crate) sync_html_tag_lang_exprpath: Option<proc_macro2::TokenStream>,
     pub(crate) sync_html_tag_dir_bool: Option<syn::LitBool>,
     pub(crate) sync_html_tag_dir_expr: Option<syn::Expr>,
+    pub(crate) sync_html_tag_dir_exprpath: Option<proc_macro2::TokenStream>,
     pub(crate) url_param_str: Option<syn::LitStr>,
     pub(crate) url_param_expr: Option<syn::Expr>,
+    pub(crate) url_param_exprpath: Option<proc_macro2::TokenStream>,
     pub(crate) initial_language_from_url_param_bool: Option<syn::LitBool>,
     pub(crate) initial_language_from_url_param_expr: Option<syn::Expr>,
+    pub(crate) initial_language_from_url_param_exprpath:
+        Option<proc_macro2::TokenStream>,
     pub(crate) initial_language_from_url_param_to_localstorage_bool:
         Option<syn::LitBool>,
     pub(crate) initial_language_from_url_param_to_localstorage_expr:
         Option<syn::Expr>,
+    pub(crate) initial_language_from_url_param_to_localstorage_exprpath:
+        Option<proc_macro2::TokenStream>,
     pub(crate) initial_language_from_url_param_to_cookie_bool:
         Option<syn::LitBool>,
     pub(crate) initial_language_from_url_param_to_cookie_expr:
         Option<syn::Expr>,
+    pub(crate) initial_language_from_url_param_to_cookie_exprpath:
+        Option<proc_macro2::TokenStream>,
     pub(crate) set_language_to_url_param_bool: Option<syn::LitBool>,
     pub(crate) set_language_to_url_param_expr: Option<syn::Expr>,
+    pub(crate) set_language_to_url_param_exprpath:
+        Option<proc_macro2::TokenStream>,
     pub(crate) localstorage_key_str: Option<syn::LitStr>,
     pub(crate) localstorage_key_expr: Option<syn::Expr>,
     pub(crate) initial_language_from_localstorage_bool: Option<syn::LitBool>,
     pub(crate) initial_language_from_localstorage_expr: Option<syn::Expr>,
+    pub(crate) initial_language_from_localstorage_exprpath:
+        Option<proc_macro2::TokenStream>,
     pub(crate) initial_language_from_localstorage_to_cookie_bool:
         Option<syn::LitBool>,
     pub(crate) initial_language_from_localstorage_to_cookie_expr:
         Option<syn::Expr>,
+    pub(crate) initial_language_from_localstorage_to_cookie_exprpath:
+        Option<proc_macro2::TokenStream>,
     pub(crate) set_language_to_localstorage_bool: Option<syn::LitBool>,
     pub(crate) set_language_to_localstorage_expr: Option<syn::Expr>,
+    pub(crate) set_language_to_localstorage_exprpath:
+        Option<proc_macro2::TokenStream>,
     pub(crate) initial_language_from_navigator_bool: Option<syn::LitBool>,
     pub(crate) initial_language_from_navigator_expr: Option<syn::Expr>,
+    pub(crate) initial_language_from_navigator_exprpath:
+        Option<proc_macro2::TokenStream>,
     pub(crate) initial_language_from_navigator_to_localstorage_bool:
         Option<syn::LitBool>,
     pub(crate) initial_language_from_navigator_to_localstorage_expr:
         Option<syn::Expr>,
+    pub(crate) initial_language_from_navigator_to_localstorage_exprpath:
+        Option<proc_macro2::TokenStream>,
     pub(crate) initial_language_from_navigator_to_cookie_bool:
         Option<syn::LitBool>,
     pub(crate) initial_language_from_navigator_to_cookie_expr:
         Option<syn::Expr>,
+    pub(crate) initial_language_from_navigator_to_cookie_exprpath:
+        Option<proc_macro2::TokenStream>,
     pub(crate) initial_language_from_accept_language_header_bool:
         Option<syn::LitBool>,
     pub(crate) initial_language_from_accept_language_header_expr:
         Option<syn::Expr>,
     pub(crate) cookie_name_str: Option<syn::LitStr>,
     pub(crate) cookie_name_expr: Option<syn::Expr>,
+    pub(crate) cookie_name_exprpath: Option<proc_macro2::TokenStream>,
     pub(crate) cookie_attrs_str: Option<syn::LitStr>,
     pub(crate) cookie_attrs_expr: Option<syn::Expr>,
+    pub(crate) cookie_attrs_exprpath: Option<proc_macro2::TokenStream>,
     pub(crate) initial_language_from_cookie_bool: Option<syn::LitBool>,
     pub(crate) initial_language_from_cookie_expr: Option<syn::Expr>,
+    pub(crate) initial_language_from_cookie_exprpath:
+        Option<proc_macro2::TokenStream>,
     pub(crate) initial_language_from_cookie_to_localstorage_bool:
         Option<syn::LitBool>,
     pub(crate) initial_language_from_cookie_to_localstorage_expr:
         Option<syn::Expr>,
+    pub(crate) initial_language_from_cookie_to_localstorage_exprpath:
+        Option<proc_macro2::TokenStream>,
     pub(crate) set_language_to_cookie_bool: Option<syn::LitBool>,
     pub(crate) set_language_to_cookie_expr: Option<syn::Expr>,
+    pub(crate) set_language_to_cookie_exprpath:
+        Option<proc_macro2::TokenStream>,
     #[cfg(feature = "system")]
     pub(crate) initial_language_from_system_bool: Option<syn::LitBool>,
     #[cfg(feature = "system")]
     pub(crate) initial_language_from_system_expr: Option<syn::Expr>,
+    #[cfg(feature = "system")]
+    pub(crate) initial_language_from_system_exprpath:
+        Option<proc_macro2::TokenStream>,
     #[cfg(feature = "system")]
     pub(crate) initial_language_from_system_to_data_file_bool:
         Option<syn::LitBool>,
@@ -281,17 +308,28 @@ pub(crate) struct I18nLoader {
     pub(crate) initial_language_from_system_to_data_file_expr:
         Option<syn::Expr>,
     #[cfg(feature = "system")]
+    pub(crate) initial_language_from_system_to_data_file_exprpath:
+        Option<proc_macro2::TokenStream>,
+    #[cfg(feature = "system")]
     pub(crate) set_language_to_data_file_bool: Option<syn::LitBool>,
     #[cfg(feature = "system")]
     pub(crate) set_language_to_data_file_expr: Option<syn::Expr>,
+    #[cfg(feature = "system")]
+    pub(crate) set_language_to_data_file_exprpath:
+        Option<proc_macro2::TokenStream>,
     #[cfg(feature = "system")]
     pub(crate) initial_language_from_data_file_bool: Option<syn::LitBool>,
     #[cfg(feature = "system")]
     pub(crate) initial_language_from_data_file_expr: Option<syn::Expr>,
     #[cfg(feature = "system")]
+    pub(crate) initial_language_from_data_file_exprpath:
+        Option<proc_macro2::TokenStream>,
+    #[cfg(feature = "system")]
     pub(crate) data_file_key_str: Option<syn::LitStr>,
     #[cfg(feature = "system")]
     pub(crate) data_file_key_expr: Option<syn::Expr>,
+    #[cfg(feature = "system")]
+    pub(crate) data_file_key_exprpath: Option<proc_macro2::TokenStream>,
 }
 
 impl Parse for I18nLoader {
@@ -309,55 +347,88 @@ impl Parse for I18nLoader {
         let mut check_translations: Option<syn::LitStr> = None;
         let mut sync_html_tag_lang_bool: Option<syn::LitBool> = None;
         let mut sync_html_tag_lang_expr: Option<syn::Expr> = None;
+        let mut sync_html_tag_lang_exprpath: Option<proc_macro2::TokenStream> =
+            None;
         let mut sync_html_tag_dir_bool: Option<syn::LitBool> = None;
         let mut sync_html_tag_dir_expr: Option<syn::Expr> = None;
+        let mut sync_html_tag_dir_exprpath: Option<proc_macro2::TokenStream> =
+            None;
         let mut url_param_str: Option<syn::LitStr> = None;
         let mut url_param_expr: Option<syn::Expr> = None;
+        let mut url_param_exprpath: Option<proc_macro2::TokenStream> = None;
         let mut initial_language_from_url_param_bool: Option<syn::LitBool> =
             None;
         let mut initial_language_from_url_param_expr: Option<syn::Expr> = None;
+        let mut initial_language_from_url_param_exprpath: Option<
+            proc_macro2::TokenStream,
+        > = None;
         let mut initial_language_from_url_param_to_localstorage_bool: Option<
             syn::LitBool,
         > = None;
         let mut initial_language_from_url_param_to_localstorage_expr: Option<
             syn::Expr,
         > = None;
+        let mut initial_language_from_url_param_to_localstorage_exprpath: Option<proc_macro2::TokenStream> =
+            None;
         let mut initial_language_from_url_param_to_cookie_bool: Option<
             syn::LitBool,
         > = None;
         let mut initial_language_from_url_param_to_cookie_expr: Option<
             syn::Expr,
         > = None;
+        let mut initial_language_from_url_param_to_cookie_exprpath: Option<
+            proc_macro2::TokenStream,
+        > = None;
         let mut set_language_to_url_param_bool: Option<syn::LitBool> = None;
         let mut set_language_to_url_param_expr: Option<syn::Expr> = None;
+        let mut set_language_to_url_param_exprpath: Option<
+            proc_macro2::TokenStream,
+        > = None;
         let mut localstorage_key_str: Option<syn::LitStr> = None;
         let mut localstorage_key_expr: Option<syn::Expr> = None;
         let mut initial_language_from_localstorage_bool: Option<syn::LitBool> =
             None;
         let mut initial_language_from_localstorage_expr: Option<syn::Expr> =
             None;
+        let mut initial_language_from_localstorage_exprpath: Option<
+            proc_macro2::TokenStream,
+        > = None;
         let mut initial_language_from_localstorage_to_cookie_bool: Option<
             syn::LitBool,
         > = None;
         let mut initial_language_from_localstorage_to_cookie_expr: Option<
             syn::Expr,
         > = None;
+        let mut initial_language_from_localstorage_to_cookie_exprpath: Option<
+            proc_macro2::TokenStream,
+        > = None;
         let mut set_language_to_localstorage_bool: Option<syn::LitBool> = None;
         let mut set_language_to_localstorage_expr: Option<syn::Expr> = None;
+        let mut set_language_to_localstorage_exprpath: Option<
+            proc_macro2::TokenStream,
+        > = None;
         let mut initial_language_from_navigator_bool: Option<syn::LitBool> =
             None;
         let mut initial_language_from_navigator_expr: Option<syn::Expr> = None;
+        let mut initial_language_from_navigator_exprpath: Option<
+            proc_macro2::TokenStream,
+        > = None;
         let mut initial_language_from_navigator_to_localstorage_bool: Option<
             syn::LitBool,
         > = None;
         let mut initial_language_from_navigator_to_localstorage_expr: Option<
             syn::Expr,
         > = None;
+        let mut initial_language_from_navigator_to_localstorage_exprpath: Option<proc_macro2::TokenStream> =
+            None;
         let mut initial_language_from_navigator_to_cookie_bool: Option<
             syn::LitBool,
         > = None;
         let mut initial_language_from_navigator_to_cookie_expr: Option<
             syn::Expr,
+        > = None;
+        let mut initial_language_from_navigator_to_cookie_exprpath: Option<
+            proc_macro2::TokenStream,
         > = None;
         let mut initial_language_from_accept_language_header_bool: Option<
             syn::LitBool,
@@ -367,21 +438,37 @@ impl Parse for I18nLoader {
         > = None;
         let mut cookie_name_str: Option<syn::LitStr> = None;
         let mut cookie_name_expr: Option<syn::Expr> = None;
+        let mut cookie_name_exprpath: Option<proc_macro2::TokenStream> = None;
         let mut cookie_attrs_str: Option<syn::LitStr> = None;
         let mut cookie_attrs_expr: Option<syn::Expr> = None;
+        let mut cookie_attrs_exprpath: Option<proc_macro2::TokenStream> = None;
         let mut initial_language_from_cookie_bool: Option<syn::LitBool> = None;
         let mut initial_language_from_cookie_expr: Option<syn::Expr> = None;
+        let mut initial_language_from_cookie_exprpath: Option<
+            proc_macro2::TokenStream,
+        > = None;
         let mut initial_language_from_cookie_to_localstorage_bool: Option<
             syn::LitBool,
         > = None;
         let mut initial_language_from_cookie_to_localstorage_expr: Option<
             syn::Expr,
         > = None;
+        let mut initial_language_from_cookie_to_localstorage_exprpath: Option<
+            proc_macro2::TokenStream,
+        > = None;
         let mut set_language_to_cookie_bool: Option<syn::LitBool> = None;
         let mut set_language_to_cookie_expr: Option<syn::Expr> = None;
+        let mut set_language_to_cookie_exprpath: Option<
+            proc_macro2::TokenStream,
+        > = None;
+
         #[cfg(feature = "system")]
         let mut initial_language_from_system_bool: Option<
             syn::LitBool,
+        > = None;
+        #[cfg(feature = "system")]
+        let mut initial_language_from_system_exprpath: Option<
+            proc_macro2::TokenStream,
         > = None;
         #[cfg(feature = "system")]
         let mut initial_language_from_system_expr: Option<syn::Expr> = None;
@@ -394,9 +481,17 @@ impl Parse for I18nLoader {
             syn::Expr,
         > = None;
         #[cfg(feature = "system")]
+        let mut initial_language_from_system_to_data_file_exprpath: Option<
+            proc_macro2::TokenStream,
+        > = None;
+        #[cfg(feature = "system")]
         let mut set_language_to_data_file_bool: Option<syn::LitBool> = None;
         #[cfg(feature = "system")]
         let mut set_language_to_data_file_expr: Option<syn::Expr> = None;
+        #[cfg(feature = "system")]
+        let mut set_language_to_data_file_exprpath: Option<
+            proc_macro2::TokenStream,
+        > = None;
         #[cfg(feature = "system")]
         let mut initial_language_from_data_file_bool: Option<
             syn::LitBool,
@@ -405,12 +500,21 @@ impl Parse for I18nLoader {
         let mut initial_language_from_data_file_expr: Option<
             syn::Expr,
         > = None;
+        #[cfg(feature = "system")]
+        let mut initial_language_from_data_file_exprpath: Option<
+            proc_macro2::TokenStream,
+        > = None;
+
         let mut data_file_key_str: Option<syn::LitStr> = None;
         let mut data_file_key_expr: Option<syn::Expr> = None;
+        let mut data_file_key_exprpath: Option<proc_macro2::TokenStream> = None;
         let mut provide_meta_context: Option<syn::LitBool> = None;
+        let mut provide_meta_context_exprpath: Option<
+            proc_macro2::TokenStream,
+        > = None;
 
         while !fields.is_empty() {
-            let mut exprpath: Option<syn::Expr> = None;
+            let mut exprpath: Option<proc_macro2::TokenStream> = None;
             let k;
             if fields.peek(syn::Ident) && fields.peek2(syn::Token![:]) {
                 k = fields.parse::<syn::Ident>()?;
@@ -421,8 +525,18 @@ impl Parse for I18nLoader {
                     let span = expr.span();
                     let string = expr.to_token_stream().to_string();
                     let ident = &string.split(' ').last().unwrap();
-                    exprpath = Some(expr);
                     k = syn::Ident::new(ident, span);
+
+                    let new_expr_stream =
+                        expr.to_token_stream().into_iter().collect::<Vec<_>>();
+                    // except last element
+                    let except_last = new_expr_stream
+                        .iter()
+                        .take(new_expr_stream.len() - 1)
+                        .cloned();
+                    exprpath = Some(proc_macro2::TokenStream::from_iter(
+                        except_last.into_iter(),
+                    ));
                 } else {
                     return Err(syn::Error::new(
                         expr.span(),
@@ -465,7 +579,9 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
-                exprpath_not_supported!(exprpath, k);
+                if exprpath.is_some() {
+                    sync_html_tag_lang_exprpath = exprpath.clone();
+                }
             } else if k == "sync_html_tag_dir" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
@@ -475,7 +591,9 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
-                exprpath_not_supported!(exprpath, k);
+                if exprpath.is_some() {
+                    sync_html_tag_dir_exprpath = exprpath.clone();
+                }
             } else if k == "url_param" {
                 if let Some(err) = parse_litstr_or_expr_param(
                     &fields,
@@ -485,7 +603,9 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
-                exprpath_not_supported!(exprpath, k);
+                if exprpath.is_some() {
+                    url_param_exprpath = exprpath.clone();
+                }
             } else if k == "initial_language_from_url_param" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
@@ -495,7 +615,9 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
-                exprpath_not_supported!(exprpath, k);
+                if exprpath.is_some() {
+                    initial_language_from_url_param_exprpath = exprpath.clone();
+                }
             } else if k == "initial_language_from_url_param_to_localstorage" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
@@ -505,7 +627,10 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
-                exprpath_not_supported!(exprpath, k);
+                if exprpath.is_some() {
+                    initial_language_from_url_param_to_localstorage_exprpath =
+                        exprpath.clone();
+                }
             } else if k == "initial_language_from_url_param_to_cookie" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
@@ -515,7 +640,10 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
-                exprpath_not_supported!(exprpath, k);
+                if exprpath.is_some() {
+                    initial_language_from_url_param_to_cookie_exprpath =
+                        exprpath.clone();
+                }
             } else if k == "set_language_to_url_param" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
@@ -525,7 +653,9 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
-                exprpath_not_supported!(exprpath, k);
+                if exprpath.is_some() {
+                    set_language_to_url_param_exprpath = exprpath.clone();
+                }
             } else if k == "localstorage_key" {
                 if let Some(err) = parse_litstr_or_expr_param(
                     &fields,
@@ -545,7 +675,10 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
-                exprpath_not_supported!(exprpath, k);
+                if exprpath.is_some() {
+                    initial_language_from_localstorage_exprpath =
+                        exprpath.clone();
+                }
             } else if k == "initial_language_from_localstorage_to_cookie" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
@@ -555,7 +688,10 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
-                exprpath_not_supported!(exprpath, k);
+                if exprpath.is_some() {
+                    initial_language_from_localstorage_to_cookie_exprpath =
+                        exprpath.clone();
+                }
             } else if k == "set_language_to_localstorage" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
@@ -565,7 +701,9 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
-                exprpath_not_supported!(exprpath, k);
+                if exprpath.is_some() {
+                    set_language_to_localstorage_exprpath = exprpath.clone();
+                }
             } else if k == "initial_language_from_navigator" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
@@ -575,7 +713,9 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
-                exprpath_not_supported!(exprpath, k);
+                if exprpath.is_some() {
+                    initial_language_from_navigator_exprpath = exprpath.clone();
+                }
             } else if k == "initial_language_from_navigator_to_localstorage" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
@@ -585,7 +725,10 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
-                exprpath_not_supported!(exprpath, k);
+                if exprpath.is_some() {
+                    initial_language_from_navigator_to_localstorage_exprpath =
+                        exprpath.clone();
+                }
             } else if k == "initial_language_from_navigator_to_cookie" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
@@ -595,7 +738,10 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
-                exprpath_not_supported!(exprpath, k);
+                if exprpath.is_some() {
+                    initial_language_from_navigator_to_cookie_exprpath =
+                        exprpath.clone();
+                }
             } else if k == "initial_language_from_accept_language_header" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
@@ -615,7 +761,9 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
-                exprpath_not_supported!(exprpath, k);
+                if exprpath.is_some() {
+                    cookie_name_exprpath = exprpath.clone();
+                }
             } else if k == "cookie_attrs" {
                 if let Some(err) = parse_litstr_or_expr_param(
                     &fields,
@@ -625,7 +773,9 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
-                exprpath_not_supported!(exprpath, k);
+                if exprpath.is_some() {
+                    cookie_attrs_exprpath = exprpath.clone();
+                }
             } else if k == "initial_language_from_cookie" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
@@ -635,7 +785,9 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
-                exprpath_not_supported!(exprpath, k);
+                if exprpath.is_some() {
+                    initial_language_from_cookie_exprpath = exprpath.clone();
+                }
             } else if k == "initial_language_from_cookie_to_localstorage" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
@@ -645,7 +797,10 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
-                exprpath_not_supported!(exprpath, k);
+                if exprpath.is_some() {
+                    initial_language_from_cookie_to_localstorage_exprpath =
+                        exprpath.clone();
+                }
             } else if k == "set_language_to_cookie" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
@@ -655,7 +810,9 @@ impl Parse for I18nLoader {
                 ) {
                     return Err(err);
                 }
-                exprpath_not_supported!(exprpath, k);
+                if exprpath.is_some() {
+                    set_language_to_cookie_exprpath = exprpath.clone();
+                }
             } else if k == "initial_language_from_system" {
                 #[cfg(feature = "system")]
                 {
@@ -667,7 +824,10 @@ impl Parse for I18nLoader {
                     ) {
                         return Err(err);
                     }
-                    exprpath_not_supported!(exprpath, k);
+                    if exprpath.is_some() {
+                        initial_language_from_system_exprpath =
+                            exprpath.clone();
+                    }
                 }
 
                 #[cfg(not(feature = "system"))]
@@ -692,7 +852,10 @@ impl Parse for I18nLoader {
                     ) {
                         return Err(err);
                     }
-                    exprpath_not_supported!(exprpath, k);
+                    if exprpath.is_some() {
+                        initial_language_from_data_file_exprpath =
+                            exprpath.clone();
+                    }
                 }
 
                 #[cfg(not(feature = "system"))]
@@ -717,7 +880,10 @@ impl Parse for I18nLoader {
                     ) {
                         return Err(err);
                     }
-                    exprpath_not_supported!(exprpath, k);
+                    if exprpath.is_some() {
+                        initial_language_from_system_to_data_file_exprpath =
+                            exprpath.clone();
+                    }
                 }
 
                 #[cfg(not(feature = "system"))]
@@ -742,7 +908,9 @@ impl Parse for I18nLoader {
                     ) {
                         return Err(err);
                     }
-                    exprpath_not_supported!(exprpath, k);
+                    if exprpath.is_some() {
+                        set_language_to_data_file_exprpath = exprpath.clone();
+                    }
                 }
 
                 #[cfg(not(feature = "system"))]
@@ -767,10 +935,18 @@ impl Parse for I18nLoader {
                         return Err(err);
                     }
                 }
-                exprpath_not_supported!(exprpath, k);
+                if exprpath.is_some() {
+                    data_file_key_exprpath = exprpath.clone();
+                }
+                #[cfg(not(feature = "system"))]
+                {
+                    _ = data_file_key_exprpath;
+                }
             } else if k == "provide_meta_context" {
                 provide_meta_context = Some(fields.parse()?);
-                exprpath_not_supported!(exprpath, k);
+                if exprpath.is_some() {
+                    provide_meta_context_exprpath = exprpath.clone();
+                }
             } else {
                 return Err(syn::Error::new(
                     k.span(),
@@ -973,66 +1149,95 @@ impl Parse for I18nLoader {
                 Some(x) => x.value,
                 None => false,
             },
+            provide_meta_context_exprpath,
             sync_html_tag_lang_bool,
             sync_html_tag_lang_expr,
+            sync_html_tag_lang_exprpath,
             sync_html_tag_dir_bool,
             sync_html_tag_dir_expr,
+            sync_html_tag_dir_exprpath,
             url_param_str,
             url_param_expr,
+            url_param_exprpath,
             initial_language_from_url_param_bool,
             initial_language_from_url_param_expr,
+            initial_language_from_url_param_exprpath,
             initial_language_from_url_param_to_localstorage_bool,
             initial_language_from_url_param_to_localstorage_expr,
+            initial_language_from_url_param_to_localstorage_exprpath,
             initial_language_from_url_param_to_cookie_bool,
             initial_language_from_url_param_to_cookie_expr,
+            initial_language_from_url_param_to_cookie_exprpath,
             set_language_to_url_param_bool,
             set_language_to_url_param_expr,
+            set_language_to_url_param_exprpath,
             localstorage_key_str,
             localstorage_key_expr,
             initial_language_from_localstorage_bool,
             initial_language_from_localstorage_expr,
+            initial_language_from_localstorage_exprpath,
             initial_language_from_localstorage_to_cookie_bool,
             initial_language_from_localstorage_to_cookie_expr,
+            initial_language_from_localstorage_to_cookie_exprpath,
             set_language_to_localstorage_bool,
             set_language_to_localstorage_expr,
+            set_language_to_localstorage_exprpath,
             initial_language_from_navigator_bool,
             initial_language_from_navigator_expr,
+            initial_language_from_navigator_exprpath,
             initial_language_from_navigator_to_localstorage_bool,
             initial_language_from_navigator_to_localstorage_expr,
+            initial_language_from_navigator_to_localstorage_exprpath,
             initial_language_from_navigator_to_cookie_bool,
             initial_language_from_navigator_to_cookie_expr,
+            initial_language_from_navigator_to_cookie_exprpath,
             initial_language_from_accept_language_header_bool,
             initial_language_from_accept_language_header_expr,
             cookie_name_str,
             cookie_name_expr,
+            cookie_name_exprpath,
             cookie_attrs_str,
             cookie_attrs_expr,
+            cookie_attrs_exprpath,
             initial_language_from_cookie_bool,
             initial_language_from_cookie_expr,
+            initial_language_from_cookie_exprpath,
             initial_language_from_cookie_to_localstorage_bool,
             initial_language_from_cookie_to_localstorage_expr,
+            initial_language_from_cookie_to_localstorage_exprpath,
             set_language_to_cookie_bool,
             set_language_to_cookie_expr,
+            set_language_to_cookie_exprpath,
             #[cfg(feature = "system")]
             initial_language_from_system_bool,
             #[cfg(feature = "system")]
             initial_language_from_system_expr,
             #[cfg(feature = "system")]
+            initial_language_from_system_exprpath,
+            #[cfg(feature = "system")]
             initial_language_from_system_to_data_file_bool,
             #[cfg(feature = "system")]
             initial_language_from_system_to_data_file_expr,
+            #[cfg(feature = "system")]
+            initial_language_from_system_to_data_file_exprpath,
             #[cfg(feature = "system")]
             set_language_to_data_file_bool,
             #[cfg(feature = "system")]
             set_language_to_data_file_expr,
             #[cfg(feature = "system")]
+            set_language_to_data_file_exprpath,
+            #[cfg(feature = "system")]
             initial_language_from_data_file_bool,
             #[cfg(feature = "system")]
             initial_language_from_data_file_expr,
             #[cfg(feature = "system")]
+            initial_language_from_data_file_exprpath,
+            #[cfg(feature = "system")]
             data_file_key_str,
             #[cfg(feature = "system")]
             data_file_key_expr,
+            #[cfg(feature = "system")]
+            data_file_key_exprpath,
         })
     }
 }

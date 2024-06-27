@@ -11,6 +11,22 @@
 - Add `flag` field to `leptos_fluent::Language` storing emoji flag
   automatic discovered for each language identifier with a country code.
 
+### Bug fixes
+
+- Accept [configuration conditional checks] directly in most macro parameters:
+
+  ```rust
+  leptos_fluent! {{
+      // ...
+      #[cfg(debug_assertions)]
+      initial_language_from_url_param: true,
+      #[cfg(debug_assertions)]
+      set_language_to_url_param: true,
+  }}
+  ```
+
+[configuration conditional checks]: https://doc.rust-lang.org/rust-by-example/attribute/cfg.html
+
 ## 2024-06-26 - [0.1.5]
 
 ### New features

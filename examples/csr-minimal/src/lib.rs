@@ -15,6 +15,10 @@ pub fn App() -> impl IntoView {
         translations: [TRANSLATIONS],
         locales: "./locales",
         check_translations: "./src/**/*.rs",
+        #[cfg(debug_assertions)]
+        initial_language_from_url_param: true,
+        #[cfg(debug_assertions)]
+        set_language_to_url_param: true,
     }};
 
     view! { <LanguageSelector/> }
