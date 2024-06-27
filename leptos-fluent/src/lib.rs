@@ -113,7 +113,7 @@
 //!         // URL in a cookie.
 //!         initial_language_from_url_param_to_cookie: true,
 //!         // Key used to get and set the current language of the
-//!         user on local storage. By default is `"lang"`.
+//!         // user on local storage. By default is `"lang"`.
 //!         localstorage_key: "language",
 //!         // Get initial language from local storage if not found
 //!         // in an URL param.
