@@ -605,6 +605,20 @@ leptos_fluent! {{
 }}
 ```
 
+### `provide_meta_context`
+
+Provide the macro meta information at runtime as a context.
+Get it using `I18n::meta`:
+
+```rust
+let i18n = leptos_fluent! {{
+    // ...
+    provide_meta_context: true,
+}};
+
+println!("Macro parameters: {:?}", i18n.meta().unwrap());
+```
+
 [`fluent_templates::static_loader!`]: https://docs.rs/fluent-templates/latest/fluent_templates/macro.static_loader.html
 [`once_cell:sync::Lazy`]: https://docs.rs/once_cell/latest/once_cell/sync/struct.Lazy.html
 [`<html lang="...">` attribute]: https://developer.mozilla.org/es/docs/Web/HTML/Global_attributes/lang

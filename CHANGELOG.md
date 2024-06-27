@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## Unreleased - [0.1.6]
+## 2024-06-27 - [0.1.6]
 
 ### New features
 
@@ -10,6 +10,22 @@
   `cookie_name` used as parameter for the macro.
 - Add `flag` field to `leptos_fluent::Language` storing emoji flag
   automatic discovered for each language identifier with a country code.
+
+### Bug fixes
+
+- Accept [configuration conditional checks] directly in most macro parameters:
+
+  ```rust
+  leptos_fluent! {{
+      // ...
+      #[cfg(debug_assertions)]
+      initial_language_from_url_param: true,
+      #[cfg(debug_assertions)]
+      set_language_to_url_param: true,
+  }}
+  ```
+
+[configuration conditional checks]: https://doc.rust-lang.org/rust-by-example/attribute/cfg.html
 
 ## 2024-06-26 - [0.1.5]
 
@@ -321,7 +337,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
-[0.1.6]: https://github.com/mondeja/leptos-fluent/compare/v0.1.5...master
+[0.1.6]: https://github.com/mondeja/leptos-fluent/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/mondeja/leptos-fluent/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/mondeja/leptos-fluent/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/mondeja/leptos-fluent/compare/v0.1.2...v0.1.3

@@ -156,6 +156,20 @@ pub fn App() -> impl IntoView {
 fn LanguageSelector() -> impl IntoView { ... }
 ```
 
+### How to get values of `leptos_fluent!` macro at runtime?
+
+Use `provide_meta_context` at the macro initialization and get them
+with the method `I18n::meta`:
+
+```rust
+let i18n = leptos_fluent! {{
+    // ...
+    provide_meta_context: true,
+}};
+
+println!("Macro parameters: {:?}", i18n.meta().unwrap());
+```
+
 [`<For/>`]: https://docs.rs/leptos/latest/leptos/fn.For.html
 [`leptos_fluent::SsrHtmlTag`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.SsrHtmlTag.html
 [`leptos_fluent::Language`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html
