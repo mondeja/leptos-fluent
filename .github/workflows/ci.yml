@@ -251,11 +251,11 @@ jobs:
       - name: Get build features
         id: build-features
         run: |
-          if [[ "${{ matrix.toolchain }}" == "nightly" ]]; \
-            then echo "features='--features=leptos-fluent/nightly'" >> $GITHUB_OUTPUT; \
-          else; \
-            then echo "features=''" >> $GITHUB_OUTPUT; \
-          fi;
+          if [[ "${{ matrix.toolchain }}" == "nightly" ]] \
+            then echo "features='--features=leptos-fluent/nightly'" >> $GITHUB_OUTPUT \
+          else \
+            echo "features=''" >> $GITHUB_OUTPUT \
+          fi
       - name: Build with trunk
         if: startsWith(matrix.example, 'csr')
         run: |
