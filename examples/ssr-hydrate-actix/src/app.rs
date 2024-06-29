@@ -38,6 +38,7 @@ pub fn App() -> impl IntoView {
         set_language_to_localstorage: true,
         initial_language_from_navigator: true,
         initial_language_from_navigator_to_cookie: true,
+        initial_language_from_navigator_to_server_function: set_language_server_function,
         initial_language_from_accept_language_header: true,
         initial_language_from_server_function: initial_language_server_function,
         set_language_to_server_function: set_language_server_function,

@@ -274,6 +274,10 @@ pub(crate) struct I18nLoader {
         Option<syn::Expr>,
     pub(crate) initial_language_from_navigator_to_cookie_exprpath:
         Option<proc_macro2::TokenStream>,
+    pub(crate) initial_language_from_navigator_to_server_function:
+        Option<syn::Ident>,
+    pub(crate) initial_language_from_navigator_to_server_function_exprpath:
+        Option<proc_macro2::TokenStream>,
     pub(crate) initial_language_from_accept_language_header_bool:
         Option<syn::LitBool>,
     pub(crate) initial_language_from_accept_language_header_expr:
@@ -449,6 +453,11 @@ impl Parse for I18nLoader {
         let mut initial_language_from_navigator_to_cookie_exprpath: Option<
             proc_macro2::TokenStream,
         > = None;
+        let mut initial_language_from_navigator_to_server_function: Option<
+            syn::Ident,
+        > = None;
+        let mut initial_language_from_navigator_to_server_function_exprpath: Option<proc_macro2::TokenStream> =
+            None;
         let mut initial_language_from_accept_language_header_bool: Option<
             syn::LitBool,
         > = None;
@@ -790,6 +799,14 @@ impl Parse for I18nLoader {
                 }
                 if exprpath.is_some() {
                     initial_language_from_navigator_to_cookie_exprpath
+                        .clone_from(&exprpath);
+                }
+            } else if k == "initial_language_from_navigator_to_server_function"
+            {
+                initial_language_from_navigator_to_server_function =
+                    Some(fields.parse()?);
+                if exprpath.is_some() {
+                    initial_language_from_navigator_to_server_function_exprpath
                         .clone_from(&exprpath);
                 }
             } else if k == "initial_language_from_accept_language_header" {
@@ -1263,6 +1280,8 @@ impl Parse for I18nLoader {
             initial_language_from_navigator_to_cookie_bool,
             initial_language_from_navigator_to_cookie_expr,
             initial_language_from_navigator_to_cookie_exprpath,
+            initial_language_from_navigator_to_server_function,
+            initial_language_from_navigator_to_server_function_exprpath,
             initial_language_from_accept_language_header_bool,
             initial_language_from_accept_language_header_expr,
             cookie_name_str,

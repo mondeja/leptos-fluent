@@ -17,3 +17,4 @@
 - `set_language_to_server_function`
 - `initial_language_from_localstorage_to_server_function`
 - `initial_language_from_cookie_to_server_function`
+- `initial_language_from_navigator_to_server_function`

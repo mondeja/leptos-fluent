@@ -136,6 +136,8 @@ pub fn leptos_fluent(
         initial_language_from_navigator_to_cookie_bool,
         initial_language_from_navigator_to_cookie_expr,
         initial_language_from_navigator_to_cookie_exprpath,
+        initial_language_from_navigator_to_server_function,
+        initial_language_from_navigator_to_server_function_exprpath,
         initial_language_from_accept_language_header_bool,
         initial_language_from_accept_language_header_expr,
         cookie_name_str,
@@ -1061,6 +1063,23 @@ pub fn leptos_fluent(
             }
         };
 
+        let initial_language_from_navigator_to_server_function_quote = {
+            let quote = match initial_language_from_navigator_to_server_function
+            {
+                Some(ref ident) => quote! {
+                    spawn_local(async move {
+                        _ = #ident(l.id.to_string()).await;
+                    });
+                },
+                None => quote! {},
+            };
+
+            match initial_language_from_navigator_to_server_function_exprpath {
+                Some(ref path) => quote! { #path{#quote} },
+                None => quote,
+            }
+        };
+
         let window_navigator_languages_quote = quote! {
             let languages = window().navigator().languages().to_vec();
             for raw_language in languages {
@@ -1075,6 +1094,7 @@ pub fn leptos_fluent(
                     lang = Some(l);
                     #initial_language_from_navigator_to_localstorage_quote;
                     #initial_language_from_navigator_to_cookie_quote;
+                    #initial_language_from_navigator_to_server_function_quote;
                     break;
                 }
             }
@@ -1116,6 +1136,8 @@ pub fn leptos_fluent(
         _ = initial_language_from_navigator_to_cookie_bool;
         _ = initial_language_from_navigator_to_cookie_expr;
         _ = initial_language_from_navigator_to_cookie_exprpath;
+        _ = initial_language_from_navigator_to_server_function;
+        _ = initial_language_from_navigator_to_server_function_exprpath;
     }
 
     // Accept-Language header
