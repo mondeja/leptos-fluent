@@ -13,3 +13,5 @@
 - `initial_language_from_data_file`
 - `data_file_key`
 - `initial_language_from_system_to_data_file`
+- `initial_language_from_server_function`
+- `set_language_to_server_function`

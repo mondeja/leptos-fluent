@@ -36,6 +36,8 @@ pub fn App() -> impl IntoView {
         initial_language_from_navigator: true,
         initial_language_from_navigator_to_cookie: true,
         initial_language_from_accept_language_header: true,
+        initial_language_from_server_function: initial_language_server_function,
+        set_language_to_server_function: set_language_server_function,
     }};
 
     view! {
@@ -100,14 +102,33 @@ fn render_language(lang: &'static Language) -> impl IntoView {
     }
 }
 
+/// Server function to set the initial language
+#[server(InitialLanguage, "/api")]
+pub async fn initial_language_server_function(
+) -> Result<Option<String>, ServerFnError> {
+    // .. replace with your own logic
+    Ok(Some("es".to_string()))
+}
+
+/// Server function to update the current language
+#[server(SetLanguage, "/api")]
+pub async fn set_language_server_function(
+    _language: String,
+) -> Result<(), ServerFnError> {
+    // .. replace with your own logic
+    Ok(())
+}
+
 /// Server action showing client-side translated message on console
 #[server(ShowHelloWorld, "/api")]
 pub async fn show_hello_world(
     translated_hello_world: String,
     language: String,
 ) -> Result<(), ServerFnError> {
-    println!("{}", translated_hello_world);
-    println!("{}", language);
+    #[allow(clippy::print_stdout)]
+    {
+        println!("{} ({})", translated_hello_world, language);
+    };
     Ok(())
 }
 

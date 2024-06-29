@@ -1,4 +1,4 @@
-<!-- markdownlint-disable MD013 MD033 -->
+<!-- markdownlint-disable MD013 MD033 MD055 MD056 -->
 
 # Strategies
 
@@ -15,27 +15,32 @@ The initial language of the user can be set in different ways:
 | :------------------------------ | :-: | :-: | :-----: | :--------------------------------------------- |
 | [URL parameter]                 | ✅  | ✅  |   ❌    | `initial_language_from_url_param`              |
 | [Cookie]                        | ✅  | ✅  |   ❌    | `initial_language_from_cookie`                 |
+| [Server function]\*             | ✅  | ✅  |   ❌    | `initial_language_from_server_function`        |
 | Browser [local storage]         | ✅  | ❌  |   ❌    | `initial_language_from_localstorage`           |
 | Browser [`navigator.languages`] | ✅  | ❌  |   ❌    | `initial_language_from_navigator`              |
 | [`Accept-Language`] header      | ❌  | ✅  |   ❌    | `initial_language_from_accept_language_header` |
 | [System language]               | ❌  | ❌  |   ✅    | `initial_language_from_system`                 |
 | Data file                       | ❌  | ❌  |   ✅    | `initial_language_from_data_file`              |
 
+<sub style="position: relative; left: 110px"><sup>\*Unreleased</sup></sub>
+
 All of them can be used at the same time or just one of them. The first setting
 found will be used. The order of precedence is:
 
 - **SSR**
-  1. [URL parameter].
-  2. [Cookie].
-  3. [`Accept-Language`] header.
+  1. [Server function]
+  1. [URL parameter]
+  1. [Cookie]
+  1. [`Accept-Language`] header
 - **CSR**
-  1. [URL parameter].
-  2. [Cookie].
-  3. Browser [local storage].
-  4. Browser [`navigator.languages`].
+  1. [Server function]
+  1. [URL parameter]
+  1. [Cookie]
+  1. Browser [local storage]
+  1. Browser [`navigator.languages`]
 - **Desktop** ([`system` feature][desktop-applications])
-  1. Data file.
-  2. [System language].
+  1. Data file
+  1. [System language]
 
 ## <span style="opacity:.5">CSR </span> | Updating the language on the client
 
@@ -115,3 +120,4 @@ The names of the settings can be configured using the following parameters:
 [URL parameter]: https://developer.mozilla.org/es/docs/Web/API/URLSearchParams
 [desktop-applications]: https://mondeja.github.io/leptos-fluent/install.html#desktop-applications
 [System language]: https://github.com/i509VCB/current_locale
+[Server function]: https://book.leptos.dev/server/25_server_functions.html
