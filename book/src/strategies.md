@@ -73,6 +73,7 @@ are available:
 | Strategy                                       | [`leptos_fluent!`]                                      |
 | :--------------------------------------------- | :------------------------------------------------------ |
 | [URL parameter] to [local storage]             | `initial_language_from_url_param_to_localstorage`       |
+| [URL parameter] to [cookie]                    | `initial_language_from_url_param_to_cookie`             |
 | [Cookie] to [local storage]                    | `initial_language_from_cookie_to_localstorage`          |
 | [Local storage] to [cookie]                    | `initial_language_from_localstorage_to_cookie`          |
 | [Local storage] to [server function]\*         | `initial_language_from_localstorage_to_server_function` |
@@ -86,7 +87,6 @@ are available:
 
 | Strategy                               | [`leptos_fluent!`]                                   |
 | :------------------------------------- | :--------------------------------------------------- |
-| [URL parameter] to [cookie]            | `initial_language_from_url_param_to_cookie`          |
 | [URL parameter] to [server function]\* | `initial_language_from_url_param_to_server_function` |
 | [Cookie] to [server function]\*        | `initial_language_from_cookie_to_server_function`    |
 
