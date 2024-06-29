@@ -752,6 +752,18 @@ pub async fn set_language_server_function(
 }
 ```
 
+### `initial_language_from_server_function_to_cookie`
+
+Get the initial language from a [server function] and set it to a
+[cookie].
+
+```rust
+leptos_fluent! {{
+    // ...
+    initial_language_from_server_function_to_cookie: true,
+}}
+```
+
 [`fluent_templates::static_loader!`]: https://docs.rs/fluent-templates/latest/fluent_templates/macro.static_loader.html
 [`once_cell:sync::Lazy`]: https://docs.rs/once_cell/latest/once_cell/sync/struct.Lazy.html
 [`<html lang="...">` attribute]: https://developer.mozilla.org/es/docs/Web/HTML/Global_attributes/lang

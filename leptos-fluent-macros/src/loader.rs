@@ -199,159 +199,141 @@ macro_rules! exprpath_not_supported {
 }
 
 pub(crate) struct I18nLoader {
-    pub(crate) fluent_file_paths: FluentFilePaths,
-    pub(crate) translations: Translations,
-    pub(crate) languages: Vec<(String, String, String, Option<String>)>,
-    pub(crate) languages_path: Option<String>,
-    pub(crate) raw_languages_path: Option<String>,
-    pub(crate) locales_path: String,
-    pub(crate) core_locales_path: Option<String>,
-    pub(crate) check_translations: Option<String>,
-    pub(crate) provide_meta_context: bool,
-    pub(crate) provide_meta_context_exprpath: Option<proc_macro2::TokenStream>,
-    pub(crate) sync_html_tag_lang_bool: Option<syn::LitBool>,
-    pub(crate) sync_html_tag_lang_expr: Option<syn::Expr>,
-    pub(crate) sync_html_tag_lang_exprpath: Option<proc_macro2::TokenStream>,
-    pub(crate) sync_html_tag_dir_bool: Option<syn::LitBool>,
-    pub(crate) sync_html_tag_dir_expr: Option<syn::Expr>,
-    pub(crate) sync_html_tag_dir_exprpath: Option<proc_macro2::TokenStream>,
-    pub(crate) url_param_str: Option<syn::LitStr>,
-    pub(crate) url_param_expr: Option<syn::Expr>,
-    pub(crate) url_param_exprpath: Option<proc_macro2::TokenStream>,
-    pub(crate) initial_language_from_url_param_bool: Option<syn::LitBool>,
-    pub(crate) initial_language_from_url_param_expr: Option<syn::Expr>,
-    pub(crate) initial_language_from_url_param_exprpath:
+    pub fluent_file_paths: FluentFilePaths,
+    pub translations: Translations,
+    pub languages: Vec<(String, String, String, Option<String>)>,
+    pub languages_path: Option<String>,
+    pub raw_languages_path: Option<String>,
+    pub locales_path: String,
+    pub core_locales_path: Option<String>,
+    pub check_translations: Option<String>,
+    pub provide_meta_context: bool,
+    pub provide_meta_context_exprpath: Option<proc_macro2::TokenStream>,
+    pub sync_html_tag_lang_bool: Option<syn::LitBool>,
+    pub sync_html_tag_lang_expr: Option<syn::Expr>,
+    pub sync_html_tag_lang_exprpath: Option<proc_macro2::TokenStream>,
+    pub sync_html_tag_dir_bool: Option<syn::LitBool>,
+    pub sync_html_tag_dir_expr: Option<syn::Expr>,
+    pub sync_html_tag_dir_exprpath: Option<proc_macro2::TokenStream>,
+    pub url_param_str: Option<syn::LitStr>,
+    pub url_param_expr: Option<syn::Expr>,
+    pub url_param_exprpath: Option<proc_macro2::TokenStream>,
+    pub initial_language_from_url_param_bool: Option<syn::LitBool>,
+    pub initial_language_from_url_param_expr: Option<syn::Expr>,
+    pub initial_language_from_url_param_exprpath:
         Option<proc_macro2::TokenStream>,
-    pub(crate) initial_language_from_url_param_to_localstorage_bool:
+    pub initial_language_from_url_param_to_localstorage_bool:
         Option<syn::LitBool>,
-    pub(crate) initial_language_from_url_param_to_localstorage_expr:
-        Option<syn::Expr>,
-    pub(crate) initial_language_from_url_param_to_localstorage_exprpath:
+    pub initial_language_from_url_param_to_localstorage_expr: Option<syn::Expr>,
+    pub initial_language_from_url_param_to_localstorage_exprpath:
         Option<proc_macro2::TokenStream>,
-    pub(crate) initial_language_from_url_param_to_cookie_bool:
-        Option<syn::LitBool>,
-    pub(crate) initial_language_from_url_param_to_cookie_expr:
-        Option<syn::Expr>,
-    pub(crate) initial_language_from_url_param_to_cookie_exprpath:
+    pub initial_language_from_url_param_to_cookie_bool: Option<syn::LitBool>,
+    pub initial_language_from_url_param_to_cookie_expr: Option<syn::Expr>,
+    pub initial_language_from_url_param_to_cookie_exprpath:
         Option<proc_macro2::TokenStream>,
-    pub(crate) initial_language_from_url_param_to_server_function:
+    pub initial_language_from_url_param_to_server_function: Option<syn::Ident>,
+    pub initial_language_from_url_param_to_server_function_exprpath:
+        Option<proc_macro2::TokenStream>,
+    pub set_language_to_url_param_bool: Option<syn::LitBool>,
+    pub set_language_to_url_param_expr: Option<syn::Expr>,
+    pub set_language_to_url_param_exprpath: Option<proc_macro2::TokenStream>,
+    pub localstorage_key_str: Option<syn::LitStr>,
+    pub localstorage_key_expr: Option<syn::Expr>,
+    pub initial_language_from_localstorage_bool: Option<syn::LitBool>,
+    pub initial_language_from_localstorage_expr: Option<syn::Expr>,
+    pub initial_language_from_localstorage_exprpath:
+        Option<proc_macro2::TokenStream>,
+    pub initial_language_from_localstorage_to_cookie_bool: Option<syn::LitBool>,
+    pub initial_language_from_localstorage_to_cookie_expr: Option<syn::Expr>,
+    pub initial_language_from_localstorage_to_cookie_exprpath:
+        Option<proc_macro2::TokenStream>,
+    pub initial_language_from_localstorage_to_server_function:
         Option<syn::Ident>,
-    pub(crate) initial_language_from_url_param_to_server_function_exprpath:
+    pub initial_language_from_localstorage_to_server_function_exprpath:
         Option<proc_macro2::TokenStream>,
-    pub(crate) set_language_to_url_param_bool: Option<syn::LitBool>,
-    pub(crate) set_language_to_url_param_expr: Option<syn::Expr>,
-    pub(crate) set_language_to_url_param_exprpath:
+    pub set_language_to_localstorage_bool: Option<syn::LitBool>,
+    pub set_language_to_localstorage_expr: Option<syn::Expr>,
+    pub set_language_to_localstorage_exprpath: Option<proc_macro2::TokenStream>,
+    pub initial_language_from_navigator_bool: Option<syn::LitBool>,
+    pub initial_language_from_navigator_expr: Option<syn::Expr>,
+    pub initial_language_from_navigator_exprpath:
         Option<proc_macro2::TokenStream>,
-    pub(crate) localstorage_key_str: Option<syn::LitStr>,
-    pub(crate) localstorage_key_expr: Option<syn::Expr>,
-    pub(crate) initial_language_from_localstorage_bool: Option<syn::LitBool>,
-    pub(crate) initial_language_from_localstorage_expr: Option<syn::Expr>,
-    pub(crate) initial_language_from_localstorage_exprpath:
-        Option<proc_macro2::TokenStream>,
-    pub(crate) initial_language_from_localstorage_to_cookie_bool:
+    pub initial_language_from_navigator_to_localstorage_bool:
         Option<syn::LitBool>,
-    pub(crate) initial_language_from_localstorage_to_cookie_expr:
-        Option<syn::Expr>,
-    pub(crate) initial_language_from_localstorage_to_cookie_exprpath:
+    pub initial_language_from_navigator_to_localstorage_expr: Option<syn::Expr>,
+    pub initial_language_from_navigator_to_localstorage_exprpath:
         Option<proc_macro2::TokenStream>,
-    pub(crate) initial_language_from_localstorage_to_server_function:
-        Option<syn::Ident>,
-    pub(crate) initial_language_from_localstorage_to_server_function_exprpath:
+    pub initial_language_from_navigator_to_cookie_bool: Option<syn::LitBool>,
+    pub initial_language_from_navigator_to_cookie_expr: Option<syn::Expr>,
+    pub initial_language_from_navigator_to_cookie_exprpath:
         Option<proc_macro2::TokenStream>,
-    pub(crate) set_language_to_localstorage_bool: Option<syn::LitBool>,
-    pub(crate) set_language_to_localstorage_expr: Option<syn::Expr>,
-    pub(crate) set_language_to_localstorage_exprpath:
+    pub initial_language_from_navigator_to_server_function: Option<syn::Ident>,
+    pub initial_language_from_navigator_to_server_function_exprpath:
         Option<proc_macro2::TokenStream>,
-    pub(crate) initial_language_from_navigator_bool: Option<syn::LitBool>,
-    pub(crate) initial_language_from_navigator_expr: Option<syn::Expr>,
-    pub(crate) initial_language_from_navigator_exprpath:
+    pub initial_language_from_accept_language_header_bool: Option<syn::LitBool>,
+    pub initial_language_from_accept_language_header_expr: Option<syn::Expr>,
+    pub cookie_name_str: Option<syn::LitStr>,
+    pub cookie_name_expr: Option<syn::Expr>,
+    pub cookie_name_exprpath: Option<proc_macro2::TokenStream>,
+    pub cookie_attrs_str: Option<syn::LitStr>,
+    pub cookie_attrs_expr: Option<syn::Expr>,
+    pub cookie_attrs_exprpath: Option<proc_macro2::TokenStream>,
+    pub initial_language_from_cookie_bool: Option<syn::LitBool>,
+    pub initial_language_from_cookie_expr: Option<syn::Expr>,
+    pub initial_language_from_cookie_exprpath: Option<proc_macro2::TokenStream>,
+    pub initial_language_from_cookie_to_localstorage_bool: Option<syn::LitBool>,
+    pub initial_language_from_cookie_to_localstorage_expr: Option<syn::Expr>,
+    pub initial_language_from_cookie_to_localstorage_exprpath:
         Option<proc_macro2::TokenStream>,
-    pub(crate) initial_language_from_navigator_to_localstorage_bool:
+    pub initial_language_from_cookie_to_server_function: Option<syn::Ident>,
+    pub initial_language_from_cookie_to_server_function_exprpath:
+        Option<proc_macro2::TokenStream>,
+    pub set_language_to_cookie_bool: Option<syn::LitBool>,
+    pub set_language_to_cookie_expr: Option<syn::Expr>,
+    pub set_language_to_cookie_exprpath: Option<proc_macro2::TokenStream>,
+    pub initial_language_from_server_function: Option<syn::Ident>,
+    pub initial_language_from_server_function_exprpath:
+        Option<proc_macro2::TokenStream>,
+    pub initial_language_from_server_function_to_cookie_bool:
         Option<syn::LitBool>,
-    pub(crate) initial_language_from_navigator_to_localstorage_expr:
-        Option<syn::Expr>,
-    pub(crate) initial_language_from_navigator_to_localstorage_exprpath:
+    pub initial_language_from_server_function_to_cookie_expr: Option<syn::Expr>,
+    pub initial_language_from_server_function_to_cookie_exprpath:
         Option<proc_macro2::TokenStream>,
-    pub(crate) initial_language_from_navigator_to_cookie_bool:
-        Option<syn::LitBool>,
-    pub(crate) initial_language_from_navigator_to_cookie_expr:
-        Option<syn::Expr>,
-    pub(crate) initial_language_from_navigator_to_cookie_exprpath:
-        Option<proc_macro2::TokenStream>,
-    pub(crate) initial_language_from_navigator_to_server_function:
-        Option<syn::Ident>,
-    pub(crate) initial_language_from_navigator_to_server_function_exprpath:
-        Option<proc_macro2::TokenStream>,
-    pub(crate) initial_language_from_accept_language_header_bool:
-        Option<syn::LitBool>,
-    pub(crate) initial_language_from_accept_language_header_expr:
-        Option<syn::Expr>,
-    pub(crate) cookie_name_str: Option<syn::LitStr>,
-    pub(crate) cookie_name_expr: Option<syn::Expr>,
-    pub(crate) cookie_name_exprpath: Option<proc_macro2::TokenStream>,
-    pub(crate) cookie_attrs_str: Option<syn::LitStr>,
-    pub(crate) cookie_attrs_expr: Option<syn::Expr>,
-    pub(crate) cookie_attrs_exprpath: Option<proc_macro2::TokenStream>,
-    pub(crate) initial_language_from_cookie_bool: Option<syn::LitBool>,
-    pub(crate) initial_language_from_cookie_expr: Option<syn::Expr>,
-    pub(crate) initial_language_from_cookie_exprpath:
-        Option<proc_macro2::TokenStream>,
-    pub(crate) initial_language_from_cookie_to_localstorage_bool:
-        Option<syn::LitBool>,
-    pub(crate) initial_language_from_cookie_to_localstorage_expr:
-        Option<syn::Expr>,
-    pub(crate) initial_language_from_cookie_to_localstorage_exprpath:
-        Option<proc_macro2::TokenStream>,
-    pub(crate) initial_language_from_cookie_to_server_function:
-        Option<syn::Ident>,
-    pub(crate) initial_language_from_cookie_to_server_function_exprpath:
-        Option<proc_macro2::TokenStream>,
-    pub(crate) set_language_to_cookie_bool: Option<syn::LitBool>,
-    pub(crate) set_language_to_cookie_expr: Option<syn::Expr>,
-    pub(crate) set_language_to_cookie_exprpath:
-        Option<proc_macro2::TokenStream>,
-    pub(crate) initial_language_from_server_function: Option<syn::Ident>,
-    pub(crate) initial_language_from_server_function_exprpath:
-        Option<proc_macro2::TokenStream>,
-    pub(crate) set_language_to_server_function: Option<syn::Ident>,
-    pub(crate) set_language_to_server_function_exprpath:
+    pub set_language_to_server_function: Option<syn::Ident>,
+    pub set_language_to_server_function_exprpath:
         Option<proc_macro2::TokenStream>,
     #[cfg(feature = "system")]
-    pub(crate) initial_language_from_system_bool: Option<syn::LitBool>,
+    pub initial_language_from_system_bool: Option<syn::LitBool>,
     #[cfg(feature = "system")]
-    pub(crate) initial_language_from_system_expr: Option<syn::Expr>,
+    pub initial_language_from_system_expr: Option<syn::Expr>,
     #[cfg(feature = "system")]
-    pub(crate) initial_language_from_system_exprpath:
+    pub initial_language_from_system_exprpath: Option<proc_macro2::TokenStream>,
+    #[cfg(feature = "system")]
+    pub initial_language_from_system_to_data_file_bool: Option<syn::LitBool>,
+    #[cfg(feature = "system")]
+    pub initial_language_from_system_to_data_file_expr: Option<syn::Expr>,
+    #[cfg(feature = "system")]
+    pub initial_language_from_system_to_data_file_exprpath:
         Option<proc_macro2::TokenStream>,
     #[cfg(feature = "system")]
-    pub(crate) initial_language_from_system_to_data_file_bool:
-        Option<syn::LitBool>,
+    pub set_language_to_data_file_bool: Option<syn::LitBool>,
     #[cfg(feature = "system")]
-    pub(crate) initial_language_from_system_to_data_file_expr:
-        Option<syn::Expr>,
+    pub set_language_to_data_file_expr: Option<syn::Expr>,
     #[cfg(feature = "system")]
-    pub(crate) initial_language_from_system_to_data_file_exprpath:
+    pub set_language_to_data_file_exprpath: Option<proc_macro2::TokenStream>,
+    #[cfg(feature = "system")]
+    pub initial_language_from_data_file_bool: Option<syn::LitBool>,
+    #[cfg(feature = "system")]
+    pub initial_language_from_data_file_expr: Option<syn::Expr>,
+    #[cfg(feature = "system")]
+    pub initial_language_from_data_file_exprpath:
         Option<proc_macro2::TokenStream>,
     #[cfg(feature = "system")]
-    pub(crate) set_language_to_data_file_bool: Option<syn::LitBool>,
+    pub data_file_key_str: Option<syn::LitStr>,
     #[cfg(feature = "system")]
-    pub(crate) set_language_to_data_file_expr: Option<syn::Expr>,
+    pub data_file_key_expr: Option<syn::Expr>,
     #[cfg(feature = "system")]
-    pub(crate) set_language_to_data_file_exprpath:
-        Option<proc_macro2::TokenStream>,
-    #[cfg(feature = "system")]
-    pub(crate) initial_language_from_data_file_bool: Option<syn::LitBool>,
-    #[cfg(feature = "system")]
-    pub(crate) initial_language_from_data_file_expr: Option<syn::Expr>,
-    #[cfg(feature = "system")]
-    pub(crate) initial_language_from_data_file_exprpath:
-        Option<proc_macro2::TokenStream>,
-    #[cfg(feature = "system")]
-    pub(crate) data_file_key_str: Option<syn::LitStr>,
-    #[cfg(feature = "system")]
-    pub(crate) data_file_key_expr: Option<syn::Expr>,
-    #[cfg(feature = "system")]
-    pub(crate) data_file_key_exprpath: Option<proc_macro2::TokenStream>,
+    pub data_file_key_exprpath: Option<proc_macro2::TokenStream>,
 }
 
 impl Parse for I18nLoader {
@@ -508,6 +490,14 @@ impl Parse for I18nLoader {
         let mut initial_language_from_server_function_exprpath: Option<
             proc_macro2::TokenStream,
         > = None;
+        let mut initial_language_from_server_function_to_cookie_bool: Option<
+            syn::LitBool,
+        > = None;
+        let mut initial_language_from_server_function_to_cookie_expr: Option<
+            syn::Expr,
+        > = None;
+        let mut initial_language_from_server_function_to_cookie_exprpath: Option<proc_macro2::TokenStream> =
+            None;
         let mut set_language_to_server_function: Option<syn::Ident> = None;
         let mut set_language_to_server_function_exprpath: Option<
             proc_macro2::TokenStream,
@@ -908,6 +898,19 @@ impl Parse for I18nLoader {
                 initial_language_from_server_function = Some(fields.parse()?);
                 if exprpath.is_some() {
                     initial_language_from_server_function_exprpath
+                        .clone_from(&exprpath);
+                }
+            } else if k == "initial_language_from_server_function_to_cookie" {
+                if let Some(err) = parse_litbool_or_expr_param(
+                    &fields,
+                    &mut initial_language_from_server_function_to_cookie_bool,
+                    &mut initial_language_from_server_function_to_cookie_expr,
+                    "initial_language_from_server_function_to_cookie",
+                ) {
+                    return Err(err);
+                }
+                if exprpath.is_some() {
+                    initial_language_from_server_function_to_cookie_exprpath
                         .clone_from(&exprpath);
                 }
             } else if k == "set_language_to_server_function" {
@@ -1322,6 +1325,9 @@ impl Parse for I18nLoader {
             set_language_to_cookie_exprpath,
             initial_language_from_server_function,
             initial_language_from_server_function_exprpath,
+            initial_language_from_server_function_to_cookie_bool,
+            initial_language_from_server_function_to_cookie_expr,
+            initial_language_from_server_function_to_cookie_exprpath,
             set_language_to_server_function,
             set_language_to_server_function_exprpath,
             #[cfg(feature = "system")]
