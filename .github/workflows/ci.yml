@@ -29,6 +29,7 @@ jobs:
   qa:
     name: QA
     runs-on: ubuntu-latest
+    needs: check-toolchain-is-stable
     strategy:
       fail-fast: false
       matrix:
