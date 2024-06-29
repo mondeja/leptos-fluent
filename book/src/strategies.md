@@ -24,8 +24,9 @@ The initial language of the user can be set in different ways:
 
 <sub style="position: relative; left: 110px"><sup>\*Unreleased</sup></sub>
 
-All of them can be used at the same time or just one of them. The first setting
-found will be used. The order of precedence is:
+All of them can be defined at the same time or just one of them at the same
+time. The first language source found will be used and nexts discharged.
+The order of precedence is:
 
 - **SSR**
   1. [Server function]
