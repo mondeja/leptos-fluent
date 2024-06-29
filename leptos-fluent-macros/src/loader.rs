@@ -294,6 +294,12 @@ pub(crate) struct I18nLoader {
     pub(crate) set_language_to_cookie_expr: Option<syn::Expr>,
     pub(crate) set_language_to_cookie_exprpath:
         Option<proc_macro2::TokenStream>,
+    pub(crate) initial_language_from_server_function: Option<syn::Ident>,
+    pub(crate) initial_language_from_server_function_exprpath:
+        Option<proc_macro2::TokenStream>,
+    pub(crate) set_language_to_server_function: Option<syn::Ident>,
+    pub(crate) set_language_to_server_function_exprpath:
+        Option<proc_macro2::TokenStream>,
     #[cfg(feature = "system")]
     pub(crate) initial_language_from_system_bool: Option<syn::LitBool>,
     #[cfg(feature = "system")]
@@ -459,6 +465,15 @@ impl Parse for I18nLoader {
         let mut set_language_to_cookie_bool: Option<syn::LitBool> = None;
         let mut set_language_to_cookie_expr: Option<syn::Expr> = None;
         let mut set_language_to_cookie_exprpath: Option<
+            proc_macro2::TokenStream,
+        > = None;
+        let mut initial_language_from_server_function: Option<syn::Ident> =
+            None;
+        let mut initial_language_from_server_function_exprpath: Option<
+            proc_macro2::TokenStream,
+        > = None;
+        let mut set_language_to_server_function: Option<syn::Ident> = None;
+        let mut set_language_to_server_function_exprpath: Option<
             proc_macro2::TokenStream,
         > = None;
 
@@ -820,6 +835,18 @@ impl Parse for I18nLoader {
                 }
                 if exprpath.is_some() {
                     set_language_to_cookie_exprpath.clone_from(&exprpath);
+                }
+            } else if k == "initial_language_from_server_function" {
+                initial_language_from_server_function = Some(fields.parse()?);
+                if exprpath.is_some() {
+                    initial_language_from_server_function_exprpath
+                        .clone_from(&exprpath);
+                }
+            } else if k == "set_language_to_server_function" {
+                set_language_to_server_function = Some(fields.parse()?);
+                if exprpath.is_some() {
+                    set_language_to_server_function_exprpath
+                        .clone_from(&exprpath);
                 }
             } else if k == "initial_language_from_system" {
                 #[cfg(feature = "system")]
@@ -1217,6 +1244,10 @@ impl Parse for I18nLoader {
             set_language_to_cookie_bool,
             set_language_to_cookie_expr,
             set_language_to_cookie_exprpath,
+            initial_language_from_server_function,
+            initial_language_from_server_function_exprpath,
+            set_language_to_server_function,
+            set_language_to_server_function_exprpath,
             #[cfg(feature = "system")]
             initial_language_from_system_bool,
             #[cfg(feature = "system")]

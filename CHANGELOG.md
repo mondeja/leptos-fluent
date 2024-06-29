@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## Unreleased - [0.1.7]
+
+### New features
+
+- Add `initial_language_from_server_function` parameter to `leptos_fluent!` macro
+  to set the initial language from a server function.
+- Add `set_language_to_server_function` parameter to `leptos_fluent!` macro to set
+  the current language to a server function.
+
 ## 2024-06-27 - [0.1.6]
 
 ### New features

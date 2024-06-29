@@ -15,6 +15,7 @@ The initial language of the user can be set in different ways:
 | :------------------------------ | :-: | :-: | :-----: | :--------------------------------------------- |
 | [URL parameter]                 | ✅  | ✅  |   ❌    | `initial_language_from_url_param`              |
 | [Cookie]                        | ✅  | ✅  |   ❌    | `initial_language_from_cookie`                 |
+| [Server function]               | ✅  | ✅  |   ❌    | `initial_language_from_server_function`        |
 | Browser [local storage]         | ✅  | ❌  |   ❌    | `initial_language_from_localstorage`           |
 | Browser [`navigator.languages`] | ✅  | ❌  |   ❌    | `initial_language_from_navigator`              |
 | [`Accept-Language`] header      | ❌  | ✅  |   ❌    | `initial_language_from_accept_language_header` |
@@ -115,3 +116,4 @@ The names of the settings can be configured using the following parameters:
 [URL parameter]: https://developer.mozilla.org/es/docs/Web/API/URLSearchParams
 [desktop-applications]: https://mondeja.github.io/leptos-fluent/install.html#desktop-applications
 [System language]: https://github.com/i509VCB/current_locale
+[Server function]: https://book.leptos.dev/server/25_server_functions.html
