@@ -241,6 +241,16 @@ locale. It is used in the root component of the application.</p>
 <li><a href="#provide_meta_context"><code>provide_meta_context</code></a></li>
 </ul>
 </li>
+<li><a href="#unreleased">Unreleased</a>
+<ul>
+<li><a href="#initial_language_from_server_function"><code>initial_language_from_server_function</code></a></li>
+<li><a href="#set_language_to_server_function"><code>set_language_to_server_function</code></a></li>
+<li><a href="#initial_language_from_localstorage_to_server_function"><code>initial_language_from_localstorage_to_server_function</code></a></li>
+<li><a href="#initial_language_from_cookie_to_server_function"><code>initial_language_from_cookie_to_server_function</code></a></li>
+<li><a href="#initial_language_from_navigator_to_server_function"><code>initial_language_from_navigator_to_server_function</code></a></li>
+<li><a href="#initial_language_from_url_param_to_server_function"><code>initial_language_from_url_param_to_server_function</code></a></li>
+</ul>
+</li>
 </ul>
 <h2 id="common-configurations"><a class="header" href="#common-configurations">Common configurations</a></h2>
 <h3 id="csr---local-storage-from-navigator"><a class="header" href="#csr---local-storage-from-navigator"><span style="opacity:.5">CSR </span> | Local storage from navigator</a></h3>
@@ -766,6 +776,122 @@ Get it using <code>I18n::meta</code>:</p>
 }};
 
 println!("Macro parameters: {:?}", i18n.meta().unwrap());
+<span class="boring">}</span></code></pre></pre>
+<h2 id="unreleased"><a class="header" href="#unreleased">Unreleased</a></h2>
+<h3 id="initial_language_from_server_function"><a class="header" href="#initial_language_from_server_function"><code>initial_language_from_server_function</code></a></h3>
+<p>Get the initial language from a <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a>.</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>leptos_fluent! {{
+    // ...
+    initial_language_from_server_function: initial_language_server_function,
+}}
+
+/// Server function to set the initial language
+#[server(InitialLanguage, "/api")]
+pub async fn initial_language_server_function(
+) -&gt; Result&lt;Option&lt;String&gt;, ServerFnError&gt; {
+    // .. replace with your own logic
+    Ok(Some("es".to_string()))
+}
+<span class="boring">}</span></code></pre></pre>
+<p>This parameter type is not like the <code>initial_language_from_*</code> parameters, it
+takes an identifier to the <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a> that will be called to get the
+initial language.</p>
+<p>The function must return a <code>Result&lt;Option&lt;String&gt;, ServerFnError&gt;</code>.</p>
+<h3 id="set_language_to_server_function"><a class="header" href="#set_language_to_server_function"><code>set_language_to_server_function</code></a></h3>
+<p>Set the current language to a <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a>.</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>leptos_fluent! {{
+    // ...
+    set_language_to_server_function: set_language_server_function,
+}}
+
+/// Server function to update the current language
+#[server(SetLanguage, "/api")]
+pub async fn set_language_server_function(
+    language: String,
+) -&gt; Result&lt;(), ServerFnError&gt; {
+    // .. replace with your own logic
+    Ok(())
+}
+<span class="boring">}</span></code></pre></pre>
+<p>This parameter type is not like the <code>set_language_to_*</code> parameters, it
+takes an identifier to the <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a> that will be called to update
+the current language.</p>
+<p>The function must return a <code>Result&lt;(), ServerFnError&gt;</code>.</p>
+<h3 id="initial_language_from_localstorage_to_server_function"><a class="header" href="#initial_language_from_localstorage_to_server_function"><code>initial_language_from_localstorage_to_server_function</code></a></h3>
+<p>Get the initial language from <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">local storage</a> and set it to a
+<a href="https://book.leptos.dev/server/25_server_functions.html">server function</a>.</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>leptos_fluent! {{
+    // ...
+    initial_language_from_localstorage_to_server_function: set_language_server_function,
+}}
+
+#[server(SetLanguage, "/api")]
+pub async fn set_language_server_function(
+    language: String,
+) -&gt; Result&lt;(), ServerFnError&gt; {
+    // .. replace with your own logic
+    Ok(())
+}
+<span class="boring">}</span></code></pre></pre>
+<h3 id="initial_language_from_cookie_to_server_function"><a class="header" href="#initial_language_from_cookie_to_server_function"><code>initial_language_from_cookie_to_server_function</code></a></h3>
+<p>Get the initial language from a <a href="https://developer.mozilla.org/docs/Web/HTTP/Cookies">cookie</a> and set it to a
+<a href="https://book.leptos.dev/server/25_server_functions.html">server function</a>.</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>leptos_fluent! {{
+    // ...
+    initial_language_from_cookie_to_server_function: set_language_server_function,
+}}
+
+#[server(SetLanguage, "/api")]
+pub async fn set_language_server_function(
+    language: String,
+) -&gt; Result&lt;(), ServerFnError&gt; {
+    // .. replace with your own logic
+    Ok(())
+}
+<span class="boring">}</span></code></pre></pre>
+<h3 id="initial_language_from_navigator_to_server_function"><a class="header" href="#initial_language_from_navigator_to_server_function"><code>initial_language_from_navigator_to_server_function</code></a></h3>
+<p>Get the initial language from <a href="https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a> and set it to a
+<a href="https://book.leptos.dev/server/25_server_functions.html">server function</a>.</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>leptos_fluent! {{
+    // ...
+    initial_language_from_navigator_to_server_function: set_language_server_function,
+}}
+
+#[server(SetLanguage, "/api")]
+pub async fn set_language_server_function(
+    language: String,
+) -&gt; Result&lt;(), ServerFnError&gt; {
+    // .. replace with your own logic
+    Ok(())
+}
+<span class="boring">}</span></code></pre></pre>
+<h3 id="initial_language_from_url_param_to_server_function"><a class="header" href="#initial_language_from_url_param_to_server_function"><code>initial_language_from_url_param_to_server_function</code></a></h3>
+<p>Get the initial language from a <a href="https://developer.mozilla.org/es/docs/Web/API/URLSearchParams">URL parameter</a> and set it to a
+<a href="https://book.leptos.dev/server/25_server_functions.html">server function</a>.</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>leptos_fluent! {{
+    // ...
+    initial_language_from_url_param_to_server_function: set_language_server_function,
+}}
+
+#[server(SetLanguage, "/api")]
+pub async fn set_language_server_function(
+    language: String,
+) -&gt; Result&lt;(), ServerFnError&gt; {
+    // .. replace with your own logic
+    Ok(())
+}
 <span class="boring">}</span></code></pre></pre>
 
                     </main>

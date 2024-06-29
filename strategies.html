@@ -193,6 +193,7 @@
 </li>
 <li><a href="#csr---updating-the-language-from-initialization-on-the-client">CSR  | Updating the language from initialization on the client</a>
 <ul>
+<li><a href="#csr--ssr">CSR + SSR</a></li>
 <li><a href="#system--desktop-applications-1">system | Desktop applications</a></li>
 </ul>
 </li>
@@ -270,12 +271,18 @@ are available:</p>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/es/docs/Web/API/URLSearchParams">URL parameter</a> to <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">local storage</a></td><td style="text-align: left"><code>initial_language_from_url_param_to_localstorage</code></td></tr>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/es/docs/Web/API/URLSearchParams">URL parameter</a> to <a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie">cookie</a></td><td style="text-align: left"><code>initial_language_from_url_param_to_cookie</code></td></tr>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie">Cookie</a> to <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">local storage</a></td><td style="text-align: left"><code>initial_language_from_cookie_to_localstorage</code></td></tr>
-<tr><td style="text-align: left"><a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie">Cookie</a> to <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a>*</td><td style="text-align: left"><code>initial_language_from_cookie_to_server_function</code></td></tr>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">Local storage</a> to <a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie">cookie</a></td><td style="text-align: left"><code>initial_language_from_localstorage_to_cookie</code></td></tr>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">Local storage</a> to <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a>*</td><td style="text-align: left"><code>initial_language_from_localstorage_to_server_function</code></td></tr>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a> to <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">local storage</a></td><td style="text-align: left"><code>initial_language_from_navigator_to_localstorage</code></td></tr>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a> to <a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie">cookie</a></td><td style="text-align: left"><code>initial_language_from_navigator_to_cookie</code></td></tr>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a> to <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a>*</td><td style="text-align: left"><code>initial_language_from_navigator_to_server_function</code></td></tr>
+</tbody></table>
+</div>
+<p><sub style="position: relative; left: 110px"><sup>*Unreleased</sup></sub></p>
+<h3 id="csr--ssr"><a class="header" href="#csr--ssr"><span style="opacity:.5">CSR + SSR</span></a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a></th></tr></thead><tbody>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/es/docs/Web/API/URLSearchParams">URL parameter</a> to <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a>*</td><td style="text-align: left"><code>initial_language_from_url_param_to_server_function</code></td></tr>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie">Cookie</a> to <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a>*</td><td style="text-align: left"><code>initial_language_from_cookie_to_server_function</code></td></tr>
 </tbody></table>
 </div>
 <p><sub style="position: relative; left: 110px"><sup>*Unreleased</sup></sub></p>
