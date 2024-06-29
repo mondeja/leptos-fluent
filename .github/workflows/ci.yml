@@ -207,11 +207,13 @@ jobs:
           - ssr-hydrate-actix
           - ssr-hydrate-axum
           - system-gtk
-        nightly: [false, true]
+        toolchain:
+          - stable
+          - nightly
     steps:
       - uses: actions/checkout@v4
       - name: Set nightly toolchain
-        if: matrix.nightly == true
+        if: matrix.toolchain == 'nightly'
         run: |
           echo -e '[toolchain]\nchannel = "nightly"\ntargets = ["wasm32-unknown-unknown"]' \
             > rust-toolchain.toml
@@ -246,16 +248,24 @@ jobs:
             ~/.cargo/git
             target
           key: ${{ runner.os }}-cargo-${{ matrix.example }}-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/Cargo.lock') }}
+      - name: Get build features
+        id: build-features
+        run: |
+          if [ "${{ matrix.toolchain }}" == "nightly" ];
+            then echo "features='--features=leptos-fluent/nightly'" >> $GITHUB_OUTPUT;
+          else;
+            then echo "features=''" >> $GITHUB_OUTPUT;
+          fi;
       - name: Build with trunk
         if: startsWith(matrix.example, 'csr')
         run: |
           cd examples/${{ matrix.example }}
-          trunk build --release
+          trunk build --release ${{ steps.build-features.outputs.features }}
       - name: Build with cargo-leptos
         if: startsWith(matrix.example, 'ssr')
         run: |
           cd examples/${{ matrix.example }}
-          cargo leptos build --release
+          cargo leptos build --release ${{ steps.build-features.outputs.features }}
       - name: Install libgtk
         if: endsWith(matrix.example, 'gtk')
         run: |
@@ -265,7 +275,7 @@ jobs:
         if: startsWith(matrix.example, 'system')
         run: |
           cd examples/${{ matrix.example }}
-          cargo build --release
+          cargo build --release ${{ steps.build-features.outputs.features }}
 
   test-release-leptos-fluent-macros:
     needs:
