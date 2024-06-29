@@ -585,7 +585,7 @@ let lang = i18n();
 </span><span class="boring">fn main() {
 </span>lang.is_active()
 <span class="boring">}</span></code></pre></pre>
-<div style="break-before: page; page-break-before: always;"></div><!-- markdownlint-disable MD013 MD033 -->
+<div style="break-before: page; page-break-before: always;"></div><!-- markdownlint-disable MD013 MD033 MD055 MD056 -->
 <h1 id="strategies"><a class="header" href="#strategies">Strategies</a></h1>
 <p>All the features of the framework are optional, following a declarative
 "opt-in" configuration method.</p>
@@ -613,6 +613,7 @@ let lang = i18n();
 <div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: center">CSR</th><th style="text-align: center">SSR</th><th style="text-align: center">Desktop</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a></th></tr></thead><tbody>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/es/docs/Web/API/URLSearchParams">URL parameter</a></td><td style="text-align: center">✅</td><td style="text-align: center">✅</td><td style="text-align: center">❌</td><td style="text-align: left"><code>initial_language_from_url_param</code></td></tr>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie">Cookie</a></td><td style="text-align: center">✅</td><td style="text-align: center">✅</td><td style="text-align: center">❌</td><td style="text-align: left"><code>initial_language_from_cookie</code></td></tr>
+<tr><td style="text-align: left"><a href="https://book.leptos.dev/server/25_server_functions.html">Server function</a>*</td><td style="text-align: center">✅</td><td style="text-align: center">✅</td><td style="text-align: center">❌</td><td style="text-align: left"><code>initial_language_from_server_function</code></td></tr>
 <tr><td style="text-align: left">Browser <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">local storage</a></td><td style="text-align: center">✅</td><td style="text-align: center">❌</td><td style="text-align: center">❌</td><td style="text-align: left"><code>initial_language_from_localstorage</code></td></tr>
 <tr><td style="text-align: left">Browser <a href="https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a></td><td style="text-align: center">✅</td><td style="text-align: center">❌</td><td style="text-align: center">❌</td><td style="text-align: left"><code>initial_language_from_navigator</code></td></tr>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language"><code>Accept-Language</code></a> header</td><td style="text-align: center">❌</td><td style="text-align: center">✅</td><td style="text-align: center">❌</td><td style="text-align: left"><code>initial_language_from_accept_language_header</code></td></tr>
@@ -620,28 +621,31 @@ let lang = i18n();
 <tr><td style="text-align: left">Data file</td><td style="text-align: center">❌</td><td style="text-align: center">❌</td><td style="text-align: center">✅</td><td style="text-align: left"><code>initial_language_from_data_file</code></td></tr>
 </tbody></table>
 </div>
+<p><sub style="position: relative; left: 110px"><sup>*Unreleased</sup></sub></p>
 <p>All of them can be used at the same time or just one of them. The first setting
 found will be used. The order of precedence is:</p>
 <ul>
 <li><strong>SSR</strong>
 <ol>
-<li><a href="https://developer.mozilla.org/es/docs/Web/API/URLSearchParams">URL parameter</a>.</li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie">Cookie</a>.</li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language"><code>Accept-Language</code></a> header.</li>
+<li><a href="https://book.leptos.dev/server/25_server_functions.html">Server function</a></li>
+<li><a href="https://developer.mozilla.org/es/docs/Web/API/URLSearchParams">URL parameter</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie">Cookie</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language"><code>Accept-Language</code></a> header</li>
 </ol>
 </li>
 <li><strong>CSR</strong>
 <ol>
-<li><a href="https://developer.mozilla.org/es/docs/Web/API/URLSearchParams">URL parameter</a>.</li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie">Cookie</a>.</li>
-<li>Browser <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">local storage</a>.</li>
-<li>Browser <a href="https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a>.</li>
+<li><a href="https://book.leptos.dev/server/25_server_functions.html">Server function</a></li>
+<li><a href="https://developer.mozilla.org/es/docs/Web/API/URLSearchParams">URL parameter</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie">Cookie</a></li>
+<li>Browser <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">local storage</a></li>
+<li>Browser <a href="https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a></li>
 </ol>
 </li>
 <li><strong>Desktop</strong> (<a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><code>system</code> feature</a>)
 <ol>
-<li>Data file.</li>
-<li><a href="https://github.com/i509VCB/current_locale">System language</a>.</li>
+<li>Data file</li>
+<li><a href="https://github.com/i509VCB/current_locale">System language</a></li>
 </ol>
 </li>
 </ul>
