@@ -623,7 +623,7 @@ println!("Macro parameters: {:?}", i18n.meta().unwrap());
 
 ### `initial_language_from_server_function`
 
-Get the initial language from a server function.
+Get the initial language from a [server function].
 
 ```rust
 leptos_fluent! {{
@@ -641,14 +641,14 @@ pub async fn initial_language_server_function(
 ```
 
 This parameter type is not like the `initial_language_from_*` parameters, it
-takes an identifier to the server function that will be called to get the
+takes an identifier to the [server function] that will be called to get the
 initial language.
 
 The function must return a `Result<Option<String>, ServerFnError>`.
 
 ### `set_language_to_server_function`
 
-Set the current language to a server function.
+Set the current language to a [server function].
 
 ```rust
 leptos_fluent! {{
@@ -667,14 +667,15 @@ pub async fn set_language_server_function(
 ```
 
 This parameter type is not like the `set_language_to_*` parameters, it
-takes an identifier to the server function that will be called to update
+takes an identifier to the [server function] that will be called to update
 the current language.
 
 The function must return a `Result<(), ServerFnError>`.
 
 ### `initial_language_from_localstorage_to_server_function`
 
-Get the initial language from [local storage] and set it to a server function.
+Get the initial language from [local storage] and set it to a
+[server function].
 
 ```rust
 leptos_fluent! {{
@@ -693,7 +694,8 @@ pub async fn set_language_server_function(
 
 ### `initial_language_from_cookie_to_server_function`
 
-Get the initial language from a [cookie] and set it to a server function.
+Get the initial language from a [cookie] and set it to a
+[server function].
 
 ```rust
 leptos_fluent! {{
@@ -712,7 +714,8 @@ pub async fn set_language_server_function(
 
 ### `initial_language_from_navigator_to_server_function`
 
-Get the initial language from [`navigator.languages`] and set it to a server function.
+Get the initial language from [`navigator.languages`] and set it to a
+[server function].
 
 ```rust
 leptos_fluent! {{
@@ -731,7 +734,8 @@ pub async fn set_language_server_function(
 
 ### `initial_language_from_url_param_to_server_function`
 
-Get the initial language from a [URL parameter] and set it to a server function.
+Get the initial language from a [URL parameter] and set it to a
+[server function].
 
 ```rust
 leptos_fluent! {{
@@ -761,3 +765,4 @@ pub async fn set_language_server_function(
 [URL parameter]: https://developer.mozilla.org/es/docs/Web/API/URLSearchParams
 [`sync_html_tag_dir`]: #csr---sync_html_tag_dir
 [cookie]: https://developer.mozilla.org/docs/Web/HTTP/Cookies
+[Server function]: https://book.leptos.dev/server/25_server_functions.html
