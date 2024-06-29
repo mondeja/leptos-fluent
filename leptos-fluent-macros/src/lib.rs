@@ -1559,6 +1559,16 @@ pub fn leptos_fluent(
                 set_language_to_cookie_bool,
                 set_language_to_cookie_expr,
             );
+            let initial_language_from_server_function_quote =
+                match initial_language_from_server_function {
+                    Some(_) => quote! { true },
+                    None => quote! { false },
+                };
+            let set_language_to_server_function =
+                match set_language_to_server_function {
+                    Some(_) => quote! { true },
+                    None => quote! { false },
+                };
 
             let system_quote = {
                 #[cfg(not(feature = "system"))]
@@ -1625,6 +1635,8 @@ pub fn leptos_fluent(
                     initial_language_from_cookie: #initial_language_from_cookie_quote,
                     initial_language_from_cookie_to_localstorage: #initial_language_from_cookie_to_localstorage_quote,
                     set_language_to_cookie: #set_language_to_cookie_quote,
+                    initial_language_from_server_function: #initial_language_from_server_function_quote,
+                    set_language_to_server_function: #set_language_to_server_function,
                     provide_meta_context: true,
                     #system_quote
                 };
