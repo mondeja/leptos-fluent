@@ -207,8 +207,14 @@ jobs:
           - ssr-hydrate-actix
           - ssr-hydrate-axum
           - system-gtk
+        nightly: [false, true]
     steps:
       - uses: actions/checkout@v4
+      - name: Set nightly toolchain
+        if: matrix.nightly == true
+        run: |
+          echo -e '[toolchain]\nchannel = "nightly"\ntargets = ["wasm32-unknown-unknown"]' \
+            > rust-toolchain.toml
       - name: Get toolchain
         id: toolchain
         uses: ./.github/actions/get-toolchain
