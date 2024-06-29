@@ -29,6 +29,7 @@ jobs:
   qa:
     name: QA
     runs-on: ubuntu-latest
+    needs: check-toolchain-is-stable
     strategy:
       fail-fast: false
       matrix:
@@ -82,6 +83,7 @@ jobs:
 
   build-book:
     name: Build book
+    needs: check-toolchain-is-stable
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -109,6 +111,7 @@ jobs:
 
   unit-tests:
     name: Unit tests
+    needs: check-toolchain-is-stable
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -141,6 +144,7 @@ jobs:
         run: cargo test -p leptos-fluent -p leptos-fluent-macros
 
   end2end-tests:
+    needs: check-toolchain-is-stable
     name: End to end tests (${{ matrix.browser }}, ${{ matrix.runs-on }})
     runs-on: ${{ matrix.runs-on }}
     strategy:
@@ -196,6 +200,7 @@ jobs:
             wasm-pack test --headless --${{ matrix.browser }}
 
   build-example:
+    needs: check-toolchain-is-stable
     name: Build example
     runs-on: ubuntu-latest
     strategy:
@@ -207,8 +212,16 @@ jobs:
           - ssr-hydrate-actix
           - ssr-hydrate-axum
           - system-gtk
+        toolchain:
+          - stable
+          - nightly
     steps:
       - uses: actions/checkout@v4
+      - name: Set nightly toolchain
+        if: matrix.toolchain == 'nightly'
+        uses: ./.github/actions/set-toolchain
+        with:
+          channel: nightly
       - name: Get toolchain
         id: toolchain
         uses: ./.github/actions/get-toolchain
@@ -239,17 +252,22 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: ${{ runner.os }}-cargo-${{ matrix.example }}-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-${{ matrix.example }}-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/Cargo.lock') }}-${{ matrix.toolchain }}
+      - name: Get build features
+        id: build-features
+        run: |
+          option=$([ "${{ matrix.toolchain }}" == "nightly" ] && echo "--features=leptos-fluent/nightly" || echo "")
+          echo "features=$option" >> $GITHUB_OUTPUT
       - name: Build with trunk
         if: startsWith(matrix.example, 'csr')
         run: |
           cd examples/${{ matrix.example }}
-          trunk build --release
+          trunk build --release ${{ steps.build-features.outputs.features }}
       - name: Build with cargo-leptos
         if: startsWith(matrix.example, 'ssr')
         run: |
           cd examples/${{ matrix.example }}
-          cargo leptos build --release
+          cargo leptos build --release ${{ steps.build-features.outputs.features }}
       - name: Install libgtk
         if: endsWith(matrix.example, 'gtk')
         run: |
@@ -259,7 +277,7 @@ jobs:
         if: startsWith(matrix.example, 'system')
         run: |
           cd examples/${{ matrix.example }}
-          cargo build --release
+          cargo build --release ${{ steps.build-features.outputs.features }}
 
   test-release-leptos-fluent-macros:
     needs:
