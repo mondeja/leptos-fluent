@@ -1,0 +1,14 @@
+name: Set Rust toolchain configuration
+description: Set the Rust toolchain configuration for the current project defined in the `rust-toolchain` file
+inputs:
+  channel:
+    description: The Rust toolchain channel
+    required: true
+runs:
+  using: composite
+  steps:
+    - id: set-toolchain
+      shell: sh
+      run: |
+        echo -e '[toolchain]\nchannel = "${{ inputs.channel }}"\ntargets = ["wasm32-unknown-unknown"]' \
+            > rust-toolchain.toml

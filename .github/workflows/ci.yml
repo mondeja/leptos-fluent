@@ -214,9 +214,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Set nightly toolchain
         if: matrix.toolchain == 'nightly'
-        run: |
-          echo -e '[toolchain]\nchannel = "nightly"\ntargets = ["wasm32-unknown-unknown"]' \
-            > rust-toolchain.toml
+        uses: ./.github/actions/set-toolchain
+        with:
+          channel: nightly
       - name: Get toolchain
         id: toolchain
         uses: ./.github/actions/get-toolchain
