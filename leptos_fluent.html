@@ -249,6 +249,7 @@ locale. It is used in the root component of the application.</p>
 <li><a href="#initial_language_from_cookie_to_server_function"><code>initial_language_from_cookie_to_server_function</code></a></li>
 <li><a href="#initial_language_from_navigator_to_server_function"><code>initial_language_from_navigator_to_server_function</code></a></li>
 <li><a href="#initial_language_from_url_param_to_server_function"><code>initial_language_from_url_param_to_server_function</code></a></li>
+<li><a href="#initial_language_from_server_function_to_cookie"><code>initial_language_from_server_function_to_cookie</code></a></li>
 </ul>
 </li>
 </ul>
@@ -892,6 +893,16 @@ pub async fn set_language_server_function(
     // .. replace with your own logic
     Ok(())
 }
+<span class="boring">}</span></code></pre></pre>
+<h3 id="initial_language_from_server_function_to_cookie"><a class="header" href="#initial_language_from_server_function_to_cookie"><code>initial_language_from_server_function_to_cookie</code></a></h3>
+<p>Get the initial language from a <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a> and set it to a
+<a href="https://developer.mozilla.org/docs/Web/HTTP/Cookies">cookie</a>.</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>leptos_fluent! {{
+    // ...
+    initial_language_from_server_function_to_cookie: true,
+}}
 <span class="boring">}</span></code></pre></pre>
 
                     </main>

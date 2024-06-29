@@ -688,6 +688,7 @@ are available:</p>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a></th></tr></thead><tbody>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/es/docs/Web/API/URLSearchParams">URL parameter</a> to <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a>*</td><td style="text-align: left"><code>initial_language_from_url_param_to_server_function</code></td></tr>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie">Cookie</a> to <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a>*</td><td style="text-align: left"><code>initial_language_from_cookie_to_server_function</code></td></tr>
+<tr><td style="text-align: left"><a href="https://book.leptos.dev/server/25_server_functions.html">Server function</a> to <a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie">cookie</a>*</td><td style="text-align: left"><code>initial_language_from_server_function_to_cookie</code></td></tr>
 </tbody></table>
 </div>
 <p><sub style="position: relative; left: 110px"><sup>*Unreleased</sup></sub></p>
@@ -1181,6 +1182,7 @@ locale. It is used in the root component of the application.</p>
 <li><a href="leptos_fluent.html#initial_language_from_cookie_to_server_function"><code>initial_language_from_cookie_to_server_function</code></a></li>
 <li><a href="leptos_fluent.html#initial_language_from_navigator_to_server_function"><code>initial_language_from_navigator_to_server_function</code></a></li>
 <li><a href="leptos_fluent.html#initial_language_from_url_param_to_server_function"><code>initial_language_from_url_param_to_server_function</code></a></li>
+<li><a href="leptos_fluent.html#initial_language_from_server_function_to_cookie"><code>initial_language_from_server_function_to_cookie</code></a></li>
 </ul>
 </li>
 </ul>
@@ -1824,6 +1826,16 @@ pub async fn set_language_server_function(
     // .. replace with your own logic
     Ok(())
 }
+<span class="boring">}</span></code></pre></pre>
+<h3 id="initial_language_from_server_function_to_cookie"><a class="header" href="#initial_language_from_server_function_to_cookie"><code>initial_language_from_server_function_to_cookie</code></a></h3>
+<p>Get the initial language from a <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a> and set it to a
+<a href="https://developer.mozilla.org/docs/Web/HTTP/Cookies">cookie</a>.</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>leptos_fluent! {{
+    // ...
+    initial_language_from_server_function_to_cookie: true,
+}}
 <span class="boring">}</span></code></pre></pre>
 
                     </main>
