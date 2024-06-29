@@ -230,7 +230,7 @@ pub fn leptos_fluent(
             let quote = match initial_language_from_system_to_data_file_bool {
                 Some(ref lit) => match lit.value {
                     true => quote! {
-                       if !#data_file_key.is_empty() {
+                       if lang.is_none() && !#data_file_key.is_empty() {
                            ::leptos_fluent::data_file::set(
                                #data_file_key,
                                &l.id.to_string(),
@@ -241,7 +241,7 @@ pub fn leptos_fluent(
                 },
                 None => match initial_language_from_system_to_data_file_expr {
                     Some(ref expr) => quote! {
-                        if #expr && !#data_file_key.is_empty() {
+                        if lang.is_none() && #expr && !#data_file_key.is_empty() {
                             ::leptos_fluent::data_file::set(
                                 #data_file_key,
                                 &l.id.to_string(),
@@ -409,12 +409,16 @@ pub fn leptos_fluent(
 
         match initial_language_from_data_file_bool {
             Some(ref lit) => match lit.value() {
-                true => effect_quote,
+                true => quote! {
+                    if lang.is_none() {
+                        #effect_quote
+                    }
+                },
                 false => quote! {},
             },
             None => match initial_language_from_data_file_expr {
                 Some(ref expr) => quote! {
-                    if #expr {
+                    if #expr && lang.is_none() {
                         #effect_quote
                     }
                 },
@@ -680,24 +684,23 @@ pub fn leptos_fluent(
 
         #[cfg(not(feature = "ssr"))]
         let set_to_localstorage_quote = {
+            let effect_quote = quote! {
+                ::leptos_fluent::localstorage::set(
+                    #localstorage_key,
+                    &l.id.to_string(),
+                );
+            };
+
             let quote = match initial_language_from_url_param_to_localstorage_bool {
                 Some(ref lit) => match lit.value {
-                    true => quote! {
-                        ::leptos_fluent::localstorage::set(
-                            #localstorage_key,
-                            &l.id.to_string(),
-                        );
-                    },
+                    true => effect_quote,
                     false => quote! {},
                 },
                 None => {
                     match initial_language_from_url_param_to_localstorage_expr {
                         Some(ref expr) => quote! {
                             if #expr {
-                                ::leptos_fluent::localstorage::set(
-                                    #localstorage_key,
-                                    &l.id.to_string(),
-                                );
+                                #effect_quote
                             }
                         },
                         None => quote! {},
@@ -713,25 +716,27 @@ pub fn leptos_fluent(
 
         #[cfg(not(feature = "ssr"))]
         let set_to_cookie_quote = {
+            let effect_quote = quote! {
+                ::leptos_fluent::cookie::set(
+                    #cookie_name,
+                    &l.id.to_string(),
+                    &#cookie_attrs,
+                );
+            };
+
             let quote = match initial_language_from_url_param_to_cookie_bool {
                 Some(ref lit) => match lit.value {
                     true => quote! {
-                        ::leptos_fluent::cookie::set(
-                            #cookie_name,
-                            &l.id.to_string(),
-                            &#cookie_attrs,
-                        );
+                        if lang.is_none() {
+                            #effect_quote
+                        }
                     },
                     false => quote! {},
                 },
                 None => match initial_language_from_url_param_to_cookie_expr {
                     Some(ref expr) => quote! {
-                        if #expr {
-                            ::leptos_fluent::cookie::set(
-                                #cookie_name,
-                                &l.id.to_string(),
-                                &#cookie_attrs,
-                            );
+                        if #expr && lang.is_none() {
+                            #effect_quote
                         }
                     },
                     None => quote! {},
