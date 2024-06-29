@@ -914,9 +914,7 @@ pub fn leptos_fluent(
 
         match initial_language_from_url_param_exprpath {
             Some(ref path) => {
-                quote! {
-                    #path{#quote}
-                }
+                quote! { #path{#quote} }
             }
             None => quote,
         }
@@ -1806,9 +1804,7 @@ pub fn leptos_fluent(
             };
 
             match provide_meta_context_exprpath {
-                Some(ref path) => quote! {
-                    #path{#quote};
-                },
+                Some(ref path) => quote! { #path{#quote}; },
                 None => quote,
             }
         }
