@@ -1265,6 +1265,22 @@ pub fn leptos_fluent(
     }
 
     // Cookie
+    let initial_language_from_cookie_to_server_function_quote = {
+        let quote = match initial_language_from_cookie_to_server_function {
+            Some(ref ident) => quote! {
+                spawn_local(async move {
+                    _ = #ident(l.id.to_string()).await;
+                });
+            },
+            None => quote! {},
+        };
+
+        match initial_language_from_cookie_to_server_function_exprpath {
+            Some(ref path) => quote! { #path{#quote} },
+            None => quote,
+        }
+    };
+
     #[cfg(not(feature = "ssr"))]
     let initial_language_from_cookie_quote = {
         let initial_language_from_cookie_to_localstorage_quote = {
@@ -1293,22 +1309,6 @@ pub fn leptos_fluent(
             };
 
             match initial_language_from_cookie_to_localstorage_exprpath {
-                Some(ref path) => quote! { #path{#quote} },
-                None => quote,
-            }
-        };
-
-        let initial_language_from_cookie_to_server_function_quote = {
-            let quote = match initial_language_from_cookie_to_server_function {
-                Some(ref ident) => quote! {
-                    spawn_local(async move {
-                        _ = #ident(l.id.to_string()).await;
-                    });
-                },
-                None => quote! {},
-            };
-
-            match initial_language_from_cookie_to_server_function_exprpath {
                 Some(ref path) => quote! { #path{#quote} },
                 None => quote,
             }
@@ -1391,8 +1391,6 @@ pub fn leptos_fluent(
         _ = initial_language_from_cookie_to_localstorage_bool;
         _ = initial_language_from_cookie_to_localstorage_expr;
         _ = initial_language_from_cookie_to_localstorage_exprpath;
-        _ = initial_language_from_cookie_to_server_function;
-        _ = initial_language_from_cookie_to_server_function_exprpath;
         _ = cookie_attrs_str;
         _ = cookie_attrs_expr;
         _ = cookie_attrs_exprpath;
@@ -1413,6 +1411,8 @@ pub fn leptos_fluent(
                 if let Some(cookie) = maybe_cookie {
                     if let Some(l) = ::leptos_fluent::l(&cookie, &LANGUAGES) {
                         lang = Some(l);
+
+                        #initial_language_from_cookie_to_server_function_quote;
                     }
                 }
             }
@@ -1459,6 +1459,8 @@ pub fn leptos_fluent(
                 if let Some(cookie) = maybe_cookie {
                     if let Some(l) = ::leptos_fluent::l(&cookie, &LANGUAGES) {
                         lang = Some(l);
+
+                        #initial_language_from_cookie_to_server_function_quote;
                     }
                 }
             }
@@ -1491,6 +1493,16 @@ pub fn leptos_fluent(
     //   Other SSR frameworks or the user is not using any
     #[cfg(all(not(feature = "actix"), not(feature = "axum"), feature = "ssr"))]
     let initial_language_from_cookie_quote = quote! {};
+    #[cfg(all(
+        not(feature = "actix"),
+        not(feature = "axum"),
+        feature = "ssr"
+    ))]
+    {
+        _ = initial_language_from_cookie_to_server_function;
+        _ = initial_language_from_cookie_to_server_function_exprpath;
+    };
+
     #[cfg(all(not(feature = "actix"), not(feature = "axum"), feature = "ssr"))]
     let sync_language_with_cookie_quote = quote! {};
 
