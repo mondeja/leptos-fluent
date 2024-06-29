@@ -10,5 +10,5 @@ runs:
     - id: set-toolchain
       shell: sh
       run: |
-        echo -E '[toolchain]\nchannel = "${{ inputs.channel }}"\ntargets = ["wasm32-unknown-unknown"]' \
+        echo '[toolchain]\nchannel = "${{ inputs.channel }}"\ntargets = ["wasm32-unknown-unknown"]' \
           > rust-toolchain.toml
