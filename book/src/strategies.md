@@ -75,12 +75,20 @@ are available:
 | [URL parameter] to [local storage]             | `initial_language_from_url_param_to_localstorage`       |
 | [URL parameter] to [cookie]                    | `initial_language_from_url_param_to_cookie`             |
 | [Cookie] to [local storage]                    | `initial_language_from_cookie_to_localstorage`          |
-| [Cookie] to [server function]\*                | `initial_language_from_cookie_to_server_function`       |
 | [Local storage] to [cookie]                    | `initial_language_from_localstorage_to_cookie`          |
 | [Local storage] to [server function]\*         | `initial_language_from_localstorage_to_server_function` |
 | [`navigator.languages`] to [local storage]     | `initial_language_from_navigator_to_localstorage`       |
 | [`navigator.languages`] to [cookie]            | `initial_language_from_navigator_to_cookie`             |
 | [`navigator.languages`] to [server function]\* | `initial_language_from_navigator_to_server_function`    |
+
+<sub style="position: relative; left: 110px"><sup>\*Unreleased</sup></sub>
+
+### <span style="opacity:.5">CSR + SSR</span>
+
+| Strategy                               | [`leptos_fluent!`]                                   |
+| :------------------------------------- | :--------------------------------------------------- |
+| [URL parameter] to [server function]\* | `initial_language_from_url_param_to_server_function` |
+| [Cookie] to [server function]\*        | `initial_language_from_cookie_to_server_function`    |
 
 <sub style="position: relative; left: 110px"><sup>\*Unreleased</sup></sub>
 

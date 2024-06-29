@@ -234,6 +234,10 @@ pub(crate) struct I18nLoader {
         Option<syn::Expr>,
     pub(crate) initial_language_from_url_param_to_cookie_exprpath:
         Option<proc_macro2::TokenStream>,
+    pub(crate) initial_language_from_url_param_to_server_function:
+        Option<syn::Ident>,
+    pub(crate) initial_language_from_url_param_to_server_function_exprpath:
+        Option<proc_macro2::TokenStream>,
     pub(crate) set_language_to_url_param_bool: Option<syn::LitBool>,
     pub(crate) set_language_to_url_param_expr: Option<syn::Expr>,
     pub(crate) set_language_to_url_param_exprpath:
@@ -397,6 +401,11 @@ impl Parse for I18nLoader {
         let mut initial_language_from_url_param_to_cookie_exprpath: Option<
             proc_macro2::TokenStream,
         > = None;
+        let mut initial_language_from_url_param_to_server_function: Option<
+            syn::Ident,
+        > = None;
+        let mut initial_language_from_url_param_to_server_function_exprpath: Option<proc_macro2::TokenStream> =
+            None;
         let mut set_language_to_url_param_bool: Option<syn::LitBool> = None;
         let mut set_language_to_url_param_expr: Option<syn::Expr> = None;
         let mut set_language_to_url_param_exprpath: Option<
@@ -691,6 +700,14 @@ impl Parse for I18nLoader {
                 }
                 if exprpath.is_some() {
                     initial_language_from_url_param_to_cookie_exprpath
+                        .clone_from(&exprpath);
+                }
+            } else if k == "initial_language_from_url_param_to_server_function"
+            {
+                initial_language_from_url_param_to_server_function =
+                    Some(fields.parse()?);
+                if exprpath.is_some() {
+                    initial_language_from_url_param_to_server_function_exprpath
                         .clone_from(&exprpath);
                 }
             } else if k == "set_language_to_url_param" {
@@ -1255,6 +1272,8 @@ impl Parse for I18nLoader {
             initial_language_from_url_param_to_cookie_bool,
             initial_language_from_url_param_to_cookie_expr,
             initial_language_from_url_param_to_cookie_exprpath,
+            initial_language_from_url_param_to_server_function,
+            initial_language_from_url_param_to_server_function_exprpath,
             set_language_to_url_param_bool,
             set_language_to_url_param_expr,
             set_language_to_url_param_exprpath,

@@ -111,6 +111,8 @@ pub fn leptos_fluent(
         initial_language_from_url_param_to_cookie_bool,
         initial_language_from_url_param_to_cookie_expr,
         initial_language_from_url_param_to_cookie_exprpath,
+        initial_language_from_url_param_to_server_function,
+        initial_language_from_url_param_to_server_function_exprpath,
         set_language_to_url_param_bool,
         set_language_to_url_param_expr,
         set_language_to_url_param_exprpath,
@@ -762,6 +764,23 @@ pub fn leptos_fluent(
             _ = initial_language_from_url_param_to_cookie_exprpath;
         }
 
+        let set_to_server_function_quote = {
+            let quote = match initial_language_from_url_param_to_server_function
+            {
+                Some(ref ident) => quote! {
+                    spawn_local(async move {
+                        _ = #ident(l.id.to_string()).await;
+                    });
+                },
+                None => quote! {},
+            };
+
+            match initial_language_from_url_param_to_server_function_exprpath {
+                Some(ref path) => quote! { #path{#quote} },
+                None => quote,
+            }
+        };
+
         #[cfg(not(feature = "ssr"))]
         let parse_language_from_url_quote = quote! {
             if let Some(l) = ::leptos_fluent::url::get(
@@ -775,6 +794,7 @@ pub fn leptos_fluent(
                     #hydrate_rerender_quote;
                     #set_to_localstorage_quote;
                     #set_to_cookie_quote;
+                    #set_to_server_function_quote;
                 }
             }
         };
@@ -799,6 +819,9 @@ pub fn leptos_fluent(
                         &l,
                         &LANGUAGES
                     );
+                    if let Some(l) = lang {
+                        #set_to_server_function_quote;
+                    }
                 }
             }
         };
@@ -823,6 +846,9 @@ pub fn leptos_fluent(
                         &l,
                         &LANGUAGES
                     );
+                    if let Some(l) = lang {
+                        #set_to_server_function_quote;
+                    }
                 }
             }
         };
@@ -1239,6 +1265,22 @@ pub fn leptos_fluent(
     }
 
     // Cookie
+    let initial_language_from_cookie_to_server_function_quote = {
+        let quote = match initial_language_from_cookie_to_server_function {
+            Some(ref ident) => quote! {
+                spawn_local(async move {
+                    _ = #ident(l.id.to_string()).await;
+                });
+            },
+            None => quote! {},
+        };
+
+        match initial_language_from_cookie_to_server_function_exprpath {
+            Some(ref path) => quote! { #path{#quote} },
+            None => quote,
+        }
+    };
+
     #[cfg(not(feature = "ssr"))]
     let initial_language_from_cookie_quote = {
         let initial_language_from_cookie_to_localstorage_quote = {
@@ -1267,22 +1309,6 @@ pub fn leptos_fluent(
             };
 
             match initial_language_from_cookie_to_localstorage_exprpath {
-                Some(ref path) => quote! { #path{#quote} },
-                None => quote,
-            }
-        };
-
-        let initial_language_from_cookie_to_server_function_quote = {
-            let quote = match initial_language_from_cookie_to_server_function {
-                Some(ref ident) => quote! {
-                    spawn_local(async move {
-                        _ = #ident(l.id.to_string()).await;
-                    });
-                },
-                None => quote! {},
-            };
-
-            match initial_language_from_cookie_to_server_function_exprpath {
                 Some(ref path) => quote! { #path{#quote} },
                 None => quote,
             }
@@ -1365,8 +1391,6 @@ pub fn leptos_fluent(
         _ = initial_language_from_cookie_to_localstorage_bool;
         _ = initial_language_from_cookie_to_localstorage_expr;
         _ = initial_language_from_cookie_to_localstorage_exprpath;
-        _ = initial_language_from_cookie_to_server_function;
-        _ = initial_language_from_cookie_to_server_function_exprpath;
         _ = cookie_attrs_str;
         _ = cookie_attrs_expr;
         _ = cookie_attrs_exprpath;
@@ -1387,6 +1411,8 @@ pub fn leptos_fluent(
                 if let Some(cookie) = maybe_cookie {
                     if let Some(l) = ::leptos_fluent::l(&cookie, &LANGUAGES) {
                         lang = Some(l);
+
+                        #initial_language_from_cookie_to_server_function_quote;
                     }
                 }
             }
@@ -1433,6 +1459,8 @@ pub fn leptos_fluent(
                 if let Some(cookie) = maybe_cookie {
                     if let Some(l) = ::leptos_fluent::l(&cookie, &LANGUAGES) {
                         lang = Some(l);
+
+                        #initial_language_from_cookie_to_server_function_quote;
                     }
                 }
             }
@@ -1465,6 +1493,16 @@ pub fn leptos_fluent(
     //   Other SSR frameworks or the user is not using any
     #[cfg(all(not(feature = "actix"), not(feature = "axum"), feature = "ssr"))]
     let initial_language_from_cookie_quote = quote! {};
+    #[cfg(all(
+        not(feature = "actix"),
+        not(feature = "axum"),
+        feature = "ssr"
+    ))]
+    {
+        _ = initial_language_from_cookie_to_server_function;
+        _ = initial_language_from_cookie_to_server_function_exprpath;
+    };
+
     #[cfg(all(not(feature = "actix"), not(feature = "axum"), feature = "ssr"))]
     let sync_language_with_cookie_quote = quote! {};
 
@@ -1568,6 +1606,11 @@ pub fn leptos_fluent(
                 initial_language_from_url_param_to_cookie_bool,
                 initial_language_from_url_param_to_cookie_expr,
             );
+            let initial_language_from_url_param_to_server_function_quote =
+                match initial_language_from_url_param_to_server_function {
+                    Some(_) => quote! { true },
+                    None => quote! { false },
+                };
             let set_language_to_url_param_quote = bool_param(
                 set_language_to_url_param_bool,
                 set_language_to_url_param_expr,
@@ -1699,6 +1742,7 @@ pub fn leptos_fluent(
                     initial_language_from_url_param: #initial_language_from_url_param_quote,
                     initial_language_from_url_param_to_localstorage: #initial_language_from_url_param_to_localstorage,
                     initial_language_from_url_param_to_cookie: #initial_language_from_url_param_to_cookie_quote,
+                    initial_language_from_url_param_to_server_function: #initial_language_from_url_param_to_server_function_quote,
                     set_language_to_url_param: #set_language_to_url_param_quote,
                     localstorage_key: #localstorage_key_quote,
                     initial_language_from_localstorage: #initial_language_from_localstorage_quote,

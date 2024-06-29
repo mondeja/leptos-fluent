@@ -15,6 +15,8 @@
     from a cookie to a server function.
   - `initial_language_from_navigator_to_server_function` to set the initial
     language from the browser language to a server function.
+  - `initial_language_from_url_param_to_server_function` to set the initial
+    language from URL parameter to a server function.
 
 ## 2024-06-27 - [0.1.6]
 
