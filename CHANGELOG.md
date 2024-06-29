@@ -4,10 +4,15 @@
 
 ### New features
 
-- Add `initial_language_from_server_function` parameter to `leptos_fluent!` macro
-  to set the initial language from a server function.
-- Add `set_language_to_server_function` parameter to `leptos_fluent!` macro to set
-  the current language to a server function.
+- Add next parameters to `leptos_fluent!` macro:
+  - `initial_language_from_server_function` to set the initial language from a
+    server function.
+  - `set_language_to_server_function` set language updates to a server
+    function.
+  - `initial_language_from_localstorage_to_server_function` to set the initial
+    language from local storage to a server function.
+  - `initial_language_from_cookie_to_server_function` to set the initial language
+    from a cookie to a server function.
 
 ## 2024-06-27 - [0.1.6]
 
@@ -346,6 +351,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.1.7]: https://github.com/mondeja/leptos-fluent/compare/v0.1.6...master
 [0.1.6]: https://github.com/mondeja/leptos-fluent/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/mondeja/leptos-fluent/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/mondeja/leptos-fluent/compare/v0.1.3...v0.1.4
