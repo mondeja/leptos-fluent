@@ -11,6 +11,8 @@
     function.
   - `initial_language_from_localstorage_to_server_function` to set the initial
     language from local storage to a server function.
+  - `initial_language_from_cookie_to_server_function` to set the initial language
+    from a cookie to a server function.
 
 ## 2024-06-27 - [0.1.6]
 
