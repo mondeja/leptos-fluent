@@ -659,7 +659,7 @@ leptos_fluent! {{
 /// Server function to update the current language
 #[server(SetLanguage, "/api")]
 pub async fn set_language_server_function(
-    _language: String,
+    language: String,
 ) -> Result<(), ServerFnError> {
     // .. replace with your own logic
     Ok(())
@@ -684,7 +684,7 @@ leptos_fluent! {{
 
 #[server(SetLanguage, "/api")]
 pub async fn set_language_server_function(
-    _language: String,
+    language: String,
 ) -> Result<(), ServerFnError> {
     // .. replace with your own logic
     Ok(())
@@ -703,7 +703,7 @@ leptos_fluent! {{
 
 #[server(SetLanguage, "/api")]
 pub async fn set_language_server_function(
-    _language: String,
+    language: String,
 ) -> Result<(), ServerFnError> {
     // .. replace with your own logic
     Ok(())
@@ -722,7 +722,7 @@ leptos_fluent! {{
 
 #[server(SetLanguage, "/api")]
 pub async fn set_language_server_function(
-    _language: String,
+    language: String,
 ) -> Result<(), ServerFnError> {
     // .. replace with your own logic
     Ok(())
@@ -741,7 +741,7 @@ leptos_fluent! {{
 
 #[server(SetLanguage, "/api")]
 pub async fn set_language_server_function(
-    _language: String,
+    language: String,
 ) -> Result<(), ServerFnError> {
     // .. replace with your own logic
     Ok(())
