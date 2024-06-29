@@ -87,6 +87,8 @@ static_loader! {
 
 #[component]
 fn App() -> impl IntoView {
+    // See all options in the reference at
+    // https://mondeja.github.io/leptos-fluent/leptos_fluent.html
     leptos_fluent! {{
         // Path to the locales directory, relative to Cargo.toml.
         locales: "./locales",
