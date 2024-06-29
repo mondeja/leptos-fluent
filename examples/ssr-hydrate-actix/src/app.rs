@@ -17,7 +17,7 @@ pub fn App() -> impl IntoView {
     leptos_fluent! {{
         translations: [TRANSLATIONS],
         locales: "./locales",
-        check_translations: "./src/**/*.rs",
+        #[cfg(debug_assertions)] check_translations: "./src/**/*.rs",
         sync_html_tag_lang: true,
         sync_html_tag_dir: true,
         cookie_name: "lang",
@@ -41,6 +41,8 @@ pub fn App() -> impl IntoView {
         initial_language_from_navigator_to_server_function: set_language_server_function,
         initial_language_from_accept_language_header: true,
         initial_language_from_server_function: initial_language_server_function,
+        initial_language_from_server_function_to_cookie: true,
+        initial_language_from_server_function_to_localstorage: true,
         set_language_to_server_function: set_language_server_function,
     }};
 

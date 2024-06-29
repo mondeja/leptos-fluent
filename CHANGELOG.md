@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## Unreleased - [0.1.7]
+## 2024-06-29 - [0.1.7]
 
 ### New features
 
@@ -19,6 +19,16 @@
     language from URL parameter to a server function.
   - `initial_language_from_server_function_to_cookie` to set the initial language
     from a server function to a cookie.
+  - `initial_language_from_server_function_to_localstorage` to set the initial
+    language from a server function to local storage.
+
+### Enhancements
+
+- Accept `#[cfg(debug_assertions)]` and `#[cfg(not(debug_assertions))]`
+  conditional checks for the next `leptos_fluent!` macro parameters:
+  - `check_translations`
+  - `languages`
+  - `core_locales`
 
 ## 2024-06-27 - [0.1.6]
 
@@ -357,7 +367,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
-[0.1.7]: https://github.com/mondeja/leptos-fluent/compare/v0.1.6...master
+[0.1.7]: https://github.com/mondeja/leptos-fluent/compare/v0.1.6...v0.1.7
 [0.1.6]: https://github.com/mondeja/leptos-fluent/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/mondeja/leptos-fluent/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/mondeja/leptos-fluent/compare/v0.1.3...v0.1.4

@@ -619,8 +619,6 @@ let i18n = leptos_fluent! {{
 println!("Macro parameters: {:?}", i18n.meta().unwrap());
 ```
 
-## Unreleased
-
 ### `initial_language_from_server_function`
 
 Get the initial language from a [server function].
@@ -761,6 +759,18 @@ Get the initial language from a [server function] and set it to a
 leptos_fluent! {{
     // ...
     initial_language_from_server_function_to_cookie: true,
+}}
+```
+
+### `initial_language_from_server_function_to_localstorage`
+
+Get the initial language from a [server function] and set it to
+[local storage].
+
+```rust
+leptos_fluent! {{
+    // ...
+    initial_language_from_server_function_to_localstorage: true,
 }}
 ```
 
