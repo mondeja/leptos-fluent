@@ -217,8 +217,9 @@
 </tbody></table>
 </div>
 <p><sub style="position: relative; left: 110px"><sup>*Unreleased</sup></sub></p>
-<p>All of them can be used at the same time or just one of them. The first setting
-found will be used. The order of precedence is:</p>
+<p>All of them can be defined at the same time or just one of them at the same
+time. The first language source found will be used and nexts discharged.
+The order of precedence is:</p>
 <ul>
 <li><strong>SSR</strong>
 <ol>
@@ -252,8 +253,10 @@ following strategies are available:</p>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/es/docs/Web/API/URLSearchParams">URL parameter</a></td><td style="text-align: left"><code>set_language_to_url_param</code></td></tr>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie">Cookie</a></td><td style="text-align: left"><code>set_language_to_cookie</code></td></tr>
 <tr><td style="text-align: left">Browser <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">local storage</a></td><td style="text-align: left"><code>set_language_to_localstorage</code></td></tr>
+<tr><td style="text-align: left"><a href="https://book.leptos.dev/server/25_server_functions.html">Server function</a>*</td><td style="text-align: left"><code>set_language_to_server_function</code></td></tr>
 </tbody></table>
 </div>
+<p><sub style="position: relative; left: 110px"><sup>*Unreleased</sup></sub></p>
 <h3 id="system--desktop-applications"><a class="header" href="#system--desktop-applications"><a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Desktop applications</a></h3>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a></th></tr></thead><tbody>
 <tr><td style="text-align: left">Data file</td><td style="text-align: left"><code>set_language_to_data_file</code></td></tr>
@@ -267,11 +270,15 @@ are available:</p>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/es/docs/Web/API/URLSearchParams">URL parameter</a> to <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">local storage</a></td><td style="text-align: left"><code>initial_language_from_url_param_to_localstorage</code></td></tr>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/es/docs/Web/API/URLSearchParams">URL parameter</a> to <a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie">cookie</a></td><td style="text-align: left"><code>initial_language_from_url_param_to_cookie</code></td></tr>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie">Cookie</a> to <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">local storage</a></td><td style="text-align: left"><code>initial_language_from_cookie_to_localstorage</code></td></tr>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie">Cookie</a> to <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a>*</td><td style="text-align: left"><code>initial_language_from_cookie_to_server_function</code></td></tr>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">Local storage</a> to <a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie">cookie</a></td><td style="text-align: left"><code>initial_language_from_localstorage_to_cookie</code></td></tr>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">Local storage</a> to <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a>*</td><td style="text-align: left"><code>initial_language_from_localstorage_to_server_function</code></td></tr>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a> to <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">local storage</a></td><td style="text-align: left"><code>initial_language_from_navigator_to_localstorage</code></td></tr>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a> to <a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie">cookie</a></td><td style="text-align: left"><code>initial_language_from_navigator_to_cookie</code></td></tr>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a> to <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a>*</td><td style="text-align: left"><code>initial_language_from_navigator_to_server_function</code></td></tr>
 </tbody></table>
 </div>
+<p><sub style="position: relative; left: 110px"><sup>*Unreleased</sup></sub></p>
 <h3 id="system--desktop-applications-1"><a class="header" href="#system--desktop-applications-1"><a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Desktop applications</a></h3>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a></th></tr></thead><tbody>
 <tr><td style="text-align: left"><a href="https://github.com/i509VCB/current_locale">System language</a> to data file</td><td style="text-align: left"><code>initial_language_from_system_to_data_file</code></td></tr>
