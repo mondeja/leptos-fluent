@@ -2,7 +2,7 @@
 
 **leptos-fluent** is a framework for internationalizing [Leptos] applications
 using [Fluent]. It has all the batteries included to handle language switching,
-translations management, strategies for activating translations at
+translations management, multiple strategies for activating translations at
 initialization, different modes of persistent storage, and more.
 
 [![Crates.io](https://img.shields.io/crates/v/leptos-fluent?logo=rust)](https://crates.io/crates/leptos-fluent)
