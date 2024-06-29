@@ -1564,7 +1564,7 @@ pub fn leptos_fluent(
                     Some(_) => quote! { true },
                     None => quote! { false },
                 };
-            let set_language_to_server_function =
+            let set_language_to_server_function_quote =
                 match set_language_to_server_function {
                     Some(_) => quote! { true },
                     None => quote! { false },
@@ -1636,7 +1636,7 @@ pub fn leptos_fluent(
                     initial_language_from_cookie_to_localstorage: #initial_language_from_cookie_to_localstorage_quote,
                     set_language_to_cookie: #set_language_to_cookie_quote,
                     initial_language_from_server_function: #initial_language_from_server_function_quote,
-                    set_language_to_server_function: #set_language_to_server_function,
+                    set_language_to_server_function: #set_language_to_server_function_quote,
                     provide_meta_context: true,
                     #system_quote
                 };
