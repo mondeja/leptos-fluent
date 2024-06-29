@@ -122,6 +122,8 @@ pub fn leptos_fluent(
         initial_language_from_localstorage_to_cookie_bool,
         initial_language_from_localstorage_to_cookie_expr,
         initial_language_from_localstorage_to_cookie_exprpath,
+        initial_language_from_localstorage_to_server_function,
+        initial_language_from_localstorage_to_server_function_exprpath,
         set_language_to_localstorage_bool,
         set_language_to_localstorage_expr,
         set_language_to_localstorage_exprpath,
@@ -148,6 +150,8 @@ pub fn leptos_fluent(
         initial_language_from_cookie_to_localstorage_bool,
         initial_language_from_cookie_to_localstorage_expr,
         initial_language_from_cookie_to_localstorage_exprpath,
+        initial_language_from_cookie_to_server_function,
+        initial_language_from_cookie_to_server_function_exprpath,
         set_language_to_cookie_bool,
         set_language_to_cookie_expr,
         set_language_to_cookie_exprpath,
@@ -893,6 +897,24 @@ pub fn leptos_fluent(
             }
         };
 
+        let initial_language_from_localstorage_to_server_function_quote = {
+            let quote =
+                match initial_language_from_localstorage_to_server_function {
+                    Some(ref ident) => quote! {
+                        spawn_local(async move {
+                            _ = #ident(l.id.to_string()).await;
+                        });
+                    },
+                    None => quote! {},
+                };
+
+            match initial_language_from_localstorage_to_server_function_exprpath
+            {
+                Some(ref path) => quote! { #path{#quote} },
+                None => quote,
+            }
+        };
+
         let localstorage_get_quote = quote! {
             if let Some(l) = ::leptos_fluent::localstorage::get(#localstorage_key)
             {
@@ -903,6 +925,7 @@ pub fn leptos_fluent(
 
                 if let Some(l) = lang {
                     #initial_language_from_localstorage_to_cookie_quote;
+                    #initial_language_from_localstorage_to_server_function_quote;
                 }
             }
         };
@@ -940,6 +963,8 @@ pub fn leptos_fluent(
         _ = initial_language_from_localstorage_to_cookie_bool;
         _ = initial_language_from_localstorage_to_cookie_expr;
         _ = initial_language_from_localstorage_to_cookie_exprpath;
+        _ = initial_language_from_localstorage_to_server_function;
+        _ = initial_language_from_localstorage_to_server_function_exprpath;
     }
 
     let sync_language_with_url_param_quote = {
@@ -1225,12 +1250,29 @@ pub fn leptos_fluent(
             }
         };
 
+        let initial_language_from_cookie_to_server_function_quote = {
+            let quote = match initial_language_from_cookie_to_server_function {
+                Some(ref ident) => quote! {
+                    spawn_local(async move {
+                        _ = #ident(l.id.to_string()).await;
+                    });
+                },
+                None => quote! {},
+            };
+
+            match initial_language_from_cookie_to_server_function_exprpath {
+                Some(ref path) => quote! { #path{#quote} },
+                None => quote,
+            }
+        };
+
         let parse_client_cookie_quote = quote! {
             if let Some(cookie) = ::leptos_fluent::cookie::get(#cookie_name) {
                 if let Some(l) = ::leptos_fluent::l(&cookie, &LANGUAGES) {
                     lang = Some(l);
 
                     #initial_language_from_cookie_to_localstorage_quote;
+                    #initial_language_from_cookie_to_server_function_quote;
                 }
             }
         };
@@ -1301,6 +1343,8 @@ pub fn leptos_fluent(
         _ = initial_language_from_cookie_to_localstorage_bool;
         _ = initial_language_from_cookie_to_localstorage_expr;
         _ = initial_language_from_cookie_to_localstorage_exprpath;
+        _ = initial_language_from_cookie_to_server_function;
+        _ = initial_language_from_cookie_to_server_function_exprpath;
         _ = cookie_attrs_str;
         _ = cookie_attrs_expr;
         _ = cookie_attrs_exprpath;
@@ -1519,6 +1563,11 @@ pub fn leptos_fluent(
                 initial_language_from_localstorage_to_cookie_bool,
                 initial_language_from_localstorage_to_cookie_expr,
             );
+            let initial_language_from_localstorage_to_server_function_quote =
+                match initial_language_from_localstorage_to_server_function {
+                    Some(_) => quote! { true },
+                    None => quote! { false },
+                };
             let set_language_to_localstorage_quote = bool_param(
                 set_language_to_localstorage_bool,
                 set_language_to_localstorage_expr,
@@ -1552,6 +1601,11 @@ pub fn leptos_fluent(
                 initial_language_from_cookie_to_localstorage_bool,
                 initial_language_from_cookie_to_localstorage_expr,
             );
+            let initial_language_from_cookie_to_server_function_quote =
+                match initial_language_from_cookie_to_server_function {
+                    Some(_) => quote! { true },
+                    None => quote! { false },
+                };
             let set_language_to_cookie_quote = bool_param(
                 set_language_to_cookie_bool,
                 set_language_to_cookie_expr,
@@ -1622,6 +1676,7 @@ pub fn leptos_fluent(
                     localstorage_key: #localstorage_key_quote,
                     initial_language_from_localstorage: #initial_language_from_localstorage_quote,
                     initial_language_from_localstorage_to_cookie: #initial_language_from_localstorage_to_cookie_quote,
+                    initial_language_from_localstorage_to_server_function: #initial_language_from_localstorage_to_server_function_quote,
                     set_language_to_localstorage: #set_language_to_localstorage_quote,
                     initial_language_from_navigator: #initial_language_from_navigator_quote,
                     initial_language_from_navigator_to_localstorage: #initial_language_from_navigator_to_localstorage_quote,
@@ -1631,6 +1686,7 @@ pub fn leptos_fluent(
                     cookie_attrs: #cookie_attrs_quote,
                     initial_language_from_cookie: #initial_language_from_cookie_quote,
                     initial_language_from_cookie_to_localstorage: #initial_language_from_cookie_to_localstorage_quote,
+                    initial_language_from_cookie_to_server_function: #initial_language_from_cookie_to_server_function_quote,
                     set_language_to_cookie: #set_language_to_cookie_quote,
                     initial_language_from_server_function: #initial_language_from_server_function_quote,
                     set_language_to_server_function: #set_language_to_server_function_quote,

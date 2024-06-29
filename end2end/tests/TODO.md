@@ -15,3 +15,5 @@
 - `initial_language_from_system_to_data_file`
 - `initial_language_from_server_function`
 - `set_language_to_server_function`
+- `initial_language_from_localstorage_to_server_function`
+- `initial_language_from_cookie_to_server_function`
