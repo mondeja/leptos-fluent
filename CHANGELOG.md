@@ -22,6 +22,14 @@
   - `initial_language_from_server_function_to_localstorage` to set the initial
     language from a server function to local storage.
 
+### Enhancements
+
+- Accept `#[cfg(debug_assertions)]` and `#[cfg(not(debug_assertions))]`
+  conditional checks for the next `leptos_fluent!` macro parameters:
+  - `check_translations`
+  - `languages`
+  - `core_locales`
+
 ## 2024-06-27 - [0.1.6]
 
 ### New features

@@ -93,6 +93,7 @@
 //!         // Static translations struct provided by fluent-templates.
 //!         translations: [TRANSLATIONS],
 //!         // Check translations correctness in the specified files.
+//!         [cfg(debug_assertions)]
 //!         check_translations: "./src/**/*.rs",
 //!
 //!         // Next options are all opt-in and can be enabled

@@ -622,13 +622,55 @@ impl Parse for I18nLoader {
                 exprpath_not_supported!(exprpath, k);
             } else if k == "core_locales" {
                 core_locales_path = Some(fields.parse()?);
-                exprpath_not_supported!(exprpath, k);
+                if let Some(ref e) = exprpath {
+                    if e.to_string() == "#[cfg(debug_assertions)]" {
+                        #[cfg(not(debug_assertions))]
+                        {
+                            core_locales_path = None;
+                        }
+                    } else if e.to_string() == "#[cfg(not(debug_assertions))]" {
+                        #[cfg(debug_assertions)]
+                        {
+                            core_locales_path = None;
+                        }
+                    } else {
+                        exprpath_not_supported!(exprpath, k);
+                    }
+                }
             } else if k == "languages" {
                 languages_path = Some(fields.parse()?);
-                exprpath_not_supported!(exprpath, k);
+                if let Some(ref e) = exprpath {
+                    if e.to_string() == "#[cfg(debug_assertions)]" {
+                        #[cfg(not(debug_assertions))]
+                        {
+                            languages_path = None;
+                        }
+                    } else if e.to_string() == "#[cfg(not(debug_assertions))]" {
+                        #[cfg(debug_assertions)]
+                        {
+                            languages_path = None;
+                        }
+                    } else {
+                        exprpath_not_supported!(exprpath, k);
+                    }
+                }
             } else if k == "check_translations" {
                 check_translations = Some(fields.parse()?);
-                exprpath_not_supported!(exprpath, k);
+                if let Some(ref e) = exprpath {
+                    if e.to_string() == "#[cfg(debug_assertions)]" {
+                        #[cfg(not(debug_assertions))]
+                        {
+                            check_translations = None;
+                        }
+                    } else if e.to_string() == "#[cfg(not(debug_assertions))]" {
+                        #[cfg(debug_assertions)]
+                        {
+                            check_translations = None;
+                        }
+                    } else {
+                        exprpath_not_supported!(exprpath, k);
+                    }
+                }
             } else if k == "sync_html_tag_lang" {
                 if let Some(err) = parse_litbool_or_expr_param(
                     &fields,
