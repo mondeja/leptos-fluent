@@ -227,14 +227,18 @@ pub fn leptos_fluent(
     #[cfg(all(feature = "system", not(feature = "ssr")))]
     let initial_language_from_system_quote = {
         let initial_language_from_system_to_data_file_quote = {
+            let effect_quote = quote! {
+                ::leptos_fluent::data_file::set(
+                    #data_file_key,
+                    &l.id.to_string(),
+                );
+            };
+
             let quote = match initial_language_from_system_to_data_file_bool {
                 Some(ref lit) => match lit.value {
                     true => quote! {
                        if lang.is_none() && !#data_file_key.is_empty() {
-                           ::leptos_fluent::data_file::set(
-                               #data_file_key,
-                               &l.id.to_string(),
-                           );
+                           #effect_quote
                        }
                     },
                     false => quote! {},
@@ -242,10 +246,7 @@ pub fn leptos_fluent(
                 None => match initial_language_from_system_to_data_file_expr {
                     Some(ref expr) => quote! {
                         if lang.is_none() && #expr && !#data_file_key.is_empty() {
-                            ::leptos_fluent::data_file::set(
-                                #data_file_key,
-                                &l.id.to_string(),
-                            );
+                            #effect_quote
                         }
                     },
                     None => quote! {},
