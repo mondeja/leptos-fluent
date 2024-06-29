@@ -1607,6 +1607,11 @@ pub fn leptos_fluent(
                 initial_language_from_navigator_to_cookie_bool,
                 initial_language_from_navigator_to_cookie_expr,
             );
+            let initial_language_from_navigator_to_server_function_quote =
+                match initial_language_from_navigator_to_server_function {
+                    Some(_) => quote! { true },
+                    None => quote! { false },
+                };
             let initial_language_from_accept_language_header_quote = bool_param(
                 initial_language_from_accept_language_header_bool,
                 initial_language_from_accept_language_header_expr,
@@ -1703,6 +1708,7 @@ pub fn leptos_fluent(
                     initial_language_from_navigator: #initial_language_from_navigator_quote,
                     initial_language_from_navigator_to_localstorage: #initial_language_from_navigator_to_localstorage_quote,
                     initial_language_from_navigator_to_cookie: #initial_language_from_navigator_to_cookie_quote,
+                    initial_language_from_navigator_to_server_function: #initial_language_from_navigator_to_server_function_quote,
                     initial_language_from_accept_language_header: #initial_language_from_accept_language_header_quote,
                     cookie_name: #cookie_name_quote,
                     cookie_attrs: #cookie_attrs_quote,
