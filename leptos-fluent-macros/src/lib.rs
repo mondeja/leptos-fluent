@@ -726,16 +726,12 @@ pub fn leptos_fluent(
 
             let quote = match initial_language_from_url_param_to_cookie_bool {
                 Some(ref lit) => match lit.value {
-                    true => quote! {
-                        if lang.is_none() {
-                            #effect_quote
-                        }
-                    },
+                    true => effect_quote,
                     false => quote! {},
                 },
                 None => match initial_language_from_url_param_to_cookie_expr {
                     Some(ref expr) => quote! {
-                        if #expr && lang.is_none() {
+                        if #expr {
                             #effect_quote
                         }
                     },
