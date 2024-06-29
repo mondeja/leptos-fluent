@@ -761,6 +761,7 @@ pub struct LeptosFluentMeta {
     pub set_language_to_cookie: bool,
     pub initial_language_from_server_function: bool, // *
     pub initial_language_from_server_function_to_cookie: bool,
+    pub initial_language_from_server_function_to_localstorage: bool,
     pub set_language_to_server_function: bool, // *
     #[cfg(feature = "system")]
     pub initial_language_from_system: bool,

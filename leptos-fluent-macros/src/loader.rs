@@ -299,6 +299,12 @@ pub(crate) struct I18nLoader {
     pub initial_language_from_server_function_to_cookie_expr: Option<syn::Expr>,
     pub initial_language_from_server_function_to_cookie_exprpath:
         Option<proc_macro2::TokenStream>,
+    pub initial_language_from_server_function_to_localstorage_bool:
+        Option<syn::LitBool>,
+    pub initial_language_from_server_function_to_localstorage_expr:
+        Option<syn::Expr>,
+    pub initial_language_from_server_function_to_localstorage_exprpath:
+        Option<proc_macro2::TokenStream>,
     pub set_language_to_server_function: Option<syn::Ident>,
     pub set_language_to_server_function_exprpath:
         Option<proc_macro2::TokenStream>,
@@ -497,6 +503,12 @@ impl Parse for I18nLoader {
             syn::Expr,
         > = None;
         let mut initial_language_from_server_function_to_cookie_exprpath: Option<proc_macro2::TokenStream> =
+            None;
+        let mut initial_language_from_server_function_to_localstorage_bool:
+            Option<syn::LitBool> = None;
+        let mut initial_language_from_server_function_to_localstorage_expr:
+            Option<syn::Expr> = None;
+        let mut initial_language_from_server_function_to_localstorage_exprpath: Option<proc_macro2::TokenStream> =
             None;
         let mut set_language_to_server_function: Option<syn::Ident> = None;
         let mut set_language_to_server_function_exprpath: Option<
@@ -911,6 +923,21 @@ impl Parse for I18nLoader {
                 }
                 if exprpath.is_some() {
                     initial_language_from_server_function_to_cookie_exprpath
+                        .clone_from(&exprpath);
+                }
+            } else if k
+                == "initial_language_from_server_function_to_localstorage"
+            {
+                if let Some(err) = parse_litbool_or_expr_param(
+                    &fields,
+                    &mut initial_language_from_server_function_to_localstorage_bool,
+                    &mut initial_language_from_server_function_to_localstorage_expr,
+                    "initial_language_from_server_function_to_localstorage",
+                ) {
+                    return Err(err);
+                }
+                if exprpath.is_some() {
+                    initial_language_from_server_function_to_localstorage_exprpath
                         .clone_from(&exprpath);
                 }
             } else if k == "set_language_to_server_function" {
@@ -1328,6 +1355,9 @@ impl Parse for I18nLoader {
             initial_language_from_server_function_to_cookie_bool,
             initial_language_from_server_function_to_cookie_expr,
             initial_language_from_server_function_to_cookie_exprpath,
+            initial_language_from_server_function_to_localstorage_bool,
+            initial_language_from_server_function_to_localstorage_expr,
+            initial_language_from_server_function_to_localstorage_exprpath,
             set_language_to_server_function,
             set_language_to_server_function_exprpath,
             #[cfg(feature = "system")]
