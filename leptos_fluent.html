@@ -239,10 +239,6 @@ locale. It is used in the root component of the application.</p>
 <li><a href="#system--set_language_to_data_file">system | <code>set_language_to_data_file</code></a></li>
 <li><a href="#system--data_file_key-leptos-fluent">system | <code>data_file_key: </code>"leptos-fluent"</a></li>
 <li><a href="#provide_meta_context"><code>provide_meta_context</code></a></li>
-</ul>
-</li>
-<li><a href="#unreleased">Unreleased</a>
-<ul>
 <li><a href="#initial_language_from_server_function"><code>initial_language_from_server_function</code></a></li>
 <li><a href="#set_language_to_server_function"><code>set_language_to_server_function</code></a></li>
 <li><a href="#initial_language_from_localstorage_to_server_function"><code>initial_language_from_localstorage_to_server_function</code></a></li>
@@ -250,6 +246,7 @@ locale. It is used in the root component of the application.</p>
 <li><a href="#initial_language_from_navigator_to_server_function"><code>initial_language_from_navigator_to_server_function</code></a></li>
 <li><a href="#initial_language_from_url_param_to_server_function"><code>initial_language_from_url_param_to_server_function</code></a></li>
 <li><a href="#initial_language_from_server_function_to_cookie"><code>initial_language_from_server_function_to_cookie</code></a></li>
+<li><a href="#initial_language_from_server_function_to_localstorage"><code>initial_language_from_server_function_to_localstorage</code></a></li>
 </ul>
 </li>
 </ul>
@@ -778,7 +775,6 @@ Get it using <code>I18n::meta</code>:</p>
 
 println!("Macro parameters: {:?}", i18n.meta().unwrap());
 <span class="boring">}</span></code></pre></pre>
-<h2 id="unreleased"><a class="header" href="#unreleased">Unreleased</a></h2>
 <h3 id="initial_language_from_server_function"><a class="header" href="#initial_language_from_server_function"><code>initial_language_from_server_function</code></a></h3>
 <p>Get the initial language from a <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a>.</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
@@ -902,6 +898,16 @@ pub async fn set_language_server_function(
 </span>leptos_fluent! {{
     // ...
     initial_language_from_server_function_to_cookie: true,
+}}
+<span class="boring">}</span></code></pre></pre>
+<h3 id="initial_language_from_server_function_to_localstorage"><a class="header" href="#initial_language_from_server_function_to_localstorage"><code>initial_language_from_server_function_to_localstorage</code></a></h3>
+<p>Get the initial language from a <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a> and set it to
+<a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">local storage</a>.</p>
+<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>leptos_fluent! {{
+    // ...
+    initial_language_from_server_function_to_localstorage: true,
 }}
 <span class="boring">}</span></code></pre></pre>
 
