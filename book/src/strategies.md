@@ -48,11 +48,14 @@ When the user changes the language and `I18n::language.set` is called, the
 framework can perform a side effect to update the language in the client. The
 following strategies are available:
 
-| Strategy                | [`leptos_fluent!`]             |
-| :---------------------- | :----------------------------- |
-| [URL parameter]         | `set_language_to_url_param`    |
-| [Cookie]                | `set_language_to_cookie`       |
-| Browser [local storage] | `set_language_to_localstorage` |
+| Strategy                | [`leptos_fluent!`]                |
+| :---------------------- | :-------------------------------- |
+| [URL parameter]         | `set_language_to_url_param`       |
+| [Cookie]                | `set_language_to_cookie`          |
+| Browser [local storage] | `set_language_to_localstorage`    |
+| [Server function]\*     | `set_language_to_server_function` |
+
+<sub style="position: relative; left: 110px"><sup>\*Unreleased</sup></sub>
 
 ### <a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Desktop applications
 
@@ -66,14 +69,19 @@ When a language is loaded from initialization, the framework can perform a side
 effect to persistently storage the language in the client. The following strategies
 are available:
 
-| Strategy                                   | [`leptos_fluent!`]                                |
-| :----------------------------------------- | :------------------------------------------------ |
-| [URL parameter] to [local storage]         | `initial_language_from_url_param_to_localstorage` |
-| [URL parameter] to [cookie]                | `initial_language_from_url_param_to_cookie`       |
-| [Cookie] to [local storage]                | `initial_language_from_cookie_to_localstorage`    |
-| [Local storage] to [cookie]                | `initial_language_from_localstorage_to_cookie`    |
-| [`navigator.languages`] to [local storage] | `initial_language_from_navigator_to_localstorage` |
-| [`navigator.languages`] to [cookie]        | `initial_language_from_navigator_to_cookie`       |
+| Strategy                                       | [`leptos_fluent!`]                                      |
+| :--------------------------------------------- | :------------------------------------------------------ |
+| [URL parameter] to [local storage]             | `initial_language_from_url_param_to_localstorage`       |
+| [URL parameter] to [cookie]                    | `initial_language_from_url_param_to_cookie`             |
+| [Cookie] to [local storage]                    | `initial_language_from_cookie_to_localstorage`          |
+| [Cookie] to [server function]\*                | `initial_language_from_cookie_to_server_function`       |
+| [Local storage] to [cookie]                    | `initial_language_from_localstorage_to_cookie`          |
+| [Local storage] to [server function]\*         | `initial_language_from_localstorage_to_server_function` |
+| [`navigator.languages`] to [local storage]     | `initial_language_from_navigator_to_localstorage`       |
+| [`navigator.languages`] to [cookie]            | `initial_language_from_navigator_to_cookie`             |
+| [`navigator.languages`] to [server function]\* | `initial_language_from_navigator_to_server_function`    |
+
+<sub style="position: relative; left: 110px"><sup>\*Unreleased</sup></sub>
 
 ### <a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Desktop applications
 
