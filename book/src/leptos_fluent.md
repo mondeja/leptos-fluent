@@ -619,6 +619,135 @@ let i18n = leptos_fluent! {{
 println!("Macro parameters: {:?}", i18n.meta().unwrap());
 ```
 
+## Unreleased
+
+### `initial_language_from_server_function`
+
+Get the initial language from a server function.
+
+```rust
+leptos_fluent! {{
+    // ...
+    initial_language_from_server_function: initial_language_server_function,
+}}
+
+/// Server function to set the initial language
+#[server(InitialLanguage, "/api")]
+pub async fn initial_language_server_function(
+) -> Result<Option<String>, ServerFnError> {
+    // .. replace with your own logic
+    Ok(Some("es".to_string()))
+}
+```
+
+This parameter type is not like the `initial_language_from_*` parameters, it
+takes an identifier to the server function that will be called to get the
+initial language.
+
+The function must return a `Result<Option<String>, ServerFnError>`.
+
+### `set_language_to_server_function`
+
+Set the current language to a server function.
+
+```rust
+leptos_fluent! {{
+    // ...
+    set_language_to_server_function: set_language_server_function,
+}}
+
+/// Server function to update the current language
+#[server(SetLanguage, "/api")]
+pub async fn set_language_server_function(
+    _language: String,
+) -> Result<(), ServerFnError> {
+    // .. replace with your own logic
+    Ok(())
+}
+```
+
+This parameter type is not like the `set_language_to_*` parameters, it
+takes an identifier to the server function that will be called to update
+the current language.
+
+The function must return a `Result<(), ServerFnError>`.
+
+### `initial_language_from_localstorage_to_server_function`
+
+Get the initial language from [local storage] and set it to a server function.
+
+```rust
+leptos_fluent! {{
+    // ...
+    initial_language_from_localstorage_to_server_function: set_language_server_function,
+}}
+
+#[server(SetLanguage, "/api")]
+pub async fn set_language_server_function(
+    _language: String,
+) -> Result<(), ServerFnError> {
+    // .. replace with your own logic
+    Ok(())
+}
+```
+
+### `initial_language_from_cookie_to_server_function`
+
+Get the initial language from a [cookie] and set it to a server function.
+
+```rust
+leptos_fluent! {{
+    // ...
+    initial_language_from_cookie_to_server_function: set_language_server_function,
+}}
+
+#[server(SetLanguage, "/api")]
+pub async fn set_language_server_function(
+    _language: String,
+) -> Result<(), ServerFnError> {
+    // .. replace with your own logic
+    Ok(())
+}
+```
+
+### `initial_language_from_navigator_to_server_function`
+
+Get the initial language from [`navigator.languages`] and set it to a server function.
+
+```rust
+leptos_fluent! {{
+    // ...
+    initial_language_from_navigator_to_server_function: set_language_server_function,
+}}
+
+#[server(SetLanguage, "/api")]
+pub async fn set_language_server_function(
+    _language: String,
+) -> Result<(), ServerFnError> {
+    // .. replace with your own logic
+    Ok(())
+}
+```
+
+### `initial_language_from_url_param_to_server_function`
+
+Get the initial language from a [URL parameter] and set it to a server function.
+
+```rust
+leptos_fluent! {{
+    // ...
+    initial_language_from_url_param_to_server_function: set_language_server_function,
+}}
+
+#[server(SetLanguage, "/api")]
+pub async fn set_language_server_function(
+    _language: String,
+) -> Result<(), ServerFnError> {
+    // .. replace with your own logic
+    Ok(())
+}
+```
+
 [`fluent_templates::static_loader!`]: https://docs.rs/fluent-templates/latest/fluent_templates/macro.static_loader.html
 [`once_cell:sync::Lazy`]: https://docs.rs/once_cell/latest/once_cell/sync/struct.Lazy.html
 [`<html lang="...">` attribute]: https://developer.mozilla.org/es/docs/Web/HTML/Global_attributes/lang
