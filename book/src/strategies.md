@@ -82,7 +82,7 @@ are available:
 
 <sub style="position: relative; left: 110px"><sup>\*Unreleased</sup></sub>
 
-### <span style="opacity:.5">CSR + SSR </span>
+### <span style="opacity:.5">CSR + SSR</span>
 
 | Strategy                               | [`leptos_fluent!`]                                   |
 | :------------------------------------- | :--------------------------------------------------- |
