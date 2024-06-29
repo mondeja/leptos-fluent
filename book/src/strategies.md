@@ -89,6 +89,7 @@ are available:
 | :------------------------------------- | :--------------------------------------------------- |
 | [URL parameter] to [server function]\* | `initial_language_from_url_param_to_server_function` |
 | [Cookie] to [server function]\*        | `initial_language_from_cookie_to_server_function`    |
+| [Server function] to [cookie]\*        | `initial_language_from_server_function_to_cookie`    |
 
 <sub style="position: relative; left: 110px"><sup>\*Unreleased</sup></sub>
 
