@@ -286,7 +286,6 @@ jobs:
       - end2end-tests
       - build-example
       - build-book
-      - check-toolchain-is-stable
     if: |
       '${{ github.event.pull_request.user.login }}' == 'mondeja' ||
       startsWith(github.ref, 'refs/tags/') ||
