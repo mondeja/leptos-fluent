@@ -1,4 +1,4 @@
-error: Missing `translations` field
+error: Missing `translations` parameter
  --> tests/ui/leptos_fluent/failing/empty.rs:6:5
   |
 6 | /     leptos_fluent! {{

@@ -992,7 +992,7 @@ impl Parse for I18nLoader {
 
         // translations
         let translations = translations.ok_or_else(|| {
-            syn::Error::new(input.span(), "Missing `translations` field")
+            syn::Error::new(input.span(), "Missing `translations` parameter")
         })?;
 
         // languages
