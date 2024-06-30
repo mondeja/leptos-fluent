@@ -4,7 +4,7 @@
 
 ### Enhancements
 
-- Stop depending on `wasm_bindgen` from `leptos-fluent` crate.
+- Stop depending on `wasm-bindgen` from `leptos-fluent` crate.
 
 ## 2024-06-29 - [0.1.7]
 
