@@ -1,7 +1,7 @@
 use std::fs;
 use std::path::PathBuf;
 
-type BuiltLanguagesFileLanguage = (String, String, String, Option<String>);
+pub(crate) type ParsedLanguage = (String, String, String, Option<String>);
 
 #[cfg(any(feature = "json", feature = "yaml", feature = "json5"))]
 #[derive(serde::Deserialize)]
@@ -15,7 +15,7 @@ enum RawLanguagesFileLanguage {
 #[cfg(any(feature = "json", feature = "yaml", feature = "json5"))]
 fn fill_languages_file(
     languages: &[RawLanguagesFileLanguage],
-) -> Vec<(String, String, String, Option<String>)> {
+) -> Vec<ParsedLanguage> {
     let mut locales = vec![];
     for tuple in languages {
         match tuple {
@@ -69,7 +69,7 @@ fn fill_languages_file(
 
 pub(crate) fn read_languages_file(
     path: &PathBuf,
-) -> Result<Vec<BuiltLanguagesFileLanguage>, String> {
+) -> Result<Vec<ParsedLanguage>, String> {
     #[cfg(feature = "json")]
     {
         let file_extension = path.extension().unwrap_or_default();
@@ -191,7 +191,9 @@ pub(crate) fn read_languages_file(
 
 pub(crate) fn read_locales_folder(
     path: &PathBuf,
-) -> Vec<(String, String, String, Option<String>)> {
+) -> (Vec<ParsedLanguage>, Vec<String>) {
+    let mut errors = vec![];
+
     let mut iso639_language_codes = vec![];
     let mut entries = vec![];
     for entry in fs::read_dir(path).expect("Couldn't read locales folder") {
@@ -222,6 +224,16 @@ pub(crate) fn read_locales_folder(
             > 1;
         let lang_name =
             language_name_from_language_code(&lang_code, use_country_code);
+        if lang_name.is_empty() {
+            errors.push(format!(
+                concat!(
+                    "Couldn't find language name for code \"{}\". Provide it",
+                    " from a languages file (see `languages` parameter).",
+                ),
+                lang_code,
+            ));
+            continue;
+        }
         let lang_dir = iso639_to_dir(&iso639_code);
         let flag = match code_to_country_code(&lang_code) {
             Some(country_code) => country_code_to_emoji_flag(&country_code),
@@ -235,11 +247,11 @@ pub(crate) fn read_locales_folder(
         ));
     }
     locales.sort_by(|a, b| a.1.cmp(&b.1));
-    locales
+    (locales, errors)
 }
 
 pub(crate) fn build_languages_quote(
-    languages: &[(String, String, String, Option<String>)],
+    languages: &[ParsedLanguage],
 ) -> proc_macro2::TokenStream {
     format!(
         "[{}]",
@@ -1950,7 +1962,7 @@ fn language_name_from_language_code(
         "za" => "Saɯ cueŋƅ",
         "zh" => "中文",
         "zu" => "isiZulu",
-        _ => panic!("Language name for language code '{code}' not found",),
+        _ => "",
     }
 }
 

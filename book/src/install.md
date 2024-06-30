@@ -89,13 +89,15 @@ By default, **leptos-fluent** supports JSON languages files. To use other
 formats to load custom languages, the `json5` or `yaml` features can be
 enabled:
 
+<!-- markdownlint-disable MD013 -->
+
 ```toml
 [dependencies]
 fluent-templates = "0.9"
-leptos-fluent = {
-  version = "0.1", features = ["json5"], default-features = false
-}
+leptos-fluent = { version = "0.1", features = ["json5"], default-features = false }
 ```
+
+<!-- markdownlint-enable MD013 -->
 
 ```admonish tip
 See [**4. Languages**](https://mondeja.github.io/leptos-fluent/languages.html).
@@ -113,5 +115,25 @@ See [**4. Languages**](https://mondeja.github.io/leptos-fluent/languages.html).
 - **YAML languages file**: `yaml`
 - **JSON5 languages file**: `json5`
 
+## Tracking locales files with [`cargo leptos`]
+
+Using [`cargo leptos`] watch of the _locales/_ folder for reloads:
+
+```toml
+# Relative to Cargo.toml file
+[package.metadata.leptos]
+watch-additional-files = ["locales"]
+```
+
+When inside a workspace, use the full path to the folder from the
+workspace _Cargo.toml_ file:
+
+```toml
+ # Relative to workspace Cargo.toml file
+[package.metadata.leptos]
+watch-additional-files = ["examples/csr/locales"]
+```
+
 [`fluent-templates`]: https://github.com/XAMPPRocky/fluent-templates
 [`leptos_fluent!`]: https://mondeja.github.io/leptos-fluent/leptos_fluent.html
+[`cargo leptos`]: https://github.com/leptos-rs/cargo-leptos

@@ -25,6 +25,7 @@ pub(crate) use fluent_resources::{
     build_fluent_resources_and_file_paths, FluentFilePaths,
 };
 use languages::build_languages_quote;
+pub(crate) use languages::ParsedLanguage;
 use loader::I18nLoader;
 use quote::quote;
 
@@ -92,7 +93,6 @@ pub fn leptos_fluent(
         core_locales_path,
         check_translations,
         provide_meta_context,
-        provide_meta_context_exprpath,
         sync_html_tag_lang,
         sync_html_tag_dir,
         initial_language_from_url_param,
@@ -355,7 +355,7 @@ pub fn leptos_fluent(
     #[cfg(all(feature = "system", not(feature = "ssr")))]
     let initial_language_from_data_file_quote = {
         let initial_language_from_data_file_quote = {
-            let quote = match initial_language_from_data_file.lit {
+            match initial_language_from_data_file.lit {
                 Some(ref lit) => match lit.value() {
                     true => quote! { #data_file_key_quote },
                     false => quote! { "" },
@@ -370,11 +370,6 @@ pub fn leptos_fluent(
                     },
                     None => quote! { "" },
                 },
-            };
-
-            match initial_language_from_data_file.exprpath {
-                Some(ref path) => quote! { #path{#quote} },
-                None => quote,
             }
         };
 
@@ -392,7 +387,7 @@ pub fn leptos_fluent(
             }
         };
 
-        match initial_language_from_data_file.lit {
+        let quote = match initial_language_from_data_file.lit {
             Some(ref lit) => match lit.value() {
                 true => quote! {
                     if lang.is_none() {
@@ -409,6 +404,11 @@ pub fn leptos_fluent(
                 },
                 None => quote! {},
             },
+        };
+
+        match initial_language_from_data_file.exprpath {
+            Some(ref path) => quote! { #path{#quote} },
+            None => quote,
         }
     };
 
@@ -1547,254 +1547,277 @@ pub fn leptos_fluent(
         }}
     };
 
-    let leptos_fluent_provide_meta_context_quote = match provide_meta_context {
-        true => {
-            let bool_param = |boolean: Option<syn::LitBool>,
-                              expr: Option<syn::Expr>|
-             -> proc_macro2::TokenStream {
-                match boolean {
-                    Some(ref lit) => quote! { #lit },
-                    None => match expr {
-                        Some(ref expr) => quote! { #expr },
-                        None => quote! { false },
-                    },
-                }
-            };
-
-            let maybe_litstr_param =
-                |lit: Option<String>| -> proc_macro2::TokenStream {
-                    match lit {
-                        Some(ref lit) => quote! { #lit },
-                        None => quote! { None },
-                    }
-                };
-
-            let maybe_some_litstr_param =
-                |lit: Option<String>| -> proc_macro2::TokenStream {
-                    match lit {
-                        Some(ref lit) => quote! { Some(#lit) },
-                        None => quote! { None },
-                    }
-                };
-
-            let litstr_or_default = |lit: Option<syn::LitStr>,
-                                     expr: Option<syn::Expr>,
-                                     default: &str|
-             -> proc_macro2::TokenStream {
-                match lit {
-                    Some(ref lit) => quote! { #lit },
-                    None => match expr {
-                        Some(ref expr) => quote! { #expr },
-                        None => quote! { #default },
-                    },
-                }
-            };
-
-            let core_locales_quote = maybe_litstr_param(core_locales_path);
-            let languages_quote = maybe_some_litstr_param(raw_languages_path);
-            let check_translations_quote =
-                maybe_some_litstr_param(check_translations);
-            let sync_html_tag_lang_quote =
-                bool_param(sync_html_tag_lang.lit, sync_html_tag_lang.expr);
-            let sync_html_tag_dir_quote =
-                bool_param(sync_html_tag_dir.lit, sync_html_tag_dir.expr);
-            let url_param_quote =
-                litstr_or_default(url_param.lit, url_param.expr, "lang");
-            let initial_language_from_url_param_quote = bool_param(
-                initial_language_from_url_param.lit,
-                initial_language_from_url_param.expr,
-            );
-            let initial_language_from_url_param_to_localstorage = bool_param(
-                initial_language_from_url_param_to_localstorage.lit,
-                initial_language_from_url_param_to_localstorage.expr,
-            );
-            let initial_language_from_url_param_to_cookie_quote = bool_param(
-                initial_language_from_url_param_to_cookie.lit,
-                initial_language_from_url_param_to_cookie.expr,
-            );
-            let initial_language_from_url_param_to_server_function_quote =
-                match initial_language_from_url_param_to_server_function.ident {
-                    Some(_) => quote! { true },
-                    None => quote! { false },
-                };
-            let set_language_to_url_param_quote = bool_param(
-                set_language_to_url_param.lit,
-                set_language_to_url_param.expr,
-            );
-            let localstorage_key_quote = litstr_or_default(
-                localstorage_key.lit,
-                localstorage_key.expr,
-                "lang",
-            );
-            let initial_language_from_localstorage_quote = bool_param(
-                initial_language_from_localstorage.lit,
-                initial_language_from_localstorage.expr,
-            );
-            let initial_language_from_localstorage_to_cookie_quote = bool_param(
-                initial_language_from_localstorage_to_cookie.lit,
-                initial_language_from_localstorage_to_cookie.expr,
-            );
-            let initial_language_from_localstorage_to_server_function_quote =
-                match initial_language_from_localstorage_to_server_function
-                    .ident
-                {
-                    Some(_) => quote! { true },
-                    None => quote! { false },
-                };
-            let set_language_to_localstorage_quote = bool_param(
-                set_language_to_localstorage.lit,
-                set_language_to_localstorage.expr,
-            );
-            let initial_language_from_navigator_quote = bool_param(
-                initial_language_from_navigator.lit,
-                initial_language_from_navigator.expr,
-            );
-            let initial_language_from_navigator_to_localstorage_quote =
-                bool_param(
-                    initial_language_from_navigator_to_localstorage.lit,
-                    initial_language_from_navigator_to_localstorage.expr,
-                );
-            let initial_language_from_navigator_to_cookie_quote = bool_param(
-                initial_language_from_navigator_to_cookie.lit,
-                initial_language_from_navigator_to_cookie.expr,
-            );
-            let initial_language_from_navigator_to_server_function_quote =
-                match initial_language_from_navigator_to_server_function.ident {
-                    Some(_) => quote! { true },
-                    None => quote! { false },
-                };
-            let initial_language_from_accept_language_header_quote = bool_param(
-                initial_language_from_accept_language_header.lit,
-                initial_language_from_accept_language_header.expr,
-            );
-            let cookie_name_quote =
-                litstr_or_default(cookie_name.lit, cookie_name.expr, "lf-lang");
-            let cookie_attrs_quote =
-                litstr_or_default(cookie_attrs.lit, cookie_attrs.expr, "");
-            let initial_language_from_cookie_quote = bool_param(
-                initial_language_from_cookie.lit,
-                initial_language_from_cookie.expr,
-            );
-            let initial_language_from_cookie_to_localstorage_quote = bool_param(
-                initial_language_from_cookie_to_localstorage.lit,
-                initial_language_from_cookie_to_localstorage.expr,
-            );
-            let initial_language_from_cookie_to_server_function_quote =
-                match initial_language_from_cookie_to_server_function.ident {
-                    Some(_) => quote! { true },
-                    None => quote! { false },
-                };
-            let set_language_to_cookie_quote = bool_param(
-                set_language_to_cookie.lit,
-                set_language_to_cookie.expr,
-            );
-            let initial_language_from_server_function_quote =
-                match initial_language_from_server_function.ident {
-                    Some(_) => quote! { true },
-                    None => quote! { false },
-                };
-            let initial_language_from_server_function_to_cookie_quote =
-                bool_param(
-                    initial_language_from_server_function_to_cookie.lit,
-                    initial_language_from_server_function_to_cookie.expr,
-                );
-            let initial_language_from_server_function_to_localstorage_quote =
-                bool_param(
-                    initial_language_from_server_function_to_localstorage.lit,
-                    initial_language_from_server_function_to_localstorage.expr,
-                );
-            let set_language_to_server_function_quote =
-                match set_language_to_server_function.ident {
-                    Some(_) => quote! { true },
-                    None => quote! { false },
-                };
-
-            let system_quote = {
-                #[cfg(not(feature = "system"))]
-                quote! {}
-
-                #[cfg(feature = "system")]
-                {
-                    let initial_language_from_system_quote = bool_param(
-                        initial_language_from_system.lit,
-                        initial_language_from_system.expr,
-                    );
-                    let initial_language_from_data_file_quote = bool_param(
-                        initial_language_from_data_file.lit,
-                        initial_language_from_data_file.expr,
-                    );
-                    let initial_language_from_system_to_data_file_quote =
-                        bool_param(
-                            initial_language_from_system_to_data_file.lit,
-                            initial_language_from_system_to_data_file.expr,
-                        );
-                    let set_language_to_data_file_quote = bool_param(
-                        set_language_to_data_file.lit,
-                        set_language_to_data_file.expr,
-                    );
-                    let data_file_key_quote = litstr_or_default(
-                        data_file_key.lit,
-                        data_file_key.expr,
-                        "leptos-fluent",
-                    );
-
-                    quote! {
-                        initial_language_from_system: #initial_language_from_system_quote,
-                        initial_language_from_data_file: #initial_language_from_data_file_quote,
-                        initial_language_from_system_to_data_file: #initial_language_from_system_to_data_file_quote,
-                        set_language_to_data_file: #set_language_to_data_file_quote,
-                        data_file_key: #data_file_key_quote,
-                    }
-                }
-            };
-
-            let quote = quote! {
-                const meta: ::leptos_fluent::LeptosFluentMeta = ::leptos_fluent::LeptosFluentMeta {
-                    locales: #locales_path,
-                    core_locales: #core_locales_quote,
-                    languages: #languages_quote,
-                    check_translations: #check_translations_quote,
-                    sync_html_tag_lang: #sync_html_tag_lang_quote,
-                    sync_html_tag_dir: #sync_html_tag_dir_quote,
-                    url_param: #url_param_quote,
-                    initial_language_from_url_param: #initial_language_from_url_param_quote,
-                    initial_language_from_url_param_to_localstorage: #initial_language_from_url_param_to_localstorage,
-                    initial_language_from_url_param_to_cookie: #initial_language_from_url_param_to_cookie_quote,
-                    initial_language_from_url_param_to_server_function: #initial_language_from_url_param_to_server_function_quote,
-                    set_language_to_url_param: #set_language_to_url_param_quote,
-                    localstorage_key: #localstorage_key_quote,
-                    initial_language_from_localstorage: #initial_language_from_localstorage_quote,
-                    initial_language_from_localstorage_to_cookie: #initial_language_from_localstorage_to_cookie_quote,
-                    initial_language_from_localstorage_to_server_function: #initial_language_from_localstorage_to_server_function_quote,
-                    set_language_to_localstorage: #set_language_to_localstorage_quote,
-                    initial_language_from_navigator: #initial_language_from_navigator_quote,
-                    initial_language_from_navigator_to_localstorage: #initial_language_from_navigator_to_localstorage_quote,
-                    initial_language_from_navigator_to_cookie: #initial_language_from_navigator_to_cookie_quote,
-                    initial_language_from_navigator_to_server_function: #initial_language_from_navigator_to_server_function_quote,
-                    initial_language_from_accept_language_header: #initial_language_from_accept_language_header_quote,
-                    cookie_name: #cookie_name_quote,
-                    cookie_attrs: #cookie_attrs_quote,
-                    initial_language_from_cookie: #initial_language_from_cookie_quote,
-                    initial_language_from_cookie_to_localstorage: #initial_language_from_cookie_to_localstorage_quote,
-                    initial_language_from_cookie_to_server_function: #initial_language_from_cookie_to_server_function_quote,
-                    set_language_to_cookie: #set_language_to_cookie_quote,
-                    initial_language_from_server_function: #initial_language_from_server_function_quote,
-                    initial_language_from_server_function_to_cookie: #initial_language_from_server_function_to_cookie_quote,
-                    initial_language_from_server_function_to_localstorage: #initial_language_from_server_function_to_localstorage_quote,
-                    set_language_to_server_function: #set_language_to_server_function_quote,
-                    provide_meta_context: true,
-                    #system_quote
-                };
-                ::leptos::provide_context::<::leptos_fluent::LeptosFluentMeta>(meta);
-            };
-
-            match provide_meta_context_exprpath {
-                Some(ref path) => quote! { #path{#quote}; },
-                None => quote,
-            }
-        }
-        false => quote! {},
+    let provide_meta_context_value = match provide_meta_context.lit {
+        Some(ref lit) => lit.value(),
+        None => false,
     };
+    let leptos_fluent_provide_meta_context_quote =
+        match provide_meta_context_value {
+            true => {
+                let bool_param = |boolean: Option<syn::LitBool>,
+                                  expr: Option<syn::Expr>|
+                 -> proc_macro2::TokenStream {
+                    match boolean {
+                        Some(ref lit) => quote! { #lit },
+                        None => match expr {
+                            Some(ref expr) => quote! { #expr },
+                            None => quote! { false },
+                        },
+                    }
+                };
+
+                let maybe_litstr_param =
+                    |lit: Option<String>| -> proc_macro2::TokenStream {
+                        match lit {
+                            Some(ref lit) => quote! { #lit },
+                            None => quote! { None },
+                        }
+                    };
+
+                let maybe_some_litstr_param =
+                    |lit: Option<String>| -> proc_macro2::TokenStream {
+                        match lit {
+                            Some(ref lit) => quote! { Some(#lit) },
+                            None => quote! { None },
+                        }
+                    };
+
+                let litstr_or_default =
+                    |lit: Option<syn::LitStr>,
+                     expr: Option<syn::Expr>,
+                     default: &str|
+                     -> proc_macro2::TokenStream {
+                        match lit {
+                            Some(ref lit) => quote! { #lit },
+                            None => match expr {
+                                Some(ref expr) => quote! { #expr },
+                                None => quote! { #default },
+                            },
+                        }
+                    };
+
+                let core_locales_quote = maybe_litstr_param(core_locales_path);
+                let languages_quote =
+                    maybe_some_litstr_param(raw_languages_path);
+                let check_translations_quote =
+                    maybe_some_litstr_param(check_translations);
+                let sync_html_tag_lang_quote =
+                    bool_param(sync_html_tag_lang.lit, sync_html_tag_lang.expr);
+                let sync_html_tag_dir_quote =
+                    bool_param(sync_html_tag_dir.lit, sync_html_tag_dir.expr);
+                let url_param_quote =
+                    litstr_or_default(url_param.lit, url_param.expr, "lang");
+                let initial_language_from_url_param_quote = bool_param(
+                    initial_language_from_url_param.lit,
+                    initial_language_from_url_param.expr,
+                );
+                let initial_language_from_url_param_to_localstorage =
+                    bool_param(
+                        initial_language_from_url_param_to_localstorage.lit,
+                        initial_language_from_url_param_to_localstorage.expr,
+                    );
+                let initial_language_from_url_param_to_cookie_quote =
+                    bool_param(
+                        initial_language_from_url_param_to_cookie.lit,
+                        initial_language_from_url_param_to_cookie.expr,
+                    );
+                let initial_language_from_url_param_to_server_function_quote =
+                    match initial_language_from_url_param_to_server_function
+                        .ident
+                    {
+                        Some(_) => quote! { true },
+                        None => quote! { false },
+                    };
+                let set_language_to_url_param_quote = bool_param(
+                    set_language_to_url_param.lit,
+                    set_language_to_url_param.expr,
+                );
+                let localstorage_key_quote = litstr_or_default(
+                    localstorage_key.lit,
+                    localstorage_key.expr,
+                    "lang",
+                );
+                let initial_language_from_localstorage_quote = bool_param(
+                    initial_language_from_localstorage.lit,
+                    initial_language_from_localstorage.expr,
+                );
+                let initial_language_from_localstorage_to_cookie_quote =
+                    bool_param(
+                        initial_language_from_localstorage_to_cookie.lit,
+                        initial_language_from_localstorage_to_cookie.expr,
+                    );
+                let initial_language_from_localstorage_to_server_function_quote =
+                    match initial_language_from_localstorage_to_server_function
+                        .ident
+                    {
+                        Some(_) => quote! { true },
+                        None => quote! { false },
+                    };
+                let set_language_to_localstorage_quote = bool_param(
+                    set_language_to_localstorage.lit,
+                    set_language_to_localstorage.expr,
+                );
+                let initial_language_from_navigator_quote = bool_param(
+                    initial_language_from_navigator.lit,
+                    initial_language_from_navigator.expr,
+                );
+                let initial_language_from_navigator_to_localstorage_quote =
+                    bool_param(
+                        initial_language_from_navigator_to_localstorage.lit,
+                        initial_language_from_navigator_to_localstorage.expr,
+                    );
+                let initial_language_from_navigator_to_cookie_quote =
+                    bool_param(
+                        initial_language_from_navigator_to_cookie.lit,
+                        initial_language_from_navigator_to_cookie.expr,
+                    );
+                let initial_language_from_navigator_to_server_function_quote =
+                    match initial_language_from_navigator_to_server_function
+                        .ident
+                    {
+                        Some(_) => quote! { true },
+                        None => quote! { false },
+                    };
+                let initial_language_from_accept_language_header_quote =
+                    bool_param(
+                        initial_language_from_accept_language_header.lit,
+                        initial_language_from_accept_language_header.expr,
+                    );
+                let cookie_name_quote = litstr_or_default(
+                    cookie_name.lit,
+                    cookie_name.expr,
+                    "lf-lang",
+                );
+                let cookie_attrs_quote =
+                    litstr_or_default(cookie_attrs.lit, cookie_attrs.expr, "");
+                let initial_language_from_cookie_quote = bool_param(
+                    initial_language_from_cookie.lit,
+                    initial_language_from_cookie.expr,
+                );
+                let initial_language_from_cookie_to_localstorage_quote =
+                    bool_param(
+                        initial_language_from_cookie_to_localstorage.lit,
+                        initial_language_from_cookie_to_localstorage.expr,
+                    );
+                let initial_language_from_cookie_to_server_function_quote =
+                    match initial_language_from_cookie_to_server_function.ident
+                    {
+                        Some(_) => quote! { true },
+                        None => quote! { false },
+                    };
+                let set_language_to_cookie_quote = bool_param(
+                    set_language_to_cookie.lit,
+                    set_language_to_cookie.expr,
+                );
+                let initial_language_from_server_function_quote =
+                    match initial_language_from_server_function.ident {
+                        Some(_) => quote! { true },
+                        None => quote! { false },
+                    };
+                let initial_language_from_server_function_to_cookie_quote =
+                    bool_param(
+                        initial_language_from_server_function_to_cookie.lit,
+                        initial_language_from_server_function_to_cookie.expr,
+                    );
+                let initial_language_from_server_function_to_localstorage_quote =
+                    bool_param(
+                        initial_language_from_server_function_to_localstorage
+                            .lit,
+                        initial_language_from_server_function_to_localstorage
+                            .expr,
+                    );
+                let set_language_to_server_function_quote =
+                    match set_language_to_server_function.ident {
+                        Some(_) => quote! { true },
+                        None => quote! { false },
+                    };
+
+                let system_quote = {
+                    #[cfg(not(feature = "system"))]
+                    quote! {}
+
+                    #[cfg(feature = "system")]
+                    {
+                        let initial_language_from_system_quote = bool_param(
+                            initial_language_from_system.lit,
+                            initial_language_from_system.expr,
+                        );
+                        let initial_language_from_data_file_quote = bool_param(
+                            initial_language_from_data_file.lit,
+                            initial_language_from_data_file.expr,
+                        );
+                        let initial_language_from_system_to_data_file_quote =
+                            bool_param(
+                                initial_language_from_system_to_data_file.lit,
+                                initial_language_from_system_to_data_file.expr,
+                            );
+                        let set_language_to_data_file_quote = bool_param(
+                            set_language_to_data_file.lit,
+                            set_language_to_data_file.expr,
+                        );
+                        let data_file_key_quote = litstr_or_default(
+                            data_file_key.lit,
+                            data_file_key.expr,
+                            "leptos-fluent",
+                        );
+
+                        quote! {
+                            initial_language_from_system: #initial_language_from_system_quote,
+                            initial_language_from_data_file: #initial_language_from_data_file_quote,
+                            initial_language_from_system_to_data_file: #initial_language_from_system_to_data_file_quote,
+                            set_language_to_data_file: #set_language_to_data_file_quote,
+                            data_file_key: #data_file_key_quote,
+                        }
+                    }
+                };
+
+                let quote = quote! {
+                    const meta: ::leptos_fluent::LeptosFluentMeta = ::leptos_fluent::LeptosFluentMeta {
+                        locales: #locales_path,
+                        core_locales: #core_locales_quote,
+                        languages: #languages_quote,
+                        check_translations: #check_translations_quote,
+                        sync_html_tag_lang: #sync_html_tag_lang_quote,
+                        sync_html_tag_dir: #sync_html_tag_dir_quote,
+                        url_param: #url_param_quote,
+                        initial_language_from_url_param: #initial_language_from_url_param_quote,
+                        initial_language_from_url_param_to_localstorage: #initial_language_from_url_param_to_localstorage,
+                        initial_language_from_url_param_to_cookie: #initial_language_from_url_param_to_cookie_quote,
+                        initial_language_from_url_param_to_server_function: #initial_language_from_url_param_to_server_function_quote,
+                        set_language_to_url_param: #set_language_to_url_param_quote,
+                        localstorage_key: #localstorage_key_quote,
+                        initial_language_from_localstorage: #initial_language_from_localstorage_quote,
+                        initial_language_from_localstorage_to_cookie: #initial_language_from_localstorage_to_cookie_quote,
+                        initial_language_from_localstorage_to_server_function: #initial_language_from_localstorage_to_server_function_quote,
+                        set_language_to_localstorage: #set_language_to_localstorage_quote,
+                        initial_language_from_navigator: #initial_language_from_navigator_quote,
+                        initial_language_from_navigator_to_localstorage: #initial_language_from_navigator_to_localstorage_quote,
+                        initial_language_from_navigator_to_cookie: #initial_language_from_navigator_to_cookie_quote,
+                        initial_language_from_navigator_to_server_function: #initial_language_from_navigator_to_server_function_quote,
+                        initial_language_from_accept_language_header: #initial_language_from_accept_language_header_quote,
+                        cookie_name: #cookie_name_quote,
+                        cookie_attrs: #cookie_attrs_quote,
+                        initial_language_from_cookie: #initial_language_from_cookie_quote,
+                        initial_language_from_cookie_to_localstorage: #initial_language_from_cookie_to_localstorage_quote,
+                        initial_language_from_cookie_to_server_function: #initial_language_from_cookie_to_server_function_quote,
+                        set_language_to_cookie: #set_language_to_cookie_quote,
+                        initial_language_from_server_function: #initial_language_from_server_function_quote,
+                        initial_language_from_server_function_to_cookie: #initial_language_from_server_function_to_cookie_quote,
+                        initial_language_from_server_function_to_localstorage: #initial_language_from_server_function_to_localstorage_quote,
+                        set_language_to_server_function: #set_language_to_server_function_quote,
+                        provide_meta_context: true,
+                        #system_quote
+                    };
+                    ::leptos::provide_context::<::leptos_fluent::LeptosFluentMeta>(meta);
+                };
+
+                match provide_meta_context.exprpath {
+                    Some(ref path) => quote! { #path{#quote}; },
+                    None => quote,
+                }
+            }
+            false => quote! {},
+        };
 
     let quote = quote! {
         {

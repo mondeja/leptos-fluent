@@ -2,7 +2,7 @@ use crate::{
     build_fluent_resources_and_file_paths,
     cookie::validate_cookie_attrs,
     languages::{read_languages_file, read_locales_folder},
-    FluentFilePaths,
+    FluentFilePaths, ParsedLanguage,
 };
 use quote::ToTokens;
 use std::path::PathBuf;
@@ -198,6 +198,7 @@ macro_rules! exprpath_not_supported {
     };
 }
 
+#[derive(Default)]
 pub(crate) struct LitBoolExpr {
     pub lit: Option<syn::LitBool>,
     pub expr: Option<syn::Expr>,
@@ -206,14 +207,11 @@ pub(crate) struct LitBoolExpr {
 
 impl LitBoolExpr {
     pub fn new() -> Self {
-        Self {
-            lit: None,
-            expr: None,
-            exprpath: None,
-        }
+        Self::default()
     }
 }
 
+#[derive(Default)]
 pub(crate) struct LitStrExpr {
     pub lit: Option<syn::LitStr>,
     pub expr: Option<syn::Expr>,
@@ -222,14 +220,11 @@ pub(crate) struct LitStrExpr {
 
 impl LitStrExpr {
     pub fn new() -> Self {
-        Self {
-            lit: None,
-            expr: None,
-            exprpath: None,
-        }
+        Self::default()
     }
 }
 
+#[derive(Default)]
 pub(crate) struct Identifier {
     pub ident: Option<syn::Ident>,
     pub exprpath: Option<proc_macro2::TokenStream>,
@@ -237,24 +232,32 @@ pub(crate) struct Identifier {
 
 impl Identifier {
     pub fn new() -> Self {
-        Self {
-            ident: None,
-            exprpath: None,
-        }
+        Self::default()
+    }
+}
+
+#[derive(Default)]
+pub(crate) struct LitBool {
+    pub lit: Option<syn::LitBool>,
+    pub exprpath: Option<proc_macro2::TokenStream>,
+}
+
+impl LitBool {
+    pub fn new() -> Self {
+        Self::default()
     }
 }
 
 pub(crate) struct I18nLoader {
     pub fluent_file_paths: FluentFilePaths,
     pub translations: Translations,
-    pub languages: Vec<(String, String, String, Option<String>)>,
+    pub languages: Vec<ParsedLanguage>,
     pub languages_path: Option<String>,
     pub raw_languages_path: Option<String>,
     pub locales_path: String,
     pub core_locales_path: Option<String>,
     pub check_translations: Option<String>,
-    pub provide_meta_context: bool,
-    pub provide_meta_context_exprpath: Option<proc_macro2::TokenStream>,
+    pub provide_meta_context: LitBool,
     pub sync_html_tag_lang: LitBoolExpr,
     pub sync_html_tag_dir: LitBoolExpr,
     pub url_param: LitStrExpr,
@@ -357,10 +360,7 @@ impl Parse for I18nLoader {
         #[cfg(feature = "system")]
         let mut initial_language_from_data_file = LitBoolExpr::new();
         let mut data_file_key = LitStrExpr::new();
-        let mut provide_meta_context: Option<syn::LitBool> = None;
-        let mut provide_meta_context_exprpath: Option<
-            proc_macro2::TokenStream,
-        > = None;
+        let mut provide_meta_context = LitBool::new();
 
         while !fields.is_empty() {
             let mut exprpath: Option<proc_macro2::TokenStream> = None;
@@ -945,9 +945,9 @@ impl Parse for I18nLoader {
                     _ = data_file_key.exprpath;
                 }
             } else if k == "provide_meta_context" {
-                provide_meta_context = Some(fields.parse()?);
+                provide_meta_context.lit = Some(fields.parse()?);
                 if exprpath.is_some() {
-                    provide_meta_context_exprpath.clone_from(&exprpath);
+                    provide_meta_context.exprpath.clone_from(&exprpath);
                 }
             } else {
                 return Err(syn::Error::new(
@@ -1036,7 +1036,19 @@ impl Parse for I18nLoader {
                 ),
             ));
         } else {
-            languages = read_locales_folder(&locales_folder_path);
+            let (langs, read_locales_folder_errors) =
+                read_locales_folder(&locales_folder_path);
+            if !read_locales_folder_errors.is_empty() {
+                return Err(syn::Error::new(
+                    locales_path.as_ref().unwrap().span(),
+                    format!(
+                        "Errors while reading locales from {}:\n- {}",
+                        locales_path.as_ref().unwrap().value(),
+                        read_locales_folder_errors.join("\n- "),
+                    ),
+                ));
+            }
+            languages = langs;
         }
 
         let locales_path_str =
@@ -1146,11 +1158,7 @@ impl Parse for I18nLoader {
             locales_path: locales_path.unwrap().value(),
             core_locales_path: core_locales_path_str,
             check_translations: check_translations.map(|x| x.value()),
-            provide_meta_context: match provide_meta_context {
-                Some(x) => x.value,
-                None => false,
-            },
-            provide_meta_context_exprpath,
+            provide_meta_context,
             sync_html_tag_lang,
             sync_html_tag_dir,
             url_param,
