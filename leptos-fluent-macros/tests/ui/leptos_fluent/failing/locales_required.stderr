@@ -1,0 +1,9 @@
+error: The `locales` field is required by leptos_fluent! macro.
+  --> tests/ui/leptos_fluent/failing/locales_required.rs:14:5
+   |
+14 | /     leptos_fluent! {{
+15 | |         translations: [TRANSLATIONS],
+16 | |     }};
+   | |______^
+   |
+   = note: this error originates in the macro `leptos_fluent` (in Nightly builds, run with -Z macro-backtrace for more info)

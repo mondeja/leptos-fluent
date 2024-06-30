@@ -1,0 +1,9 @@
+error: Missing `translations` field
+ --> tests/ui/leptos_fluent/failing/empty.rs:6:5
+  |
+6 | /     leptos_fluent! {{
+7 | |
+8 | |     }};
+  | |______^
+  |
+  = note: this error originates in the macro `leptos_fluent` (in Nightly builds, run with -Z macro-backtrace for more info)

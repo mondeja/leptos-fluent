@@ -1,0 +1,17 @@
+error: The parameter 'translations' of leptos_fluent! macro does not accept the expression path '#[cfg(debug_assertions)]'. Consider to move your configuration to a variable:
+
+       ```rust
+       #[cfg(debug_assertions)]
+       {
+           let translations_dyn = { ... };
+       }
+
+       leptos_fluent! {{
+           // ...
+           translations: translations_dyn,
+       }};
+       ```
+  --> tests/ui/leptos_fluent/failing/translations_cfg.rs:15:9
+   |
+15 |         #[cfg(debug_assertions)] translations: [TRANSLATIONS],
+   |         ^

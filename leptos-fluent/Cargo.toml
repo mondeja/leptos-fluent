@@ -2,7 +2,7 @@
 name = "leptos-fluent"
 description = "Fluent framework for internationalization of Leptos applications"
 edition.workspace = true
-version = "0.1.7"
+version = "0.1.8"
 license = "MIT"
 documentation.workspace = true
 repository.workspace = true
@@ -22,7 +22,6 @@ web-sys = { version = ">=0.1", features = [
   "Storage",
   "UrlSearchParams",
 ] }
-wasm-bindgen = ">=0.1"
 current_locale = { version = "0.1", optional = true }
 directories = { version = "5", optional = true }
 

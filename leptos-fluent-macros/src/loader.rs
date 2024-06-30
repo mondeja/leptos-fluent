@@ -29,17 +29,24 @@ fn parse_litstr_or_expr_param(
                 *expr = Some(e);
                 None
             }
-            Err(_) => Some(syn::Error::new(
-                fields.span(),
-                format!(
-                    concat!(
-                        "Not a valid value for '{}' of leptos_fluent! macro.",
-                        " Must be a literal string or a valid expression.",
-                        " Found {:?}",
+            Err(_) => {
+                let fields_str = fields.to_string();
+                Some(syn::Error::new(
+                    fields.span(),
+                    format!(
+                        concat!(
+                            "Not a valid value for '{}' of leptos_fluent! macro.",
+                            " Must be a literal string or a valid expression.",
+                            " Found {}",
+                        ),
+                        param_name,
+                        match fields_str.is_empty() {
+                            true => "(empty)",
+                            false => &fields_str,
+                        },
                     ),
-                    param_name, fields,
-                ),
-            )),
+                ))
+            }
         },
     }
 }
@@ -60,26 +67,35 @@ fn parse_litbool_or_expr_param(
                 *expr = Some(e);
                 None
             }
-            Err(_) => Some(syn::Error::new(
-                fields.span(),
-                format!(
-                    concat!(
-                        "Not a valid value for '{}' of leptos_fluent! macro.",
-                        " Must be a literal boolean or a valid expression.",
-                        " Found {:?}",
+            Err(_) => {
+                let fields_str = fields.to_string();
+                Some(syn::Error::new(
+                    fields.span(),
+                    format!(
+                        concat!(
+                            "Not a valid value for '{}' of leptos_fluent! macro.",
+                            " Must be a literal string or a valid expression.",
+                            " Found {}",
+                        ),
+                        param_name,
+                        match fields_str.is_empty() {
+                            true => "(empty)",
+                            false => &fields_str,
+                        },
                     ),
-                    param_name, fields,
-                ),
-            )),
+                ))
+            }
         },
     }
 }
 
-/// A syntax part consisting of a list of simple loaders.
+/// A syntax part consisting of a list of syn paths.
 ///
-/// e.g. `[loader1, loader2]`
+/// ```rust,ignore
+/// translations: [loader1, loader2],
+/// //            ^^^^^^^^^^^^^^^^^^
+/// ```
 ///
-/// # Note
 /// Must not contain a [`Compound`] loader.
 pub(crate) struct Simple(pub(crate) Vec<syn::Path>);
 
@@ -168,20 +184,21 @@ fn exprpath_not_supported_error_message(
     let exprpath_str = expr.to_string();
     format!(
         concat!(
-            "The parameter '{}' of",
-            " leptos_fluent! macro does not accept an expression",
-            " path like '{}'. Maybe in the future.",
-            " Consider to move your configuration to a variable:\n\n",
-            "```rust\n",
-            "{}
+            "The parameter '{}' of leptos_fluent! macro does not accept the",
+            " expression path '{}'. Consider to move your configuration to a",
+            " variable:\n\n",
+            "```rust
+{}
 {{
     let {}_dyn = {{ ... }};
 }}
 
-leptos_fluent! {{
+leptos_fluent! {{{{
     // ...
     {}: {}_dyn,
-}};",
+}}}};
+```
+",
         ),
         k, exprpath_str, exprpath_str, k, k, k,
     )
@@ -311,6 +328,7 @@ impl Parse for I18nLoader {
         let mut core_locales_path: Option<syn::LitStr> = None;
         let mut translations: Option<Translations> = None;
         let mut check_translations: Option<syn::LitStr> = None;
+        let mut provide_meta_context = LitBool::new();
         let mut sync_html_tag_lang = LitBoolExpr::new();
         let mut sync_html_tag_dir = LitBoolExpr::new();
         let mut url_param = LitStrExpr::new();
@@ -360,7 +378,6 @@ impl Parse for I18nLoader {
         #[cfg(feature = "system")]
         let mut initial_language_from_data_file = LitBoolExpr::new();
         let mut data_file_key = LitStrExpr::new();
-        let mut provide_meta_context = LitBool::new();
 
         while !fields.is_empty() {
             let mut exprpath: Option<proc_macro2::TokenStream> = None;
@@ -369,9 +386,18 @@ impl Parse for I18nLoader {
                 k = fields.parse::<syn::Ident>()?;
                 // expression:
             } else {
-                let expr = fields.parse::<syn::Expr>()?;
+                let maybe_expr = fields.parse::<syn::Expr>();
+                if maybe_expr.is_err() {
+                    return Err(syn::Error::new(
+                        fields.span(),
+                        concat!(
+                            "Expected an expression building a line with",
+                            " 'key: value' or '[#...] key: value' format.",
+                        ),
+                    ));
+                }
+                let expr = maybe_expr.unwrap();
                 if matches!(expr, syn::Expr::Path(_)) {
-                    let span = expr.span();
                     let string = expr.to_token_stream().to_string();
                     let splitter =
                         if string.contains('\n') { "\n" } else { "] " };
@@ -380,7 +406,7 @@ impl Parse for I18nLoader {
                         .last()
                         .unwrap()
                         .replace('\n', " ");
-                    k = syn::Ident::new(ident, span);
+                    k = syn::Ident::new(ident, expr.span());
 
                     let new_expr_stream =
                         expr.to_token_stream().into_iter().collect::<Vec<_>>();

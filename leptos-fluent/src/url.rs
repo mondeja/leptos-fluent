@@ -31,7 +31,7 @@ pub fn set(k: &str, v: &str) {
             .history()
             .expect("Failed to get the history from the browser")
             .replace_state_with_url(
-                &wasm_bindgen::JsValue::NULL,
+                &crate::web_sys::wasm_bindgen::JsValue::NULL,
                 "",
                 Some(&url.href()),
             )
@@ -60,7 +60,7 @@ pub fn delete(k: &str) {
             .history()
             .expect("Failed to get the history from the browser")
             .replace_state_with_url(
-                &wasm_bindgen::JsValue::NULL,
+                &crate::web_sys::wasm_bindgen::JsValue::NULL,
                 "",
                 Some(&url.href()),
             )

@@ -556,7 +556,7 @@ pub fn leptos_fluent(
     let sync_html_tag_lang_quote = {
         let effect_quote = quote! {
             ::leptos::create_effect(move |_| {
-                use wasm_bindgen::JsCast;
+                use leptos_fluent::web_sys::wasm_bindgen::JsCast;
                 _ = ::leptos::document()
                     .document_element()
                     .unwrap()
@@ -600,7 +600,7 @@ pub fn leptos_fluent(
     let sync_html_tag_dir_quote = {
         let effect_quote = quote! {
             ::leptos::create_effect(move |_| {
-                use wasm_bindgen::JsCast;
+                use leptos_fluent::web_sys::wasm_bindgen::JsCast;
                 _ = ::leptos::document()
                     .document_element()
                     .unwrap()
@@ -1858,6 +1858,15 @@ pub fn leptos_fluent(
 
 #[cfg(test)]
 mod test {
+    use trybuild;
+
+    #[test]
+    fn ui() {
+        let t = trybuild::TestCases::new();
+        t.compile_fail("tests/ui/leptos_fluent/failing/*.rs");
+        t.pass("tests/ui/leptos_fluent/passing/*.rs");
+    }
+
     #[test]
     fn test_main_and_macros_package_versions_match() {
         // cargo-readme does not allow to use `version.workspace = true`,
