@@ -303,18 +303,6 @@ leptos-fluent = { version = "*", default-features = false, features = ["json5"] 
 <li><code>yaml</code>: YAML</li>
 <li><code>json5</code>: JSON5</li>
 </ul>
-<h2 id="tracking-locales-files-with-cargo-leptos"><a class="header" href="#tracking-locales-files-with-cargo-leptos">Tracking locales files with <a href="https://github.com/leptos-rs/cargo-leptos"><code>cargo leptos</code></a></a></h2>
-<p>Using <a href="https://github.com/leptos-rs/cargo-leptos"><code>cargo leptos</code></a> watch of the <em>locales/</em> folder for reloads:</p>
-<pre><code class="language-toml"># Relative to Cargo.toml file
-[package.metadata.leptos]
-watch-additional-files = ["locales"]
-</code></pre>
-<p>When inside a workspace, use the full path to the folder from the
-workspace <em>Cargo.toml</em> file:</p>
-<pre><code class="language-toml"> # Relative to workspace Cargo.toml file
-[package.metadata.leptos]
-watch-additional-files = ["examples/csr/locales"]
-</code></pre>
 
                     </main>
 

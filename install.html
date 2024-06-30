@@ -188,6 +188,7 @@
 <li><a href="#nightly-toolchain">Nightly toolchain</a></li>
 <li><a href="#language-files">Language files</a></li>
 <li><a href="#features">Features</a></li>
+<li><a href="#tracking-locales-files-with-cargo-leptos">Tracking locales files with <code>cargo leptos</code></a></li>
 </ul>
 <h2 id="csr"><a class="header" href="#csr">CSR</a></h2>
 <p>For client side rendering apps install <strong>leptos-fluent</strong> and <a href="https://github.com/XAMPPRocky/fluent-templates"><code>fluent-templates</code></a>:</p>
@@ -258,12 +259,12 @@ fluent-templates = "0.9"
 <p>By default, <strong>leptos-fluent</strong> supports JSON languages files. To use other
 formats to load custom languages, the <code>json5</code> or <code>yaml</code> features can be
 enabled:</p>
+<!-- markdownlint-disable MD013 -->
 <pre><code class="language-toml">[dependencies]
 fluent-templates = "0.9"
-leptos-fluent = {
-  version = "0.1", features = ["json5"], default-features = false
-}
+leptos-fluent = { version = "0.1", features = ["json5"], default-features = false }
 </code></pre>
+<!-- markdownlint-enable MD013 -->
 <div id="admonition-tip" class="admonition admonish-tip" role="note" aria-labelledby="admonition-tip-title">
 <div class="admonition-title">
 <div id="admonition-tip-title">
@@ -287,6 +288,18 @@ leptos-fluent = {
 <li><strong>YAML languages file</strong>: <code>yaml</code></li>
 <li><strong>JSON5 languages file</strong>: <code>json5</code></li>
 </ul>
+<h2 id="tracking-locales-files-with-cargo-leptos"><a class="header" href="#tracking-locales-files-with-cargo-leptos">Tracking locales files with <a href="https://github.com/leptos-rs/cargo-leptos"><code>cargo leptos</code></a></a></h2>
+<p>Using <a href="https://github.com/leptos-rs/cargo-leptos"><code>cargo leptos</code></a> watch of the <em>locales/</em> folder for reloads:</p>
+<pre><code class="language-toml"># Relative to Cargo.toml file
+[package.metadata.leptos]
+watch-additional-files = ["locales"]
+</code></pre>
+<p>When inside a workspace, use the full path to the folder from the
+workspace <em>Cargo.toml</em> file:</p>
+<pre><code class="language-toml"> # Relative to workspace Cargo.toml file
+[package.metadata.leptos]
+watch-additional-files = ["examples/csr/locales"]
+</code></pre>
 
                     </main>
 
