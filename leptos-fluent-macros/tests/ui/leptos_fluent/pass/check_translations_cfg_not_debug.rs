@@ -22,7 +22,7 @@ pub fn App() -> impl IntoView {
         translations: [TRANSLATIONS],
         locales: "../../../../examples/csr-minimal/locales",
         #[cfg(not(debug_assertions))]
-        check_translations: "../../../../leptos-fluent-macros/tests/ui/leptos_fluent/passing/check_translations_cfg.rs"
+        check_translations: "../../../../leptos-fluent-macros/tests/ui/leptos_fluent/pass/check_translations_cfg.rs"
     }};
 
     view! { <p>{move_tr!("select-a-language")}</p> }

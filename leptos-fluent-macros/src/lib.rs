@@ -1864,7 +1864,7 @@ mod test {
     fn ui() {
         let t = trybuild::TestCases::new();
         t.compile_fail("tests/ui/leptos_fluent/fail/*.rs");
-        t.pass("tests/ui/leptos_fluent/passing/*.rs");
+        t.pass("tests/ui/leptos_fluent/pass/*.rs");
     }
 
     #[test]
