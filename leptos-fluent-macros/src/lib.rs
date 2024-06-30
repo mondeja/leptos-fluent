@@ -1861,10 +1861,15 @@ mod test {
     use trybuild;
 
     #[test]
-    fn ui() {
+    fn ui_pass() {
+        let t = trybuild::TestCases::new();
+        t.pass("tests/ui/leptos_fluent/pass/*.rs");
+    }
+
+    #[test]
+    fn ui_fail() {
         let t = trybuild::TestCases::new();
         t.compile_fail("tests/ui/leptos_fluent/fail/*.rs");
-        t.pass("tests/ui/leptos_fluent/pass/*.rs");
     }
 
     #[test]
