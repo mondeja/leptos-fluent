@@ -1,5 +1,5 @@
 error: Missing `translations` parameter
- --> tests/ui/leptos_fluent/failing/empty.rs:6:5
+ --> tests/ui/leptos_fluent/fail/empty.rs:6:5
   |
 6 | /     leptos_fluent! {{
 7 | |

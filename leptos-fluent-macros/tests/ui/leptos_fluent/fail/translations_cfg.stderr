@@ -11,7 +11,7 @@ error: The parameter 'translations' of leptos_fluent! macro does not accept the 
            translations: translations_dyn,
        }};
        ```
-  --> tests/ui/leptos_fluent/failing/translations_cfg.rs:15:9
+  --> tests/ui/leptos_fluent/fail/translations_cfg.rs:15:9
    |
 15 |         #[cfg(debug_assertions)] translations: [TRANSLATIONS],
    |         ^

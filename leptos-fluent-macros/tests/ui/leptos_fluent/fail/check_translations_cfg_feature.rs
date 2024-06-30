@@ -16,7 +16,7 @@ pub fn App() -> impl IntoView {
         translations: [TRANSLATIONS],
         locales: "../../../../examples/csr-minimal/locales",
         #[cfg(feature = "ssr")]
-        check_translations: "../../../../leptos-fluent-macros/tests/ui/leptos_fluent/failing/check_translations_cfg_feature.rs"
+        check_translations: "../../../../leptos-fluent-macros/tests/ui/leptos_fluent/fail/check_translations_cfg_feature.rs"
     }};
 
     view! { <p>{move_tr!("select-a-language")}</p> }
