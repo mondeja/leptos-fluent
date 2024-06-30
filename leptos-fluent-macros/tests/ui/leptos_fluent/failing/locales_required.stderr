@@ -1,4 +1,4 @@
-error: The `locales` field is required by leptos_fluent! macro.
+error: Missing `locales` parameter
   --> tests/ui/leptos_fluent/failing/locales_required.rs:14:5
    |
 14 | /     leptos_fluent! {{

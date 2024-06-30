@@ -999,9 +999,7 @@ impl Parse for I18nLoader {
         if locales_path.is_none() {
             return Err(syn::Error::new(
                 input.span(),
-                concat!(
-                    "The `locales` field is required by leptos_fluent! macro.",
-                ),
+                "Missing `locales` parameter",
             ));
         }
 
