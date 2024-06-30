@@ -392,7 +392,7 @@ impl Parse for I18nLoader {
                         fields.span(),
                         concat!(
                             "Expected an expression building a line with",
-                            " 'key: value' or '[#...] key: value' format.",
+                            " 'key: value' or '#[...] key: value' format.",
                         ),
                     ));
                 }
