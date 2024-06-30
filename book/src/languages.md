@@ -127,25 +127,5 @@ Available features for languages file formats are:
 - `yaml`: YAML
 - `json5`: JSON5
 
-## Tracking locales files with [`cargo leptos`]
-
-Using [`cargo leptos`] watch of the _locales/_ folder for reloads:
-
-```toml
-# Relative to Cargo.toml file
-[package.metadata.leptos]
-watch-additional-files = ["locales"]
-```
-
-When inside a workspace, use the full path to the folder from the
-workspace _Cargo.toml_ file:
-
-```toml
- # Relative to workspace Cargo.toml file
-[package.metadata.leptos]
-watch-additional-files = ["examples/csr/locales"]
-```
-
 [ISO 639-1 code]: https://en.wikipedia.org/wiki/ISO_639-1
-[`cargo leptos`]: https://github.com/leptos-rs/cargo-leptos
 [`leptos_fluent!`]: https://mondeja.github.io/leptos-fluent/leptos_fluent.html
