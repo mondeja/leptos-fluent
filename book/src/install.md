@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD033 -->
+
 # Installation
 
 <!-- toc -->
@@ -11,8 +13,6 @@ For client side rendering apps install **leptos-fluent** and [`fluent-templates`
 leptos-fluent = "0.1"
 fluent-templates = "0.9"
 ```
-
-<!-- markdownlint-disable MD033 -->
 
 <details>
 <summary>Minimal</summary>
@@ -28,8 +28,6 @@ fluent-templates = "0.9"
 ```
 
 </details>
-
-<!-- markdownlint-enable MD033 -->
 
 ## SSR
 
@@ -114,6 +112,9 @@ See [**4. Languages**](https://mondeja.github.io/leptos-fluent/languages.html).
 - **JSON languages file**: `json` (enabled by default)
 - **YAML languages file**: `yaml`
 - **JSON5 languages file**: `json5`
+- **Tracing support**: `tracing`\*
+
+<sub style="position: relative; left: 25px"><sup>\*Unreleased</sup></sub>
 
 ## Tracking locales files with [`cargo leptos`]
 
@@ -134,6 +135,23 @@ workspace _Cargo.toml_ file:
 watch-additional-files = ["examples/csr/locales"]
 ```
 
+## Unreleased
+
+### Tracing
+
+To enable [tracing] support, add the `tracing` feature to **leptos-fluent**:
+
+```toml
+[dependencies]
+leptos-fluent = { version = "0.1", features = ["tracing"] }
+fluent-templates = "0.9"
+```
+
+```admonish example
+See the [GTK example](https://github.com/mondeja/leptos-fluent/tree/master/examples/system-gtk).
+```
+
 [`fluent-templates`]: https://github.com/XAMPPRocky/fluent-templates
 [`leptos_fluent!`]: https://mondeja.github.io/leptos-fluent/leptos_fluent.html
 [`cargo leptos`]: https://github.com/leptos-rs/cargo-leptos
+[tracing]: https://docs.rs/tracing/latest/tracing
