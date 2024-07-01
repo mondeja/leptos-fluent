@@ -228,15 +228,17 @@ report bugs by <a href="https://github.com/mondeja/leptos-fluent/issues/new">ope
 <p><a href="https://github.com/mondeja/leptos-fluent/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.github.com%2Fsearch%2Fissues%3Fq%3Drepo%3Amondeja%2Fleptos-fluent%2520label%3A%2522help%2520wanted%2522%2520is%3Aopen%2520-linked%3Apr&amp;query=%24.total_count&amp;suffix=%20open&amp;logo=github&amp;label=help%20wanted%20issues&amp;color=228f6c&amp;labelColor=228f6c&amp;logoColor=white&amp;style=flat-square" alt="Help wanted issues" /></a></p>
 <p>See <a href="https://github.com/mondeja/leptos-fluent/blob/master/CONTRIBUTING.md"><em>CONTRIBUTING.md</em></a> file for more information about how to setup the
 development environment and contribute to the project.</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="installation"><a class="header" href="#installation">Installation</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><!-- markdownlint-disable MD033 -->
+<h1 id="installation"><a class="header" href="#installation">Installation</a></h1>
 <ul>
 <li><a href="install.html#csr">CSR</a></li>
 <li><a href="install.html#ssr">SSR</a></li>
 <li><a href="install.html#desktop-applications">Desktop applications</a></li>
+<li><a href="install.html#features">Features</a></li>
 <li><a href="install.html#nightly-toolchain">Nightly toolchain</a></li>
 <li><a href="install.html#language-files">Language files</a></li>
-<li><a href="install.html#features">Features</a></li>
 <li><a href="install.html#tracking-locales-files-with-cargo-leptos">Tracking locales files with <code>cargo leptos</code></a></li>
+<li><a href="install.html#tracing">Tracing</a></li>
 </ul>
 <h2 id="csr"><a class="header" href="#csr">CSR</a></h2>
 <p>For client side rendering apps install <strong>leptos-fluent</strong> and <a href="https://github.com/XAMPPRocky/fluent-templates"><code>fluent-templates</code></a>:</p>
@@ -244,7 +246,6 @@ development environment and contribute to the project.</p>
 leptos-fluent = "0.1"
 fluent-templates = "0.9"
 </code></pre>
-<!-- markdownlint-disable MD033 -->
 <details>
 <summary>Minimal</summary>
 <p>Using <code>default-features = false</code> the <code>json</code> default feature of
@@ -255,7 +256,6 @@ leptos-fluent = { version = "0.1", default-features = false }
 fluent-templates = "0.9"
 </code></pre>
 </details>
-<!-- markdownlint-enable MD033 -->
 <h2 id="ssr"><a class="header" href="#ssr">SSR</a></h2>
 <p>For server side rendering apps install <strong>leptos-fluent</strong>, <a href="https://github.com/XAMPPRocky/fluent-templates"><code>fluent-templates</code></a>
 and activate the <code>hydrate</code>, <code>ssr</code> and <code>actix</code>/<code>axum</code> features in their
@@ -296,6 +296,19 @@ fluent-templates = "0.9"
 <p>See the <a href="https://github.com/mondeja/leptos-fluent/tree/master/examples/system-gtk">GTK example</a>.</p>
 </div>
 </div>
+<h2 id="features"><a class="header" href="#features">Features</a></h2>
+<ul>
+<li><strong>Server Side Rendering</strong>: <code>ssr</code></li>
+<li><strong>Hydration</strong>: <code>hydrate</code></li>
+<li><strong>Actix Web integration</strong>: <code>actix</code></li>
+<li><strong>Axum integration</strong>: <code>axum</code></li>
+<li><strong>Nightly toolchain</strong>: <code>nightly</code></li>
+<li><strong>Desktop applications</strong>: <code>system</code></li>
+<li><strong>JSON languages file</strong>: <code>json</code> (enabled by default)</li>
+<li><strong>YAML languages file</strong>: <code>yaml</code></li>
+<li><strong>JSON5 languages file</strong>: <code>json5</code></li>
+<li><strong>Tracing support</strong>: <code>tracing</code></li>
+</ul>
 <h2 id="nightly-toolchain"><a class="header" href="#nightly-toolchain">Nightly toolchain</a></h2>
 <p><strong>leptos-fluent</strong> builds nightly functionalities by enabling the <code>nightly</code>
 feature:</p>
@@ -324,18 +337,6 @@ leptos-fluent = { version = "0.1", features = ["json5"], default-features = fals
 <p>See <a href="https://mondeja.github.io/leptos-fluent/languages.html"><strong>4. Languages</strong></a>.</p>
 </div>
 </div>
-<h2 id="features"><a class="header" href="#features">Features</a></h2>
-<ul>
-<li><strong>Server Side Rendering</strong>: <code>ssr</code></li>
-<li><strong>Hydration</strong>: <code>hydrate</code></li>
-<li><strong>Actix Web integration</strong>: <code>actix</code></li>
-<li><strong>Axum integration</strong>: <code>axum</code></li>
-<li><strong>Nightly toolchain</strong>: <code>nightly</code></li>
-<li><strong>Desktop applications</strong>: <code>system</code></li>
-<li><strong>JSON languages file</strong>: <code>json</code> (enabled by default)</li>
-<li><strong>YAML languages file</strong>: <code>yaml</code></li>
-<li><strong>JSON5 languages file</strong>: <code>json5</code></li>
-</ul>
 <h2 id="tracking-locales-files-with-cargo-leptos"><a class="header" href="#tracking-locales-files-with-cargo-leptos">Tracking locales files with <a href="https://github.com/leptos-rs/cargo-leptos"><code>cargo leptos</code></a></a></h2>
 <p>Using <a href="https://github.com/leptos-rs/cargo-leptos"><code>cargo leptos</code></a> watch of the <em>locales/</em> folder for reloads:</p>
 <pre><code class="language-toml"># Relative to Cargo.toml file
@@ -348,6 +349,23 @@ workspace <em>Cargo.toml</em> file:</p>
 [package.metadata.leptos]
 watch-additional-files = ["examples/csr/locales"]
 </code></pre>
+<h2 id="tracing"><a class="header" href="#tracing">Tracing</a></h2>
+<p>To enable <a href="https://docs.rs/tracing/latest/tracing"><code>tracing</code></a> support, add the <code>tracing</code> feature to <strong>leptos-fluent</strong>:</p>
+<pre><code class="language-toml">[dependencies]
+leptos-fluent = { version = "0.1", features = ["tracing"] }
+fluent-templates = "0.9"
+</code></pre>
+<div id="admonition-example-1" class="admonition admonish-example" role="note" aria-labelledby="admonition-example-1-title">
+<div class="admonition-title">
+<div id="admonition-example-1-title">
+<p>Example</p>
+</div>
+<a class="admonition-anchor-link" href="install.html#admonition-example-1"></a>
+</div>
+<div>
+<p>See the <a href="https://github.com/mondeja/leptos-fluent/tree/master/examples/system-gtk">GTK example</a>.</p>
+</div>
+</div>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="basic-usage"><a class="header" href="#basic-usage">Basic usage</a></h1>
 <ul>
 <li><a href="basic-usage.html#minimal-skeleton">Minimal skeleton</a></li>
@@ -1024,7 +1042,7 @@ pub async fn show_hello_world(
     translated_hello_world: String,
     language: String,
 ) -&gt; Result&lt;(), ServerFnError&gt; {
-    println!("{} ({})", translated_hello_world, language);
+    println!("{translated_hello_world} ({language})");
     Ok(())
 }
 
@@ -1239,13 +1257,15 @@ executed in the next order:</p>
 <li>Get the initial languaje from a source or target: <code>initial_language_from_*</code></li>
 <li>Obtain the initial language and set to a target: <code>initial_language_from_*_to_*</code></li>
 <li>Synchronize the current language with a target: <code>set_language_to_*</code></li>
-<li>The name of a source or a target: <code>cookie_name</code>, <code>localstorage_key</code>, <code>navigator</code>...</li>
 </ol>
+<ul>
+<li>The name of a source or a target: <code>cookie_name</code>, <code>localstorage_key</code>, <code>navigator</code>...</li>
+</ul>
 <h3 id="sources-and-targets"><a class="header" href="#sources-and-targets">Sources and targets</a></h3>
 <p>Sources are read-only and targets are read-write.</p>
 <ul>
 <li>Sources: <code>navigator</code>, <code>system</code>, <code>accept_language_header</code></li>
-<li>Targets: <code>cookie_name</code>, <code>localstorage_key</code>, <code>url_param</code>, <code>data_file</code></li>
+<li>Targets: <code>cookie_name</code>, <code>localstorage_key</code>, <code>url_param</code>, <code>data_file</code>...</li>
 </ul>
 <h3 id="commented-example"><a class="header" href="#commented-example">Commented example</a></h3>
 <div id="admonition-example" class="admonition admonish-example" role="note" aria-labelledby="admonition-example-title">

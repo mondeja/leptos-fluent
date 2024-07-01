@@ -287,7 +287,7 @@ pub async fn show_hello_world(
     translated_hello_world: String,
     language: String,
 ) -&gt; Result&lt;(), ServerFnError&gt; {
-    println!("{} ({})", translated_hello_world, language);
+    println!("{translated_hello_world} ({language})");
     Ok(())
 }
 
