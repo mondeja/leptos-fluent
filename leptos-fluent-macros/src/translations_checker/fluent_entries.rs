@@ -2,7 +2,7 @@ use crate::{FluentFilePaths, FluentResources};
 use std::collections::HashMap;
 
 #[cfg_attr(test, derive(PartialEq))]
-#[derive(Debug)]
+#[cfg_attr(any(debug_assertions, feature = "tracing"), derive(Debug))]
 pub(crate) struct FluentEntry {
     pub(crate) message_name: String,
     pub(crate) placeables: Vec<String>,
