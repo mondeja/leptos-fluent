@@ -29,7 +29,6 @@ serde = { version = "1", default-features = false, features = [
 serde_json = { version = "1", optional = true }
 serde_yaml = { version = "0.9", optional = true }
 json5 = { version = "0.4", optional = true }
-tracing = { version = "0.1", optional = true }
 
 [dev-dependencies]
 trybuild = "1"
@@ -39,7 +38,7 @@ leptos-fluent = { path = "../leptos-fluent" }
 [features]
 nightly = ["proc-macro2/span-locations"]
 system = []
-tracing = ["dep:tracing"]
+tracing = []
 hydrate = []
 ssr = []
 actix = []
@@ -61,4 +60,4 @@ skip_feature_sets = [
   ["ssr"],
 ]
 always_include_features = ["json"]
-denylist = ["yaml", "json5", "nightly", "tracing"]
+denylist = ["yaml", "json5", "nightly"]
