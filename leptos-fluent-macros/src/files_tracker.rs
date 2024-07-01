@@ -1,6 +1,6 @@
 use crate::FluentFilePaths;
 
-#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace"))]
+#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
 pub(crate) fn build_files_tracker_quote(
     fluent_resources: &FluentFilePaths,
     languages_path: &Option<String>,

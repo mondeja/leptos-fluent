@@ -572,7 +572,7 @@ pub fn i18n() -> I18n {
     }
 }
 
-#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace"))]
+#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
 #[doc(hidden)]
 pub fn tr_impl(text_id: &str) -> String {
     let i18n = expect_i18n();
@@ -639,12 +639,15 @@ pub fn tr_with_args_impl(
             );
         } else {
             tracing::trace!(
-                concat!(
-                    "Localization message \"{}\" found in a translation.",
-                    " Translated to \"{}\"."
+                "{}",
+                format!(
+                    concat!(
+                        "Localization message \"{}\" found in a translation.",
+                        " Translated to \"{}\"."
+                    ),
+                    text_id,
+                    found.as_ref().unwrap()
                 ),
-                text_id,
-                found.as_ref().unwrap()
             );
         }
     }
