@@ -2,7 +2,7 @@
 name = "leptos-fluent-macros"
 description = "Macros for leptos-fluent"
 edition.workspace = true
-version = "0.1.7"
+version = "0.1.8"
 license = "MIT"
 documentation.workspace = true
 repository.workspace = true
@@ -29,6 +29,11 @@ serde = { version = "1", default-features = false, features = [
 serde_json = { version = "1", optional = true }
 serde_yaml = { version = "0.9", optional = true }
 json5 = { version = "0.4", optional = true }
+
+[dev-dependencies]
+trybuild = "1"
+leptos = "0.6"
+leptos-fluent = { path = "../leptos-fluent" }
 
 [features]
 nightly = ["proc-macro2/span-locations"]

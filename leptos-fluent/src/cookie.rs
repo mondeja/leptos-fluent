@@ -1,7 +1,7 @@
 pub fn get(name: &str) -> Option<String> {
     #[cfg(not(feature = "ssr"))]
     {
-        use wasm_bindgen::JsCast;
+        use crate::web_sys::wasm_bindgen::JsCast;
         let mut cookies = leptos::document()
             .dyn_into::<web_sys::HtmlDocument>()
             .unwrap()
@@ -23,7 +23,7 @@ pub fn get(name: &str) -> Option<String> {
 
 #[cfg(not(feature = "ssr"))]
 fn set_cookie(new_value: &str) {
-    use wasm_bindgen::JsCast;
+    use crate::web_sys::wasm_bindgen::JsCast;
     leptos::document()
         .dyn_into::<web_sys::HtmlDocument>()
         .unwrap()

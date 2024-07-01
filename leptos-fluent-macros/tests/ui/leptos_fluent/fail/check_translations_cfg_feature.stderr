@@ -1,0 +1,17 @@
+error: The parameter 'check_translations' of leptos_fluent! macro does not accept the expression path '#[cfg(feature = "ssr")]'. Consider to move your configuration to a variable:
+
+       ```rust
+       #[cfg(feature = "ssr")]
+       {
+           let check_translations_dyn = { ... };
+       }
+
+       leptos_fluent! {{
+           // ...
+           check_translations: check_translations_dyn,
+       }};
+       ```
+  --> tests/ui/leptos_fluent/fail/check_translations_cfg_feature.rs:18:9
+   |
+18 |         #[cfg(feature = "ssr")]
+   |         ^
