@@ -390,9 +390,13 @@ impl Parse for I18nLoader {
                 if maybe_expr.is_err() {
                     return Err(syn::Error::new(
                         fields.span(),
-                        concat!(
-                            "Expected an expression building a line with",
-                            " 'key: value' or '#[...] key: value' format.",
+                        format!(
+                            concat!(
+                                "Expected an expression with",
+                                " 'key: value' or '#[...] key: value' format.",
+                                " Found:\n{}"
+                            ),
+                            fields,
                         ),
                     ));
                 }
