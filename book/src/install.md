@@ -70,6 +70,19 @@ fluent-templates = "0.9"
 See the [GTK example](https://github.com/mondeja/leptos-fluent/tree/master/examples/system-gtk).
 ```
 
+## Features
+
+- **Server Side Rendering**: `ssr`
+- **Hydration**: `hydrate`
+- **Actix Web integration**: `actix`
+- **Axum integration**: `axum`
+- **Nightly toolchain**: `nightly`
+- **Desktop applications**: `system`
+- **JSON languages file**: `json` (enabled by default)
+- **YAML languages file**: `yaml`
+- **JSON5 languages file**: `json5`
+- **Tracing support**: `tracing`
+
 ## Nightly toolchain
 
 **leptos-fluent** builds nightly functionalities by enabling the `nightly`
@@ -101,21 +114,6 @@ leptos-fluent = { version = "0.1", features = ["json5"], default-features = fals
 See [**4. Languages**](https://mondeja.github.io/leptos-fluent/languages.html).
 ```
 
-## Features
-
-- **Server Side Rendering**: `ssr`
-- **Hydration**: `hydrate`
-- **Actix Web integration**: `actix`
-- **Axum integration**: `axum`
-- **Nightly toolchain**: `nightly`
-- **Desktop applications**: `system`
-- **JSON languages file**: `json` (enabled by default)
-- **YAML languages file**: `yaml`
-- **JSON5 languages file**: `json5`
-- **Tracing support**: `tracing`\*
-
-<sub style="position: relative; left: 25px"><sup>\*Unreleased</sup></sub>
-
 ## Tracking locales files with [`cargo leptos`]
 
 Using [`cargo leptos`] watch of the _locales/_ folder for reloads:
@@ -135,9 +133,7 @@ workspace _Cargo.toml_ file:
 watch-additional-files = ["examples/csr/locales"]
 ```
 
-## Unreleased
-
-### Tracing
+## Tracing
 
 To enable [tracing] support, add the `tracing` feature to **leptos-fluent**:
 
