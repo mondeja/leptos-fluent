@@ -1,10 +1,27 @@
+#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
 pub fn get(k: &str) -> Option<String> {
     #[cfg(not(feature = "ssr"))]
     if let Ok(search) = leptos::window().location().search() {
         if let Ok(search_params) =
             web_sys::UrlSearchParams::new_with_str(&search)
         {
-            return search_params.get(k);
+            let result = search_params.get(k);
+
+            #[cfg(feature = "tracing")]
+            if let Some(ref result) = result {
+                tracing::trace!(
+                    "Got URL search parameter \"{}\" from browser: {:?}",
+                    k,
+                    result
+                );
+            } else {
+                tracing::trace!(
+                    "Got no URL search parameter \"{}\" from browser",
+                    k
+                );
+            }
+
+            return result;
         }
     }
 
@@ -16,6 +33,7 @@ pub fn get(k: &str) -> Option<String> {
     None
 }
 
+#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
 pub fn set(k: &str, v: &str) {
     #[cfg(not(feature = "ssr"))]
     {
@@ -36,6 +54,13 @@ pub fn set(k: &str, v: &str) {
                 Some(&url.href()),
             )
             .expect("Failed to replace the history state");
+
+        #[cfg(feature = "tracing")]
+        tracing::trace!(
+            "Set URL search parameter \"{}\" in browser with value {:?}",
+            k,
+            v
+        );
     };
 
     #[cfg(feature = "ssr")]
@@ -45,6 +70,7 @@ pub fn set(k: &str, v: &str) {
     };
 }
 
+#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
 pub fn delete(k: &str) {
     #[cfg(not(feature = "ssr"))]
     {
@@ -65,6 +91,9 @@ pub fn delete(k: &str) {
                 Some(&url.href()),
             )
             .expect("Failed to replace the history state");
+
+        #[cfg(feature = "tracing")]
+        tracing::trace!("Deleted URL search parameter \"{}\" in browser", k);
     };
 
     #[cfg(feature = "ssr")]

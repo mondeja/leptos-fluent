@@ -79,6 +79,7 @@ use quote::quote;
 ///
 /// See the reference with all the parameters explained in detail at
 /// https://mondeja.github.io/leptos-fluent/leptos_fluent.html
+#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
 #[proc_macro]
 pub fn leptos_fluent(
     input: proc_macro::TokenStream,
@@ -146,7 +147,7 @@ pub fn leptos_fluent(
     // Less code possible on nightly
     #[cfg(feature = "nightly")]
     let get_language_quote = quote! {
-        (::leptos_fluent::i18n())()
+        ::leptos_fluent::i18n()()
     };
 
     #[cfg(not(feature = "nightly"))]
@@ -1819,35 +1820,46 @@ pub fn leptos_fluent(
             false => quote! {},
         };
 
+    let other_quotes = quote! {
+        #sync_html_tag_lang_quote
+        #sync_html_tag_dir_quote
+        #sync_language_with_server_function_quote
+        #sync_language_with_localstorage_quote
+        #sync_language_with_url_param_quote
+        #sync_language_with_cookie_quote
+        #sync_language_with_data_file_quote
+        #files_tracker_quote
+        #leptos_fluent_provide_meta_context_quote;
+    };
+
+    let debug_quote = quote! {
+        const LANGUAGES: [&::leptos_fluent::Language; #n_languages] =
+            #languages_quote;
+
+        let mut lang: Option<&'static ::leptos_fluent::Language> = None;
+        #initial_language_quote;
+
+        let initial_lang = if let Some(l) = lang {
+            l
+        } else {
+            LANGUAGES[0]
+        };
+
+        let mut i18n = ::leptos_fluent::I18n {
+            language: ::leptos::create_rw_signal(initial_lang),
+            languages: &LANGUAGES,
+            translations: ::leptos::Signal::derive(|| #translations),
+        };
+        ::leptos::provide_context::<::leptos_fluent::I18n>(i18n);
+    };
+
+    #[cfg(feature = "tracing")]
+    tracing::trace!("{}", debug_quote);
+
     let quote = quote! {
         {
-            const LANGUAGES: [&::leptos_fluent::Language; #n_languages] = #languages_quote;
-
-            let mut lang: Option<&'static ::leptos_fluent::Language> = None;
-            #initial_language_quote;
-
-            let initial_lang = if let Some(l) = lang {
-                l
-            } else {
-                LANGUAGES[0]
-            };
-
-            let mut i18n = ::leptos_fluent::I18n {
-                language: ::leptos::create_rw_signal(initial_lang),
-                languages: &LANGUAGES,
-                translations: ::leptos::Signal::derive(|| #translations),
-            };
-            ::leptos::provide_context::<::leptos_fluent::I18n>(i18n);
-            #sync_html_tag_lang_quote
-            #sync_html_tag_dir_quote
-            #sync_language_with_server_function_quote
-            #sync_language_with_localstorage_quote
-            #sync_language_with_url_param_quote
-            #sync_language_with_cookie_quote
-            #sync_language_with_data_file_quote
-            #files_tracker_quote
-            #leptos_fluent_provide_meta_context_quote;
-
+            #debug_quote
+            #other_quotes
             i18n
         }
     };

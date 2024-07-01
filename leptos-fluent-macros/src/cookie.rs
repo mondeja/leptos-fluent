@@ -1,4 +1,5 @@
 /// Validates a string with cookie attributes.
+#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace"))]
 pub(crate) fn validate_cookie_attrs(cookie_attrs: &str) -> Vec<String> {
     let mut errors = Vec::new();
     let attrs = cookie_attrs.split(';');
@@ -23,7 +24,13 @@ pub(crate) fn validate_cookie_attrs(cookie_attrs: &str) -> Vec<String> {
                 if !["strict", "lax", "none"]
                     .contains(&value.to_ascii_lowercase().as_str())
                 {
-                    errors.push(format!("Invalid SameSite value: {value}. Must be Strict, Lax, or None."));
+                    errors.push(format!(
+                        concat!(
+                            "Invalid SameSite value: {}.",
+                            " Must be Strict, Lax, or None.",
+                        ),
+                        value,
+                    ));
                 }
             }
             "secure" => {
@@ -83,9 +90,22 @@ pub(crate) fn validate_cookie_attrs(cookie_attrs: &str) -> Vec<String> {
                     "Expires",
                     "Partitioned",
                 ];
-                errors.push(format!("Invalid cookie attribute: '{}'.\n  Valid attributes are: {}.", value, valid_attributes.join(", ")));
+                errors.push(format!(
+                    concat!(
+                        "Invalid cookie attribute: '{}'.\n",
+                        "  Valid attributes are: {}.",
+                    ),
+                    value,
+                    valid_attributes.join(", "),
+                ));
             }
         }
     }
+
+    #[cfg(feature = "tracing")]
+    if !errors.is_empty() {
+        tracing::warn!("Cookie attributes validation errors: {:?}", errors);
+    }
+
     errors
 }

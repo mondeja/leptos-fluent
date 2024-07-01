@@ -1,10 +1,17 @@
 # CHANGELOG
 
-## Unreleased - [0.1.8]
+## 2024-07-01 - [0.1.8]
+
+### New features
+
+- Add `tracing` feature to enable building with [`tracing`] support.
 
 ### Enhancements
 
 - Stop depending on `wasm-bindgen` from `leptos-fluent` crate.
+- Better error messages parsing parameters with `leptos_fluent!` macro.
+
+[`tracing`]: https://docs.rs/tracing/latest/tracing/
 
 ## 2024-06-29 - [0.1.7]
 
@@ -373,7 +380,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
-[0.1.8]: https://github.com/mondeja/leptos-fluent/compare/v0.1.7...master
+[0.1.8]: https://github.com/mondeja/leptos-fluent/compare/v0.1.7...v0.1.8
 [0.1.7]: https://github.com/mondeja/leptos-fluent/compare/v0.1.6...v0.1.7
 [0.1.6]: https://github.com/mondeja/leptos-fluent/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/mondeja/leptos-fluent/compare/v0.1.4...v0.1.5

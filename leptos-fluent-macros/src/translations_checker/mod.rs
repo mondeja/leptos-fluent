@@ -7,6 +7,7 @@ use std::collections::HashMap;
 use std::path::Path;
 use tr_macros::{gather_tr_macro_defs_from_rs_files, TranslationMacro};
 
+#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
 pub(crate) fn run(
     check_translations_globstr: &str,
     workspace_path: &Path,
@@ -22,7 +23,20 @@ pub(crate) fn run(
         #[cfg(not(test))]
         workspace_path,
     );
+    #[cfg(feature = "tracing")]
+    errors.extend(tr_macros_errors.clone());
+    #[cfg(not(feature = "tracing"))]
     errors.extend(tr_macros_errors);
+
+    #[cfg(feature = "tracing")]
+    if !tr_macros_errors.is_empty() {
+        tracing::warn!(
+            "Errors while gathering tr macros: {:#?}",
+            tr_macros_errors
+        );
+    } else {
+        tracing::trace!("Gathered tr macros: {:#?}", tr_macros);
+    }
 
     let (fluent_entries, fluent_syntax_errors) = build_fluent_entries(
         fluent_resources,
@@ -31,7 +45,20 @@ pub(crate) fn run(
         core_locales_path,
         core_locales_content,
     );
+    #[cfg(feature = "tracing")]
+    errors.extend(fluent_syntax_errors.clone());
+    #[cfg(not(feature = "tracing"))]
     errors.extend(fluent_syntax_errors);
+
+    #[cfg(feature = "tracing")]
+    if !fluent_syntax_errors.is_empty() {
+        tracing::warn!(
+            "Errors while building fluent entries: {:#?}",
+            fluent_syntax_errors
+        );
+    } else {
+        tracing::trace!("Built fluent entries: {:#?}", fluent_entries);
+    }
 
     let mut check_messages =
         check_tr_macros_against_fluent_entries(&tr_macros, &fluent_entries);
@@ -39,9 +66,19 @@ pub(crate) fn run(
         &tr_macros,
         &fluent_entries,
     ));
+
     // TODO: Currently, the fluent-syntax parser does not offer a CST
     //       parser so we don't know the spans of the entries.
     //       See https://github.com/projectfluent/fluent-rs/issues/270
+
+    #[cfg(feature = "tracing")]
+    if !check_messages.is_empty() {
+        tracing::warn!(
+            "Errors while checking translations: {:#?}",
+            check_messages
+        );
+    }
+
     (check_messages, errors)
 }
 
@@ -229,7 +266,7 @@ fn check_tr_macro_message_name_is_valid(message_name: &str) -> bool {
                     return false;
                 }
             }
-            None => break true,
+            None => return true,
         }
     }
 }

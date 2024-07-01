@@ -1,5 +1,6 @@
 use crate::FluentFilePaths;
 
+#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
 pub(crate) fn build_files_tracker_quote(
     fluent_resources: &FluentFilePaths,
     languages_path: &Option<String>,
@@ -50,9 +51,14 @@ pub(crate) fn build_files_tracker_quote(
             ));
         }
         files_tracker_str.push_str("};");
-        files_tracker_str
+        let result = files_tracker_str
             .parse::<proc_macro2::TokenStream>()
-            .unwrap()
+            .unwrap();
+
+        #[cfg(feature = "tracing")]
+        tracing::trace!("Built files tracker quote: {:?}", result);
+
+        result
     }
 }
 

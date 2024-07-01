@@ -24,6 +24,7 @@ web-sys = { version = ">=0.1", features = [
 ] }
 current_locale = { version = "0.1", optional = true }
 directories = { version = "5", optional = true }
+tracing = { version = "0.1", optional = true }
 
 [features]
 default = ["json"]
@@ -33,6 +34,7 @@ system = [
   "leptos-fluent-macros/system"
 ]
 nightly = ["leptos-fluent-macros/nightly"]
+tracing = ["leptos-fluent-macros/tracing", "dep:tracing"]
 hydrate = ["leptos-fluent-macros/hydrate"]
 ssr = ["leptos-fluent-macros/ssr", "dep:leptos_meta"]
 actix = ["leptos-fluent-macros/actix"]
@@ -54,4 +56,4 @@ skip_feature_sets = [
   ["ssr"],
 ]
 always_include_features = ["json"]
-denylist = ["yaml", "json5", "nightly"]
+denylist = ["yaml", "json5", "nightly", "tracing"]

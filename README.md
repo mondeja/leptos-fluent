@@ -246,6 +246,7 @@ fn LanguageSelector() -> impl IntoView {
 - **JSON languages file**: `json` (enabled by default)
 - **YAML languages file**: `yaml`
 - **JSON5 languages file**: `json5`
+- **Tracing support**: `tracing`
 
 ## Resources
 
