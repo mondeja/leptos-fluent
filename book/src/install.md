@@ -135,7 +135,7 @@ watch-additional-files = ["examples/csr/locales"]
 
 ## Tracing
 
-To enable [tracing] support, add the `tracing` feature to **leptos-fluent**:
+To enable [`tracing`] support, add the `tracing` feature to **leptos-fluent**:
 
 ```toml
 [dependencies]
@@ -150,4 +150,4 @@ See the [GTK example](https://github.com/mondeja/leptos-fluent/tree/master/examp
 [`fluent-templates`]: https://github.com/XAMPPRocky/fluent-templates
 [`leptos_fluent!`]: https://mondeja.github.io/leptos-fluent/leptos_fluent.html
 [`cargo leptos`]: https://github.com/leptos-rs/cargo-leptos
-[tracing]: https://docs.rs/tracing/latest/tracing
+[`tracing`]: https://docs.rs/tracing/latest/tracing
