@@ -1,3 +1,4 @@
+#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
 pub fn parse(header: &str) -> Vec<String> {
     let mut parsed_lang: Vec<_> = header
         .split(';')
@@ -19,8 +20,17 @@ pub fn parse(header: &str) -> Vec<String> {
 
     parsed_lang.sort_unstable_by(|a, b| b.0.total_cmp(&a.0));
 
-    parsed_lang
+    let result = parsed_lang
         .into_iter()
         .flat_map(|(_q, langs)| langs.map(str::trim).map(String::from))
-        .collect()
+        .collect();
+
+    #[cfg(feature = "tracing")]
+    tracing::trace!(
+        "Parsed HTTP header \"{}\" into languages: {:?}",
+        header,
+        &result
+    );
+
+    result
 }

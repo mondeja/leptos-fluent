@@ -67,9 +67,13 @@ fn fill_languages_file(
     locales
 }
 
+#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace"))]
 pub(crate) fn read_languages_file(
     path: &PathBuf,
 ) -> Result<Vec<ParsedLanguage>, String> {
+    #[cfg(feature = "tracing")]
+    tracing::trace!("Reading languages file {:?}", path);
+
     #[cfg(feature = "json")]
     {
         let file_extension = path.extension().unwrap_or_default();
@@ -80,28 +84,47 @@ pub(crate) fn read_languages_file(
                         content.as_str(),
                     ) {
                         Ok(languages) => Ok(fill_languages_file(&languages)),
-                        Err(e) => Err(format!(
-                            "Invalid JSON in languages file {}: {}",
-                            path.to_string_lossy(),
-                            e
-                        )),
+                        Err(e) => {
+                            let error_message = format!(
+                                "Invalid JSON in languages file {}: {}",
+                                path.to_string_lossy(),
+                                e
+                            );
+
+                            #[cfg(feature = "tracing")]
+                            tracing::error!("{}", error_message);
+
+                            Err(error_message)
+                        }
                     }
                 }
-                Err(e) => Err(format!(
-                    "Couldn't read languages file {}: {}",
-                    path.to_string_lossy(),
-                    e,
-                )),
+                Err(e) => {
+                    let error_message = format!(
+                        "Couldn't read languages file {}: {}",
+                        path.to_string_lossy(),
+                        e,
+                    );
+
+                    #[cfg(feature = "tracing")]
+                    tracing::error!("{}", error_message);
+
+                    Err(error_message)
+                }
             }
         } else {
-            Err(format!(
+            let error_message = format!(
                 concat!(
                     "The languages file should be a JSON file because",
                     " you've enabled the 'json' feature.",
                     " Found file extension {:?}"
                 ),
                 file_extension
-            ))
+            );
+
+            #[cfg(feature = "tracing")]
+            tracing::error!("{}", error_message);
+
+            Err(error_message)
         }
     }
 
@@ -115,28 +138,47 @@ pub(crate) fn read_languages_file(
                         content.as_str(),
                     ) {
                         Ok(languages) => Ok(fill_languages_file(&languages)),
-                        Err(e) => Err(format!(
-                            "Invalid YAML in languages file {}: {}",
-                            path.to_string_lossy(),
-                            e.to_string()
-                        )),
+                        Err(e) => {
+                            let error_message = format!(
+                                "Invalid YAML in languages file {}: {}",
+                                path.to_string_lossy(),
+                                e.to_string()
+                            );
+
+                            #[cfg(feature = "tracing")]
+                            tracing::error!("{}", error_message);
+
+                            Err(error_message)
+                        }
                     }
                 }
-                Err(e) => Err(format!(
-                    "Couldn't read languages file {}: {}",
-                    path.to_string_lossy(),
-                    e.to_string(),
-                )),
+                Err(e) => {
+                    let error_message = format!(
+                        "Couldn't read languages file {}: {}",
+                        path.to_string_lossy(),
+                        e,
+                    );
+
+                    #[cfg(feature = "tracing")]
+                    tracing::error!("{}", error_message);
+
+                    Err(error_message)
+                }
             }
         } else {
-            Err(format!(
+            let error_message = format!(
                 concat!(
                     "The languages file should be a YAML file because",
                     " you've enabled the 'yaml' feature.",
                     " Found file extension {:?}"
                 ),
                 file_extension
-            ))
+            );
+
+            #[cfg(feature = "tracing")]
+            tracing::error!("{}", error_message);
+
+            Err(error_message)
         }
     }
 
@@ -153,45 +195,73 @@ pub(crate) fn read_languages_file(
                         content.as_str(),
                     ) {
                         Ok(languages) => Ok(fill_languages_file(&languages)),
-                        Err(e) => Err(format!(
-                            "Invalid JSON5 in languages file {}: {}",
-                            path.to_string_lossy(),
-                            e.to_string()
-                        )),
+                        Err(e) => {
+                            let error_message = format!(
+                                "Invalid JSON5 in languages file {}: {}",
+                                path.to_string_lossy(),
+                                e.to_string()
+                            );
+
+                            #[cfg(feature = "tracing")]
+                            tracing::error!("{}", error_message);
+
+                            Err(error_message)
+                        }
                     }
                 }
-                Err(e) => Err(format!(
-                    "Couldn't read languages file {}: {}",
-                    path.to_string_lossy(),
-                    e.to_string(),
-                )),
+                Err(e) => {
+                    let error_message = format!(
+                        "Couldn't read languages file {}: {}",
+                        path.to_string_lossy(),
+                        e,
+                    );
+
+                    #[cfg(feature = "tracing")]
+                    tracing::error!("{}", error_message);
+
+                    Err(error_message)
+                }
             }
         } else {
-            Err(format!(
+            let error_message = format!(
                 concat!(
                     "The languages file should be a JSON5 file because",
                     " you've enabled the 'json5' feature.",
                     " Found file extension {:?}"
                 ),
                 file_extension
-            ))
+            );
+
+            #[cfg(feature = "tracing")]
+            tracing::error!("{}", error_message);
+
+            Err(error_message)
         }
     }
 
     #[cfg(not(any(feature = "json", feature = "yaml", feature = "json5")))]
     {
         _ = path;
-        Err(concat!(
+        let error_message = concat!(
             "No feature enabled to read languages file.",
             " Enable either the 'json', 'yaml' or 'json5' feature.",
         )
-        .to_string())
+        .to_string();
+
+        #[cfg(feature = "tracing")]
+        tracing::error!("{}", error_message);
+
+        Err(error_message)
     }
 }
 
+#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace"))]
 pub(crate) fn read_locales_folder(
     path: &PathBuf,
 ) -> (Vec<ParsedLanguage>, Vec<String>) {
+    #[cfg(feature = "tracing")]
+    tracing::trace!("Reading locales folder {:?}", path);
+
     let mut errors = vec![];
 
     let mut iso639_language_codes = vec![];
@@ -247,6 +317,14 @@ pub(crate) fn read_locales_folder(
         ));
     }
     locales.sort_by(|a, b| a.1.cmp(&b.1));
+
+    #[cfg(feature = "tracing")]
+    if !errors.is_empty() {
+        tracing::warn!("Errors reading locales folder: {:?}", errors);
+    } else {
+        tracing::trace!("Read locales: {:?}", locales);
+    }
+
     (locales, errors)
 }
 

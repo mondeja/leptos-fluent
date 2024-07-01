@@ -2,6 +2,10 @@
 
 ## Unreleased - [0.1.8]
 
+### New features
+
+- Add `tracing` feature to enable building with `tracing` support.
+
 ### Enhancements
 
 - Stop depending on `wasm-bindgen` from `leptos-fluent` crate.

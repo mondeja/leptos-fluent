@@ -99,7 +99,7 @@ pub async fn show_hello_world(
     translated_hello_world: String,
     language: String,
 ) -> Result<(), ServerFnError> {
-    println!("{} ({})", translated_hello_world, language);
+    println!("{translated_hello_world} ({language})");
     Ok(())
 }
 

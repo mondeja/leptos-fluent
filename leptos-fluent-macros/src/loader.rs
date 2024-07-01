@@ -1053,7 +1053,7 @@ impl Parse for I18nLoader {
                 locales_path.as_ref().unwrap().span(),
                 format!(
                     concat!(
-                        "Couldn't read locales folder, this path should",
+                        "Couldn't read locales folder. This path should",
                         " be relative to your crate's `Cargo.toml`.",
                         " Looking for: {:?}",
                     ),
@@ -1093,7 +1093,7 @@ impl Parse for I18nLoader {
                     core_locales_path.unwrap().span(),
                     format!(
                         concat!(
-                            "Couldn't read core fluent resource, this path should",
+                            "Couldn't read core fluent resource. This path should",
                             " be relative to your crate's `Cargo.toml`.",
                             " Looking for: {:?}",
                         ),

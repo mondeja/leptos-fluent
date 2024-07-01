@@ -133,7 +133,7 @@ pub async fn show_hello_world(
 ) -> Result<(), ServerFnError> {
     #[allow(clippy::print_stdout)]
     {
-        println!("{} ({})", translated_hello_world, language);
+        println!("{translated_hello_world} ({language})");
     };
     Ok(())
 }

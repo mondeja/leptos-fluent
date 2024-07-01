@@ -83,7 +83,6 @@ repos:
           [
             "--features=ssr,actix",
             --exclude=leptos-fluent-ssr-hydrate-axum-example,
-            --exclude=leptos-fluent-ssr-hydrate-actix-example,
             --exclude=leptos-fluent-csr-complete-example,
             --exclude=leptos-fluent-csr-minimal-example,
             --workspace,
@@ -106,8 +105,7 @@ repos:
         name: clippy-ssr-axum
         args:
           [
-            "--features=ssr,axum,yaml",
-            --exclude=leptos-fluent-ssr-hydrate-axum-example,
+            "--features=ssr,leptos-fluent/axum,yaml",
             --exclude=leptos-fluent-ssr-hydrate-actix-example,
             --exclude=leptos-fluent-csr-complete-example,
             --exclude=leptos-fluent-csr-minimal-example,

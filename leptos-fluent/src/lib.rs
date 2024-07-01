@@ -335,7 +335,7 @@ pub struct Language {
     pub name: &'static str,
     /// Writing direction of the language
     pub dir: &'static WritingDirection,
-    /// Flag of the country of the language (if any) as emoji
+    /// Flag of the country of the language as emoji (if any)
     pub flag: Option<&'static str>,
 }
 
@@ -448,6 +448,10 @@ impl I18n {
     ///
     /// leptos::logging::log!("Macro parameters: {:?}", i18n.meta().unwrap());
     /// ```
+    #[cfg_attr(
+        feature = "tracing",
+        tracing::instrument(level = "trace", err(Debug))
+    )]
     pub fn meta(&self) -> Result<LeptosFluentMeta, String> {
         leptos::use_context::<LeptosFluentMeta>().ok_or(
             concat!(
@@ -532,27 +536,45 @@ impl Fn<(&'static Language,)> for I18n {
 }
 
 /// Get the current context for localization.
+#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace"))]
 #[inline(always)]
 pub fn use_i18n() -> Option<I18n> {
     use_context::<I18n>()
 }
 
 /// Expect the current context for localization.
+#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace"))]
 #[inline(always)]
 pub fn expect_i18n() -> I18n {
-    use_context::<I18n>().expect(
-        "I18n context is missing, use the leptos_fluent!{} macro to provide it.",
-    )
+    if let Some(i18n) = use_i18n() {
+        i18n
+    } else {
+        let error_message = concat!(
+            "I18n context is missing, use the leptos_fluent! macro to provide it."
+        );
+        #[cfg(feature = "tracing")]
+        tracing::error!(error_message);
+        panic!("{}", error_message)
+    }
 }
 
 /// Expect the current context for localization.
+#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace"))]
 #[inline(always)]
 pub fn i18n() -> I18n {
-    use_context::<I18n>().expect(
-        "I18n context is missing, use the leptos_fluent!{} macro to provide it.",
-    )
+    if let Some(i18n) = use_i18n() {
+        i18n
+    } else {
+        let error_message = concat!(
+            "I18n context is missing, use the leptos_fluent! macro to provide it."
+        );
+        #[cfg(feature = "tracing")]
+        tracing::error!(error_message);
+        panic!("{}", error_message)
+    }
 }
 
+#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace"))]
 #[doc(hidden)]
 pub fn tr_impl(text_id: &str) -> String {
     let i18n = expect_i18n();
@@ -567,9 +589,31 @@ pub fn tr_impl(text_id: &str) -> String {
         None
     });
 
+    #[cfg(feature = "tracing")]
+    {
+        if found.is_none() {
+            tracing::warn!(
+                "Localization message \"{text_id}\" not found in any translation"
+            );
+        } else {
+            let translated = found.as_ref().unwrap();
+            tracing::trace!(
+                "{}",
+                format!(
+                    concat!(
+                        "Localization message \"{}\" found in a translation.",
+                        " Translated to \"{}\"."
+                    ),
+                    text_id, translated
+                ),
+            );
+        }
+    }
+
     found.unwrap_or(format!("Unknown localization {text_id}"))
 }
 
+#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
 #[doc(hidden)]
 pub fn tr_with_args_impl(
     text_id: &str,
@@ -588,6 +632,27 @@ pub fn tr_with_args_impl(
 
         None
     });
+
+    #[cfg(feature = "tracing")]
+    {
+        if found.is_none() {
+            tracing::warn!(
+                "Localization message \"{text_id}\" not found in any translation"
+            );
+        } else {
+            let translated = found.as_ref().unwrap();
+            tracing::trace!(
+                "{}",
+                format!(
+                    concat!(
+                        "Localization message \"{}\" found in a translation.",
+                        " Translated to \"{}\"."
+                    ),
+                    text_id, translated
+                ),
+            );
+        }
+    }
 
     found.unwrap_or(format!("Unknown localization {text_id}"))
 }
@@ -650,17 +715,41 @@ macro_rules! move_tr {
     };
 }
 
+#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
 #[doc(hidden)]
 pub fn language_from_str_between_languages(
     code: &str,
     languages: &'static [&Language],
 ) -> Option<&'static Language> {
+    #[cfg(feature = "tracing")]
+    tracing::trace!(
+        concat!(
+            "Searching for language with code \"{}\".\n",
+            " Available languages: {}",
+        ),
+        code,
+        languages
+            .iter()
+            .map(|lang| format!("\"{}\"", lang.id))
+            .collect::<Vec<_>>()
+            .join(", ")
+    );
+
     match LanguageIdentifier::from_str(code) {
         Ok(target_lang) => match languages
             .iter()
             .find(|lang| lang.id.matches(&target_lang, false, false))
         {
-            Some(lang) => Some(lang),
+            Some(lang) => {
+                #[cfg(feature = "tracing")]
+                tracing::trace!(
+                    "Language with code \"{}\" found with exact search: \"{}\"",
+                    code,
+                    lang.id
+                );
+
+                Some(lang)
+            }
             None => {
                 let lazy_target_lang =
                     LanguageIdentifier::from_raw_parts_unchecked(
@@ -673,8 +762,25 @@ pub fn language_from_str_between_languages(
                     .iter()
                     .find(|lang| lang.id.matches(&lazy_target_lang, true, true))
                 {
-                    Some(lang) => Some(lang),
-                    None => None,
+                    Some(lang) => {
+                        #[cfg(feature = "tracing")]
+                        tracing::trace!(
+                            "Language with code \"{}\" found with fuzzy search: \"{}\"",
+                            code,
+                            lang.id
+                        );
+
+                        Some(lang)
+                    }
+                    None => {
+                        #[cfg(feature = "tracing")]
+                        tracing::trace!(
+                            "Language with code \"{}\" not found",
+                            code
+                        );
+
+                        None
+                    }
                 }
             }
         },
@@ -707,6 +813,7 @@ pub fn l(
 /// ```
 #[component(transparent)]
 #[cfg(feature = "ssr")]
+#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace"))]
 pub fn SsrHtmlTag() -> impl IntoView {
     let lang = expect_i18n().language.get_untracked();
     view! { <Html lang=lang.id.to_string() dir=lang.dir.as_str()/> }
@@ -727,6 +834,7 @@ pub fn SsrHtmlTag() -> impl IntoView {
 /// ```
 #[component(transparent)]
 #[cfg(not(feature = "ssr"))]
+#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace"))]
 pub fn SsrHtmlTag() -> impl IntoView {}
 
 /// Parameters passed to `leptos_fluent!` macro at creation of `i18n` context
