@@ -321,8 +321,7 @@ impl core::fmt::Display for WritingDirection {
 }
 
 /// Each language supported by your application.
-#[derive(Clone)]
-#[cfg_attr(debug_assertions, derive(Debug))]
+#[derive(Clone, Debug)]
 pub struct Language {
     /// Language identifier
     ///
