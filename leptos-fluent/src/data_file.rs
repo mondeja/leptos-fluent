@@ -50,7 +50,10 @@ pub fn get(data_file_key: &str) -> Option<String> {
             );
             return None;
         }
+        #[cfg(feature = "tracing")]
         let mut file = File::open(data_file.clone()).unwrap();
+        #[cfg(not(feature = "tracing"))]
+        let mut file = File::open(data_file).unwrap();
         let mut contents = String::new();
         _ = file.read_to_string(&mut contents);
         if contents.is_empty() {
