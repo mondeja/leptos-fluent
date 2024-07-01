@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::path::Path;
 use tr_macros::{gather_tr_macro_defs_from_rs_files, TranslationMacro};
 
-#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace"))]
+#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
 pub(crate) fn run(
     check_translations_globstr: &str,
     workspace_path: &Path,

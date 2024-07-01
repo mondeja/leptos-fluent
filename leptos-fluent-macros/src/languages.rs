@@ -67,7 +67,7 @@ fn fill_languages_file(
     locales
 }
 
-#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace"))]
+#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
 pub(crate) fn read_languages_file(
     path: &PathBuf,
 ) -> Result<Vec<ParsedLanguage>, String> {
@@ -255,7 +255,7 @@ pub(crate) fn read_languages_file(
     }
 }
 
-#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace"))]
+#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
 pub(crate) fn read_locales_folder(
     path: &PathBuf,
 ) -> (Vec<ParsedLanguage>, Vec<String>) {

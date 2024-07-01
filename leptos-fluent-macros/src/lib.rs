@@ -79,7 +79,7 @@ use quote::quote;
 ///
 /// See the reference with all the parameters explained in detail at
 /// https://mondeja.github.io/leptos-fluent/leptos_fluent.html
-#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace"))]
+#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
 #[proc_macro]
 pub fn leptos_fluent(
     input: proc_macro::TokenStream,
