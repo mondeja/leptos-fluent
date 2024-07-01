@@ -9,7 +9,7 @@
 ### Enhancements
 
 - Stop depending on `wasm-bindgen` from `leptos-fluent` crate.
-- Better error messages when parsing paramters with `leptos_fluent!` macro.
+- Better error messages parsing parameters with `leptos_fluent!` macro.
 
 ## 2024-06-29 - [0.1.7]
 
