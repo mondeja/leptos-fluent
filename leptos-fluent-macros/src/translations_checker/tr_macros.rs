@@ -72,7 +72,7 @@ fn tr_macros_from_file_path(
     }
 }
 
-#[cfg_attr(debug_assertions, derive(Debug))]
+#[cfg_attr(any(debug_assertions, feature = "tracing"), derive(Debug))]
 pub(crate) struct TranslationMacro {
     pub(crate) name: String,
     pub(crate) message_name: String,
