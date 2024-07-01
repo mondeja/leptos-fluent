@@ -464,7 +464,7 @@ impl I18n {
     }
 }
 
-#[cfg(debug_assertions)]
+#[cfg(any(debug_assertions, feature = "tracing"))]
 impl core::fmt::Debug for I18n {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.debug_struct("I18n")
