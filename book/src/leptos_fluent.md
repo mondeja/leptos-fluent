@@ -80,14 +80,15 @@ executed in the next order:
 1. Get the initial languaje from a source or target: `initial_language_from_*`
 2. Obtain the initial language and set to a target: `initial_language_from_*_to_*`
 3. Synchronize the current language with a target: `set_language_to_*`
-4. The name of a source or a target: `cookie_name`, `localstorage_key`, `navigator`...
+
+- The name of a source or a target: `cookie_name`, `localstorage_key`, `navigator`...
 
 ### Sources and targets
 
 Sources are read-only and targets are read-write.
 
 - Sources: `navigator`, `system`, `accept_language_header`
-- Targets: `cookie_name`, `localstorage_key`, `url_param`, `data_file`
+- Targets: `cookie_name`, `localstorage_key`, `url_param`, `data_file`...
 
 ### Commented example
 
