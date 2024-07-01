@@ -594,7 +594,6 @@ pub fn tr_impl(text_id: &str) -> String {
                 "Localization message \"{text_id}\" not found in any translation"
             );
         } else {
-            let translated = found.as_ref().unwrap();
             tracing::trace!(
                 "{}",
                 format!(
@@ -602,7 +601,8 @@ pub fn tr_impl(text_id: &str) -> String {
                         "Localization message \"{}\" found in a translation.",
                         " Translated to \"{}\"."
                     ),
-                    text_id, translated
+                    text_id,
+                    found.as_ref().unwrap()
                 ),
             );
         }
@@ -638,16 +638,13 @@ pub fn tr_with_args_impl(
                 "Localization message \"{text_id}\" not found in any translation"
             );
         } else {
-            let translated = found.as_ref().unwrap();
             tracing::trace!(
-                "{}",
-                format!(
-                    concat!(
-                        "Localization message \"{}\" found in a translation.",
-                        " Translated to \"{}\"."
-                    ),
-                    text_id, translated
+                concat!(
+                    "Localization message \"{}\" found in a translation.",
+                    " Translated to \"{}\"."
                 ),
+                text_id,
+                found.as_ref().unwrap()
             );
         }
     }
