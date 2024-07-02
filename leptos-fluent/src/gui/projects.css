@@ -1,0 +1,11 @@
+#projects {
+  padding: 10px;
+  display: inline-flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+#projects .title {
+  color: #ddd;
+  text-transform: uppercase;
+}

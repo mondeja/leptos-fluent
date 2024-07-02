@@ -330,13 +330,14 @@ pub(crate) fn read_locales_folder(
 
 pub(crate) fn build_languages_quote(
     languages: &[ParsedLanguage],
+    leptos_fluent_prefix: &str,
 ) -> proc_macro2::TokenStream {
     format!(
         "[{}]",
         languages
             .iter()
             .map(|(id, name, dir, flag)| generate_code_for_static_language(
-                id, name, dir, flag
+                id, name, dir, flag, leptos_fluent_prefix
             ))
             .collect::<Vec<String>>()
             .join(",")
@@ -350,22 +351,24 @@ fn generate_code_for_static_language(
     name: &str,
     dir: &str,
     flag: &Option<String>,
+    leptos_fluent_prefix: &str,
 ) -> String {
     format!(
         concat!(
-            "&::leptos_fluent::Language{{",
+            "&{}::Language{{",
             "id: ::fluent_templates::loader::langid!(\"{}\"),",
             "name: \"{}\",",
             "dir: {},",
             "flag: {}",
             "}}",
         ),
+        leptos_fluent_prefix,
         id,
         name,
         match dir {
-            "ltr" => "&::leptos_fluent::WritingDirection::Ltr",
-            "rtl" => "&::leptos_fluent::WritingDirection::Rtl",
-            _ => "&::leptos_fluent::WritingDirection::Auto",
+            "ltr" => format!("&{leptos_fluent_prefix}::WritingDirection::Ltr"),
+            "rtl" => format!("&{leptos_fluent_prefix}::WritingDirection::Rtl"),
+            _ => format!("&{leptos_fluent_prefix}::WritingDirection::Auto"),
         },
         match flag {
             Some(f) => format!("Some(\"{f}\")"),

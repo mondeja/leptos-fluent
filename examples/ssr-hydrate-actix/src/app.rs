@@ -1,5 +1,6 @@
 use fluent_templates::static_loader;
 use leptos::*;
+use leptos_fluent::LeptosFluentGui;
 use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, tr, Language};
 use leptos_meta::*;
 use leptos_router::*;
@@ -54,6 +55,7 @@ pub fn App() -> impl IntoView {
             <main>
                 <Routes>
                     <Route path="" view=HomePage/>
+                    <Route path="/i18n" view=LeptosFluentGui/>
                     <Route path="/*any" view=NotFound/>
                 </Routes>
             </main>
@@ -74,6 +76,10 @@ fn HomePage() -> impl IntoView {
             }}
 
         </fieldset>
+        <p inner_html = move_tr!(
+            "see-translator-gui",
+            { "url" => "<a href=\"http://127.0.0.1:3000/i18n\">/i18n</a>" }
+        )/>
     }
 }
 

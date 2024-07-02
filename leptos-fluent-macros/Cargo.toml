@@ -47,6 +47,7 @@ axum = []
 json = ["dep:serde", "dep:serde_json"]
 yaml = ["dep:serde", "dep:serde_yaml"]
 json5 = ["dep:serde", "dep:json5"]
+gui = []
 
 [package.metadata.cargo-all-features]
 skip_feature_sets = [

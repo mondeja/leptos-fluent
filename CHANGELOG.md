@@ -11,7 +11,7 @@
 - Stop depending on `wasm-bindgen` from `leptos-fluent` crate.
 - Better error messages parsing parameters with `leptos_fluent!` macro.
 
-[`tracing`]: https://docs.rs/tracing/latest/tracing/
+[`tracing`]: https://docs.rs/tracing/latest/tracing
 
 ## 2024-06-29 - [0.1.7]
 

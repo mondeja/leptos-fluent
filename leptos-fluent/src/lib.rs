@@ -271,6 +271,8 @@ pub mod http_header;
 pub mod localstorage;
 #[doc(hidden)]
 pub mod url;
+#[cfg(feature = "gui")]
+pub mod gui;
 
 #[cfg(feature = "system")]
 pub use current_locale::current_locale;
@@ -290,6 +292,8 @@ use leptos::{
 #[cfg(feature = "ssr")]
 use leptos::{view, SignalGetUntracked};
 pub use leptos_fluent_macros::leptos_fluent;
+#[cfg(feature = "gui")]
+pub use gui::LeptosFluentGui;
 #[cfg(feature = "ssr")]
 use leptos_meta::Html;
 

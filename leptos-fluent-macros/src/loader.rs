@@ -313,6 +313,7 @@ pub(crate) struct I18nLoader {
     pub initial_language_from_data_file: LitBoolExpr,
     #[cfg(feature = "system")]
     pub data_file_key: LitStrExpr,
+    pub leptos_fluent_prefix: syn::Path,
 }
 
 impl Parse for I18nLoader {
@@ -378,6 +379,7 @@ impl Parse for I18nLoader {
         #[cfg(feature = "system")]
         let mut initial_language_from_data_file = LitBoolExpr::new();
         let mut data_file_key = LitStrExpr::new();
+        let mut leptos_fluent_prefix: Option<syn::Path> = None;
 
         while !fields.is_empty() {
             let mut exprpath: Option<proc_macro2::TokenStream> = None;
@@ -979,6 +981,9 @@ impl Parse for I18nLoader {
                 if exprpath.is_some() {
                     provide_meta_context.exprpath.clone_from(&exprpath);
                 }
+            } else if k == "leptos_fluent_prefix" {
+                leptos_fluent_prefix = Some(fields.parse()?);
+                exprpath_not_supported!(exprpath, k);
             } else {
                 return Err(syn::Error::new(
                     k.span(),
@@ -1225,6 +1230,10 @@ impl Parse for I18nLoader {
             initial_language_from_data_file,
             #[cfg(feature = "system")]
             data_file_key,
+            leptos_fluent_prefix: match leptos_fluent_prefix {
+                Some(prefix) => prefix,
+                None => syn::parse_str("::leptos_fluent").unwrap(),
+            },
         })
     }
 }

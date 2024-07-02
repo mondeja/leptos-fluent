@@ -1796,11 +1796,15 @@ dependencies = [
 name = "leptos-fluent"
 version = "0.1.8"
 dependencies = [
+ "actix-web",
+ "axum",
  "current_locale",
  "directories",
  "fluent-templates",
  "leptos",
  "leptos-fluent-macros",
+ "leptos_actix",
+ "leptos_axum",
  "leptos_meta",
  "tracing",
  "web-sys",

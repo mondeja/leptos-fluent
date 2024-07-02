@@ -15,6 +15,8 @@ leptos-fluent-macros = { path = "../leptos-fluent-macros" }
 fluent-templates.workspace = true
 leptos = ">=0.6"
 leptos_meta = { version = ">=0.6", optional = true }
+leptos_actix = { version = "0.6", optional = true }
+leptos_axum = { version = "0.6", optional = true }
 web-sys = { version = ">=0.1", features = [
   "HtmlDocument",
   "Navigator",
@@ -25,20 +27,26 @@ web-sys = { version = ">=0.1", features = [
 current_locale = { version = "0.1", optional = true }
 directories = { version = "5", optional = true }
 tracing = { version = "0.1", optional = true }
+actix-web = { version = ">=3", optional = true }
+axum = { version = ">=0.3", optional = true }
+serde = { version = "1", default-features = false, features = [
+  "derive"
+], optional = true }
 
 [features]
 default = ["json"]
 system = [
   "dep:current_locale",
   "dep:directories",
-  "leptos-fluent-macros/system"
+  "leptos-fluent-macros/system",
 ]
 nightly = ["leptos-fluent-macros/nightly"]
-tracing = ["leptos-fluent-macros/tracing", "dep:tracing"]
+gui = ["dep:leptos_meta", "dep:serde", "leptos-fluent-macros/gui"]
+tracing = ["dep:tracing", "leptos-fluent-macros/tracing"]
 hydrate = ["leptos-fluent-macros/hydrate"]
-ssr = ["leptos-fluent-macros/ssr", "dep:leptos_meta"]
-actix = ["leptos-fluent-macros/actix"]
-axum = ["leptos-fluent-macros/axum"]
+ssr = ["dep:leptos_meta", "leptos-fluent-macros/ssr"]
+actix = ["dep:actix-web", "dep:leptos_actix", "leptos-fluent-macros/actix"]
+axum = ["dep:axum", "dep:leptos_axum", "leptos-fluent-macros/axum"]
 json = ["leptos-fluent-macros/json"]
 yaml = ["leptos-fluent-macros/yaml"]
 json5 = ["leptos-fluent-macros/json5"]
@@ -56,4 +64,4 @@ skip_feature_sets = [
   ["ssr"],
 ]
 always_include_features = ["json"]
-denylist = ["yaml", "json5", "nightly", "tracing"]
+denylist = ["yaml", "json5", "nightly", "tracing", "gui"]

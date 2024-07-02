@@ -182,7 +182,11 @@ impl<'ast> TranslationsMacrosVisitor {
         for token in tokens.clone() {
             if let proc_macro2::TokenTree::Ident(ident) = token {
                 let ident_str = ident.to_string();
-                if ident_str == "move_tr" || ident_str == "tr" {
+                if ident_str == "move_tr"
+                    || ident_str == "tr"
+                    || ident_str == "move_ctr"
+                    || ident_str == "ctr"
+                {
                     self.current_tr_macro = Some(ident.to_string());
                     #[cfg(feature = "nightly")]
                     {
