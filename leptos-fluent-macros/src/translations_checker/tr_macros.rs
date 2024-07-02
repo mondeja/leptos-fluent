@@ -173,6 +173,17 @@ fn value_from_literal(literal: &proc_macro2::Literal) -> String {
     }
 }
 
+fn is_leptos_fluent_tr_macro(name: &str) -> bool {
+    let equal = name == "tr"
+        || name == "move_tr";
+
+    #[cfg(feature = "gui")]
+    return equal || name == "ctr" || name == "move_ctr";
+
+    #[cfg(not(feature = "gui"))]
+    equal
+}
+
 impl<'ast> TranslationsMacrosVisitor {
     fn visit_maybe_macro_tokens_stream(
         &mut self,
@@ -182,11 +193,7 @@ impl<'ast> TranslationsMacrosVisitor {
         for token in tokens.clone() {
             if let proc_macro2::TokenTree::Ident(ident) = token {
                 let ident_str = ident.to_string();
-                if ident_str == "move_tr"
-                    || ident_str == "tr"
-                    || ident_str == "move_ctr"
-                    || ident_str == "ctr"
-                {
+                if is_leptos_fluent_tr_macro(&ident_str) {
                     self.current_tr_macro = Some(ident.to_string());
                     #[cfg(feature = "nightly")]
                     {

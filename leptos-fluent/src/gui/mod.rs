@@ -8,13 +8,15 @@
 //! [leptos-fluent]: https://crates.io/crates/leptos-fluent
 //!
 
+mod editor;
 mod projects;
 
+use crate::{ctr, leptos_fluent};
+use editor::Editor;
 use fluent_templates::static_loader;
 use leptos::*;
-use crate::leptos_fluent;
-use leptos_meta::provide_meta_context;
-use projects::Projects;
+use leptos_meta::{provide_meta_context, Title};
+use projects::{CurrentProjectContext, Project, Projects, ProjectsContext};
 
 #[cfg(feature = "gui")]
 #[macro_export]
@@ -82,7 +84,14 @@ pub fn LeptosFluentGui() -> impl IntoView {
         data_file_key: "leptos-fluent-gui",
     }};
 
+    let projects_context = create_rw_signal::<Option<Vec<Project>>>(None);
+    provide_context::<ProjectsContext>(projects_context);
+
+    let current_project_context = create_rw_signal::<Option<Project>>(None);
+    provide_context::<CurrentProjectContext>(current_project_context);
+
     view! {
+        <Title text=|| ctr!("leptos-fluent-translator-gui")/>
         <style>{include_str!("./mod.css")}</style>
         <div id="app">
             <Projects/>
@@ -93,9 +102,87 @@ pub fn LeptosFluentGui() -> impl IntoView {
 
 #[component]
 fn Main() -> impl IntoView {
+    let get_current_project =
+        || expect_context::<RwSignal<Option<Project>>>().get();
+
     view! {
         <lf-main>
-            <h1>Main</h1>
+            {move || match get_current_project() {
+                Some(project) => view! { <ProjectView project /> }.into_view(),
+                None => view! {}.into_view(),
+            }}
         </lf-main>
     }
+}
+
+#[component]
+fn ProjectView(project: Project) -> impl IntoView {
+    let opened_files = create_rw_signal::<Vec<editor::OpenedFile>>(Vec::new());
+    let active_file = create_rw_signal::<Option<editor::OpenedFile>>(None);
+
+    view! {
+        <h1>"📂 "{project.locales_path.clone()}</h1>
+        <Editor project=project.clone() opened_files active_file/>
+        <FilesSelector project=project.clone() opened_files active_file/>
+    }
+}
+
+#[component]
+fn FilesSelector(
+    project: Project,
+    opened_files: RwSignal<Vec<editor::OpenedFile>>,
+    active_file: RwSignal<Option<editor::OpenedFile>>,
+) -> impl IntoView {
+    let render_file = |file: String| {
+        let file_copy = file.clone();
+        view! {
+            <li
+                on:click=move |_| {
+                    let mut files = opened_files.get();
+                    let new_file = editor::OpenedFile::new(file.clone());
+                    if !files.contains(&new_file) {
+                        files.push(new_file.clone());
+                    }
+                    opened_files.set(files);
+                    active_file.set(Some(new_file));
+                }
+            >{file_to_relative_path(file_copy, project.workspace_path.clone(), project.locales_path.clone())}</li>
+        }
+    };
+
+    let render_files = |lang: String, files: Vec<String>| {
+        view! {
+            <li>
+                <h3>{lang}</h3>
+                <ul>
+                    {files.iter().map(|file| render_file(file.to_string())).collect::<Vec<_>>()}
+                </ul>
+            </li>
+        }
+    };
+
+    view! {
+        <div class="files-selector">
+            <ul>
+                {{
+                    project.languages.iter().map(
+                        |(lang, files)| render_files(lang.to_string(), files.clone())
+                    )
+                }.collect::<Vec<_>>()}
+            </ul>
+        </div>
+    }
+}
+
+pub(crate) fn file_to_relative_path(
+    file: String,
+    workspace_path: String,
+    locales_path: String,
+) -> String {
+    let rel_pathbuf =
+        pathdiff::diff_paths(file.as_str(), &workspace_path).unwrap();
+    let rel_pathstr = rel_pathbuf.to_str().unwrap().to_string();
+    rel_pathstr.split(&locales_path).collect::<Vec<_>>()[1]
+        .trim_start_matches('/')
+        .to_string()
 }

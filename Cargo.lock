@@ -1806,6 +1806,8 @@ dependencies = [
  "leptos_actix",
  "leptos_axum",
  "leptos_meta",
+ "pathdiff",
+ "serde",
  "tracing",
  "web-sys",
 ]

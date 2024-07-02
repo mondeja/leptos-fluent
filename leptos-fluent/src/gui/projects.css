@@ -1,11 +1,47 @@
 #projects {
-  padding: 10px;
+  padding: 15px;
   display: inline-flex;
   flex-direction: column;
   height: 100vh;
 }
 
+#projects.closed {
+  padding: 11px;
+  max-width: 30px;
+}
+
+#projects.closed > ul li {
+  color: rgba(0, 0, 0, 0)
+}
+
 #projects .title {
-  color: #ddd;
   text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 15px;
+  font-size: 1.1em;
+  text-wrap: nowrap;
+}
+
+#projects > ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+#projects > ul > li {
+  padding: 7px 13px;
+  border-bottom: 1px solid rgba(221, 221, 221, .7);
+  cursor: pointer;
+  max-width: 280px;
+  text-overflow: ellipsis;
+  text-wrap: nowrap;
+  overflow: hidden;
+}
+#projects > ul > li:first-child {
+  border-top: 1px solid rgba(221, 221, 221, .7);
+}
+
+#projects:not(.closed) > ul > li:hover {
+  background-color: #ddd;
+  color: #353535;
 }

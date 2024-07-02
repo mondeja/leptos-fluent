@@ -1,2 +1,3 @@
 projects = Projects
 loading = Loading...
+leptos-fluent-translator-gui = Leptos Fluent Translator GUI
