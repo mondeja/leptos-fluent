@@ -225,6 +225,19 @@ macro_rules! exprpath_not_supported {
     };
 }
 
+macro_rules! evaluate_compile_time_exprpath {
+    ($exprpath:ident, $k:ident, $field:ident) => {
+        if let Some(ref e) = $exprpath {
+            let evaluated_exprpath = $crate::evaluate_exprpath(e);
+            if !evaluated_exprpath.supported {
+                exprpath_not_supported!($exprpath, $k);
+            } else if !evaluated_exprpath.result {
+                $field = None;
+            }
+        }
+    };
+}
+
 macro_rules! struct_field_init_shorthand_not_supported {
     ($struct_field_init_shorthand:ident, $k:ident) => {
         if $struct_field_init_shorthand {
@@ -482,77 +495,39 @@ impl Parse for I18nLoader {
                     k
                 );
                 translations = Some(fields.parse()?);
-                exprpath_not_supported!(exprpath, k);
+                evaluate_compile_time_exprpath!(exprpath, k, translations);
             } else if k == "locales" {
                 struct_field_init_shorthand_not_supported!(
                     struct_field_init_shorthand,
                     k
                 );
                 locales_path = Some(fields.parse()?);
-                exprpath_not_supported!(exprpath, k);
+                evaluate_compile_time_exprpath!(exprpath, k, locales_path);
             } else if k == "core_locales" {
                 struct_field_init_shorthand_not_supported!(
                     struct_field_init_shorthand,
                     k
                 );
                 core_locales_path = Some(fields.parse()?);
-                if let Some(ref e) = exprpath {
-                    if e.to_string() == "#[cfg(debug_assertions)]" {
-                        #[cfg(not(debug_assertions))]
-                        {
-                            core_locales_path = None;
-                        }
-                    } else if e.to_string() == "#[cfg(not(debug_assertions))]" {
-                        #[cfg(debug_assertions)]
-                        {
-                            core_locales_path = None;
-                        }
-                    } else {
-                        exprpath_not_supported!(exprpath, k);
-                    }
-                }
+                evaluate_compile_time_exprpath!(exprpath, k, core_locales_path);
             } else if k == "languages" {
                 struct_field_init_shorthand_not_supported!(
                     struct_field_init_shorthand,
                     k
                 );
                 languages_path = Some(fields.parse()?);
-                if let Some(ref e) = exprpath {
-                    if e.to_string() == "#[cfg(debug_assertions)]" {
-                        #[cfg(not(debug_assertions))]
-                        {
-                            languages_path = None;
-                        }
-                    } else if e.to_string() == "#[cfg(not(debug_assertions))]" {
-                        #[cfg(debug_assertions)]
-                        {
-                            languages_path = None;
-                        }
-                    } else {
-                        exprpath_not_supported!(exprpath, k);
-                    }
-                }
+                evaluate_compile_time_exprpath!(exprpath, k, languages_path);
             } else if k == "check_translations" {
                 struct_field_init_shorthand_not_supported!(
                     struct_field_init_shorthand,
                     k
                 );
                 check_translations = Some(fields.parse()?);
-                if let Some(ref e) = exprpath {
-                    if e.to_string() == "#[cfg(debug_assertions)]" {
-                        #[cfg(not(debug_assertions))]
-                        {
-                            check_translations = None;
-                        }
-                    } else if e.to_string() == "#[cfg(not(debug_assertions))]" {
-                        #[cfg(debug_assertions)]
-                        {
-                            check_translations = None;
-                        }
-                    } else {
-                        exprpath_not_supported!(exprpath, k);
-                    }
-                }
+                evaluate_compile_time_exprpath!(
+                    exprpath,
+                    k,
+                    check_translations
+                );
             } else if k == "sync_html_tag_lang" {
                 if exprpath.is_some() {
                     sync_html_tag_lang.exprpath.clone_from(&exprpath);
