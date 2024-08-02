@@ -355,8 +355,8 @@ println!("Macro parameters: {:?}", i18n.meta().unwrap());
 <span class="boring">}</span></code></pre></pre>
 <h3 id="different-configuration-conditional-checks"><a class="header" href="#different-configuration-conditional-checks">Different <a href="https://doc.rust-lang.org/rust-by-example/attribute/cfg.html">configuration conditional checks</a></a></h3>
 <p><code>leptos_fluent!</code> macro does not allows to set the same macro parameter
-multiple times with different <a href="https://doc.rust-lang.org/rust-by-example/attribute/cfg.html">configuration conditional checks</a>, but
-the next approach can be used instead:</p>
+multiple times with different <a href="https://doc.rust-lang.org/rust-by-example/attribute/cfg.html">configuration conditional checks</a> for now, but
+the parameter value can be compiled as an expression:</p>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>#[cfg(feature = "ssr")]
