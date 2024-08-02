@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2024-08-02 - [0.1.9]
+
+### Enhancements
+
+- Allow [struct field init shorthand] for `leptos_fluent!` expressions macro
+  parameters.
+
+[struct field init shorthand]: https://doc.rust-lang.org/book/ch05-01-defining-structs.html#using-the-field-init-shorthand
+
 ## 2024-07-01 - [0.1.8]
 
 ### New features
@@ -380,6 +389,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.1.9]: https://github.com/mondeja/leptos-fluent/compare/v0.1.8...v0.1.9
 [0.1.8]: https://github.com/mondeja/leptos-fluent/compare/v0.1.7...v0.1.8
 [0.1.7]: https://github.com/mondeja/leptos-fluent/compare/v0.1.6...v0.1.7
 [0.1.6]: https://github.com/mondeja/leptos-fluent/compare/v0.1.5...v0.1.6

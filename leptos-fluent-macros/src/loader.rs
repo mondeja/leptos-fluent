@@ -18,20 +18,20 @@ fn parse_litstr_or_expr_param(
     strlit: &mut Option<syn::LitStr>,
     expr: &mut Option<syn::Expr>,
     param_name: &'static str,
-) -> Option<syn::Error> {
+) -> Result<()> {
     match fields.parse::<syn::LitStr>() {
         Ok(lit) => {
             *strlit = Some(lit);
-            None
+            Ok(())
         }
         Err(_) => match fields.parse::<syn::Expr>() {
             Ok(e) => {
                 *expr = Some(e);
-                None
+                Ok(())
             }
             Err(_) => {
                 let fields_str = fields.to_string();
-                Some(syn::Error::new(
+                Err(syn::Error::new(
                     fields.span(),
                     format!(
                         concat!(
@@ -56,20 +56,20 @@ fn parse_litbool_or_expr_param(
     litbool: &mut Option<syn::LitBool>,
     expr: &mut Option<syn::Expr>,
     param_name: &'static str,
-) -> Option<syn::Error> {
+) -> Result<()> {
     match fields.parse::<syn::LitBool>() {
         Ok(lit) => {
             *litbool = Some(lit);
-            None
+            Ok(())
         }
         Err(_) => match fields.parse::<syn::Expr>() {
             Ok(e) => {
                 *expr = Some(e);
-                None
+                Ok(())
             }
             Err(_) => {
                 let fields_str = fields.to_string();
-                Some(syn::Error::new(
+                Err(syn::Error::new(
                     fields.span(),
                     format!(
                         concat!(
@@ -87,6 +87,16 @@ fn parse_litbool_or_expr_param(
             }
         },
     }
+}
+
+macro_rules! parse_struct_field_init_shorthand {
+    ($shorthand:ident, $param:ident, $k:ident) => {
+        if $shorthand {
+            $param.expr =
+                Some(syn::Expr::Verbatim($k.to_string().parse().unwrap()));
+            continue;
+        }
+    };
 }
 
 /// A syntax part consisting of a list of syn paths.
@@ -210,6 +220,23 @@ macro_rules! exprpath_not_supported {
             return Err(syn::Error::new(
                 e.span(),
                 exprpath_not_supported_error_message(e, &$k),
+            ));
+        }
+    };
+}
+
+macro_rules! struct_field_init_shorthand_not_supported {
+    ($struct_field_init_shorthand:ident, $k:ident) => {
+        if $struct_field_init_shorthand {
+            return Err(syn::Error::new(
+                $k.span(),
+                format!(
+                    concat!(
+                        "Struct field initialization shorthand is not supported",
+                        " for the parameter '{}'.",
+                    ),
+                    $k,
+                )
             ));
         }
     };
@@ -382,9 +409,12 @@ impl Parse for I18nLoader {
         while !fields.is_empty() {
             let mut exprpath: Option<proc_macro2::TokenStream> = None;
             let k;
-            if fields.peek(syn::Ident) && fields.peek2(syn::Token![:]) {
+            if fields.peek(syn::Ident)
+                && (fields.peek2(syn::Token![:])
+                    || fields.peek2(syn::Token![,]))
+            {
                 k = fields.parse::<syn::Ident>()?;
-                // expression:
+                // `expression:` or `expression,`
             } else {
                 let maybe_expr = fields.parse::<syn::Expr>();
                 if maybe_expr.is_err() {
@@ -393,7 +423,7 @@ impl Parse for I18nLoader {
                         format!(
                             concat!(
                                 "Expected an expression with",
-                                " 'key: value' or '#[...] key: value' format.",
+                                " 'key: value', '#[...] key: value', 'key,' or `#[...] key,` format.",
                                 " Found:\n{}"
                             ),
                             fields,
@@ -438,15 +468,33 @@ impl Parse for I18nLoader {
                 }
             }
 
-            fields.parse::<syn::Token![:]>()?;
+            let mut struct_field_init_shorthand = false;
+            if fields.peek(syn::Token![,]) {
+                fields.parse::<syn::Token![,]>()?;
+                struct_field_init_shorthand = true;
+            } else {
+                fields.parse::<syn::Token![:]>()?;
+            }
 
             if k == "translations" {
+                struct_field_init_shorthand_not_supported!(
+                    struct_field_init_shorthand,
+                    k
+                );
                 translations = Some(fields.parse()?);
                 exprpath_not_supported!(exprpath, k);
             } else if k == "locales" {
+                struct_field_init_shorthand_not_supported!(
+                    struct_field_init_shorthand,
+                    k
+                );
                 locales_path = Some(fields.parse()?);
                 exprpath_not_supported!(exprpath, k);
             } else if k == "core_locales" {
+                struct_field_init_shorthand_not_supported!(
+                    struct_field_init_shorthand,
+                    k
+                );
                 core_locales_path = Some(fields.parse()?);
                 if let Some(ref e) = exprpath {
                     if e.to_string() == "#[cfg(debug_assertions)]" {
@@ -464,6 +512,10 @@ impl Parse for I18nLoader {
                     }
                 }
             } else if k == "languages" {
+                struct_field_init_shorthand_not_supported!(
+                    struct_field_init_shorthand,
+                    k
+                );
                 languages_path = Some(fields.parse()?);
                 if let Some(ref e) = exprpath {
                     if e.to_string() == "#[cfg(debug_assertions)]" {
@@ -481,6 +533,10 @@ impl Parse for I18nLoader {
                     }
                 }
             } else if k == "check_translations" {
+                struct_field_init_shorthand_not_supported!(
+                    struct_field_init_shorthand,
+                    k
+                );
                 check_translations = Some(fields.parse()?);
                 if let Some(ref e) = exprpath {
                     if e.to_string() == "#[cfg(debug_assertions)]" {
@@ -498,364 +554,462 @@ impl Parse for I18nLoader {
                     }
                 }
             } else if k == "sync_html_tag_lang" {
-                if let Some(err) = parse_litbool_or_expr_param(
+                if exprpath.is_some() {
+                    sync_html_tag_lang.exprpath.clone_from(&exprpath);
+                }
+                parse_struct_field_init_shorthand!(
+                    struct_field_init_shorthand,
+                    sync_html_tag_lang,
+                    k
+                );
+                parse_litbool_or_expr_param(
                     &fields,
                     &mut sync_html_tag_lang.lit,
                     &mut sync_html_tag_lang.expr,
                     "sync_html_tag_lang",
-                ) {
-                    return Err(err);
-                }
-                if exprpath.is_some() {
-                    sync_html_tag_lang.exprpath.clone_from(&exprpath);
-                }
+                )?;
             } else if k == "sync_html_tag_dir" {
-                if let Some(err) = parse_litbool_or_expr_param(
+                if exprpath.is_some() {
+                    sync_html_tag_dir.exprpath.clone_from(&exprpath);
+                }
+                parse_struct_field_init_shorthand!(
+                    struct_field_init_shorthand,
+                    sync_html_tag_dir,
+                    k
+                );
+                parse_litbool_or_expr_param(
                     &fields,
                     &mut sync_html_tag_dir.lit,
                     &mut sync_html_tag_dir.expr,
                     "sync_html_tag_dir",
-                ) {
-                    return Err(err);
-                }
-                if exprpath.is_some() {
-                    sync_html_tag_dir.exprpath.clone_from(&exprpath);
-                }
+                )?;
             } else if k == "url_param" {
-                if let Some(err) = parse_litstr_or_expr_param(
+                if exprpath.is_some() {
+                    url_param.exprpath.clone_from(&exprpath);
+                }
+                parse_struct_field_init_shorthand!(
+                    struct_field_init_shorthand,
+                    url_param,
+                    k
+                );
+                parse_litstr_or_expr_param(
                     &fields,
                     &mut url_param.lit,
                     &mut url_param.expr,
                     "url_param",
-                ) {
-                    return Err(err);
-                }
-                if exprpath.is_some() {
-                    url_param.exprpath.clone_from(&exprpath);
-                }
+                )?;
             } else if k == "initial_language_from_url_param" {
-                if let Some(err) = parse_litbool_or_expr_param(
-                    &fields,
-                    &mut initial_language_from_url_param.lit,
-                    &mut initial_language_from_url_param.expr,
-                    "initial_language_from_url_param",
-                ) {
-                    return Err(err);
-                }
                 if exprpath.is_some() {
                     initial_language_from_url_param
                         .exprpath
                         .clone_from(&exprpath);
                 }
-            } else if k == "initial_language_from_url_param_to_localstorage" {
-                if let Some(err) = parse_litbool_or_expr_param(
+                parse_struct_field_init_shorthand!(
+                    struct_field_init_shorthand,
+                    initial_language_from_url_param,
+                    k
+                );
+                parse_litbool_or_expr_param(
                     &fields,
-                    &mut initial_language_from_url_param_to_localstorage.lit,
-                    &mut initial_language_from_url_param_to_localstorage.expr,
-                    "initial_language_from_url_param_to_localstorage",
-                ) {
-                    return Err(err);
-                }
+                    &mut initial_language_from_url_param.lit,
+                    &mut initial_language_from_url_param.expr,
+                    "initial_language_from_url_param",
+                )?;
+            } else if k == "initial_language_from_url_param_to_localstorage" {
                 if exprpath.is_some() {
                     initial_language_from_url_param_to_localstorage
                         .exprpath
                         .clone_from(&exprpath);
                 }
-            } else if k == "initial_language_from_url_param_to_cookie" {
-                if let Some(err) = parse_litbool_or_expr_param(
+                parse_struct_field_init_shorthand!(
+                    struct_field_init_shorthand,
+                    initial_language_from_url_param_to_localstorage,
+                    k
+                );
+                parse_litbool_or_expr_param(
                     &fields,
-                    &mut initial_language_from_url_param_to_cookie.lit,
-                    &mut initial_language_from_url_param_to_cookie.expr,
-                    "initial_language_from_url_param_to_cookie",
-                ) {
-                    return Err(err);
-                }
+                    &mut initial_language_from_url_param_to_localstorage.lit,
+                    &mut initial_language_from_url_param_to_localstorage.expr,
+                    "initial_language_from_url_param_to_localstorage",
+                )?;
+            } else if k == "initial_language_from_url_param_to_cookie" {
                 if exprpath.is_some() {
                     initial_language_from_url_param_to_cookie
                         .exprpath
                         .clone_from(&exprpath);
                 }
+                parse_struct_field_init_shorthand!(
+                    struct_field_init_shorthand,
+                    initial_language_from_url_param_to_cookie,
+                    k
+                );
+                parse_litbool_or_expr_param(
+                    &fields,
+                    &mut initial_language_from_url_param_to_cookie.lit,
+                    &mut initial_language_from_url_param_to_cookie.expr,
+                    "initial_language_from_url_param_to_cookie",
+                )?;
             } else if k == "initial_language_from_url_param_to_server_function"
             {
-                initial_language_from_url_param_to_server_function.ident =
-                    Some(fields.parse()?);
                 if exprpath.is_some() {
                     initial_language_from_url_param_to_server_function
                         .exprpath
                         .clone_from(&exprpath);
                 }
+                if struct_field_init_shorthand {
+                    initial_language_from_url_param_to_server_function.ident =
+                        Some(k);
+                } else {
+                    initial_language_from_url_param_to_server_function.ident =
+                        Some(fields.parse()?);
+                }
             } else if k == "set_language_to_url_param" {
-                if let Some(err) = parse_litbool_or_expr_param(
+                if exprpath.is_some() {
+                    set_language_to_url_param.exprpath.clone_from(&exprpath);
+                }
+                parse_struct_field_init_shorthand!(
+                    struct_field_init_shorthand,
+                    set_language_to_url_param,
+                    k
+                );
+                parse_litbool_or_expr_param(
                     &fields,
                     &mut set_language_to_url_param.lit,
                     &mut set_language_to_url_param.expr,
                     "set_language_to_url_param",
-                ) {
-                    return Err(err);
-                }
-                if exprpath.is_some() {
-                    set_language_to_url_param.exprpath.clone_from(&exprpath);
-                }
+                )?;
             } else if k == "localstorage_key" {
-                if let Some(err) = parse_litstr_or_expr_param(
+                if exprpath.is_some() {
+                    localstorage_key.exprpath.clone_from(&exprpath);
+                }
+                parse_struct_field_init_shorthand!(
+                    struct_field_init_shorthand,
+                    localstorage_key,
+                    k
+                );
+                parse_litstr_or_expr_param(
                     &fields,
                     &mut localstorage_key.lit,
                     &mut localstorage_key.expr,
                     "localstorage_key",
-                ) {
-                    return Err(err);
-                }
-                if exprpath.is_some() {
-                    localstorage_key.exprpath.clone_from(&exprpath);
-                }
+                )?;
             } else if k == "initial_language_from_localstorage" {
-                if let Some(err) = parse_litbool_or_expr_param(
-                    &fields,
-                    &mut initial_language_from_localstorage.lit,
-                    &mut initial_language_from_localstorage.expr,
-                    "initial_language_from_localstorage",
-                ) {
-                    return Err(err);
-                }
                 if exprpath.is_some() {
                     initial_language_from_localstorage
                         .exprpath
                         .clone_from(&exprpath);
                 }
-            } else if k == "initial_language_from_localstorage_to_cookie" {
-                if let Some(err) = parse_litbool_or_expr_param(
+                parse_struct_field_init_shorthand!(
+                    struct_field_init_shorthand,
+                    initial_language_from_localstorage,
+                    k
+                );
+                parse_litbool_or_expr_param(
                     &fields,
-                    &mut initial_language_from_localstorage_to_cookie.lit,
-                    &mut initial_language_from_localstorage_to_cookie.expr,
-                    "initial_language_from_localstorage_to_cookie",
-                ) {
-                    return Err(err);
-                }
+                    &mut initial_language_from_localstorage.lit,
+                    &mut initial_language_from_localstorage.expr,
+                    "initial_language_from_localstorage",
+                )?;
+            } else if k == "initial_language_from_localstorage_to_cookie" {
                 if exprpath.is_some() {
                     initial_language_from_localstorage_to_cookie
                         .exprpath
                         .clone_from(&exprpath);
                 }
+                parse_struct_field_init_shorthand!(
+                    struct_field_init_shorthand,
+                    initial_language_from_localstorage_to_cookie,
+                    k
+                );
+                parse_litbool_or_expr_param(
+                    &fields,
+                    &mut initial_language_from_localstorage_to_cookie.lit,
+                    &mut initial_language_from_localstorage_to_cookie.expr,
+                    "initial_language_from_localstorage_to_cookie",
+                )?;
             } else if k
                 == "initial_language_from_localstorage_to_server_function"
             {
-                initial_language_from_localstorage_to_server_function.ident =
-                    Some(fields.parse()?);
                 if exprpath.is_some() {
                     initial_language_from_localstorage_to_server_function
                         .exprpath
                         .clone_from(&exprpath);
                 }
+                if struct_field_init_shorthand {
+                    initial_language_from_localstorage_to_server_function
+                        .ident = Some(k);
+                } else {
+                    initial_language_from_localstorage_to_server_function
+                        .ident = Some(fields.parse()?);
+                }
             } else if k == "set_language_to_localstorage" {
-                if let Some(err) = parse_litbool_or_expr_param(
+                if exprpath.is_some() {
+                    set_language_to_localstorage.exprpath.clone_from(&exprpath);
+                }
+                parse_struct_field_init_shorthand!(
+                    struct_field_init_shorthand,
+                    set_language_to_localstorage,
+                    k
+                );
+                parse_litbool_or_expr_param(
                     &fields,
                     &mut set_language_to_localstorage.lit,
                     &mut set_language_to_localstorage.expr,
                     "set_language_to_localstorage",
-                ) {
-                    return Err(err);
-                }
-                if exprpath.is_some() {
-                    set_language_to_localstorage.exprpath.clone_from(&exprpath);
-                }
+                )?;
             } else if k == "initial_language_from_navigator" {
-                if let Some(err) = parse_litbool_or_expr_param(
-                    &fields,
-                    &mut initial_language_from_navigator.lit,
-                    &mut initial_language_from_navigator.expr,
-                    "initial_language_from_navigator",
-                ) {
-                    return Err(err);
-                }
                 if exprpath.is_some() {
                     initial_language_from_navigator
                         .exprpath
                         .clone_from(&exprpath);
                 }
-            } else if k == "initial_language_from_navigator_to_localstorage" {
-                if let Some(err) = parse_litbool_or_expr_param(
+                parse_struct_field_init_shorthand!(
+                    struct_field_init_shorthand,
+                    initial_language_from_navigator,
+                    k
+                );
+                parse_litbool_or_expr_param(
                     &fields,
-                    &mut initial_language_from_navigator_to_localstorage.lit,
-                    &mut initial_language_from_navigator_to_localstorage.expr,
-                    "initial_language_from_navigator_to_localstorage",
-                ) {
-                    return Err(err);
-                }
+                    &mut initial_language_from_navigator.lit,
+                    &mut initial_language_from_navigator.expr,
+                    "initial_language_from_navigator",
+                )?;
+            } else if k == "initial_language_from_navigator_to_localstorage" {
                 if exprpath.is_some() {
                     initial_language_from_navigator_to_localstorage
                         .exprpath
                         .clone_from(&exprpath);
                 }
-            } else if k == "initial_language_from_navigator_to_cookie" {
-                if let Some(err) = parse_litbool_or_expr_param(
+                parse_struct_field_init_shorthand!(
+                    struct_field_init_shorthand,
+                    initial_language_from_navigator_to_localstorage,
+                    k
+                );
+                parse_litbool_or_expr_param(
                     &fields,
-                    &mut initial_language_from_navigator_to_cookie.lit,
-                    &mut initial_language_from_navigator_to_cookie.expr,
-                    "initial_language_from_navigator_to_cookie",
-                ) {
-                    return Err(err);
-                }
+                    &mut initial_language_from_navigator_to_localstorage.lit,
+                    &mut initial_language_from_navigator_to_localstorage.expr,
+                    "initial_language_from_navigator_to_localstorage",
+                )?;
+            } else if k == "initial_language_from_navigator_to_cookie" {
                 if exprpath.is_some() {
                     initial_language_from_navigator_to_cookie
                         .exprpath
                         .clone_from(&exprpath);
                 }
+                parse_struct_field_init_shorthand!(
+                    struct_field_init_shorthand,
+                    initial_language_from_navigator_to_cookie,
+                    k
+                );
+                parse_litbool_or_expr_param(
+                    &fields,
+                    &mut initial_language_from_navigator_to_cookie.lit,
+                    &mut initial_language_from_navigator_to_cookie.expr,
+                    "initial_language_from_navigator_to_cookie",
+                )?;
             } else if k == "initial_language_from_navigator_to_server_function"
             {
-                initial_language_from_navigator_to_server_function.ident =
-                    Some(fields.parse()?);
                 if exprpath.is_some() {
                     initial_language_from_navigator_to_server_function
                         .exprpath
                         .clone_from(&exprpath);
                 }
-            } else if k == "initial_language_from_accept_language_header" {
-                if let Some(err) = parse_litbool_or_expr_param(
-                    &fields,
-                    &mut initial_language_from_accept_language_header.lit,
-                    &mut initial_language_from_accept_language_header.expr,
-                    "initial_language_from_accept_language_header",
-                ) {
-                    return Err(err);
+                if struct_field_init_shorthand {
+                    initial_language_from_navigator_to_server_function.ident =
+                        Some(k);
+                } else {
+                    initial_language_from_navigator_to_server_function.ident =
+                        Some(fields.parse()?);
                 }
+            } else if k == "initial_language_from_accept_language_header" {
                 if exprpath.is_some() {
                     initial_language_from_accept_language_header
                         .exprpath
                         .clone_from(&exprpath);
                 }
+                parse_struct_field_init_shorthand!(
+                    struct_field_init_shorthand,
+                    initial_language_from_accept_language_header,
+                    k
+                );
+                parse_litbool_or_expr_param(
+                    &fields,
+                    &mut initial_language_from_accept_language_header.lit,
+                    &mut initial_language_from_accept_language_header.expr,
+                    "initial_language_from_accept_language_header",
+                )?;
             } else if k == "cookie_name" {
-                if let Some(err) = parse_litstr_or_expr_param(
+                if exprpath.is_some() {
+                    cookie_name.exprpath.clone_from(&exprpath);
+                }
+                parse_struct_field_init_shorthand!(
+                    struct_field_init_shorthand,
+                    cookie_name,
+                    k
+                );
+                parse_litstr_or_expr_param(
                     &fields,
                     &mut cookie_name.lit,
                     &mut cookie_name.expr,
                     "cookie_name",
-                ) {
-                    return Err(err);
-                }
-                if exprpath.is_some() {
-                    cookie_name.exprpath.clone_from(&exprpath);
-                }
+                )?;
             } else if k == "cookie_attrs" {
-                if let Some(err) = parse_litstr_or_expr_param(
+                if exprpath.is_some() {
+                    cookie_attrs.exprpath.clone_from(&exprpath);
+                }
+                parse_struct_field_init_shorthand!(
+                    struct_field_init_shorthand,
+                    cookie_attrs,
+                    k
+                );
+                parse_litstr_or_expr_param(
                     &fields,
                     &mut cookie_attrs.lit,
                     &mut cookie_attrs.expr,
                     "cookie_attrs",
-                ) {
-                    return Err(err);
-                }
-                if exprpath.is_some() {
-                    cookie_attrs.exprpath.clone_from(&exprpath);
-                }
+                )?;
             } else if k == "initial_language_from_cookie" {
-                if let Some(err) = parse_litbool_or_expr_param(
+                if exprpath.is_some() {
+                    initial_language_from_cookie.exprpath.clone_from(&exprpath);
+                }
+                parse_struct_field_init_shorthand!(
+                    struct_field_init_shorthand,
+                    initial_language_from_cookie,
+                    k
+                );
+                parse_litbool_or_expr_param(
                     &fields,
                     &mut initial_language_from_cookie.lit,
                     &mut initial_language_from_cookie.expr,
                     "initial_language_from_cookie",
-                ) {
-                    return Err(err);
-                }
-                if exprpath.is_some() {
-                    initial_language_from_cookie.exprpath.clone_from(&exprpath);
-                }
+                )?;
             } else if k == "initial_language_from_cookie_to_localstorage" {
-                if let Some(err) = parse_litbool_or_expr_param(
-                    &fields,
-                    &mut initial_language_from_cookie_to_localstorage.lit,
-                    &mut initial_language_from_cookie_to_localstorage.expr,
-                    "initial_language_from_cookie_to_localstorage",
-                ) {
-                    return Err(err);
-                }
                 if exprpath.is_some() {
                     initial_language_from_cookie_to_localstorage
                         .exprpath
                         .clone_from(&exprpath);
                 }
+                parse_struct_field_init_shorthand!(
+                    struct_field_init_shorthand,
+                    initial_language_from_cookie_to_localstorage,
+                    k
+                );
+                parse_litbool_or_expr_param(
+                    &fields,
+                    &mut initial_language_from_cookie_to_localstorage.lit,
+                    &mut initial_language_from_cookie_to_localstorage.expr,
+                    "initial_language_from_cookie_to_localstorage",
+                )?;
             } else if k == "initial_language_from_cookie_to_server_function" {
-                initial_language_from_cookie_to_server_function.ident =
-                    Some(fields.parse()?);
                 if exprpath.is_some() {
                     initial_language_from_cookie_to_server_function
                         .exprpath
                         .clone_from(&exprpath);
                 }
+                if struct_field_init_shorthand {
+                    initial_language_from_cookie_to_server_function.ident =
+                        Some(k);
+                } else {
+                    initial_language_from_cookie_to_server_function.ident =
+                        Some(fields.parse()?);
+                }
             } else if k == "set_language_to_cookie" {
-                if let Some(err) = parse_litbool_or_expr_param(
+                if exprpath.is_some() {
+                    set_language_to_cookie.exprpath.clone_from(&exprpath);
+                }
+                parse_struct_field_init_shorthand!(
+                    struct_field_init_shorthand,
+                    set_language_to_cookie,
+                    k
+                );
+                parse_litbool_or_expr_param(
                     &fields,
                     &mut set_language_to_cookie.lit,
                     &mut set_language_to_cookie.expr,
                     "set_language_to_cookie",
-                ) {
-                    return Err(err);
-                }
-                if exprpath.is_some() {
-                    set_language_to_cookie.exprpath.clone_from(&exprpath);
-                }
+                )?;
             } else if k == "initial_language_from_server_function" {
-                initial_language_from_server_function.ident =
-                    Some(fields.parse()?);
                 if exprpath.is_some() {
                     initial_language_from_server_function
                         .exprpath
                         .clone_from(&exprpath);
                 }
-            } else if k == "initial_language_from_server_function_to_cookie" {
-                if let Some(err) = parse_litbool_or_expr_param(
-                    &fields,
-                    &mut initial_language_from_server_function_to_cookie.lit,
-                    &mut initial_language_from_server_function_to_cookie.expr,
-                    "initial_language_from_server_function_to_cookie",
-                ) {
-                    return Err(err);
+                if struct_field_init_shorthand {
+                    initial_language_from_server_function.ident = Some(k);
+                } else {
+                    initial_language_from_server_function.ident =
+                        Some(fields.parse()?);
                 }
+            } else if k == "initial_language_from_server_function_to_cookie" {
                 if exprpath.is_some() {
                     initial_language_from_server_function_to_cookie
                         .exprpath
                         .clone_from(&exprpath);
                 }
+                parse_struct_field_init_shorthand!(
+                    struct_field_init_shorthand,
+                    initial_language_from_server_function_to_cookie,
+                    k
+                );
+                parse_litbool_or_expr_param(
+                    &fields,
+                    &mut initial_language_from_server_function_to_cookie.lit,
+                    &mut initial_language_from_server_function_to_cookie.expr,
+                    "initial_language_from_server_function_to_cookie",
+                )?;
             } else if k
                 == "initial_language_from_server_function_to_localstorage"
             {
-                if let Some(err) = parse_litbool_or_expr_param(
+                if exprpath.is_some() {
+                    initial_language_from_server_function_to_localstorage
+                        .exprpath
+                        .clone_from(&exprpath);
+                }
+                parse_struct_field_init_shorthand!(
+                    struct_field_init_shorthand,
+                    initial_language_from_server_function_to_localstorage,
+                    k
+                );
+                parse_litbool_or_expr_param(
                     &fields,
                     &mut initial_language_from_server_function_to_localstorage
                         .lit,
                     &mut initial_language_from_server_function_to_localstorage
                         .expr,
                     "initial_language_from_server_function_to_localstorage",
-                ) {
-                    return Err(err);
-                }
-                if exprpath.is_some() {
-                    initial_language_from_server_function_to_localstorage
-                        .exprpath
-                        .clone_from(&exprpath);
-                }
+                )?;
             } else if k == "set_language_to_server_function" {
-                set_language_to_server_function.ident = Some(fields.parse()?);
                 if exprpath.is_some() {
                     set_language_to_server_function
                         .exprpath
                         .clone_from(&exprpath);
                 }
+                if struct_field_init_shorthand {
+                    set_language_to_server_function.ident = Some(k);
+                } else {
+                    set_language_to_server_function.ident =
+                        Some(fields.parse()?);
+                }
             } else if k == "initial_language_from_system" {
                 #[cfg(feature = "system")]
                 {
-                    if let Some(err) = parse_litbool_or_expr_param(
-                        &fields,
-                        &mut initial_language_from_system.lit,
-                        &mut initial_language_from_system.expr,
-                        "initial_language_from_system",
-                    ) {
-                        return Err(err);
-                    }
                     if exprpath.is_some() {
                         initial_language_from_system
                             .exprpath
                             .clone_from(&exprpath);
                     }
+                    parse_struct_field_init_shorthand!(
+                        struct_field_init_shorthand,
+                        initial_language_from_system,
+                        k
+                    );
+                    parse_litbool_or_expr_param(
+                        &fields,
+                        &mut initial_language_from_system.lit,
+                        &mut initial_language_from_system.expr,
+                        "initial_language_from_system",
+                    )?;
                 }
 
                 #[cfg(not(feature = "system"))]
@@ -872,19 +1026,22 @@ impl Parse for I18nLoader {
             } else if k == "initial_language_from_data_file" {
                 #[cfg(feature = "system")]
                 {
-                    if let Some(err) = parse_litbool_or_expr_param(
-                        &fields,
-                        &mut initial_language_from_data_file.lit,
-                        &mut initial_language_from_data_file.expr,
-                        "initial_language_from_data_file",
-                    ) {
-                        return Err(err);
-                    }
                     if exprpath.is_some() {
                         initial_language_from_data_file
                             .exprpath
                             .clone_from(&exprpath);
                     }
+                    parse_struct_field_init_shorthand!(
+                        struct_field_init_shorthand,
+                        initial_language_from_data_file,
+                        k
+                    );
+                    parse_litbool_or_expr_param(
+                        &fields,
+                        &mut initial_language_from_data_file.lit,
+                        &mut initial_language_from_data_file.expr,
+                        "initial_language_from_data_file",
+                    )?;
                 }
 
                 #[cfg(not(feature = "system"))]
@@ -901,19 +1058,22 @@ impl Parse for I18nLoader {
             } else if k == "initial_language_from_system_to_data_file" {
                 #[cfg(feature = "system")]
                 {
-                    if let Some(err) = parse_litbool_or_expr_param(
-                        &fields,
-                        &mut initial_language_from_system_to_data_file.lit,
-                        &mut initial_language_from_system_to_data_file.expr,
-                        "initial_language_from_system_to_data_file",
-                    ) {
-                        return Err(err);
-                    }
                     if exprpath.is_some() {
                         initial_language_from_system_to_data_file
                             .exprpath
                             .clone_from(&exprpath);
                     }
+                    parse_struct_field_init_shorthand!(
+                        struct_field_init_shorthand,
+                        initial_language_from_system_to_data_file,
+                        k
+                    );
+                    parse_litbool_or_expr_param(
+                        &fields,
+                        &mut initial_language_from_system_to_data_file.lit,
+                        &mut initial_language_from_system_to_data_file.expr,
+                        "initial_language_from_system_to_data_file",
+                    )?;
                 }
 
                 #[cfg(not(feature = "system"))]
@@ -930,19 +1090,22 @@ impl Parse for I18nLoader {
             } else if k == "set_language_to_data_file" {
                 #[cfg(feature = "system")]
                 {
-                    if let Some(err) = parse_litbool_or_expr_param(
-                        &fields,
-                        &mut set_language_to_data_file.lit,
-                        &mut set_language_to_data_file.expr,
-                        "set_language_to_data_file",
-                    ) {
-                        return Err(err);
-                    }
                     if exprpath.is_some() {
                         set_language_to_data_file
                             .exprpath
                             .clone_from(&exprpath);
                     }
+                    parse_struct_field_init_shorthand!(
+                        struct_field_init_shorthand,
+                        set_language_to_data_file,
+                        k
+                    );
+                    parse_litbool_or_expr_param(
+                        &fields,
+                        &mut set_language_to_data_file.lit,
+                        &mut set_language_to_data_file.expr,
+                        "set_language_to_data_file",
+                    )?;
                 }
 
                 #[cfg(not(feature = "system"))]
@@ -957,24 +1120,29 @@ impl Parse for I18nLoader {
                     ));
                 }
             } else if k == "data_file_key" {
-                {
-                    if let Some(err) = parse_litstr_or_expr_param(
-                        &fields,
-                        &mut data_file_key.lit,
-                        &mut data_file_key.expr,
-                        "data_file_key",
-                    ) {
-                        return Err(err);
-                    }
-                }
                 if exprpath.is_some() {
                     data_file_key.exprpath.clone_from(&exprpath);
                 }
+                parse_struct_field_init_shorthand!(
+                    struct_field_init_shorthand,
+                    data_file_key,
+                    k
+                );
+                parse_litstr_or_expr_param(
+                    &fields,
+                    &mut data_file_key.lit,
+                    &mut data_file_key.expr,
+                    "data_file_key",
+                )?;
                 #[cfg(not(feature = "system"))]
                 {
                     _ = data_file_key.exprpath;
                 }
             } else if k == "provide_meta_context" {
+                struct_field_init_shorthand_not_supported!(
+                    struct_field_init_shorthand,
+                    k
+                );
                 provide_meta_context.lit = Some(fields.parse()?);
                 if exprpath.is_some() {
                     provide_meta_context.exprpath.clone_from(&exprpath);
