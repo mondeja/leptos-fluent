@@ -173,8 +173,8 @@ println!("Macro parameters: {:?}", i18n.meta().unwrap());
 ### Different [configuration conditional checks]
 
 `leptos_fluent!` macro does not allows to set the same macro parameter
-multiple times with different [configuration conditional checks], but
-the next approach can be used instead:
+multiple times with different [configuration conditional checks] for now, but
+the parameter value can be compiled as an expression:
 
 ```rust
 #[cfg(feature = "ssr")]

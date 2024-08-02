@@ -12,8 +12,10 @@ static_loader! {
 #[component]
 pub fn App() -> impl IntoView {
     leptos_fluent! {{
-        #[cfg(debug_assertions)] translations: [TRANSLATIONS],
+        translations: [TRANSLATIONS],
         locales: "../../../../examples/csr-minimal/locales",
+        #[cfg(all(not(target_os = "windows"), not(target_os = "macos")))]
+        languages: "../../../../examples/csr-complete/locales/languages.json",
     }};
 
     view! { <p>Foo</p> }

@@ -2,7 +2,7 @@
 name = "leptos-fluent-macros"
 description = "Macros for leptos-fluent"
 edition.workspace = true
-version = "0.1.9"
+version = "0.1.10"
 license = "MIT"
 documentation.workspace = true
 repository.workspace = true
@@ -23,6 +23,8 @@ globwalk = "0.9"
 fluent-templates.workspace = true
 fluent-syntax = "0.11"
 pathdiff = "0.2"
+cfg-expr = ">=0.10"
+current_platform = ">=0.2"
 serde = { version = "1", default-features = false, features = [
   "derive"
 ], optional = true }

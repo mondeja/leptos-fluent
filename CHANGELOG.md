@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## 2024-08-03 - [0.1.10]
+
+### Enhancements
+
+- Accept almost all possible constant compile-time config expression paths
+  for some `leptos_fluent!` parameters like `languages`.
+
+  Allows to, for example, only use a languages file when compiling on Unix
+  systems:
+
+  ```rust
+  leptos_fluent! {{
+      ...
+      #[cfg(target_family = "unix")]
+      languages: "./locales/languages.json",
+  }}
+  ```
+
 ## 2024-08-02 - [0.1.9]
 
 ### Enhancements
