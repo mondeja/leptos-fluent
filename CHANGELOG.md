@@ -1,5 +1,24 @@
 # CHANGELOG
 
+## 2024-08-04 - [0.1.11]
+
+### Enhancements
+
+- Accept multiple configuration conditional checks for the same parameter in
+  `leptos_fluent!` macro:
+
+  ```rust
+  leptos_fluent! {{
+      // ...
+      #[cfg(feature = "ssr")]
+      url_param: "ssr-lang",
+      #[cfg(feature = "hydrate")]
+      url_param: "hydrate-lang",
+      #[cfg(all(not(feature = "ssr"), not(feature = "hydrate"), debug_assertions))]
+      url_param: "debug-lang",
+  }}
+  ```
+
 ## 2024-08-03 - [0.1.10]
 
 ### Enhancements
@@ -11,7 +30,7 @@
 
   ```rust
   leptos_fluent! {{
-      ...
+      // ...
       #[cfg(target_family = "unix")]
       languages: "./locales/languages.json",
   }}
