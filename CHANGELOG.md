@@ -7,8 +7,7 @@
 - Accept almost all possible constant compile-time config expression paths
   for some `leptos_fluent!` parameters like `languages`.
 
-  Allows to, for example, only use a languages file when compiling on Unix
-  systems:
+  For example, only use a languages file when compiling on Unix systems:
 
   ```rust
   leptos_fluent! {{
@@ -407,6 +406,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.1.10]: https://github.com/mondeja/leptos-fluent/compare/v0.1.9...v0.1.10
 [0.1.9]: https://github.com/mondeja/leptos-fluent/compare/v0.1.8...v0.1.9
 [0.1.8]: https://github.com/mondeja/leptos-fluent/compare/v0.1.7...v0.1.8
 [0.1.7]: https://github.com/mondeja/leptos-fluent/compare/v0.1.6...v0.1.7
