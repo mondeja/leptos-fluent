@@ -191,7 +191,7 @@
 <li><a href="#how-to-manage-translations-on-server-actions">How to manage translations on server actions</a></li>
 <li><a href="#how-to-change-html-attributes-on-ssr">How to change <code>&lt;html&gt;</code> attributes on SSR</a></li>
 <li><a href="#how-to-get-values-of-leptos_fluent-macro-at-runtime">How to get values of <code>leptos_fluent!</code> macro at runtime?</a></li>
-<li><a href="#different-configuration-conditional-checks">Different configuration conditional checks</a></li>
+<li><a href="#configuration-conditional-checks">Configuration conditional checks</a></li>
 </ul>
 <h3 id="how-to-get-languageidentifier-if-not-installed"><a class="header" href="#how-to-get-languageidentifier-if-not-installed">How to get <a href="https://docs.rs/unic-langid/latest/unic_langid/struct.LanguageIdentifier.html"><code>LanguageIdentifier</code></a> if not installed?</a></h3>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
@@ -353,25 +353,15 @@ with the method <code>I18n::meta</code>:</p>
 
 println!("Macro parameters: {:?}", i18n.meta().unwrap());
 <span class="boring">}</span></code></pre></pre>
-<h3 id="different-configuration-conditional-checks"><a class="header" href="#different-configuration-conditional-checks">Different <a href="https://doc.rust-lang.org/rust-by-example/attribute/cfg.html">configuration conditional checks</a></a></h3>
-<p><code>leptos_fluent!</code> macro does not allows to set the same macro parameter
-multiple times with different <a href="https://doc.rust-lang.org/rust-by-example/attribute/cfg.html">configuration conditional checks</a> for now, but
-the parameter value can be compiled as an expression:</p>
+<h3 id="configuration-conditional-checks"><a class="header" href="#configuration-conditional-checks"><a href="https://doc.rust-lang.org/rust-by-example/attribute/cfg.html">Configuration conditional checks</a></a></h3>
 <pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>#[cfg(feature = "ssr")]
-let param = "ssr-lang";
-#[cfg(feature = "hydrate")]
-let param = "hydrate-lang";
-#[cfg(debug_assertions)]
-let param = "debug-lang";
-
-leptos_fluent! {{
+</span>leptos_fluent! {{
     // ...
-    #[cfg(any(feature = "ssr", feature = "hydrate", debug_assertions))]
-    url_param: param,
     #[cfg(debug_assertions)]
-    initial_language_from_url_param: true,
+    set_language_to_url_param: true,
+    #[cfg(not(debug_assertions))]
+    set_language_to_url_param: false,
 }}
 <span class="boring">}</span></code></pre></pre>
 
