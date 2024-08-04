@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## Unreleased - [0.1.11]
+## 2024-08-04 - [0.1.11]
 
 ### Bug fixes
 
