@@ -1214,9 +1214,10 @@ impl Parse for I18nLoader {
         if let Some(ref file) = languages_file {
             if std::fs::metadata(file).is_err() {
                 #[cfg(feature = "nightly")]
-                let file_path = std::path::absolute(file).unwrap_or(file);
+                let file_path =
+                    std::path::absolute(file).unwrap_or(file.to_path_buf());
                 #[cfg(not(feature = "nightly"))]
-                let file_path = file;
+                let file_path = file.to_path_buf();
 
                 return Err(syn::Error::new(
                     languages_path.as_ref().unwrap().span(),
@@ -1245,9 +1246,9 @@ impl Parse for I18nLoader {
         } else if std::fs::metadata(&locales_folder_path).is_err() {
             #[cfg(feature = "nightly")]
             let file_path = std::path::absolute(&locales_folder_path)
-                .unwrap_or(locales_folder_path);
+                .unwrap_or(locales_folder_path.to_path_buf());
             #[cfg(not(feature = "nightly"))]
-            let file_path = locales_folder_path;
+            let file_path = locales_folder_path.to_path_buf();
 
             return Err(syn::Error::new(
                 locales_path.as_ref().unwrap().span(),
@@ -1287,10 +1288,10 @@ impl Parse for I18nLoader {
             let core_locales = workspace_path.join(core_locales.value());
             if std::fs::metadata(&core_locales).is_err() {
                 #[cfg(feature = "nightly")]
-                let file_path =
-                    std::path::absolute(&core_locales).unwrap_or(core_locales);
+                let file_path = std::path::absolute(&core_locales)
+                    .unwrap_or(core_locales.to_path_buf());
                 #[cfg(not(feature = "nightly"))]
-                let file_path = core_locales;
+                let file_path = core_locales.to_path_buf();
 
                 return Err(syn::Error::new(
                     core_locales_path.unwrap().span(),
