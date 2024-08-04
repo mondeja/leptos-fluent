@@ -18,15 +18,16 @@ fn get_fluent_entries_from_resource(
                 let mut placeables = Vec::new();
                 for element in &value.elements {
                     if let fluent_syntax::ast::PatternElement::Placeable {
-                        expression: fluent_syntax::ast::Expression::Inline(
+                        expression,
+                    } = element
+                    {
+                        if let fluent_syntax::ast::Expression::Inline(
                             fluent_syntax::ast::InlineExpression::VariableReference {
                                 id
                             }
-                        )
-                    } = element {
-                        placeables.push(id.name.to_string());
-                    } else if let fluent_syntax::ast::PatternElement::Placeable {
-                        expression: fluent_syntax::ast::Expression::Inline(
+                        ) = expression {
+                            placeables.push(id.name.to_string());
+                        } else if let fluent_syntax::ast::Expression::Inline(
                             fluent_syntax::ast::InlineExpression::FunctionReference {
                                 arguments: fluent_syntax::ast::CallArguments {
                                     positional,
@@ -34,13 +35,13 @@ fn get_fluent_entries_from_resource(
                                 },
                                 ..
                             }
-                        )
-                    } = element {
-                        for arg in positional {
-                            if let fluent_syntax::ast::InlineExpression::VariableReference {
-                                id
-                            } = arg {
-                                placeables.push(id.name.to_string());
+                        ) = expression {
+                            for arg in positional {
+                                if let fluent_syntax::ast::InlineExpression::VariableReference {
+                                    id
+                                } = arg {
+                                    placeables.push(id.name.to_string());
+                                }
                             }
                         }
                     }
