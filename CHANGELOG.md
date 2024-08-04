@@ -425,6 +425,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.1.11]: https://github.com/mondeja/leptos-fluent/compare/v0.1.10...v0.1.11
 [0.1.10]: https://github.com/mondeja/leptos-fluent/compare/v0.1.9...v0.1.10
 [0.1.9]: https://github.com/mondeja/leptos-fluent/compare/v0.1.8...v0.1.9
 [0.1.8]: https://github.com/mondeja/leptos-fluent/compare/v0.1.7...v0.1.8
