@@ -52,9 +52,11 @@ fn main() {
         initial_language_from_system_to_data_file: true,
         set_language_to_data_file: true,
         data_file_key: "leptos-fluent-gtk-example",
+        #[cfg(debug_assertions)]
         provide_meta_context: true,
     }};
 
+    #[cfg(debug_assertions)]
     tracing::info!("Macro parameters: {:?}", i18n.meta().unwrap());
 
     // Run the application

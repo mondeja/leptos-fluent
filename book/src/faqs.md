@@ -170,19 +170,15 @@ let i18n = leptos_fluent! {{
 println!("Macro parameters: {:?}", i18n.meta().unwrap());
 ```
 
-### Different [configuration conditional checks]
+### [Configuration conditional checks]
 
 ```rust
 leptos_fluent! {{
     // ...
-    #[cfg(feature = "ssr")]
-    url_param: "ssr-lang",
-    #[cfg(feature = "hydrate")]
-    url_param: "hydrate-lang",
-    #[cfg(all(not(feature = "ssr"), not(feature = "hydrate"), debug_assertions))]
-    url_param: "debug-lang",
     #[cfg(debug_assertions)]
-    initial_language_from_url_param: true,
+    set_language_to_url_param: true,
+    #[cfg(not(debug_assertions))]
+    set_language_to_url_param: false,
 }}
 ```
 
