@@ -25,6 +25,24 @@ fn get_fluent_entries_from_resource(
                         )
                     } = element {
                         placeables.push(id.name.to_string());
+                    } else if let fluent_syntax::ast::PatternElement::Placeable {
+                        expression: fluent_syntax::ast::Expression::Inline(
+                            fluent_syntax::ast::InlineExpression::FunctionReference {
+                                arguments: fluent_syntax::ast::CallArguments {
+                                    positional,
+                                    ..
+                                },
+                                ..
+                            }
+                        )
+                    } = element {
+                        for arg in positional {
+                            if let fluent_syntax::ast::InlineExpression::VariableReference {
+                                id
+                            } = arg {
+                                placeables.push(id.name.to_string());
+                            }
+                        }
                     }
                 }
                 entries.push(FluentEntry {
@@ -319,6 +337,52 @@ mod tests {
                     message_name: "foo".to_string(),
                     placeables: vec![]
                 }]
+            )])
+        );
+    }
+
+    #[test]
+    fn test_fluent_functions() {
+        let fluent_resources = HashMap::from([(
+            "en-US".to_string(),
+            vec![
+                r#"locale-date-format = { DATETIME($date, month: "long", year: "numeric", day: "numeric") }
+log-time2 = Entry time: { DATETIME($date) }
+emails2 = Number of unread emails { NUMBER($unreadEmails) }
+"#.to_string()
+            ],
+        )]);
+        let fluent_file_paths = HashMap::from([(
+            "en-US".to_string(),
+            vec!["./locales/en-US/foo.ftl".to_string()],
+        )]);
+        let workspace_path = "./";
+        let (entries, errors) = build_fluent_entries(
+            &fluent_resources,
+            &fluent_file_paths,
+            workspace_path,
+            &None,
+            &None,
+        );
+        assert!(errors.is_empty());
+        assert_eq!(
+            entries,
+            HashMap::from([(
+                "en-US".to_string(),
+                vec![
+                    FluentEntry {
+                        message_name: "locale-date-format".to_string(),
+                        placeables: vec!["date".to_string()]
+                    },
+                    FluentEntry {
+                        message_name: "log-time2".to_string(),
+                        placeables: vec!["date".to_string()]
+                    },
+                    FluentEntry {
+                        message_name: "emails2".to_string(),
+                        placeables: vec!["unreadEmails".to_string()]
+                    }
+                ]
             )])
         );
     }
