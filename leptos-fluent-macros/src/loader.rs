@@ -51,6 +51,66 @@ fn parse_litstr_or_expr_param(
     }
 }
 
+fn parse_litstr_or_expr_param_noop(
+    fields: ParseStream,
+    param_name: &'static str,
+) -> Result<()> {
+    match fields.parse::<syn::LitStr>() {
+        Ok(_) => Ok(()),
+        Err(_) => match fields.parse::<syn::Expr>() {
+            Ok(_) => Ok(()),
+            Err(_) => {
+                let fields_str = fields.to_string();
+                Err(syn::Error::new(
+                    fields.span(),
+                    format!(
+                        concat!(
+                            "Not a valid value for '{}' of leptos_fluent! macro.",
+                            " Must be a literal string or a valid expression.",
+                            " Found {}",
+                        ),
+                        param_name,
+                        match fields_str.is_empty() {
+                            true => "(empty)",
+                            false => &fields_str,
+                        },
+                    ),
+                ))
+            }
+        },
+    }
+}
+
+macro_rules! parse_litstr_or_expr_param_with_maybe_comptime_exprpath {
+    ($exprpath:ident, $k:ident, $fields:ident, $param:ident, $param_name:literal) => {
+        if let Some(ref e) = $exprpath {
+            let evaluated_exprpath = $crate::evaluate_exprpath(e);
+            if !evaluated_exprpath.supported {
+                return Err(syn::Error::new(
+                    e.span(),
+                    exprpath_not_supported_error_message(e, &$k),
+                ));
+            } else if !evaluated_exprpath.result {
+                parse_litstr_or_expr_param_noop(&$fields, $param_name)?;
+            } else {
+                parse_litstr_or_expr_param(
+                    &$fields,
+                    &mut $param.lit,
+                    &mut $param.expr,
+                    $param_name,
+                )?;
+            }
+        } else {
+            parse_litstr_or_expr_param(
+                &$fields,
+                &mut $param.lit,
+                &mut $param.expr,
+                $param_name,
+            )?;
+        }
+    };
+}
+
 fn parse_litbool_or_expr_param(
     fields: ParseStream,
     litbool: &mut Option<syn::LitBool>,
@@ -94,6 +154,14 @@ macro_rules! parse_struct_field_init_shorthand {
         if $shorthand {
             $param.expr =
                 Some(syn::Expr::Verbatim($k.to_string().parse().unwrap()));
+            continue;
+        }
+    };
+    ($shorthand:ident, $param:ident, $k:ident, $vec:ident) => {
+        if $shorthand {
+            $param.expr =
+                Some(syn::Expr::Verbatim($k.to_string().parse().unwrap()));
+            $vec.push($param);
             continue;
         }
     };
@@ -214,27 +282,25 @@ leptos_fluent! {{{{
     )
 }
 
-macro_rules! exprpath_not_supported {
-    ($exprpath:ident, $k:ident) => {
-        if let Some(ref e) = $exprpath {
-            return Err(syn::Error::new(
-                e.span(),
-                exprpath_not_supported_error_message(e, &$k),
-            ));
-        }
-    };
-}
-
-macro_rules! evaluate_compile_time_exprpath {
+macro_rules! evaluate_compile_time_exprpath_set_none {
     ($exprpath:ident, $k:ident, $field:ident) => {
         if let Some(ref e) = $exprpath {
             let evaluated_exprpath = $crate::evaluate_exprpath(e);
             if !evaluated_exprpath.supported {
-                exprpath_not_supported!($exprpath, $k);
+                return Err(syn::Error::new(
+                    e.span(),
+                    exprpath_not_supported_error_message(e, &$k),
+                ));
             } else if !evaluated_exprpath.result {
                 $field = None;
             }
         }
+    };
+}
+
+macro_rules! clone_runtime_exprpath {
+    ($exprpath:ident, $field:ident) => {
+        $field.exprpath.clone_from(&$exprpath);
     };
 }
 
@@ -272,7 +338,6 @@ impl LitBoolExpr {
 pub(crate) struct LitStrExpr {
     pub lit: Option<syn::LitStr>,
     pub expr: Option<syn::Expr>,
-    pub exprpath: Option<proc_macro2::TokenStream>,
 }
 
 impl LitStrExpr {
@@ -314,43 +379,43 @@ pub(crate) struct I18nLoader {
     pub locales_path: String,
     pub core_locales_path: Option<String>,
     pub check_translations: Option<String>,
-    pub provide_meta_context: LitBool,
-    pub sync_html_tag_lang: LitBoolExpr,
-    pub sync_html_tag_dir: LitBoolExpr,
+    pub provide_meta_context: Vec<LitBool>,
+    pub sync_html_tag_lang: Vec<LitBoolExpr>,
+    pub sync_html_tag_dir: Vec<LitBoolExpr>,
     pub url_param: LitStrExpr,
-    pub initial_language_from_url_param: LitBoolExpr,
-    pub initial_language_from_url_param_to_localstorage: LitBoolExpr,
-    pub initial_language_from_url_param_to_cookie: LitBoolExpr,
-    pub initial_language_from_url_param_to_server_function: Identifier,
-    pub set_language_to_url_param: LitBoolExpr,
+    pub initial_language_from_url_param: Vec<LitBoolExpr>,
+    pub initial_language_from_url_param_to_localstorage: Vec<LitBoolExpr>,
+    pub initial_language_from_url_param_to_cookie: Vec<LitBoolExpr>,
+    pub initial_language_from_url_param_to_server_function: Vec<Identifier>,
+    pub set_language_to_url_param: Vec<LitBoolExpr>,
     pub localstorage_key: LitStrExpr,
-    pub initial_language_from_localstorage: LitBoolExpr,
-    pub initial_language_from_localstorage_to_cookie: LitBoolExpr,
-    pub initial_language_from_localstorage_to_server_function: Identifier,
-    pub set_language_to_localstorage: LitBoolExpr,
-    pub initial_language_from_navigator: LitBoolExpr,
-    pub initial_language_from_navigator_to_localstorage: LitBoolExpr,
-    pub initial_language_from_navigator_to_cookie: LitBoolExpr,
-    pub initial_language_from_navigator_to_server_function: Identifier,
-    pub initial_language_from_accept_language_header: LitBoolExpr,
+    pub initial_language_from_localstorage: Vec<LitBoolExpr>,
+    pub initial_language_from_localstorage_to_cookie: Vec<LitBoolExpr>,
+    pub initial_language_from_localstorage_to_server_function: Vec<Identifier>,
+    pub set_language_to_localstorage: Vec<LitBoolExpr>,
+    pub initial_language_from_navigator: Vec<LitBoolExpr>,
+    pub initial_language_from_navigator_to_localstorage: Vec<LitBoolExpr>,
+    pub initial_language_from_navigator_to_cookie: Vec<LitBoolExpr>,
+    pub initial_language_from_navigator_to_server_function: Vec<Identifier>,
+    pub initial_language_from_accept_language_header: Vec<LitBoolExpr>,
     pub cookie_name: LitStrExpr,
     pub cookie_attrs: LitStrExpr,
-    pub initial_language_from_cookie: LitBoolExpr,
-    pub initial_language_from_cookie_to_localstorage: LitBoolExpr,
-    pub initial_language_from_cookie_to_server_function: Identifier,
-    pub set_language_to_cookie: LitBoolExpr,
-    pub initial_language_from_server_function: Identifier,
-    pub initial_language_from_server_function_to_cookie: LitBoolExpr,
-    pub initial_language_from_server_function_to_localstorage: LitBoolExpr,
-    pub set_language_to_server_function: Identifier,
+    pub initial_language_from_cookie: Vec<LitBoolExpr>,
+    pub initial_language_from_cookie_to_localstorage: Vec<LitBoolExpr>,
+    pub initial_language_from_cookie_to_server_function: Vec<Identifier>,
+    pub set_language_to_cookie: Vec<LitBoolExpr>,
+    pub initial_language_from_server_function: Vec<Identifier>,
+    pub initial_language_from_server_function_to_cookie: Vec<LitBoolExpr>,
+    pub initial_language_from_server_function_to_localstorage: Vec<LitBoolExpr>,
+    pub set_language_to_server_function: Vec<Identifier>,
     #[cfg(feature = "system")]
-    pub initial_language_from_system: LitBoolExpr,
+    pub initial_language_from_system: Vec<LitBoolExpr>,
     #[cfg(feature = "system")]
-    pub initial_language_from_system_to_data_file: LitBoolExpr,
+    pub initial_language_from_system_to_data_file: Vec<LitBoolExpr>,
     #[cfg(feature = "system")]
-    pub set_language_to_data_file: LitBoolExpr,
+    pub set_language_to_data_file: Vec<LitBoolExpr>,
     #[cfg(feature = "system")]
-    pub initial_language_from_data_file: LitBoolExpr,
+    pub initial_language_from_data_file: Vec<LitBoolExpr>,
     #[cfg(feature = "system")]
     pub data_file_key: LitStrExpr,
 }
@@ -368,55 +433,69 @@ impl Parse for I18nLoader {
         let mut core_locales_path: Option<syn::LitStr> = None;
         let mut translations: Option<Translations> = None;
         let mut check_translations: Option<syn::LitStr> = None;
-        let mut provide_meta_context = LitBool::new();
-        let mut sync_html_tag_lang = LitBoolExpr::new();
-        let mut sync_html_tag_dir = LitBoolExpr::new();
+        let mut provide_meta_context: Vec<LitBool> = Vec::new();
+        let mut sync_html_tag_lang: Vec<LitBoolExpr> = Vec::new();
+        let mut sync_html_tag_dir: Vec<LitBoolExpr> = Vec::new();
         let mut url_param = LitStrExpr::new();
-        let mut initial_language_from_url_param = LitBoolExpr::new();
-        let mut initial_language_from_url_param_to_localstorage =
-            LitBoolExpr::new();
-        let mut initial_language_from_url_param_to_cookie = LitBoolExpr::new();
-        let mut initial_language_from_url_param_to_server_function =
-            Identifier::new();
-        let mut set_language_to_url_param = LitBoolExpr::new();
+        let mut initial_language_from_url_param: Vec<LitBoolExpr> = Vec::new();
+        let mut initial_language_from_url_param_to_localstorage: Vec<
+            LitBoolExpr,
+        > = Vec::new();
+        let mut initial_language_from_url_param_to_cookie: Vec<LitBoolExpr> =
+            Vec::new();
+        let mut initial_language_from_url_param_to_server_function: Vec<
+            Identifier,
+        > = Vec::new();
+        let mut set_language_to_url_param: Vec<LitBoolExpr> = Vec::new();
         let mut localstorage_key = LitStrExpr::new();
-        let mut initial_language_from_localstorage = LitBoolExpr::new();
-        let mut initial_language_from_localstorage_to_cookie =
-            LitBoolExpr::new();
-        let mut initial_language_from_localstorage_to_server_function =
-            Identifier::new();
-        let mut set_language_to_localstorage = LitBoolExpr::new();
-        let mut initial_language_from_navigator = LitBoolExpr::new();
-        let mut initial_language_from_navigator_to_localstorage =
-            LitBoolExpr::new();
-        let mut initial_language_from_navigator_to_cookie = LitBoolExpr::new();
-        let mut initial_language_from_navigator_to_server_function =
-            Identifier::new();
-        let mut initial_language_from_accept_language_header =
-            LitBoolExpr::new();
+        let mut initial_language_from_localstorage: Vec<LitBoolExpr> =
+            Vec::new();
+        let mut initial_language_from_localstorage_to_cookie: Vec<LitBoolExpr> =
+            Vec::new();
+        let mut initial_language_from_localstorage_to_server_function: Vec<
+            Identifier,
+        > = Vec::new();
+        let mut set_language_to_localstorage: Vec<LitBoolExpr> = Vec::new();
+        let mut initial_language_from_navigator: Vec<LitBoolExpr> = Vec::new();
+        let mut initial_language_from_navigator_to_localstorage: Vec<
+            LitBoolExpr,
+        > = Vec::new();
+        let mut initial_language_from_navigator_to_cookie: Vec<LitBoolExpr> =
+            Vec::new();
+        let mut initial_language_from_navigator_to_server_function: Vec<
+            Identifier,
+        > = Vec::new();
+        let mut initial_language_from_accept_language_header: Vec<LitBoolExpr> =
+            Vec::new();
         let mut cookie_name = LitStrExpr::new();
         let mut cookie_attrs = LitStrExpr::new();
-        let mut initial_language_from_cookie = LitBoolExpr::new();
-        let mut initial_language_from_cookie_to_localstorage =
-            LitBoolExpr::new();
-        let mut initial_language_from_cookie_to_server_function =
-            Identifier::new();
-        let mut set_language_to_cookie = LitBoolExpr::new();
-        let mut initial_language_from_server_function = Identifier::new();
-        let mut initial_language_from_server_function_to_cookie =
-            LitBoolExpr::new();
-        let mut initial_language_from_server_function_to_localstorage =
-            LitBoolExpr::new();
-        let mut set_language_to_server_function = Identifier::new();
+        let mut initial_language_from_cookie: Vec<LitBoolExpr> = Vec::new();
+        let mut initial_language_from_cookie_to_localstorage: Vec<LitBoolExpr> =
+            Vec::new();
+        let mut initial_language_from_cookie_to_server_function: Vec<
+            Identifier,
+        > = Vec::new();
+        let mut set_language_to_cookie: Vec<LitBoolExpr> = Vec::new();
+        let mut initial_language_from_server_function: Vec<Identifier> =
+            Vec::new();
+        let mut initial_language_from_server_function_to_cookie: Vec<
+            LitBoolExpr,
+        > = Vec::new();
+        let mut initial_language_from_server_function_to_localstorage: Vec<
+            LitBoolExpr,
+        > = Vec::new();
+        let mut set_language_to_server_function: Vec<Identifier> = Vec::new();
 
         #[cfg(feature = "system")]
-        let mut initial_language_from_system = LitBoolExpr::new();
+        let mut initial_language_from_system: Vec<LitBoolExpr> = Vec::new();
         #[cfg(feature = "system")]
-        let mut initial_language_from_system_to_data_file = LitBoolExpr::new();
+        let mut initial_language_from_system_to_data_file: Vec<
+            LitBoolExpr,
+        > = Vec::new();
         #[cfg(feature = "system")]
-        let mut set_language_to_data_file = LitBoolExpr::new();
+        let mut set_language_to_data_file: Vec<LitBoolExpr> = Vec::new();
         #[cfg(feature = "system")]
-        let mut initial_language_from_data_file = LitBoolExpr::new();
+        let mut initial_language_from_data_file: Vec<LitBoolExpr> = Vec::new();
         let mut data_file_key = LitStrExpr::new();
 
         while !fields.is_empty() {
@@ -495,496 +574,475 @@ impl Parse for I18nLoader {
                     k
                 );
                 translations = Some(fields.parse()?);
-                evaluate_compile_time_exprpath!(exprpath, k, translations);
+                evaluate_compile_time_exprpath_set_none!(
+                    exprpath,
+                    k,
+                    translations
+                );
             } else if k == "locales" {
                 struct_field_init_shorthand_not_supported!(
                     struct_field_init_shorthand,
                     k
                 );
                 locales_path = Some(fields.parse()?);
-                evaluate_compile_time_exprpath!(exprpath, k, locales_path);
+                evaluate_compile_time_exprpath_set_none!(
+                    exprpath,
+                    k,
+                    locales_path
+                );
             } else if k == "core_locales" {
                 struct_field_init_shorthand_not_supported!(
                     struct_field_init_shorthand,
                     k
                 );
                 core_locales_path = Some(fields.parse()?);
-                evaluate_compile_time_exprpath!(exprpath, k, core_locales_path);
+                evaluate_compile_time_exprpath_set_none!(
+                    exprpath,
+                    k,
+                    core_locales_path
+                );
             } else if k == "languages" {
                 struct_field_init_shorthand_not_supported!(
                     struct_field_init_shorthand,
                     k
                 );
                 languages_path = Some(fields.parse()?);
-                evaluate_compile_time_exprpath!(exprpath, k, languages_path);
+                evaluate_compile_time_exprpath_set_none!(
+                    exprpath,
+                    k,
+                    languages_path
+                );
             } else if k == "check_translations" {
                 struct_field_init_shorthand_not_supported!(
                     struct_field_init_shorthand,
                     k
                 );
                 check_translations = Some(fields.parse()?);
-                evaluate_compile_time_exprpath!(
+                evaluate_compile_time_exprpath_set_none!(
                     exprpath,
                     k,
                     check_translations
                 );
             } else if k == "sync_html_tag_lang" {
-                if exprpath.is_some() {
-                    sync_html_tag_lang.exprpath.clone_from(&exprpath);
-                }
+                let mut param = LitBoolExpr::new();
+                clone_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
-                    sync_html_tag_lang,
-                    k
+                    param,
+                    k,
+                    sync_html_tag_lang
                 );
                 parse_litbool_or_expr_param(
                     &fields,
-                    &mut sync_html_tag_lang.lit,
-                    &mut sync_html_tag_lang.expr,
+                    &mut param.lit,
+                    &mut param.expr,
                     "sync_html_tag_lang",
                 )?;
+                sync_html_tag_lang.push(param);
             } else if k == "sync_html_tag_dir" {
-                if exprpath.is_some() {
-                    sync_html_tag_dir.exprpath.clone_from(&exprpath);
-                }
+                let mut param = LitBoolExpr::new();
+                clone_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
-                    sync_html_tag_dir,
-                    k
+                    param,
+                    k,
+                    sync_html_tag_dir
                 );
                 parse_litbool_or_expr_param(
                     &fields,
-                    &mut sync_html_tag_dir.lit,
-                    &mut sync_html_tag_dir.expr,
+                    &mut param.lit,
+                    &mut param.expr,
                     "sync_html_tag_dir",
                 )?;
+                sync_html_tag_dir.push(param);
             } else if k == "url_param" {
-                if exprpath.is_some() {
-                    url_param.exprpath.clone_from(&exprpath);
-                }
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     url_param,
                     k
                 );
-                parse_litstr_or_expr_param(
-                    &fields,
-                    &mut url_param.lit,
-                    &mut url_param.expr,
-                    "url_param",
-                )?;
+                parse_litstr_or_expr_param_with_maybe_comptime_exprpath!(
+                    exprpath,
+                    k,
+                    fields,
+                    url_param,
+                    "url_param"
+                );
             } else if k == "initial_language_from_url_param" {
-                if exprpath.is_some() {
-                    initial_language_from_url_param
-                        .exprpath
-                        .clone_from(&exprpath);
-                }
+                let mut param = LitBoolExpr::new();
+                clone_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
-                    initial_language_from_url_param,
-                    k
+                    param,
+                    k,
+                    initial_language_from_url_param
                 );
                 parse_litbool_or_expr_param(
                     &fields,
-                    &mut initial_language_from_url_param.lit,
-                    &mut initial_language_from_url_param.expr,
+                    &mut param.lit,
+                    &mut param.expr,
                     "initial_language_from_url_param",
                 )?;
+                initial_language_from_url_param.push(param);
             } else if k == "initial_language_from_url_param_to_localstorage" {
-                if exprpath.is_some() {
-                    initial_language_from_url_param_to_localstorage
-                        .exprpath
-                        .clone_from(&exprpath);
-                }
+                let mut param = LitBoolExpr::new();
+                clone_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
-                    initial_language_from_url_param_to_localstorage,
-                    k
+                    param,
+                    k,
+                    initial_language_from_url_param_to_localstorage
                 );
                 parse_litbool_or_expr_param(
                     &fields,
-                    &mut initial_language_from_url_param_to_localstorage.lit,
-                    &mut initial_language_from_url_param_to_localstorage.expr,
+                    &mut param.lit,
+                    &mut param.expr,
                     "initial_language_from_url_param_to_localstorage",
                 )?;
+                initial_language_from_url_param_to_localstorage.push(param);
             } else if k == "initial_language_from_url_param_to_cookie" {
-                if exprpath.is_some() {
-                    initial_language_from_url_param_to_cookie
-                        .exprpath
-                        .clone_from(&exprpath);
-                }
+                let mut param = LitBoolExpr::new();
+                clone_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
-                    initial_language_from_url_param_to_cookie,
-                    k
+                    param,
+                    k,
+                    initial_language_from_url_param_to_cookie
                 );
                 parse_litbool_or_expr_param(
                     &fields,
-                    &mut initial_language_from_url_param_to_cookie.lit,
-                    &mut initial_language_from_url_param_to_cookie.expr,
+                    &mut param.lit,
+                    &mut param.expr,
                     "initial_language_from_url_param_to_cookie",
                 )?;
+                initial_language_from_url_param_to_cookie.push(param);
             } else if k == "initial_language_from_url_param_to_server_function"
             {
-                if exprpath.is_some() {
-                    initial_language_from_url_param_to_server_function
-                        .exprpath
-                        .clone_from(&exprpath);
-                }
+                let mut param = Identifier::new();
+                clone_runtime_exprpath!(exprpath, param);
                 if struct_field_init_shorthand {
-                    initial_language_from_url_param_to_server_function.ident =
-                        Some(k);
+                    param.ident = Some(k);
                 } else {
-                    initial_language_from_url_param_to_server_function.ident =
-                        Some(fields.parse()?);
+                    param.ident = Some(fields.parse()?);
                 }
+                initial_language_from_url_param_to_server_function.push(param);
             } else if k == "set_language_to_url_param" {
-                if exprpath.is_some() {
-                    set_language_to_url_param.exprpath.clone_from(&exprpath);
-                }
+                let mut param = LitBoolExpr::new();
+                clone_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
-                    set_language_to_url_param,
-                    k
+                    param,
+                    k,
+                    set_language_to_url_param
                 );
                 parse_litbool_or_expr_param(
                     &fields,
-                    &mut set_language_to_url_param.lit,
-                    &mut set_language_to_url_param.expr,
+                    &mut param.lit,
+                    &mut param.expr,
                     "set_language_to_url_param",
                 )?;
+                set_language_to_url_param.push(param);
             } else if k == "localstorage_key" {
-                if exprpath.is_some() {
-                    localstorage_key.exprpath.clone_from(&exprpath);
-                }
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     localstorage_key,
                     k
                 );
-                parse_litstr_or_expr_param(
-                    &fields,
-                    &mut localstorage_key.lit,
-                    &mut localstorage_key.expr,
-                    "localstorage_key",
-                )?;
+                parse_litstr_or_expr_param_with_maybe_comptime_exprpath!(
+                    exprpath,
+                    k,
+                    fields,
+                    localstorage_key,
+                    "localstorage_key"
+                );
             } else if k == "initial_language_from_localstorage" {
-                if exprpath.is_some() {
-                    initial_language_from_localstorage
-                        .exprpath
-                        .clone_from(&exprpath);
-                }
+                let mut param = LitBoolExpr::new();
+                clone_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
-                    initial_language_from_localstorage,
-                    k
+                    param,
+                    k,
+                    initial_language_from_localstorage
                 );
                 parse_litbool_or_expr_param(
                     &fields,
-                    &mut initial_language_from_localstorage.lit,
-                    &mut initial_language_from_localstorage.expr,
+                    &mut param.lit,
+                    &mut param.expr,
                     "initial_language_from_localstorage",
                 )?;
+                initial_language_from_localstorage.push(param);
             } else if k == "initial_language_from_localstorage_to_cookie" {
-                if exprpath.is_some() {
-                    initial_language_from_localstorage_to_cookie
-                        .exprpath
-                        .clone_from(&exprpath);
-                }
+                let mut param = LitBoolExpr::new();
+                clone_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
-                    initial_language_from_localstorage_to_cookie,
-                    k
+                    param,
+                    k,
+                    initial_language_from_localstorage_to_cookie
                 );
                 parse_litbool_or_expr_param(
                     &fields,
-                    &mut initial_language_from_localstorage_to_cookie.lit,
-                    &mut initial_language_from_localstorage_to_cookie.expr,
+                    &mut param.lit,
+                    &mut param.expr,
                     "initial_language_from_localstorage_to_cookie",
                 )?;
+                initial_language_from_localstorage_to_cookie.push(param);
             } else if k
                 == "initial_language_from_localstorage_to_server_function"
             {
-                if exprpath.is_some() {
-                    initial_language_from_localstorage_to_server_function
-                        .exprpath
-                        .clone_from(&exprpath);
-                }
+                let mut param = Identifier::new();
+                clone_runtime_exprpath!(exprpath, param);
                 if struct_field_init_shorthand {
-                    initial_language_from_localstorage_to_server_function
-                        .ident = Some(k);
+                    param.ident = Some(k);
                 } else {
-                    initial_language_from_localstorage_to_server_function
-                        .ident = Some(fields.parse()?);
+                    param.ident = Some(fields.parse()?);
                 }
+                initial_language_from_localstorage_to_server_function
+                    .push(param);
             } else if k == "set_language_to_localstorage" {
-                if exprpath.is_some() {
-                    set_language_to_localstorage.exprpath.clone_from(&exprpath);
-                }
+                let mut param = LitBoolExpr::new();
+                clone_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
-                    set_language_to_localstorage,
-                    k
+                    param,
+                    k,
+                    set_language_to_localstorage
                 );
                 parse_litbool_or_expr_param(
                     &fields,
-                    &mut set_language_to_localstorage.lit,
-                    &mut set_language_to_localstorage.expr,
+                    &mut param.lit,
+                    &mut param.expr,
                     "set_language_to_localstorage",
                 )?;
+                set_language_to_localstorage.push(param);
             } else if k == "initial_language_from_navigator" {
-                if exprpath.is_some() {
-                    initial_language_from_navigator
-                        .exprpath
-                        .clone_from(&exprpath);
-                }
+                let mut param = LitBoolExpr::new();
+                clone_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
-                    initial_language_from_navigator,
-                    k
+                    param,
+                    k,
+                    initial_language_from_navigator
                 );
                 parse_litbool_or_expr_param(
                     &fields,
-                    &mut initial_language_from_navigator.lit,
-                    &mut initial_language_from_navigator.expr,
+                    &mut param.lit,
+                    &mut param.expr,
                     "initial_language_from_navigator",
                 )?;
+                initial_language_from_navigator.push(param);
             } else if k == "initial_language_from_navigator_to_localstorage" {
-                if exprpath.is_some() {
-                    initial_language_from_navigator_to_localstorage
-                        .exprpath
-                        .clone_from(&exprpath);
-                }
+                let mut param = LitBoolExpr::new();
+                clone_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
-                    initial_language_from_navigator_to_localstorage,
-                    k
+                    param,
+                    k,
+                    initial_language_from_navigator_to_localstorage
                 );
                 parse_litbool_or_expr_param(
                     &fields,
-                    &mut initial_language_from_navigator_to_localstorage.lit,
-                    &mut initial_language_from_navigator_to_localstorage.expr,
+                    &mut param.lit,
+                    &mut param.expr,
                     "initial_language_from_navigator_to_localstorage",
                 )?;
+                initial_language_from_navigator_to_localstorage.push(param);
             } else if k == "initial_language_from_navigator_to_cookie" {
-                if exprpath.is_some() {
-                    initial_language_from_navigator_to_cookie
-                        .exprpath
-                        .clone_from(&exprpath);
-                }
+                let mut param = LitBoolExpr::new();
+                clone_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
-                    initial_language_from_navigator_to_cookie,
-                    k
+                    param,
+                    k,
+                    initial_language_from_navigator_to_cookie
                 );
                 parse_litbool_or_expr_param(
                     &fields,
-                    &mut initial_language_from_navigator_to_cookie.lit,
-                    &mut initial_language_from_navigator_to_cookie.expr,
+                    &mut param.lit,
+                    &mut param.expr,
                     "initial_language_from_navigator_to_cookie",
                 )?;
+                initial_language_from_navigator_to_cookie.push(param);
             } else if k == "initial_language_from_navigator_to_server_function"
             {
-                if exprpath.is_some() {
-                    initial_language_from_navigator_to_server_function
-                        .exprpath
-                        .clone_from(&exprpath);
-                }
+                let mut param = Identifier::new();
+                clone_runtime_exprpath!(exprpath, param);
                 if struct_field_init_shorthand {
-                    initial_language_from_navigator_to_server_function.ident =
-                        Some(k);
+                    param.ident = Some(k);
                 } else {
-                    initial_language_from_navigator_to_server_function.ident =
-                        Some(fields.parse()?);
+                    param.ident = Some(fields.parse()?);
                 }
+                initial_language_from_navigator_to_server_function.push(param);
             } else if k == "initial_language_from_accept_language_header" {
-                if exprpath.is_some() {
-                    initial_language_from_accept_language_header
-                        .exprpath
-                        .clone_from(&exprpath);
-                }
+                let mut param = LitBoolExpr::new();
+                clone_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
-                    initial_language_from_accept_language_header,
-                    k
+                    param,
+                    k,
+                    initial_language_from_accept_language_header
                 );
                 parse_litbool_or_expr_param(
                     &fields,
-                    &mut initial_language_from_accept_language_header.lit,
-                    &mut initial_language_from_accept_language_header.expr,
+                    &mut param.lit,
+                    &mut param.expr,
                     "initial_language_from_accept_language_header",
                 )?;
+                initial_language_from_accept_language_header.push(param);
             } else if k == "cookie_name" {
-                if exprpath.is_some() {
-                    cookie_name.exprpath.clone_from(&exprpath);
-                }
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     cookie_name,
                     k
                 );
-                parse_litstr_or_expr_param(
-                    &fields,
-                    &mut cookie_name.lit,
-                    &mut cookie_name.expr,
-                    "cookie_name",
-                )?;
+                parse_litstr_or_expr_param_with_maybe_comptime_exprpath!(
+                    exprpath,
+                    k,
+                    fields,
+                    cookie_name,
+                    "cookie_name"
+                );
             } else if k == "cookie_attrs" {
-                if exprpath.is_some() {
-                    cookie_attrs.exprpath.clone_from(&exprpath);
-                }
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     cookie_attrs,
                     k
                 );
-                parse_litstr_or_expr_param(
-                    &fields,
-                    &mut cookie_attrs.lit,
-                    &mut cookie_attrs.expr,
-                    "cookie_attrs",
-                )?;
+                parse_litstr_or_expr_param_with_maybe_comptime_exprpath!(
+                    exprpath,
+                    k,
+                    fields,
+                    cookie_attrs,
+                    "cookie_attrs"
+                );
             } else if k == "initial_language_from_cookie" {
-                if exprpath.is_some() {
-                    initial_language_from_cookie.exprpath.clone_from(&exprpath);
-                }
+                let mut param = LitBoolExpr::new();
+                clone_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
-                    initial_language_from_cookie,
-                    k
+                    param,
+                    k,
+                    initial_language_from_cookie
                 );
                 parse_litbool_or_expr_param(
                     &fields,
-                    &mut initial_language_from_cookie.lit,
-                    &mut initial_language_from_cookie.expr,
+                    &mut param.lit,
+                    &mut param.expr,
                     "initial_language_from_cookie",
                 )?;
+                initial_language_from_cookie.push(param);
             } else if k == "initial_language_from_cookie_to_localstorage" {
-                if exprpath.is_some() {
-                    initial_language_from_cookie_to_localstorage
-                        .exprpath
-                        .clone_from(&exprpath);
-                }
+                let mut param = LitBoolExpr::new();
+                clone_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
-                    initial_language_from_cookie_to_localstorage,
-                    k
+                    param,
+                    k,
+                    initial_language_from_cookie_to_localstorage
                 );
                 parse_litbool_or_expr_param(
                     &fields,
-                    &mut initial_language_from_cookie_to_localstorage.lit,
-                    &mut initial_language_from_cookie_to_localstorage.expr,
+                    &mut param.lit,
+                    &mut param.expr,
                     "initial_language_from_cookie_to_localstorage",
                 )?;
+                initial_language_from_cookie_to_localstorage.push(param);
             } else if k == "initial_language_from_cookie_to_server_function" {
-                if exprpath.is_some() {
-                    initial_language_from_cookie_to_server_function
-                        .exprpath
-                        .clone_from(&exprpath);
-                }
+                let mut param = Identifier::new();
+                clone_runtime_exprpath!(exprpath, param);
                 if struct_field_init_shorthand {
-                    initial_language_from_cookie_to_server_function.ident =
-                        Some(k);
+                    param.ident = Some(k);
                 } else {
-                    initial_language_from_cookie_to_server_function.ident =
-                        Some(fields.parse()?);
+                    param.ident = Some(fields.parse()?);
                 }
+                initial_language_from_cookie_to_server_function.push(param);
             } else if k == "set_language_to_cookie" {
-                if exprpath.is_some() {
-                    set_language_to_cookie.exprpath.clone_from(&exprpath);
-                }
+                let mut param = LitBoolExpr::new();
+                clone_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
-                    set_language_to_cookie,
-                    k
+                    param,
+                    k,
+                    set_language_to_cookie
                 );
                 parse_litbool_or_expr_param(
                     &fields,
-                    &mut set_language_to_cookie.lit,
-                    &mut set_language_to_cookie.expr,
+                    &mut param.lit,
+                    &mut param.expr,
                     "set_language_to_cookie",
                 )?;
+                set_language_to_cookie.push(param);
             } else if k == "initial_language_from_server_function" {
-                if exprpath.is_some() {
-                    initial_language_from_server_function
-                        .exprpath
-                        .clone_from(&exprpath);
-                }
+                let mut param = Identifier::new();
+                clone_runtime_exprpath!(exprpath, param);
                 if struct_field_init_shorthand {
-                    initial_language_from_server_function.ident = Some(k);
+                    param.ident = Some(k);
                 } else {
-                    initial_language_from_server_function.ident =
-                        Some(fields.parse()?);
+                    param.ident = Some(fields.parse()?);
                 }
+                initial_language_from_server_function.push(param);
             } else if k == "initial_language_from_server_function_to_cookie" {
-                if exprpath.is_some() {
-                    initial_language_from_server_function_to_cookie
-                        .exprpath
-                        .clone_from(&exprpath);
-                }
+                let mut param = LitBoolExpr::new();
+                clone_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
-                    initial_language_from_server_function_to_cookie,
-                    k
+                    param,
+                    k,
+                    initial_language_from_server_function_to_cookie
                 );
                 parse_litbool_or_expr_param(
                     &fields,
-                    &mut initial_language_from_server_function_to_cookie.lit,
-                    &mut initial_language_from_server_function_to_cookie.expr,
+                    &mut param.lit,
+                    &mut param.expr,
                     "initial_language_from_server_function_to_cookie",
                 )?;
+                initial_language_from_server_function_to_cookie.push(param);
             } else if k
                 == "initial_language_from_server_function_to_localstorage"
             {
-                if exprpath.is_some() {
-                    initial_language_from_server_function_to_localstorage
-                        .exprpath
-                        .clone_from(&exprpath);
-                }
+                let mut param = LitBoolExpr::new();
+                clone_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
-                    initial_language_from_server_function_to_localstorage,
-                    k
+                    param,
+                    k,
+                    initial_language_from_server_function_to_localstorage
                 );
                 parse_litbool_or_expr_param(
                     &fields,
-                    &mut initial_language_from_server_function_to_localstorage
-                        .lit,
-                    &mut initial_language_from_server_function_to_localstorage
-                        .expr,
+                    &mut param.lit,
+                    &mut param.expr,
                     "initial_language_from_server_function_to_localstorage",
                 )?;
+                initial_language_from_server_function_to_localstorage
+                    .push(param);
             } else if k == "set_language_to_server_function" {
-                if exprpath.is_some() {
-                    set_language_to_server_function
-                        .exprpath
-                        .clone_from(&exprpath);
-                }
+                let mut param = Identifier::new();
+                clone_runtime_exprpath!(exprpath, param);
                 if struct_field_init_shorthand {
-                    set_language_to_server_function.ident = Some(k);
+                    param.ident = Some(k);
                 } else {
-                    set_language_to_server_function.ident =
-                        Some(fields.parse()?);
+                    param.ident = Some(fields.parse()?);
                 }
+                set_language_to_server_function.push(param);
             } else if k == "initial_language_from_system" {
                 #[cfg(feature = "system")]
                 {
-                    if exprpath.is_some() {
-                        initial_language_from_system
-                            .exprpath
-                            .clone_from(&exprpath);
-                    }
+                    let mut param = LitBoolExpr::new();
+                    clone_runtime_exprpath!(exprpath, param);
                     parse_struct_field_init_shorthand!(
                         struct_field_init_shorthand,
-                        initial_language_from_system,
-                        k
+                        param,
+                        k,
+                        initial_language_from_system
                     );
                     parse_litbool_or_expr_param(
                         &fields,
-                        &mut initial_language_from_system.lit,
-                        &mut initial_language_from_system.expr,
+                        &mut param.lit,
+                        &mut param.expr,
                         "initial_language_from_system",
                     )?;
+                    initial_language_from_system.push(param);
                 }
 
                 #[cfg(not(feature = "system"))]
@@ -1001,22 +1059,21 @@ impl Parse for I18nLoader {
             } else if k == "initial_language_from_data_file" {
                 #[cfg(feature = "system")]
                 {
-                    if exprpath.is_some() {
-                        initial_language_from_data_file
-                            .exprpath
-                            .clone_from(&exprpath);
-                    }
+                    let mut param = LitBoolExpr::new();
+                    clone_runtime_exprpath!(exprpath, param);
                     parse_struct_field_init_shorthand!(
                         struct_field_init_shorthand,
-                        initial_language_from_data_file,
-                        k
+                        param,
+                        k,
+                        initial_language_from_data_file
                     );
                     parse_litbool_or_expr_param(
                         &fields,
-                        &mut initial_language_from_data_file.lit,
-                        &mut initial_language_from_data_file.expr,
+                        &mut param.lit,
+                        &mut param.expr,
                         "initial_language_from_data_file",
                     )?;
+                    initial_language_from_data_file.push(param);
                 }
 
                 #[cfg(not(feature = "system"))]
@@ -1033,22 +1090,21 @@ impl Parse for I18nLoader {
             } else if k == "initial_language_from_system_to_data_file" {
                 #[cfg(feature = "system")]
                 {
-                    if exprpath.is_some() {
-                        initial_language_from_system_to_data_file
-                            .exprpath
-                            .clone_from(&exprpath);
-                    }
+                    let mut param = LitBoolExpr::new();
+                    clone_runtime_exprpath!(exprpath, param);
                     parse_struct_field_init_shorthand!(
                         struct_field_init_shorthand,
-                        initial_language_from_system_to_data_file,
-                        k
+                        param,
+                        k,
+                        initial_language_from_system_to_data_file
                     );
                     parse_litbool_or_expr_param(
                         &fields,
-                        &mut initial_language_from_system_to_data_file.lit,
-                        &mut initial_language_from_system_to_data_file.expr,
+                        &mut param.lit,
+                        &mut param.expr,
                         "initial_language_from_system_to_data_file",
                     )?;
+                    initial_language_from_system_to_data_file.push(param);
                 }
 
                 #[cfg(not(feature = "system"))]
@@ -1065,22 +1121,21 @@ impl Parse for I18nLoader {
             } else if k == "set_language_to_data_file" {
                 #[cfg(feature = "system")]
                 {
-                    if exprpath.is_some() {
-                        set_language_to_data_file
-                            .exprpath
-                            .clone_from(&exprpath);
-                    }
+                    let mut param = LitBoolExpr::new();
+                    clone_runtime_exprpath!(exprpath, param);
                     parse_struct_field_init_shorthand!(
                         struct_field_init_shorthand,
-                        set_language_to_data_file,
-                        k
+                        param,
+                        k,
+                        set_language_to_data_file
                     );
                     parse_litbool_or_expr_param(
                         &fields,
-                        &mut set_language_to_data_file.lit,
-                        &mut set_language_to_data_file.expr,
+                        &mut param.lit,
+                        &mut param.expr,
                         "set_language_to_data_file",
                     )?;
+                    set_language_to_data_file.push(param);
                 }
 
                 #[cfg(not(feature = "system"))]
@@ -1095,33 +1150,27 @@ impl Parse for I18nLoader {
                     ));
                 }
             } else if k == "data_file_key" {
-                if exprpath.is_some() {
-                    data_file_key.exprpath.clone_from(&exprpath);
-                }
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     data_file_key,
                     k
                 );
-                parse_litstr_or_expr_param(
-                    &fields,
-                    &mut data_file_key.lit,
-                    &mut data_file_key.expr,
-                    "data_file_key",
-                )?;
-                #[cfg(not(feature = "system"))]
-                {
-                    _ = data_file_key.exprpath;
-                }
+                parse_litstr_or_expr_param_with_maybe_comptime_exprpath!(
+                    exprpath,
+                    k,
+                    fields,
+                    data_file_key,
+                    "data_file_key"
+                );
             } else if k == "provide_meta_context" {
+                let mut param = LitBool::new();
+                clone_runtime_exprpath!(exprpath, param);
                 struct_field_init_shorthand_not_supported!(
                     struct_field_init_shorthand,
                     k
                 );
-                provide_meta_context.lit = Some(fields.parse()?);
-                if exprpath.is_some() {
-                    provide_meta_context.exprpath.clone_from(&exprpath);
-                }
+                param.lit = Some(fields.parse()?);
+                provide_meta_context.push(param);
             } else {
                 return Err(syn::Error::new(
                     k.span(),
@@ -1164,6 +1213,12 @@ impl Parse for I18nLoader {
 
         if let Some(ref file) = languages_file {
             if std::fs::metadata(file).is_err() {
+                #[cfg(feature = "nightly")]
+                let file_path =
+                    std::path::absolute(file).unwrap_or(file.to_path_buf());
+                #[cfg(not(feature = "nightly"))]
+                let file_path = file.to_path_buf();
+
                 return Err(syn::Error::new(
                     languages_path.as_ref().unwrap().span(),
                     format!(
@@ -1172,10 +1227,7 @@ impl Parse for I18nLoader {
                             " be relative to your crate's `Cargo.toml`.",
                             " Looking for: {:?}",
                         ),
-                        // TODO: Use std::path::absolute from
-                        // #![feature(absolute_path)] when stable,
-                        // see https://github.com/rust-lang/rust/issues/92750
-                        file,
+                        file_path,
                     ),
                 ));
             } else {
@@ -1192,6 +1244,12 @@ impl Parse for I18nLoader {
                     Some(langs_path.as_path().to_str().unwrap().to_string());
             }
         } else if std::fs::metadata(&locales_folder_path).is_err() {
+            #[cfg(feature = "nightly")]
+            let file_path = std::path::absolute(&locales_folder_path)
+                .unwrap_or(locales_folder_path.to_path_buf());
+            #[cfg(not(feature = "nightly"))]
+            let file_path = locales_folder_path.to_path_buf();
+
             return Err(syn::Error::new(
                 locales_path.as_ref().unwrap().span(),
                 format!(
@@ -1200,10 +1258,7 @@ impl Parse for I18nLoader {
                         " be relative to your crate's `Cargo.toml`.",
                         " Looking for: {:?}",
                     ),
-                    // TODO: Use std::path::absolute from
-                    // #![feature(absolute_path)] when stable,
-                    // see https://github.com/rust-lang/rust/issues/92750
-                    &locales_folder_path,
+                    file_path,
                 ),
             ));
         } else {
@@ -1232,6 +1287,12 @@ impl Parse for I18nLoader {
         if let Some(core_locales) = &core_locales_path {
             let core_locales = workspace_path.join(core_locales.value());
             if std::fs::metadata(&core_locales).is_err() {
+                #[cfg(feature = "nightly")]
+                let file_path = std::path::absolute(&core_locales)
+                    .unwrap_or(core_locales.to_path_buf());
+                #[cfg(not(feature = "nightly"))]
+                let file_path = core_locales.to_path_buf();
+
                 return Err(syn::Error::new(
                     core_locales_path.unwrap().span(),
                     format!(
@@ -1240,7 +1301,7 @@ impl Parse for I18nLoader {
                             " be relative to your crate's `Cargo.toml`.",
                             " Looking for: {:?}",
                         ),
-                        core_locales,
+                        file_path,
                     )
                 ));
             } else {

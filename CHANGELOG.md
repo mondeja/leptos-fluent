@@ -1,5 +1,22 @@
 # CHANGELOG
 
+## Unreleased - [0.1.11]
+
+### Enhancements
+
+- Accept multiple configuration conditional checks for the same parameters in
+  `leptos_fluent!` macro:
+
+  ```rust
+  leptos_fluent! {{
+      // ...
+      #[cfg(debug_assertions)]
+      set_language_to_url_param: true,
+      #[cfg(not(debug_assertions))]
+      set_language_to_url_param: false,
+  }}
+  ```
+
 ## 2024-08-03 - [0.1.10]
 
 ### Enhancements
@@ -11,7 +28,7 @@
 
   ```rust
   leptos_fluent! {{
-      ...
+      // ...
       #[cfg(target_family = "unix")]
       languages: "./locales/languages.json",
   }}
@@ -406,6 +423,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.1.11]: https://github.com/mondeja/leptos-fluent/compare/v0.1.10...master
 [0.1.10]: https://github.com/mondeja/leptos-fluent/compare/v0.1.9...v0.1.10
 [0.1.9]: https://github.com/mondeja/leptos-fluent/compare/v0.1.8...v0.1.9
 [0.1.8]: https://github.com/mondeja/leptos-fluent/compare/v0.1.7...v0.1.8
