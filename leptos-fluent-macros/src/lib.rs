@@ -672,7 +672,7 @@ pub fn leptos_fluent(
 
                 #[cfg(all(feature = "ssr", feature = "actix"))]
                 let effect_quote = quote! {
-                    if let Some(req) = leptos::use_context::<actix_web::HttpRequest>() {
+                    if let Some(req) = ::leptos::use_context::<::actix_web::HttpRequest>() {
                         lang = ::leptos_fluent::l(#ident(&req.path()), &LANGUAGES);
                         if let Some(l) = lang {
                             #initial_language_from_url_path_to_server_function_quote;
@@ -682,7 +682,7 @@ pub fn leptos_fluent(
 
                 #[cfg(all(feature = "ssr", feature = "axum"))]
                 let effect_quote = quote! {
-                    if let Some(req) = leptos::use_context::<axum::http::request::Parts>() {
+                    if let Some(req) = ::leptos::use_context::<::axum::http::request::Parts>() {
                         lang = ::leptos_fluent::l(#ident(&req.uri.path()), &LANGUAGES);
                         if let Some(l) = lang {
                             #initial_language_from_url_path_to_server_function_quote;
@@ -1012,7 +1012,7 @@ pub fn leptos_fluent(
 
         #[cfg(all(feature = "ssr", feature = "actix"))]
         let parse_language_quote = quote! {
-            if let Some(req) = leptos::use_context::<actix_web::HttpRequest>() {
+            if let Some(req) = ::leptos::use_context::<actix_web::HttpRequest>() {
                 let uri_query = req.uri().query().unwrap_or("");
                 #lang_parser_quote
             }
@@ -1020,7 +1020,7 @@ pub fn leptos_fluent(
 
         #[cfg(all(feature = "ssr", feature = "axum"))]
         let parse_language_quote = quote! {
-            if let Some(req) = leptos::use_context::<axum::http::request::Parts>() {
+            if let Some(req) = ::leptos::use_context::<::axum::http::request::Parts>() {
                 let uri_query = req.uri.query().unwrap_or("");
                 #lang_parser_quote
             }
@@ -1369,10 +1369,10 @@ pub fn leptos_fluent(
     #[cfg(all(feature = "actix", feature = "ssr"))]
     let initial_language_from_accept_language_header_quote: proc_macro2::TokenStream = {
         let effect_quote = quote! {
-            if let Some(req) = leptos::use_context::<actix_web::HttpRequest>() {
+            if let Some(req) = ::leptos::use_context::<::actix_web::HttpRequest>() {
                 let maybe_header = req
                     .headers()
-                    .get(actix_web::http::header::ACCEPT_LANGUAGE)
+                    .get(::actix_web::http::header::ACCEPT_LANGUAGE)
                     .and_then(|header| header.to_str().ok());
 
                 if let Some(header) = maybe_header {
@@ -1421,10 +1421,10 @@ pub fn leptos_fluent(
     #[cfg(all(feature = "axum", feature = "ssr"))]
     let initial_language_from_accept_language_header_quote: proc_macro2::TokenStream = {
         let effect_quote = quote! {
-            if let Some(req) = leptos::use_context::<axum::http::request::Parts>() {
+            if let Some(req) = ::leptos::use_context::<::axum::http::request::Parts>() {
                 let maybe_header = req
                     .headers
-                    .get(axum::http::header::ACCEPT_LANGUAGE)
+                    .get(::axum::http::header::ACCEPT_LANGUAGE)
                     .and_then(|header| header.to_str().ok());
 
                 if let Some(header) = maybe_header {
@@ -1631,7 +1631,7 @@ pub fn leptos_fluent(
     #[cfg(all(feature = "ssr", feature = "actix"))]
     let initial_language_from_cookie_quote: proc_macro2::TokenStream = {
         let effect_quote = quote! {
-            if let Some(req) = leptos::use_context::<actix_web::HttpRequest>() {
+            if let Some(req) = ::leptos::use_context::<::actix_web::HttpRequest>() {
                 let maybe_cookie = req
                     .cookie(#cookie_name_quote)
                     .and_then(|cookie| Some(cookie.value().to_string()));
@@ -1686,10 +1686,10 @@ pub fn leptos_fluent(
     #[cfg(all(feature = "ssr", feature = "axum"))]
     let initial_language_from_cookie_quote: proc_macro2::TokenStream = {
         let effect_quote = quote! {
-            if let Some(req) = leptos::use_context::<axum::http::request::Parts>() {
+            if let Some(req) = ::leptos::use_context::<::axum::http::request::Parts>() {
                 let maybe_cookie = req
                     .headers
-                    .get(axum::http::header::COOKIE)
+                    .get(::axum::http::header::COOKIE)
                     .and_then(|header| header.to_str().ok())
                     .and_then(|cookie| {
                         let cookie = cookie.split(';').find(|c| c.starts_with(#cookie_name_quote));
