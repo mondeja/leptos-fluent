@@ -108,8 +108,8 @@ update the language in the client. The following side effects are available:
 | [`<html lang="...">`] attribute | `sync_html_tag_lang` |
 | [`<html dir="...">`] attribute  | `sync_html_tag_dir`  |
 
-[`<html lang="...">`]: https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/lang
-[`<html dir="...">`]: https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/dir
+[`<html lang="...">`]: https://developer.mozilla.org/docs/Web/HTML/Global_attributes/lang
+[`<html dir="...">`]: https://developer.mozilla.org/docs/Web/HTML/Global_attributes/dir
 
 ## <span style="opacity:.5">CSR + SSR </span> | Names
 

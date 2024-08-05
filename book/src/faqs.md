@@ -44,7 +44,7 @@ leptos_fluent! {{
 }}
 ```
 
-[cookie attributes]: https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie#write_a_new_cookie
+[cookie attributes]: https://developer.mozilla.org/docs/Web/API/Document/cookie#write_a_new_cookie
 
 ### How to get the fallback language
 
