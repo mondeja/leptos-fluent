@@ -364,6 +364,59 @@ leptos_fluent! {{
 }}
 ```
 
+### <span style="opacity:.5">CSR + SSR </span> | `url_path`
+
+Language extractor from URL path. It must take the URI path as argument
+and return the possible language.
+
+```rust
+/// Get the language from the top directory in the URL path.
+fn get_language_from_url_path(path: &str) -> &str {
+    if let Some(language) = path.split('/').nth(1) {
+        return language;
+    }
+    ""
+}
+
+leptos_fluent! {{
+    // ...
+    url_path: get_language_from_url_path,
+}}
+```
+
+### <span style="opacity:.5">CSR + SSR </span> | `initial_language_from_url_path`
+
+Set initial language from [URL path].
+
+```rust
+leptos_fluent! {{
+    // ...
+    initial_language_from_url_path: true,
+}}
+```
+
+### <span style="opacity:.5">CSR </span> | `initial_language_from_url_path_to_cookie`
+
+Set initial language from [URL path] to a [cookie].
+
+```rust
+leptos_fluent! {{
+    // ...
+    initial_language_from_url_path_to_cookie: true,
+}}
+```
+
+### <span style="opacity:.5">CSR </span> | `initial_language_from_url_path_to_localstorage`
+
+Set initial language from [URL path] to [local storage].
+
+```rust
+leptos_fluent! {{
+    // ...
+    initial_language_from_url_path_to_localstorage: true,
+}}
+```
+
 <!-- markdownlint-disable MD013 -->
 
 ### <span style="opacity:.5">CSR </span> | `localstorage_key: `<span style="color: #b5bd68;font-size: 16px; opacity:.9;">"lang"</span>
@@ -751,6 +804,25 @@ pub async fn set_language_server_function(
 }
 ```
 
+### `initial_language_from_url_path_to_server_function`
+
+Get the initial language from a [URL path] and set it to a [server function].
+
+```rust
+leptos_fluent! {{
+    // ...
+    initial_language_from_url_path_to_server_function: set_language_server_function,
+}}
+
+#[server(SetLanguage, "/api")]
+pub async fn set_language_server_function(
+    language: String,
+) -> Result<(), ServerFnError> {
+    // .. replace with your own logic
+    Ok(())
+}
+```
+
 ### `initial_language_from_server_function_to_cookie`
 
 Get the initial language from a [server function] and set it to a
@@ -777,15 +849,16 @@ leptos_fluent! {{
 
 [`fluent_templates::static_loader!`]: https://docs.rs/fluent-templates/latest/fluent_templates/macro.static_loader.html
 [`once_cell:sync::Lazy`]: https://docs.rs/once_cell/latest/once_cell/sync/struct.Lazy.html
-[`<html lang="...">` attribute]: https://developer.mozilla.org/es/docs/Web/HTML/Global_attributes/lang
-[`<html dir="...">` attribute]: https://developer.mozilla.org/es/docs/Web/HTML/Global_attributes/dir
-[local storage]: https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
-[`navigator.languages`]: https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages
+[`<html lang="...">` attribute]: https://developer.mozilla.org/docs/Web/HTML/Global_attributes/lang
+[`<html dir="...">` attribute]: https://developer.mozilla.org/docs/Web/HTML/Global_attributes/dir
+[local storage]: https://developer.mozilla.org/docs/Web/API/Window/localStorage
+[`navigator.languages`]: https://developer.mozilla.org/docs/Web/API/Navigator/languages
 [`leptos::create_effect`]: https://docs.rs/leptos/latest/leptos/fn.create_effect.html
-[cookie attributes]: https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie#write_a_new_cookie
-[`Accept-Language`]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language
+[cookie attributes]: https://developer.mozilla.org/docs/Web/API/Document/cookie#write_a_new_cookie
+[`Accept-Language`]: https://developer.mozilla.org/docs/Web/HTTP/Headers/Accept-Language
 [glob]: https://docs.rs/globwalk/latest/globwalk/fn.glob.html
-[URL parameter]: https://developer.mozilla.org/es/docs/Web/API/URLSearchParams
+[URL parameter]: https://developer.mozilla.org/docs/Web/API/URLSearchParams
+[URL path]: https://developer.mozilla.org/docs/Web/API/URL/pathname
 [`sync_html_tag_dir`]: #csr---sync_html_tag_dir
 [cookie]: https://developer.mozilla.org/docs/Web/HTTP/Cookies
 [Server function]: https://book.leptos.dev/server/25_server_functions.html

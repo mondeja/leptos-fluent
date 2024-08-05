@@ -4,7 +4,7 @@
 
 <!-- toc -->
 
-### How to get [`LanguageIdentifier`] if not installed?
+### How to get [`LanguageIdentifier`]?
 
 ```rust
 use fluent_templates::LanguageIdentifier;
@@ -44,7 +44,7 @@ leptos_fluent! {{
 }}
 ```
 
-[cookie attributes]: https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie#write_a_new_cookie
+[cookie attributes]: https://developer.mozilla.org/docs/Web/API/Document/cookie#write_a_new_cookie
 
 ### How to get the fallback language
 
@@ -62,8 +62,8 @@ SSR and hydrate modes leading to different renders, so decided to use a
 simple vector to not bring confusion to main examples.
 ```
 
-In any case, the [`<For/>`] component is secure on CSR contexts and
-[`leptos_fluent::Language`]s implement `Hash` and `Eq` traits to be
+In any case, the [`<For/>`] component is safe on CSR contexts and
+[`leptos_fluent::Language`] implement `Hash` and `Eq` traits to be
 able to be passed directly to `key`s properties trigerring reactivity
 depending on the current active language.
 

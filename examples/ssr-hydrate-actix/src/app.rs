@@ -44,6 +44,11 @@ pub fn App() -> impl IntoView {
         initial_language_from_server_function_to_cookie: true,
         initial_language_from_server_function_to_localstorage: true,
         set_language_to_server_function: set_language_server_function,
+        url_path: get_language_from_url_path,
+        initial_language_from_url_path: true,
+        initial_language_from_url_path_to_cookie: true,
+        initial_language_from_url_path_to_localstorage: true,
+        initial_language_from_url_path_to_server_function: set_language_server_function,
     }};
 
     view! {
@@ -54,6 +59,8 @@ pub fn App() -> impl IntoView {
             <main>
                 <Routes>
                     <Route path="" view=HomePage/>
+                    <Route path="/en" view=HomePage/>
+                    <Route path="/es" view=HomePage/>
                     <Route path="/*any" view=NotFound/>
                 </Routes>
             </main>
@@ -108,7 +115,7 @@ fn render_language(lang: &'static Language) -> impl IntoView {
     }
 }
 
-/// Server function to set the initial language
+/// Server function to set the initial language.
 #[server(InitialLanguage, "/api")]
 pub async fn initial_language_server_function(
 ) -> Result<Option<String>, ServerFnError> {
@@ -116,7 +123,7 @@ pub async fn initial_language_server_function(
     Ok(Some("es".to_string()))
 }
 
-/// Server function to update the current language
+/// Server function to update the current language.
 #[server(SetLanguage, "/api")]
 pub async fn set_language_server_function(
     _language: String,
@@ -125,7 +132,7 @@ pub async fn set_language_server_function(
     Ok(())
 }
 
-/// Server action showing client-side translated message on console
+/// Server action showing client-side translated message on console.
 #[server(ShowHelloWorld, "/api")]
 pub async fn show_hello_world(
     translated_hello_world: String,
@@ -136,6 +143,14 @@ pub async fn show_hello_world(
         println!("{translated_hello_world} ({language})");
     };
     Ok(())
+}
+
+/// Get the language from the top directory in the URL path.
+fn get_language_from_url_path(path: &str) -> &str {
+    if let Some(language) = path.split('/').nth(1) {
+        return language;
+    }
+    ""
 }
 
 /// 404 - Not Found
