@@ -186,19 +186,13 @@ set the <code>check_translations</code> parameter in the <a href="https://mondej
 a glob pattern that matches the Rust files that you want to check.</p>
 <p>The pattern must be relative to the location of the <em>Cargo.toml</em> file.</p>
 <p>For single crate projects, it would be something like:</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<pre><code class="language-rust">leptos_fluent! {{
     check_translations: "./src/**/*.rs",
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <p>For workspace projects, it could be something like:</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<pre><code class="language-rust">leptos_fluent! {{
     check_translations: "../{app,components}/src/**/*.rs",
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <h2 id="translations-error-messages"><a class="header" href="#translations-error-messages">Translations error messages</a></h2>
 <!-- markdownlint-disable MD013 -->
 <p>When the translations stop being synchronized, you will see errors like:</p>

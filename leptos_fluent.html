@@ -184,13 +184,10 @@
 <h1 id="leptos_fluent"><a class="header" href="#leptos_fluent"><code>leptos_fluent!</code></a></h1>
 <p>The <code>leptos_fluent!</code> macro is used to load the translations and set the current
 locale. It is used in the root component of the application.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<pre><code class="language-rust">leptos_fluent! {{
     locales: "./locales",
     translations: [TRANSLATIONS],
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <ul>
 <li><a href="#common-configurations">Common configurations</a>
 <ul>
@@ -220,6 +217,10 @@ locale. It is used in the root component of the application.</p>
 <li><a href="#csr---initial_language_from_url_param_to_localstorage">CSR  | <code>initial_language_from_url_param_to_localstorage</code></a></li>
 <li><a href="#csr---initial_language_from_url_param_to_cookie">CSR  | <code>initial_language_from_url_param_to_cookie</code></a></li>
 <li><a href="#csr---set_language_to_url_param">CSR  | <code>set_language_to_url_param</code></a></li>
+<li><a href="#csr--ssr---url_path">CSR + SSR  | <code>url_path</code></a></li>
+<li><a href="#csr--ssr---initial_language_from_url_path">CSR + SSR  | <code>initial_language_from_url_path</code></a></li>
+<li><a href="#csr---initial_language_from_url_path_to_cookie">CSR  | <code>initial_language_from_url_path_to_cookie</code></a></li>
+<li><a href="#csr---initial_language_from_url_path_to_localstorage">CSR  | <code>initial_language_from_url_path_to_localstorage</code></a></li>
 <li><a href="#csr---localstorage_key-lang">CSR  | <code>localstorage_key: </code>"lang"</a></li>
 <li><a href="#csr---initial_language_from_localstorage">CSR  | <code>initial_language_from_localstorage</code></a></li>
 <li><a href="#csr---initial_language_from_localstorage_to_cookie">CSR  | <code>initial_language_from_localstorage_to_cookie</code></a></li>
@@ -245,6 +246,7 @@ locale. It is used in the root component of the application.</p>
 <li><a href="#initial_language_from_cookie_to_server_function"><code>initial_language_from_cookie_to_server_function</code></a></li>
 <li><a href="#initial_language_from_navigator_to_server_function"><code>initial_language_from_navigator_to_server_function</code></a></li>
 <li><a href="#initial_language_from_url_param_to_server_function"><code>initial_language_from_url_param_to_server_function</code></a></li>
+<li><a href="#initial_language_from_url_path_to_server_function"><code>initial_language_from_url_path_to_server_function</code></a></li>
 <li><a href="#initial_language_from_server_function_to_cookie"><code>initial_language_from_server_function_to_cookie</code></a></li>
 <li><a href="#initial_language_from_server_function_to_localstorage"><code>initial_language_from_server_function_to_localstorage</code></a></li>
 </ul>
@@ -252,9 +254,7 @@ locale. It is used in the root component of the application.</p>
 </ul>
 <h2 id="common-configurations"><a class="header" href="#common-configurations">Common configurations</a></h2>
 <h3 id="csr---local-storage-from-navigator"><a class="header" href="#csr---local-storage-from-navigator"><span style="opacity:.5">CSR </span> | Local storage from navigator</a></h3>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<pre><code class="language-rust">leptos_fluent! {{
     locales: "./locales",
     translations: [TRANSLATIONS],
 
@@ -265,12 +265,9 @@ locale. It is used in the root component of the application.</p>
     initial_language_from_url_param: true,
     initial_language_from_url_param_to_localstorage: true,
     localstorage_key: "lang",
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <h3 id="csr--ssr---cookie-from-navigator-and-header"><a class="header" href="#csr--ssr---cookie-from-navigator-and-header"><span style="opacity:.5">CSR + SSR </span> | Cookie from navigator and header</a></h3>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<pre><code class="language-rust">leptos_fluent! {{
     locales: "./locales",
     translations: [TRANSLATIONS],
 
@@ -282,14 +279,11 @@ locale. It is used in the root component of the application.</p>
     initial_language_from_url_param_to_cookie: true,
     initial_language_from_accept_language_header: true,
     cookie_name: "lf-lang",
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <!-- markdownlint-disable MD013 -->
 <h3 id="system--data-files-on-desktop-applications"><a class="header" href="#system--data-files-on-desktop-applications"><a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Data files on Desktop applications</a></h3>
 <!-- markdownlint-enable MD013 -->
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<pre><code class="language-rust">leptos_fluent! {{
     locales: "./locales",
     translations: [TRANSLATIONS],
 
@@ -298,8 +292,7 @@ locale. It is used in the root component of the application.</p>
     initial_language_from_data_file: true,
     set_language_to_data_file: true,
     data_file_key: "system-language-example",
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <h2 id="processing-steps"><a class="header" href="#processing-steps">Processing steps</a></h2>
 <p>There is four kind of parameters for all the possible configurations and are
 executed in the next order:</p>
@@ -327,9 +320,7 @@ executed in the next order:</p>
 <a class="admonition-anchor-link" href="#admonition-example"></a>
 </div>
 <div>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<pre><code class="language-rust">leptos_fluent! {{
     // ..
     // Get the initial language from the source operative system
     initial_language_from_system: true,
@@ -341,17 +332,14 @@ executed in the next order:</p>
     set_language_to_data_file: true,
     // Unique file name to set the language for this app:
     data_file_key: "system-language-example",
-}};
-<span class="boring">}</span></code></pre></pre>
+}};</code></pre>
 </div>
 </div>
 <h2 id="parameters"><a class="header" href="#parameters">Parameters</a></h2>
 <h3 id="translations"><a class="header" href="#translations"><code>translations</code></a></h3>
 <p>Set the translations to be used in the application. It must be a reference
 to a static array of <a href="https://docs.rs/fluent-templates/latest/fluent_templates/macro.static_loader.html"><code>fluent_templates::static_loader!</code></a> instances.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>use fluent_templates::static_loader;
+<pre><code class="language-rust">use fluent_templates::static_loader;
 use leptos_fluent::leptos_fluent;
 
 static_loader! {
@@ -365,29 +353,23 @@ leptos_fluent! {{
     locales: "./locales",
     translations: [TRANSLATIONS],
     // ^^^^^^^^^^^^^^^^^^^^^^^^^
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <p>Must be the same identifier used in the <a href="https://docs.rs/fluent-templates/latest/fluent_templates/macro.static_loader.html"><code>fluent_templates::static_loader!</code></a>
 macro, which returns an <a href="https://docs.rs/once_cell/latest/once_cell/sync/struct.Lazy.html"><code>once_cell:sync::Lazy</code></a> variable.</p>
 <h3 id="locales"><a class="header" href="#locales"><code>locales</code></a></h3>
 <p>Set the path to the locales directory which contain the Fluent
 files for the translations. Must be relative to the <em>Cargo.toml</em> file, the same
 used in the <a href="https://docs.rs/fluent-templates/latest/fluent_templates/macro.static_loader.html"><code>fluent_templates::static_loader!</code></a> macro.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<pre><code class="language-rust">leptos_fluent! {{
     locales: "./locales",
     // ^^^^^^^^^^^^^^^^^
     translations: [TRANSLATIONS],
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <h3 id="core_locales"><a class="header" href="#core_locales"><code>core_locales</code></a></h3>
 <p>Common locale resources that are shared across all locales.
 Must be relative to the <em>Cargo.toml</em> file, the same
 used in the <a href="https://docs.rs/fluent-templates/latest/fluent_templates/macro.static_loader.html"><code>fluent_templates::static_loader!</code></a> macro:</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>static_loader! {
+<pre><code class="language-rust">static_loader! {
     pub static TRANSLATIONS = {
         locales: "./locales",
         core_locales: "./locales/core",
@@ -399,20 +381,16 @@ leptos_fluent! {{
     core_locales: "./locales/core",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^
     translations: [TRANSLATIONS],
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <h3 id="languages"><a class="header" href="#languages"><code>languages</code></a></h3>
 <p>Path to a file containing the list of languages supported by the application.
 Must be relative to the <em>Cargo.toml</em> file.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<pre><code class="language-rust">leptos_fluent! {{
     locales: "./locales",
     languages: "./locales/languages.json",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     translations: [TRANSLATIONS],
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <div id="admonition-tip" class="admonition admonish-tip" role="note" aria-labelledby="admonition-tip-title">
 <div class="admonition-title">
 <div id="admonition-tip-title">
@@ -449,7 +427,7 @@ to use a YAML or JSON5 files. For example:</p>
 ]
 </code></pre>
 <p>Define a third element in the inner array with the direction of the language,
-to use it in the <a href="https://developer.mozilla.org/es/docs/Web/HTML/Global_attributes/dir"><code>&lt;html dir="..."&gt;</code> attribute</a> (see <a href="#csr---sync_html_tag_dir"><code>sync_html_tag_dir</code></a>).
+to use it in the <a href="https://developer.mozilla.org/docs/Web/HTML/Global_attributes/dir"><code>&lt;html dir="..."&gt;</code> attribute</a> (see <a href="#csr---sync_html_tag_dir"><code>sync_html_tag_dir</code></a>).
 For example:</p>
 <pre><code class="language-json">[
   ["en-US", "English (United States)", "ltr"],
@@ -465,51 +443,39 @@ translations are correct and that there are no missing translations.</p>
 <ul>
 <li>
 <p>For single crate projects:</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<pre><code class="language-rust">leptos_fluent! {{
     locales: "./locales",
     translations: [TRANSLATIONS],
     check_translations: "./src/**/*.rs",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 </li>
 <li>
 <p>For workspace projects:</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<pre><code class="language-rust">leptos_fluent! {{
     locales: "./locales",
     translations: [TRANSLATIONS],
     check_translations: "../{app,components}/src/**/*.rs",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 </li>
 </ul>
 <h3 id="csr---sync_html_tag_lang"><a class="header" href="#csr---sync_html_tag_lang"><span style="opacity:.5">CSR </span> | <code>sync_html_tag_lang</code></a></h3>
-<p>Synchronize the global <a href="https://developer.mozilla.org/es/docs/Web/HTML/Global_attributes/lang"><code>&lt;html lang="..."&gt;</code> attribute</a> with current language
+<p>Synchronize the global <a href="https://developer.mozilla.org/docs/Web/HTML/Global_attributes/lang"><code>&lt;html lang="..."&gt;</code> attribute</a> with current language
 using <a href="https://docs.rs/leptos/latest/leptos/fn.create_effect.html"><code>leptos::create_effect</code></a>. Can be a literal boolean or an expression
 that will be evaluated at runtime.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<pre><code class="language-rust">leptos_fluent! {{
     // ...
     sync_html_tag_lang: true,
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <h3 id="csr---sync_html_tag_dir"><a class="header" href="#csr---sync_html_tag_dir"><span style="opacity:.5">CSR </span> | <code>sync_html_tag_dir</code></a></h3>
-<p>Synchronize the global <a href="https://developer.mozilla.org/es/docs/Web/HTML/Global_attributes/dir"><code>&lt;html dir="..."&gt;</code> attribute</a> with current language
+<p>Synchronize the global <a href="https://developer.mozilla.org/docs/Web/HTML/Global_attributes/dir"><code>&lt;html dir="..."&gt;</code> attribute</a> with current language
 using <a href="https://docs.rs/leptos/latest/leptos/fn.create_effect.html"><code>leptos::create_effect</code></a>.</p>
 <p>Can be a literal boolean or an expression that will be evaluated at runtime.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<pre><code class="language-rust">leptos_fluent! {{
     // ...
     sync_html_tag_dir: true,
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <p>For custom languages from a languages file, specify a third element in
 the inner array with the direction of the language, which can be <code>"auto"</code>,
 <code>"ltr"</code>, or <code>"rtl"</code>. Discovered languages will be defined depending on the
@@ -532,256 +498,212 @@ language.</p>
 <!-- markdownlint-disable MD013 -->
 <h3 id="csr--ssr---url_param-lang"><a class="header" href="#csr--ssr---url_param-lang"><span style="opacity:.5">CSR + SSR </span> | <code>url_param: </code><span style="color: #b5bd68;font-size: 16px; opacity:.9;">"lang"</span></a></h3>
 <!-- markdownlint-enable MD013 -->
-<p>Name of <a href="https://developer.mozilla.org/es/docs/Web/API/URLSearchParams">URL parameter</a> used to manage the current language.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<p>Name of <a href="https://developer.mozilla.org/docs/Web/API/URLSearchParams">URL parameter</a> used to manage the current language.</p>
+<pre><code class="language-rust">leptos_fluent! {{
     // ...
     url_param: "lang",
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <h3 id="csr--ssr---initial_language_from_url_param"><a class="header" href="#csr--ssr---initial_language_from_url_param"><span style="opacity:.5">CSR + SSR </span> | <code>initial_language_from_url_param</code></a></h3>
-<p>Set initial language from <a href="https://developer.mozilla.org/es/docs/Web/API/URLSearchParams">URL parameter</a>.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<p>Set initial language from <a href="https://developer.mozilla.org/docs/Web/API/URLSearchParams">URL parameter</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {{
     // ...
     initial_language_from_url_param: true,
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <h3 id="csr---initial_language_from_url_param_to_localstorage"><a class="header" href="#csr---initial_language_from_url_param_to_localstorage"><span style="opacity:.5">CSR </span> | <code>initial_language_from_url_param_to_localstorage</code></a></h3>
-<p>Get initial language from <a href="https://developer.mozilla.org/es/docs/Web/API/URLSearchParams">URL parameter</a> and save it to <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">local storage</a>.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<p>Get initial language from <a href="https://developer.mozilla.org/docs/Web/API/URLSearchParams">URL parameter</a> and save it to <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {{
     // ...
     initial_language_from_url_param_to_localstorage: true,
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <h3 id="csr---initial_language_from_url_param_to_cookie"><a class="header" href="#csr---initial_language_from_url_param_to_cookie"><span style="opacity:.5">CSR </span> | <code>initial_language_from_url_param_to_cookie</code></a></h3>
-<p>Get initial language from <a href="https://developer.mozilla.org/es/docs/Web/API/URLSearchParams">URL parameter</a> and save it to a <a href="https://developer.mozilla.org/docs/Web/HTTP/Cookies">cookie</a>.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<p>Get initial language from <a href="https://developer.mozilla.org/docs/Web/API/URLSearchParams">URL parameter</a> and save it to a <a href="https://developer.mozilla.org/docs/Web/HTTP/Cookies">cookie</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {{
     // ...
     initial_language_from_url_param_to_cookie: true,
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <h3 id="csr---set_language_to_url_param"><a class="header" href="#csr---set_language_to_url_param"><span style="opacity:.5">CSR </span> | <code>set_language_to_url_param</code></a></h3>
-<p>Synchronize current language with <a href="https://developer.mozilla.org/es/docs/Web/API/URLSearchParams">URL parameter</a>.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<p>Synchronize current language with <a href="https://developer.mozilla.org/docs/Web/API/URLSearchParams">URL parameter</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {{
     // ...
     set_language_to_url_param: true,
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
+<h3 id="csr--ssr---url_path"><a class="header" href="#csr--ssr---url_path"><span style="opacity:.5">CSR + SSR </span> | <code>url_path</code></a></h3>
+<p>Language extractor from URL path. It must take the URI path as argument
+and return the possible language.</p>
+<pre><code class="language-rust">/// Get the language from the top directory in the URL path.
+fn get_language_from_url_path(path: &amp;str) -&gt; &amp;str {
+    if let Some(language) = path.split('/').nth(1) {
+        return language;
+    }
+    ""
+}
+
+leptos_fluent! {{
+    // ...
+    url_path: get_language_from_url_path,
+}}</code></pre>
+<h3 id="csr--ssr---initial_language_from_url_path"><a class="header" href="#csr--ssr---initial_language_from_url_path"><span style="opacity:.5">CSR + SSR </span> | <code>initial_language_from_url_path</code></a></h3>
+<p>Set initial language from <a href="https://developer.mozilla.org/docs/Web/API/URL/pathname">URL path</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {{
+    // ...
+    initial_language_from_url_path: true,
+}}</code></pre>
+<h3 id="csr---initial_language_from_url_path_to_cookie"><a class="header" href="#csr---initial_language_from_url_path_to_cookie"><span style="opacity:.5">CSR </span> | <code>initial_language_from_url_path_to_cookie</code></a></h3>
+<p>Set initial language from <a href="https://developer.mozilla.org/docs/Web/API/URL/pathname">URL path</a> to a <a href="https://developer.mozilla.org/docs/Web/HTTP/Cookies">cookie</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {{
+    // ...
+    initial_language_from_url_path_to_cookie: true,
+}}</code></pre>
+<h3 id="csr---initial_language_from_url_path_to_localstorage"><a class="header" href="#csr---initial_language_from_url_path_to_localstorage"><span style="opacity:.5">CSR </span> | <code>initial_language_from_url_path_to_localstorage</code></a></h3>
+<p>Set initial language from <a href="https://developer.mozilla.org/docs/Web/API/URL/pathname">URL path</a> to <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {{
+    // ...
+    initial_language_from_url_path_to_localstorage: true,
+}}</code></pre>
 <!-- markdownlint-disable MD013 -->
 <h3 id="csr---localstorage_key-lang"><a class="header" href="#csr---localstorage_key-lang"><span style="opacity:.5">CSR </span> | <code>localstorage_key: </code><span style="color: #b5bd68;font-size: 16px; opacity:.9;">"lang"</span></a></h3>
 <!-- markdownlint-enable MD013 -->
-<p><a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">Local storage</a> key to manage the current language.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<p><a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">Local storage</a> key to manage the current language.</p>
+<pre><code class="language-rust">leptos_fluent! {{
     // ...
     localstorage_key: "lang",
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <h3 id="csr---initial_language_from_localstorage"><a class="header" href="#csr---initial_language_from_localstorage"><span style="opacity:.5">CSR </span> | <code>initial_language_from_localstorage</code></a></h3>
-<p>Get initial language from <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">local storage</a>.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<p>Get initial language from <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {{
     // ...
     initial_language_from_localstorage: true,
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <h3 id="csr---initial_language_from_localstorage_to_cookie"><a class="header" href="#csr---initial_language_from_localstorage_to_cookie"><span style="opacity:.5">CSR </span> | <code>initial_language_from_localstorage_to_cookie</code></a></h3>
-<p>Get initial language from <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">local storage</a> and save it to a <a href="https://developer.mozilla.org/docs/Web/HTTP/Cookies">cookie</a>.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<p>Get initial language from <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a> and save it to a <a href="https://developer.mozilla.org/docs/Web/HTTP/Cookies">cookie</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {{
     // ...
     initial_language_from_localstorage_to_cookie: true,
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <h3 id="csr---set_language_to_localstorage"><a class="header" href="#csr---set_language_to_localstorage"><span style="opacity:.5">CSR </span> | <code>set_language_to_localstorage</code></a></h3>
-<p>Set the current language to <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">local storage</a>.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<p>Set the current language to <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {{
     // ...
     set_language_to_localstorage: true,
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <h3 id="csr---initial_language_from_navigator"><a class="header" href="#csr---initial_language_from_navigator"><span style="opacity:.5">CSR </span> | <code>initial_language_from_navigator</code></a></h3>
-<p>Get the initial language from <a href="https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a>.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<p>Get the initial language from <a href="https://developer.mozilla.org/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a>.</p>
+<pre><code class="language-rust">leptos_fluent! {{
     // ...
     initial_language_from_navigator: true,
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <h3 id="csr---initial_language_from_navigator_to_localstorage"><a class="header" href="#csr---initial_language_from_navigator_to_localstorage"><span style="opacity:.5">CSR </span> | <code>initial_language_from_navigator_to_localstorage</code></a></h3>
-<p>Get the initial language from <a href="https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a> and save it in the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">local storage</a>.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<p>Get the initial language from <a href="https://developer.mozilla.org/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a> and save it in the <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {{
     // ...
     initial_language_from_navigator_to_localstorage: true,
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <h3 id="csr---initial_language_from_navigator_to_cookie"><a class="header" href="#csr---initial_language_from_navigator_to_cookie"><span style="opacity:.5">CSR </span> | <code>initial_language_from_navigator_to_cookie</code></a></h3>
-<p>Get the initial language from <a href="https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a> and save it in a <a href="https://developer.mozilla.org/docs/Web/HTTP/Cookies">cookie</a>.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<p>Get the initial language from <a href="https://developer.mozilla.org/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a> and save it in a <a href="https://developer.mozilla.org/docs/Web/HTTP/Cookies">cookie</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {{
     // ...
     initial_language_from_navigator_to_cookie: true,
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <h3 id="ssr---initial_language_from_accept_language_header"><a class="header" href="#ssr---initial_language_from_accept_language_header"><span style="opacity:.5">SSR </span> | <code>initial_language_from_accept_language_header</code></a></h3>
-<p>Get the initial language from the <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language"><code>Accept-Language</code></a> header.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<p>Get the initial language from the <a href="https://developer.mozilla.org/docs/Web/HTTP/Headers/Accept-Language"><code>Accept-Language</code></a> header.</p>
+<pre><code class="language-rust">leptos_fluent! {{
     // ...
     initial_language_from_accept_language_header: true,
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <!-- markdownlint-disable MD013 -->
 <h3 id="csr--ssr---cookie_name-lf-lang"><a class="header" href="#csr--ssr---cookie_name-lf-lang"><span style="opacity:.5">CSR + SSR </span> | <code>cookie_name: </code><span style="color: #b5bd68;font-size: 16px; opacity:.9;">"lf-lang"</span></a></h3>
 <!-- markdownlint-enable MD013 -->
 <p>Name of the <a href="https://developer.mozilla.org/docs/Web/HTTP/Cookies">cookie</a> that will be used to manage the current language. By default
 it is <code>"lf-lang"</code>.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<pre><code class="language-rust">leptos_fluent! {{
     // ...
     cookie_name: "lang",
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <!-- markdownlint-disable MD013 -->
 <h3 id="csr---cookie_attrs-"><a class="header" href="#csr---cookie_attrs-"><span style="opacity:.5">CSR </span> | <code>cookie_attrs: </code><span style="color: #b5bd68;font-size: 16px; opacity:.9;">""</span></a></h3>
 <!-- markdownlint-enable MD013 -->
-<p><a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie#write_a_new_cookie">Cookie attributes</a> to set on the language <a href="https://developer.mozilla.org/docs/Web/HTTP/Cookies">cookie</a>.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<p><a href="https://developer.mozilla.org/docs/Web/API/Document/cookie#write_a_new_cookie">Cookie attributes</a> to set on the language <a href="https://developer.mozilla.org/docs/Web/HTTP/Cookies">cookie</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {{
     // ...
     cookie_attrs: "SameSite=Strict; Secure",
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <p>If value is an expression the <a href="https://developer.mozilla.org/docs/Web/HTTP/Cookies">cookie</a> will not be validated at compile time:</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>let attrs = "SameSite=Strict; Secure; MyCustomCookie=value"
+<pre><code class="language-rust">let attrs = "SameSite=Strict; Secure; MyCustomCookie=value"
 leptos_fluent! {{
     // ...
     cookie_attrs: attrs,
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <h3 id="csr--ssr---initial_language_from_cookie"><a class="header" href="#csr--ssr---initial_language_from_cookie"><span style="opacity:.5">CSR + SSR </span> | <code>initial_language_from_cookie</code></a></h3>
 <p>Get the initial language from the cookie.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<pre><code class="language-rust">leptos_fluent! {{
     // ...
     initial_language_from_cookie: true,
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <h3 id="csr---initial_language_from_cookie_to_localstorage"><a class="header" href="#csr---initial_language_from_cookie_to_localstorage"><span style="opacity:.5">CSR </span> | <code>initial_language_from_cookie_to_localstorage</code></a></h3>
-<p>Get the initial language from the cookie and save it in the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">local storage</a>.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<p>Get the initial language from the cookie and save it in the <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {{
     // ...
     initial_language_from_cookie_to_localstorage: true,
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <h3 id="csr---set_language_to_cookie"><a class="header" href="#csr---set_language_to_cookie"><span style="opacity:.5">CSR </span> | <code>set_language_to_cookie</code></a></h3>
 <p>Set the current language to the cookie.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<pre><code class="language-rust">leptos_fluent! {{
     // ...
     set_language_to_cookie: true,
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <!-- markdownlint-disable MD013 -->
 <h3 id="system--initial_language_from_system"><a class="header" href="#system--initial_language_from_system"><a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | <code>initial_language_from_system</code></a></h3>
 <!-- markdownlint-enable MD013 -->
 <p>Get the initial language from the system.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<pre><code class="language-rust">leptos_fluent! {{
     // ...
     initial_language_from_system: true,
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <!-- markdownlint-disable MD013 -->
 <h3 id="system--initial_language_from_data_file"><a class="header" href="#system--initial_language_from_data_file"><a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | <code>initial_language_from_data_file</code></a></h3>
 <!-- markdownlint-enable MD013 -->
 <p>Get the initial language from a data file.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<pre><code class="language-rust">leptos_fluent! {{
     // ...
     initial_language_from_data_file: true,
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <!-- markdownlint-disable MD013 -->
 <h3 id="system--initial_language_from_system_to_data_file"><a class="header" href="#system--initial_language_from_system_to_data_file"><a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | <code>initial_language_from_system_to_data_file</code></a></h3>
 <!-- markdownlint-enable MD013 -->
 <p>Get the initial language from the system and save it in a data file.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<pre><code class="language-rust">leptos_fluent! {{
     // ...
     initial_language_from_system_to_data_file: true,
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <!-- markdownlint-disable MD013 -->
 <h3 id="system--set_language_to_data_file"><a class="header" href="#system--set_language_to_data_file"><a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | <code>set_language_to_data_file</code></a></h3>
 <!-- markdownlint-enable MD013 -->
 <p>Set the current language to a data file.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<pre><code class="language-rust">leptos_fluent! {{
     // ...
     set_language_to_data_file: true,
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <!-- markdownlint-disable MD013 -->
 <h3 id="system--data_file_key-leptos-fluent"><a class="header" href="#system--data_file_key-leptos-fluent"><a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | <code>data_file_key: </code><span style="color: #b5bd68;font-size: 16px; opacity:.9;">"leptos-fluent"</span></a></h3>
 <!-- markdownlint-enable MD013 -->
 <p>Key to manage the current language in the data file. It should be unique
 per application.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<pre><code class="language-rust">leptos_fluent! {{
     // ...
     data_file_key: "my-app",
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <h3 id="provide_meta_context"><a class="header" href="#provide_meta_context"><code>provide_meta_context</code></a></h3>
 <p>Provide the macro meta information at runtime as a context.
 Get it using <code>I18n::meta</code>:</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>let i18n = leptos_fluent! {{
+<pre><code class="language-rust">let i18n = leptos_fluent! {{
     // ...
     provide_meta_context: true,
 }};
 
-println!("Macro parameters: {:?}", i18n.meta().unwrap());
-<span class="boring">}</span></code></pre></pre>
+println!("Macro parameters: {:?}", i18n.meta().unwrap());</code></pre>
 <h3 id="initial_language_from_server_function"><a class="header" href="#initial_language_from_server_function"><code>initial_language_from_server_function</code></a></h3>
 <p>Get the initial language from a <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a>.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<pre><code class="language-rust">leptos_fluent! {{
     // ...
     initial_language_from_server_function: initial_language_server_function,
 }}
@@ -792,17 +714,14 @@ pub async fn initial_language_server_function(
 ) -&gt; Result&lt;Option&lt;String&gt;, ServerFnError&gt; {
     // .. replace with your own logic
     Ok(Some("es".to_string()))
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p>This parameter type is not like the <code>initial_language_from_*</code> parameters, it
 takes an identifier to the <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a> that will be called to get the
 initial language.</p>
 <p>The function must return a <code>Result&lt;Option&lt;String&gt;, ServerFnError&gt;</code>.</p>
 <h3 id="set_language_to_server_function"><a class="header" href="#set_language_to_server_function"><code>set_language_to_server_function</code></a></h3>
 <p>Set the current language to a <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a>.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<pre><code class="language-rust">leptos_fluent! {{
     // ...
     set_language_to_server_function: set_language_server_function,
 }}
@@ -814,18 +733,15 @@ pub async fn set_language_server_function(
 ) -&gt; Result&lt;(), ServerFnError&gt; {
     // .. replace with your own logic
     Ok(())
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <p>This parameter type is not like the <code>set_language_to_*</code> parameters, it
 takes an identifier to the <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a> that will be called to update
 the current language.</p>
 <p>The function must return a <code>Result&lt;(), ServerFnError&gt;</code>.</p>
 <h3 id="initial_language_from_localstorage_to_server_function"><a class="header" href="#initial_language_from_localstorage_to_server_function"><code>initial_language_from_localstorage_to_server_function</code></a></h3>
-<p>Get the initial language from <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">local storage</a> and set it to a
+<p>Get the initial language from <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a> and set it to a
 <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a>.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<pre><code class="language-rust">leptos_fluent! {{
     // ...
     initial_language_from_localstorage_to_server_function: set_language_server_function,
 }}
@@ -836,14 +752,11 @@ pub async fn set_language_server_function(
 ) -&gt; Result&lt;(), ServerFnError&gt; {
     // .. replace with your own logic
     Ok(())
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <h3 id="initial_language_from_cookie_to_server_function"><a class="header" href="#initial_language_from_cookie_to_server_function"><code>initial_language_from_cookie_to_server_function</code></a></h3>
 <p>Get the initial language from a <a href="https://developer.mozilla.org/docs/Web/HTTP/Cookies">cookie</a> and set it to a
 <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a>.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<pre><code class="language-rust">leptos_fluent! {{
     // ...
     initial_language_from_cookie_to_server_function: set_language_server_function,
 }}
@@ -854,14 +767,11 @@ pub async fn set_language_server_function(
 ) -&gt; Result&lt;(), ServerFnError&gt; {
     // .. replace with your own logic
     Ok(())
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <h3 id="initial_language_from_navigator_to_server_function"><a class="header" href="#initial_language_from_navigator_to_server_function"><code>initial_language_from_navigator_to_server_function</code></a></h3>
-<p>Get the initial language from <a href="https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a> and set it to a
+<p>Get the initial language from <a href="https://developer.mozilla.org/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a> and set it to a
 <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a>.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<pre><code class="language-rust">leptos_fluent! {{
     // ...
     initial_language_from_navigator_to_server_function: set_language_server_function,
 }}
@@ -872,14 +782,11 @@ pub async fn set_language_server_function(
 ) -&gt; Result&lt;(), ServerFnError&gt; {
     // .. replace with your own logic
     Ok(())
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <h3 id="initial_language_from_url_param_to_server_function"><a class="header" href="#initial_language_from_url_param_to_server_function"><code>initial_language_from_url_param_to_server_function</code></a></h3>
-<p>Get the initial language from a <a href="https://developer.mozilla.org/es/docs/Web/API/URLSearchParams">URL parameter</a> and set it to a
+<p>Get the initial language from a <a href="https://developer.mozilla.org/docs/Web/API/URLSearchParams">URL parameter</a> and set it to a
 <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a>.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<pre><code class="language-rust">leptos_fluent! {{
     // ...
     initial_language_from_url_param_to_server_function: set_language_server_function,
 }}
@@ -890,28 +797,35 @@ pub async fn set_language_server_function(
 ) -&gt; Result&lt;(), ServerFnError&gt; {
     // .. replace with your own logic
     Ok(())
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
+<h3 id="initial_language_from_url_path_to_server_function"><a class="header" href="#initial_language_from_url_path_to_server_function"><code>initial_language_from_url_path_to_server_function</code></a></h3>
+<p>Get the initial language from a <a href="https://developer.mozilla.org/docs/Web/API/URL/pathname">URL path</a> and set it to a <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {{
+    // ...
+    initial_language_from_url_path_to_server_function: set_language_server_function,
+}}
+
+#[server(SetLanguage, "/api")]
+pub async fn set_language_server_function(
+    language: String,
+) -&gt; Result&lt;(), ServerFnError&gt; {
+    // .. replace with your own logic
+    Ok(())
+}</code></pre>
 <h3 id="initial_language_from_server_function_to_cookie"><a class="header" href="#initial_language_from_server_function_to_cookie"><code>initial_language_from_server_function_to_cookie</code></a></h3>
 <p>Get the initial language from a <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a> and set it to a
 <a href="https://developer.mozilla.org/docs/Web/HTTP/Cookies">cookie</a>.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<pre><code class="language-rust">leptos_fluent! {{
     // ...
     initial_language_from_server_function_to_cookie: true,
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <h3 id="initial_language_from_server_function_to_localstorage"><a class="header" href="#initial_language_from_server_function_to_localstorage"><code>initial_language_from_server_function_to_localstorage</code></a></h3>
 <p>Get the initial language from a <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a> and set it to
-<a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">local storage</a>.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {{
     // ...
     initial_language_from_server_function_to_localstorage: true,
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 
                     </main>
 

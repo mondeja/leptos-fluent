@@ -193,9 +193,7 @@ of the application. This strategy is based on the <em>locales/</em> directory.</
 </code></pre>
 <p>The framework will generate something like the following languages array at
 compile time:</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>let LANGUAGES = [
+<pre><code class="language-rust">let LANGUAGES = [
   leptos_fluent::Language {
     id: unic_langid::langid!("en"),
     name: "English",
@@ -206,8 +204,7 @@ compile time:</p>
     name: "Español (España)",
     dir: leptos_fluent::WritingDirection::Ltr,
   },
-]
-<span class="boring">}</span></code></pre></pre>
+]</code></pre>
 <ul>
 <li><code>en</code> is built with the name <code>"English"</code> because it's defined as an
 <a href="https://en.wikipedia.org/wiki/ISO_639-1">ISO 639-1 code</a>, without a region code.</li>
@@ -232,13 +229,10 @@ order of their names, not their codes.</p>
 <p>The languages array can be fully customized by defining a <code>languages</code> parameter
 in the <a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a> macro pointing to a languages file. This file must
 be relative to the <em>Cargo.toml</em> file.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos_fluent! {{
+<pre><code class="language-rust">leptos_fluent! {{
     languages: "./locales/languages.json",
     // ...
-}}
-<span class="boring">}</span></code></pre></pre>
+}}</code></pre>
 <pre><code class="language-json">[
   ["en", "English"],
   ["es-ES", "Spanish (Spain)", "auto"]
@@ -267,9 +261,7 @@ of the names.</p>
 <p>The first in the languages file will used as the initial of the user when any
 other initialization value is discovered. Use the same as the one configured
 as <code>fallback_language</code> in <code>static_loader!</code>.</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>static_loader! {
+<pre><code class="language-rust">static_loader! {
     static TRANSLATIONS = {
         locales: "./locales",
         fallback_language: "en",
@@ -282,8 +274,7 @@ pub fn App() -&gt; impl IntoView {
         translations: [TRANSLATIONS],
         languages: "./locales/languages.json5",
     }};
-}
-<span class="boring">}</span></code></pre></pre>
+}</code></pre>
 <pre><code class="language-json5">// ./locales/languages.json5
 [
   ["en", "English"],

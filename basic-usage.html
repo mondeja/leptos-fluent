@@ -215,9 +215,7 @@ language-selected-is = The selected language is { $lang }.
 select-a-language = Selecciona un idioma:
 language-selected-is = El idioma seleccionado es { $lang }.
 </code></pre>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>// src/lib.rs
+<pre><code class="language-rust">// src/lib.rs
 use fluent_templates::static_loader;
 use leptos::*;
 use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, Language};
@@ -276,13 +274,12 @@ fn render_language(lang: &amp;'static Language) -&gt; impl IntoView {
             /&gt;
         &lt;/div&gt;
     }
-}
-<span class="boring">}</span></code></pre></pre>
-<pre><pre class="playground"><code class="language-rust edition2021">// src/main.rs
+}</code></pre>
+<pre><code class="language-rust">// src/main.rs
 pub fn main() {
     console_error_panic_hook::set_once();
     leptos::mount_to_body(minimal_example::App);
-}</code></pre></pre>
+}</code></pre>
 <pre><code class="language-toml"># Cargo.toml
 [package]
 name = "minimal-example"
@@ -306,12 +303,9 @@ watch-additional-files = ["locales"]
 <h2 id="translating-messages"><a class="header" href="#translating-messages">Translating messages</a></h2>
 <p>Use the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.move_tr.html"><code>move_tr!</code></a> macro to translate a string. The macro takes the key of the
 translation and an optional object with the variables to interpolate:</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>move_tr!("select-a-language")
+<pre><code class="language-rust">move_tr!("select-a-language")
 
-move_tr!("language-selected-is", { "lang" =&gt; i18n.language.get().name })
-<span class="boring">}</span></code></pre></pre>
+move_tr!("language-selected-is", { "lang" =&gt; i18n.language.get().name })</code></pre>
 <p>Additionally, use the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.tr.html"><code>tr!</code></a> macro to translate a string inside
 a reactive context. Note that if is not inside a reactive context,
 the translation won't be updated on the fly when the language changes.
@@ -333,34 +327,19 @@ app is not responding to changes in signal values in the way you expect.
 <p>Can be fixed by replacing calls to <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.tr.html"><code>tr!</code></a> with <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.move_tr.html"><code>move_tr!</code></a> or wrapping the
 <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.tr.html"><code>tr!</code></a> calls in a reactive context.</p>
 <p>The previous code <em>could</em> be rewritten as:</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>move || tr!("select-a-language")
+<pre><code class="language-rust">move || tr!("select-a-language")
 
-move || tr!("language-selected-is", { "lang" =&gt; i18n.language.get().name })
-<span class="boring">}</span></code></pre></pre>
+move || tr!("language-selected-is", { "lang" =&gt; i18n.language.get().name })</code></pre>
 <p>The main difference is that <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.move_tr.html"><code>move_tr!</code></a> encapsulates the movement in a
 <a href="https://docs.rs/leptos/latest/leptos/struct.Signal.html"><code>leptos::Signal</code></a>, strictly would be rewritten as:</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>leptos::Signal::derive(move || tr!("select-a-language"))
-<span class="boring">}</span></code></pre></pre>
+<pre><code class="language-rust">leptos::Signal::derive(move || tr!("select-a-language"))</code></pre>
 <h2 id="retrieving-the-i18n-context"><a class="header" href="#retrieving-the-i18n-context">Retrieving the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html"><code>I18n</code></a> context</a></h2>
 <p>Use the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.expect_i18n.html"><code>expect_i18n</code></a> function to get the current i18n context:</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>let i18n = leptos_fluent::expect_i18n();
-<span class="boring">}</span></code></pre></pre>
+<pre><code class="language-rust">let i18n = leptos_fluent::expect_i18n();</code></pre>
 <p>It is exported as <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.i18n.html"><code>i18n</code></a> too:</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>let i18n = leptos_fluent::i18n();
-<span class="boring">}</span></code></pre></pre>
+<pre><code class="language-rust">let i18n = leptos_fluent::i18n();</code></pre>
 <p>The function <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.use_i18n.html"><code>use_i18n</code></a> returns an <code>Option</code> with the current i18n context:</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>let i18n = leptos_fluent::use_i18n().expect("No `I18n` context found");
-<span class="boring">}</span></code></pre></pre>
+<pre><code class="language-rust">let i18n = leptos_fluent::use_i18n().expect("No `I18n` context found");</code></pre>
 <h2 id="using-the-i18n-context"><a class="header" href="#using-the-i18n-context">Using the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html"><code>I18n</code></a> context</a></h2>
 <p>The i18n context has the following fields:</p>
 <ul>
@@ -371,12 +350,9 @@ the translations.</li>
 </ul>
 <h3 id="update-language"><a class="header" href="#update-language">Update language</a></h3>
 <p>To update the language, use <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html#method.activate"><code>lang.activate</code></a> or the <code>set</code> method of <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.language"><code>language</code></a>:</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>lang.activate();
+<pre><code class="language-rust">lang.activate();
 
-expect_i18n().language.set(lang);
-<span class="boring">}</span></code></pre></pre>
+expect_i18n().language.set(lang);</code></pre>
 <div id="admonition-nightly" class="admonition admonish-tip" role="note" aria-labelledby="admonition-nightly-title">
 <div class="admonition-title">
 <div id="admonition-nightly-title">
@@ -387,20 +363,14 @@ expect_i18n().language.set(lang);
 <div>
 <p>When <code>nightly</code> feature is enabled, can be updated passing a new language to the
 context as a function with:</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>let i18n = leptos_fluent::i18n();
-i18n(lang);
-<span class="boring">}</span></code></pre></pre>
+<pre><code class="language-rust">let i18n = leptos_fluent::i18n();
+i18n(lang);</code></pre>
 </div>
 </div>
 <h3 id="get-active-language"><a class="header" href="#get-active-language">Get active language</a></h3>
 <p>To get the current active language, use <code>get</code> method of <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.language"><code>language</code></a> field:</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>let i18n = leptos_fluent::i18n();
-let lang = i18n.language.get();
-<span class="boring">}</span></code></pre></pre>
+<pre><code class="language-rust">let i18n = leptos_fluent::i18n();
+let lang = i18n.language.get();</code></pre>
 <div id="admonition-nightly-1" class="admonition admonish-tip" role="note" aria-labelledby="admonition-nightly-1-title">
 <div class="admonition-title">
 <div id="admonition-nightly-1-title">
@@ -410,26 +380,17 @@ let lang = i18n.language.get();
 </div>
 <div>
 <p>When <code>nightly</code> enabled, can get the active language with:</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>let i18n = leptos_fluent::i18n();
-let lang = i18n();
-<span class="boring">}</span></code></pre></pre>
+<pre><code class="language-rust">let i18n = leptos_fluent::i18n();
+let lang = i18n();</code></pre>
 </div>
 </div>
 <h3 id="get-available-languages"><a class="header" href="#get-available-languages">Get available languages</a></h3>
 <p>To get the available languages, iterate over the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.languages"><code>languages</code></a> field:</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>i18n.languages.iter()
-<span class="boring">}</span></code></pre></pre>
+<pre><code class="language-rust">i18n.languages.iter()</code></pre>
 <h3 id="check-if-a-language-is-active"><a class="header" href="#check-if-a-language-is-active">Check if a language is active</a></h3>
 <p>To check if a language is the active one, use <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html#method.is_active"><code>is_active</code></a> method of a
 <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html"><code>leptos_fluent::Language</code></a> struct:</p>
-<pre><pre class="playground"><code class="language-rust edition2021"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>lang.is_active()
-<span class="boring">}</span></code></pre></pre>
+<pre><code class="language-rust">lang.is_active()</code></pre>
 
                     </main>
 
