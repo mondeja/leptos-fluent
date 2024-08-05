@@ -22,6 +22,7 @@ additional-css = ["./mdbook-admonish.css"]
 [output.html.playground]
 editable = true
 line-numbers = true
+runnable = false
 
 [preprocessor.admonish]
 on_failure = "bail"

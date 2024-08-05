@@ -125,6 +125,11 @@ pub fn leptos_fluent(
         initial_language_from_server_function_to_cookie,
         initial_language_from_server_function_to_localstorage,
         set_language_to_server_function,
+        url_path,
+        initial_language_from_url_path,
+        initial_language_from_url_path_to_cookie,
+        initial_language_from_url_path_to_localstorage,
+        initial_language_from_url_path_to_server_function,
         #[cfg(feature = "system")]
         initial_language_from_system,
         #[cfg(feature = "system")]
@@ -234,11 +239,7 @@ pub fn leptos_fluent(
 
         let effect_quote = quote! {
             if let Ok(l) = ::leptos_fluent::current_locale() {
-                lang = ::leptos_fluent::l(
-                    &l,
-                    &LANGUAGES
-                );
-
+                lang = ::leptos_fluent::l(&l, &LANGUAGES);
                 if let Some(l) = lang {
                     #initial_language_from_system_to_data_file_quote
                 }
@@ -380,10 +381,7 @@ pub fn leptos_fluent(
                     if let Some(l) = ::leptos_fluent::data_file::get(
                         #initial_language_from_data_file_quote
                     ) {
-                        lang = ::leptos_fluent::l(
-                            &l,
-                            &LANGUAGES
-                        );
+                        lang = ::leptos_fluent::l(&l, &LANGUAGES);
                     }
                 };
 
@@ -517,10 +515,7 @@ pub fn leptos_fluent(
                         let lang_result = #ident().await;
                         if let Ok(maybe_lang) = lang_result {
                             if let Some(l) = maybe_lang {
-                                lang = ::leptos_fluent::l(
-                                    &l,
-                                    &LANGUAGES
-                                );
+                                lang = ::leptos_fluent::l(&l, &LANGUAGES);
                                 if let Some(l) = lang {
                                     #set_to_cookie_quote;
                                     #set_to_localstorage_quote;
@@ -569,6 +564,154 @@ pub fn leptos_fluent(
             }
         }).collect();
 
+    let initial_language_from_url_path_to_server_function_quote: proc_macro2::TokenStream =
+        initial_language_from_url_path_to_server_function.iter().map(|param| {
+            match param.ident {
+                Some(ref ident) => {
+                    let quote = quote! {
+                        spawn_local(async move {
+                            _ = #ident(l.id.to_string()).await;
+                        });
+                    };
+                    match param.exprpath {
+                        Some(ref path) => quote! { #path{#quote} },
+                        None => quote,
+                    }
+                },
+                None => quote! {},
+            }
+        }).collect();
+
+    let initial_language_from_url_path_quote: proc_macro2::TokenStream = {
+        if url_path.is_none() {
+            quote! {}
+        } else {
+            let ident = url_path.as_ref().unwrap();
+
+            initial_language_from_url_path.iter().map(|param| {
+                #[cfg(not(feature = "ssr"))]
+                let effect_quote = {
+                    let to_cookie_effect_quote: proc_macro2::TokenStream =
+                        initial_language_from_url_path_to_cookie.iter().map(|param| {
+                            let effect_quote = quote! {
+                                ::leptos_fluent::cookie::set(
+                                    #cookie_name_quote,
+                                    &l.id.to_string(),
+                                    &#cookie_attrs_quote,
+                                );
+                            };
+
+                            let quote = match param.lit {
+                                Some(ref lit) => match lit.value {
+                                    true => effect_quote,
+                                    false => quote! {},
+                                },
+                                None => match param.expr {
+                                    Some(ref expr) => quote! {
+                                        if #expr {
+                                            #effect_quote
+                                        }
+                                    },
+                                    None => quote! {},
+                                },
+                            };
+
+                            match quote.is_empty() {
+                                true => quote! {},
+                                false => match param.exprpath {
+                                    Some(ref path) => quote! { #path{#quote} },
+                                    None => quote,
+                                },
+                            }
+                        }).collect();
+
+                    let to_localstorage_effect_quote: proc_macro2::TokenStream =
+                        initial_language_from_url_path_to_localstorage.iter().map(|param| {
+                            let effect_quote = quote! {
+                                ::leptos_fluent::localstorage::set(
+                                    #localstorage_key_quote,
+                                    &l.id.to_string(),
+                                );
+                            };
+
+                            let quote = match param.lit {
+                                Some(ref lit) => match lit.value {
+                                    true => effect_quote,
+                                    false => quote! {},
+                                },
+                                None => match param.expr {
+                                    Some(ref expr) => quote! {
+                                        if #expr {
+                                            #effect_quote
+                                        }
+                                    },
+                                    None => quote! {},
+                                },
+                            };
+
+                            match quote.is_empty() {
+                                true => quote! {},
+                                false => match param.exprpath {
+                                    Some(ref path) => quote! { #path{#quote} },
+                                    None => quote,
+                                },
+                            }
+                        }).collect();
+
+                    quote! {
+                        if let Some(url_path) = ::leptos_fluent::url::path::get() {
+                            lang = ::leptos_fluent::l(#ident(&url_path), &LANGUAGES);
+                            if let Some(l) = lang {
+                                #to_cookie_effect_quote;
+                                #to_localstorage_effect_quote;
+                                #initial_language_from_url_path_to_server_function_quote;
+                            }
+                        }
+                    }
+                };
+
+                #[cfg(all(feature = "ssr", feature = "actix"))]
+                let effect_quote = quote! {
+                    if let Some(req) = leptos::use_context::<actix_web::HttpRequest>() {
+                        lang = ::leptos_fluent::l(#ident(&req.path()), &LANGUAGES);
+                        if let Some(l) = lang {
+                            #initial_language_from_url_path_to_server_function_quote;
+                        }
+                    }
+                };
+
+                #[cfg(all(feature = "ssr", feature = "axum"))]
+                let effect_quote = quote! {
+                    if let Some(req) = leptos::use_context::<axum::http::request::Parts>() {
+                        lang = ::leptos_fluent::l(#ident(&req.uri.path()), &LANGUAGES);
+                        if let Some(l) = lang {
+                            #initial_language_from_url_path_to_server_function_quote;
+                        }
+                    }
+                };
+
+                #[cfg(all(feature = "ssr", not(feature = "axum"), not(feature = "actix")))]
+                let effect_quote = {
+                    _ = initial_language_from_url_path_to_server_function_quote;
+                    quote! {}
+                };
+
+                let quote = quote! {
+                    if lang.is_none() {
+                        #effect_quote
+                    }
+                };
+
+                match param.exprpath {
+                    Some(ref path) => quote! {
+                        #path{#quote}
+                    },
+                    None => quote,
+                }
+            }).collect()
+        }
+    };
+
     #[cfg(not(feature = "ssr"))]
     let sync_html_tag_lang_quote: proc_macro2::TokenStream = {
         let effect_quote = quote! {
@@ -615,11 +758,10 @@ pub fn leptos_fluent(
     };
 
     #[cfg(feature = "ssr")]
-    let sync_html_tag_lang_quote = quote! {};
-    #[cfg(feature = "ssr")]
-    {
+    let sync_html_tag_lang_quote = {
         _ = sync_html_tag_lang;
-    }
+        quote! {}
+    };
 
     #[cfg(not(feature = "ssr"))]
     let sync_html_tag_dir_quote: proc_macro2::TokenStream = {
@@ -667,11 +809,10 @@ pub fn leptos_fluent(
     };
 
     #[cfg(feature = "ssr")]
-    let sync_html_tag_dir_quote = quote! {};
-    #[cfg(feature = "ssr")]
-    {
+    let sync_html_tag_dir_quote = {
         _ = sync_html_tag_dir;
-    }
+        quote! {}
+    };
 
     let url_param_quote = match url_param.lit {
         Some(ref lit) => quote! { #lit },
@@ -836,14 +977,9 @@ pub fn leptos_fluent(
                 .collect();
 
         #[cfg(not(feature = "ssr"))]
-        let parse_language_from_url_quote = quote! {
-            if let Some(l) = ::leptos_fluent::url::get(
-                #url_param_quote
-            ) {
-                lang = ::leptos_fluent::l(
-                    &l,
-                    &LANGUAGES
-                );
+        let parse_language_quote = quote! {
+            if let Some(l) = ::leptos_fluent::url::param::get(#url_param_quote) {
+                lang = ::leptos_fluent::l(&l, &LANGUAGES);
                 if let Some(l) = lang {
                     #hydrate_rerender_quote;
                     #set_to_localstorage_quote;
@@ -853,83 +989,66 @@ pub fn leptos_fluent(
             }
         };
 
-        #[cfg(all(feature = "ssr", feature = "actix"))]
-        let parse_language_from_url_quote = quote! {
-            if let Some(req) = leptos::use_context::<actix_web::HttpRequest>() {
-                let uri_query = req.uri().query().unwrap_or("");
-                let mut maybe_lang = None;
-                for (key, value) in uri_query.split('&').map(|pair| {
-                    let mut split = pair.splitn(2, '=');
-                    (split.next().unwrap_or(""), split.next().unwrap_or(""))
-                }) {
-                    if key == #url_param_quote {
-                        maybe_lang = Some(value);
-                        break;
-                    }
+        #[cfg(all(feature = "ssr", any(feature = "actix", feature = "axum")))]
+        let lang_parser_quote = quote! {
+            let mut maybe_lang = None;
+            for (key, value) in uri_query.split('&').map(|pair| {
+                let mut split = pair.splitn(2, '=');
+                (split.next().unwrap_or(""), split.next().unwrap_or(""))
+            }) {
+                if key == #url_param_quote {
+                    maybe_lang = Some(value);
+                    break;
                 }
+            }
 
-                if let Some(l) = maybe_lang {
-                    lang = ::leptos_fluent::l(
-                        &l,
-                        &LANGUAGES
-                    );
-                    if let Some(l) = lang {
-                        #set_to_server_function_quote;
-                    }
+            if let Some(l) = maybe_lang {
+                lang = ::leptos_fluent::l(&l, &LANGUAGES);
+                if let Some(l) = lang {
+                    #set_to_server_function_quote;
                 }
             }
         };
 
+        #[cfg(all(feature = "ssr", feature = "actix"))]
+        let parse_language_quote = quote! {
+            if let Some(req) = leptos::use_context::<actix_web::HttpRequest>() {
+                let uri_query = req.uri().query().unwrap_or("");
+                #lang_parser_quote
+            }
+        };
+
         #[cfg(all(feature = "ssr", feature = "axum"))]
-        let parse_language_from_url_quote = quote! {
+        let parse_language_quote = quote! {
             if let Some(req) = leptos::use_context::<axum::http::request::Parts>() {
                 let uri_query = req.uri.query().unwrap_or("");
-                let mut maybe_lang = None;
-                for (key, value) in uri_query.split('&').map(|pair| {
-                    let mut split = pair.splitn(2, '=');
-                    (split.next().unwrap_or(""), split.next().unwrap_or(""))
-                }) {
-                    if key == #url_param_quote {
-                        maybe_lang = Some(value);
-                        break;
-                    }
-                }
-
-                if let Some(l) = maybe_lang {
-                    lang = ::leptos_fluent::l(
-                        &l,
-                        &LANGUAGES
-                    );
-                    if let Some(l) = lang {
-                        #set_to_server_function_quote;
-                    }
-                }
+                #lang_parser_quote
             }
         };
 
         // Other SSR framework or the user is not using any
         #[cfg(all(
+            feature = "ssr",
             not(feature = "actix"),
             not(feature = "axum"),
-            feature = "ssr"
         ))]
-        let parse_language_from_url_quote = quote! {};
+        let parse_language_quote = quote! {};
 
         initial_language_from_url_param
             .iter()
             .map(|param| {
                 let quote = match param.lit {
                     Some(ref lit) => match lit.value {
-                        true => parse_language_from_url_quote.clone(),
+                        true => parse_language_quote.clone(),
                         false => quote! {},
                     },
                     None => match param.expr {
                         Some(ref expr) => {
-                            match parse_language_from_url_quote.is_empty() {
+                            match parse_language_quote.is_empty() {
                                 true => quote! {},
                                 false => quote! {
                                     if #expr {
-                                        #parse_language_from_url_quote
+                                        #parse_language_quote
                                     }
                                 },
                             }
@@ -1007,11 +1126,7 @@ pub fn leptos_fluent(
         let localstorage_get_quote = quote! {
             if let Some(l) = ::leptos_fluent::localstorage::get(#localstorage_key_quote)
             {
-                lang = ::leptos_fluent::l(
-                    &l,
-                    &LANGUAGES
-                );
-
+                lang = ::leptos_fluent::l(&l, &LANGUAGES);
                 if let Some(l) = lang {
                     #initial_language_from_localstorage_to_cookie_quote;
                     #initial_language_from_localstorage_to_server_function_quote;
@@ -1062,7 +1177,7 @@ pub fn leptos_fluent(
     let sync_language_with_url_param_quote: proc_macro2::TokenStream = {
         let effect_quote = quote! {
             ::leptos::create_effect(move |_| {
-                ::leptos_fluent::url::set(
+                ::leptos_fluent::url::param::set(
                     #url_param_quote,
                     &#get_language_quote.id.to_string(),
                 );
@@ -1198,11 +1313,8 @@ pub fn leptos_fluent(
                 if language.is_none() {
                     continue;
                 }
-                if let Some(l) = ::leptos_fluent::l(
-                    &language.unwrap(),
-                    &LANGUAGES
-                ) {
-                    lang = Some(l);
+                let lang = ::leptos_fluent::l(&language.unwrap(), &LANGUAGES);
+                if let Some(l) = lang {
                     #initial_language_from_navigator_to_localstorage_quote;
                     #initial_language_from_navigator_to_cookie_quote;
                     #initial_language_from_navigator_to_server_function_quote;
@@ -1427,7 +1539,6 @@ pub fn leptos_fluent(
             if let Some(cookie) = ::leptos_fluent::cookie::get(#cookie_name_quote) {
                 if let Some(l) = ::leptos_fluent::l(&cookie, &LANGUAGES) {
                     lang = Some(l);
-
                     #initial_language_from_cookie_to_localstorage_quote;
                     #initial_language_from_cookie_to_server_function_quote;
                 }
@@ -1528,7 +1639,6 @@ pub fn leptos_fluent(
                 if let Some(cookie) = maybe_cookie {
                     if let Some(l) = ::leptos_fluent::l(&cookie, &LANGUAGES) {
                         lang = Some(l);
-
                         #initial_language_from_cookie_to_server_function_quote;
                     }
                 }
@@ -1589,7 +1699,6 @@ pub fn leptos_fluent(
                 if let Some(cookie) = maybe_cookie {
                     if let Some(l) = ::leptos_fluent::l(&cookie, &LANGUAGES) {
                         lang = Some(l);
-
                         #initial_language_from_cookie_to_server_function_quote;
                     }
                 }
@@ -1655,6 +1764,7 @@ pub fn leptos_fluent(
             #initial_language_from_data_file_quote
             #initial_language_from_system_quote
             #initial_language_from_url_param_quote
+            #initial_language_from_url_path_quote
             #initial_language_from_cookie_quote
             #initial_language_from_localstorage_quote
             #initial_language_from_navigator_quote
@@ -1664,6 +1774,7 @@ pub fn leptos_fluent(
         quote! {
             #initial_language_from_server_function_quote
             #initial_language_from_url_param_quote
+            #initial_language_from_url_path_quote
             #initial_language_from_cookie_quote
             #initial_language_from_accept_language_header_quote
         }
@@ -1869,6 +1980,19 @@ pub fn leptos_fluent(
                         );
                     let set_language_to_server_function_quote =
                         identifiers_as_bools(&set_language_to_server_function);
+                    let url_path_quote = if url_path.is_some() {quote!{true}} else {quote!{false}};
+                    let initial_language_from_url_path_quote =
+                        lit_bool_exprs(&initial_language_from_url_path);
+                    let initial_language_from_url_path_to_cookie_quote =
+                        lit_bool_exprs(&initial_language_from_url_path_to_cookie);
+                    let initial_language_from_url_path_to_localstorage_quote =
+                        lit_bool_exprs(
+                            &initial_language_from_url_path_to_localstorage,
+                        );
+                    let initial_language_from_url_path_to_server_function_quote =
+                        identifiers_as_bools(
+                            &initial_language_from_url_path_to_server_function,
+                        );
 
                     let system_quote = {
                         #[cfg(not(feature = "system"))]
@@ -1936,6 +2060,11 @@ pub fn leptos_fluent(
                             initial_language_from_server_function_to_cookie: #initial_language_from_server_function_to_cookie_quote,
                             initial_language_from_server_function_to_localstorage: #initial_language_from_server_function_to_localstorage_quote,
                             set_language_to_server_function: #set_language_to_server_function_quote,
+                            url_path: #url_path_quote,
+                            initial_language_from_url_path: #initial_language_from_url_path_quote,
+                            initial_language_from_url_path_to_cookie: #initial_language_from_url_path_to_cookie_quote,
+                            initial_language_from_url_path_to_localstorage: #initial_language_from_url_path_to_localstorage_quote,
+                            initial_language_from_url_path_to_server_function: #initial_language_from_url_path_to_server_function_quote,
                             provide_meta_context: true,
                             #system_quote
                         };

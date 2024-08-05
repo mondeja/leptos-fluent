@@ -29,14 +29,14 @@ async fn test_url_param_to_cookie() {
     let en = move || input_by_id("en");
 
     // initial_language_from_url_param_to_cookie
-    url::delete(URL_PARAM);
+    url::param::delete(URL_PARAM);
     cookie::delete(COOKIE_NAME);
     mount!(App);
     assert!(en().checked());
     assert_eq!(element_text("p"), "Select a language:");
     unmount!();
 
-    url::set(URL_PARAM, "es");
+    url::param::set(URL_PARAM, "es");
     cookie::delete(COOKIE_NAME);
     mount!(App);
     assert!(es().checked());
@@ -44,7 +44,7 @@ async fn test_url_param_to_cookie() {
     assert_eq!(cookie::get(COOKIE_NAME), Some("es".to_string()));
     unmount!();
 
-    url::set(URL_PARAM, "en");
+    url::param::set(URL_PARAM, "en");
     cookie::delete(COOKIE_NAME);
     mount!(App);
     assert!(en().checked());

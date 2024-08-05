@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## 2024-08-05 - [0.1.12]
+
+### New features
+
+- Add `initial_language_from_url_path` parameter to `leptos_fluent!` macro to
+  set the initial language from URL path.
+- Add `initial_language_from_url_path_to_cookie` to `leptos_fluent!` macro to
+  set the initial language from URL path to a cookie.
+- Add `initial_language_from_url_path_to_localstorage` to `leptos_fluent!` macro
+  to set the initial language from URL path to local storage.
+- Add `initial_language_from_url_path_to_server_function` to `leptos_fluent!`
+  macro to set the initial language from URL path to a server function.
+
 ## 2024-08-04 - [0.1.11]
 
 ### Bug fixes
@@ -428,6 +441,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.1.12]: https://github.com/mondeja/leptos-fluent/compare/v0.1.11...v0.1.12
 [0.1.11]: https://github.com/mondeja/leptos-fluent/compare/v0.1.10...v0.1.11
 [0.1.10]: https://github.com/mondeja/leptos-fluent/compare/v0.1.9...v0.1.10
 [0.1.9]: https://github.com/mondeja/leptos-fluent/compare/v0.1.8...v0.1.9

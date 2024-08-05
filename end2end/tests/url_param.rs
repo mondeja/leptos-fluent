@@ -44,19 +44,19 @@ async fn test_url_param() {
     unmount!();
 
     // initial_language_from_url_param
-    url::delete(URL_PARAM);
+    url::param::delete(URL_PARAM);
     mount!(App);
     assert!(en().checked());
     assert_eq!(element_text("p"), "Select a language:");
     unmount!();
 
-    url::set(URL_PARAM, "es");
+    url::param::set(URL_PARAM, "es");
     mount!(App);
     assert!(es().checked());
     assert_eq!(element_text("p"), "Selecciona un idioma:");
     unmount!();
 
-    url::set(URL_PARAM, "en");
+    url::param::set(URL_PARAM, "en");
     mount!(App);
     assert!(en().checked());
     assert_eq!(element_text("p"), "Select a language:");
