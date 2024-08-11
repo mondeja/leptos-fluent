@@ -5,7 +5,7 @@
 ### Bug fixes
 
 - Fix bug discovering initial language from `navigator.languages`
-  (regression on v0.1.12).
+  (regression from v0.1.11).
 
 ## 2024-08-05 - [0.1.12]
 
