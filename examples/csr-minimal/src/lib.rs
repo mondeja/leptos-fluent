@@ -14,7 +14,6 @@ pub fn App() -> impl IntoView {
     leptos_fluent! {{
         translations: [TRANSLATIONS],
         locales: "./locales",
-        initial_language_from_navigator: true,
     }};
 
     view! { <LanguageSelector/> }
