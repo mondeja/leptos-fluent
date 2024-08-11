@@ -1313,7 +1313,7 @@ pub fn leptos_fluent(
                 if language.is_none() {
                     continue;
                 }
-                let lang = ::leptos_fluent::l(&language.unwrap(), &LANGUAGES);
+                lang = ::leptos_fluent::l(&language.unwrap(), &LANGUAGES);
                 if let Some(l) = lang {
                     #initial_language_from_navigator_to_localstorage_quote;
                     #initial_language_from_navigator_to_cookie_quote;
@@ -2146,7 +2146,7 @@ mod test {
     }
 
     #[test]
-    fn test_main_and_macros_package_versions_match() {
+    fn main_and_macros_package_versions_match() {
         // cargo-readme does not allow to use `version.workspace = true`,
         // see https://github.com/webern/cargo-readme/issues/81
 
