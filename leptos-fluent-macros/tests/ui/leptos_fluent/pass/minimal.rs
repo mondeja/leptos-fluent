@@ -11,14 +11,10 @@ static_loader! {
 
 #[component]
 pub fn App() -> impl IntoView {
-    let i18n = leptos_fluent! {{
+    leptos_fluent! {{
         translations: [TRANSLATIONS],
         locales: "../../../../examples/csr-minimal/locales",
-        // A comment
-        provide_meta_context: true,
     }};
-
-    logging::log!("I18n context: {:?}", i18n.meta().unwrap());
 
     view! { <p>Foo</p> }
 }

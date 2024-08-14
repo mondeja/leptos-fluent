@@ -13,8 +13,8 @@ keywords.workspace = true
 [dependencies]
 leptos-fluent-macros = { path = "../leptos-fluent-macros" }
 fluent-templates.workspace = true
-leptos = ">=0.6"
-leptos_meta = { version = ">=0.6", optional = true }
+leptos = "0.6"
+leptos_meta = { version = "0.6", optional = true }
 web-sys = { version = ">=0.1", features = [
   "HtmlDocument",
   "Navigator",

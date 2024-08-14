@@ -39,6 +39,14 @@ jobs:
           - build-all-features
     steps:
       - uses: actions/checkout@v4
+      - name: Get toolchain
+        id: toolchain
+        uses: ./.github/actions/get-toolchain
+      - name: Setup Rust
+        uses: hecrj/setup-rust-action@v2
+        with:
+          rust-version: ${{ steps.toolchain.outputs.channel }}
+          profile: minimal
       - name: Set up Python
         uses: actions/setup-python@v5
         with:

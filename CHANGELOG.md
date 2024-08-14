@@ -1,5 +1,7 @@
 # CHANGELOG
 
+## Unreleased - [0.1.14]
+
 ## 2024-08-11 - [0.1.13]
 
 ### Bug fixes
@@ -448,6 +450,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.1.14]: https://github.com/mondeja/leptos-fluent/compare/v0.1.13...master
 [0.1.13]: https://github.com/mondeja/leptos-fluent/compare/v0.1.12...v0.1.13
 [0.1.12]: https://github.com/mondeja/leptos-fluent/compare/v0.1.11...v0.1.12
 [0.1.11]: https://github.com/mondeja/leptos-fluent/compare/v0.1.10...v0.1.11
