@@ -759,7 +759,7 @@ pub fn leptos_fluent(
                             };
 
                             match quote.is_empty() {
-                                true => quote! {},
+                                true => quote! { false },
                                 false => match param.exprpath {
                                     Some(ref path) => quote! { #path{#quote} },
                                     None => quote,
@@ -818,7 +818,7 @@ pub fn leptos_fluent(
                             };
 
                             match quote.is_empty() {
-                                true => quote! {},
+                                true => quote! { false },
                                 false => match param.exprpath {
                                     Some(ref path) => quote! { #path{#quote} },
                                     None => quote,
