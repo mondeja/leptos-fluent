@@ -189,7 +189,6 @@
 <li><a href="#how-to-get-the-fallback-language">How to get the fallback language</a></li>
 <li><a href="#why-examples-dont-use-for-component">Why examples don't use <code>&lt;For/&gt;</code> component?</a></li>
 <li><a href="#how-to-manage-translations-on-server-actions">How to manage translations on server actions</a></li>
-<li><a href="#how-to-change-html-attributes-on-ssr">How to change <code>&lt;html&gt;</code> attributes on SSR</a></li>
 <li><a href="#how-to-get-values-of-leptos_fluent-macro-at-runtime">How to get values of <code>leptos_fluent!</code> macro at runtime?</a></li>
 <li><a href="#configuration-conditional-checks">Configuration conditional checks</a></li>
 </ul>
@@ -301,25 +300,6 @@ fn render_language(lang: &amp;'static Language) -&gt; impl IntoView {
         &lt;/div&gt;
     }
 }</code></pre>
-<h3 id="how-to-change-html-attributes-on-ssr"><a class="header" href="#how-to-change-html-attributes-on-ssr">How to change <code>&lt;html&gt;</code> attributes on SSR</a></h3>
-<p>Use the component <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.SsrHtmlTag.html"><code>leptos_fluent::SsrHtmlTag</code></a>:</p>
-<pre><code class="language-rust">use leptos::*;
-use leptos_fluent::{leptos_fluent, SsrHtmlTag};
-
-#[component]
-pub fn App() -&gt; impl IntoView {
-    leptos_fluent! {{
-        // ...
-    }};
-
-    view! {
-        &lt;SsrHtmlTag/&gt;
-        &lt;LanguageSelector/&gt;
-    }
-}
-
-#[component]
-fn LanguageSelector() -&gt; impl IntoView { ... }</code></pre>
 <h3 id="how-to-get-values-of-leptos_fluent-macro-at-runtime"><a class="header" href="#how-to-get-values-of-leptos_fluent-macro-at-runtime">How to get values of <code>leptos_fluent!</code> macro at runtime?</a></h3>
 <p>Use <code>provide_meta_context</code> at the macro initialization and get them
 with the method <code>I18n::meta</code>:</p>
