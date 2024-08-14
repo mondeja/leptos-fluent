@@ -728,9 +728,6 @@ pub fn leptos_fluent(
             for attr in html_tag_as_string.split(' ') {
                 let mut parts = attr.split('=');
                 let key = parts.next().unwrap_or("");
-                if key.is_empty() {
-                    continue;
-                }
                 let value = parts.next().unwrap_or("");
                 if key == "class" {
                     class = Some(value.trim_matches('"').to_string().into());
