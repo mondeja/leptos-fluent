@@ -284,8 +284,8 @@ use fluent_templates::{
     LanguageIdentifier, StaticLoader,
 };
 use leptos::{
-    component, use_context, Attribute, IntoAttribute, IntoView, Oco, RwSignal,
-    Signal, SignalGet, SignalSet, SignalWith,
+    component, use_context, with, Attribute, IntoAttribute, IntoView, Oco,
+    RwSignal, Signal, SignalGet, SignalSet,
 };
 #[cfg(feature = "ssr")]
 use leptos::{view, SignalGetUntracked};
@@ -466,10 +466,12 @@ impl I18n {
 
 impl core::fmt::Debug for I18n {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        f.debug_struct("I18n")
-            .field("language", &self.language.get())
+        let language = self.language;
+        with!(|language| f
+            .debug_struct("I18n")
+            .field("language", language)
             .field("languages", &self.languages)
-            .finish()
+            .finish())
     }
 }
 
@@ -576,16 +578,15 @@ pub fn i18n() -> I18n {
 #[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
 #[doc(hidden)]
 pub fn tr_impl(text_id: &str) -> String {
-    let i18n = expect_i18n();
-    let lang_id = i18n.language.get().id.clone();
-    let found = i18n.translations.with(|translations| {
-        for tr in translations {
-            if let Some(result) = tr.try_lookup(&lang_id, text_id) {
-                return Some(result);
-            }
-        }
-
-        None
+    let I18n {
+        language,
+        translations,
+        ..
+    } = expect_i18n();
+    let found = with!(|translations, language| {
+        translations
+            .iter()
+            .find_map(|tr| tr.try_lookup(&language.id, text_id))
     });
 
     #[cfg(feature = "tracing")]
@@ -618,18 +619,15 @@ pub fn tr_with_args_impl(
     text_id: &str,
     args: &std::collections::HashMap<String, FluentValue>,
 ) -> String {
-    let i18n = expect_i18n();
-    let lang_id = i18n.language.get().id.clone();
-    let found = i18n.translations.with(|translations| {
-        for tr in translations {
-            if let Some(result) =
-                tr.try_lookup_with_args(&lang_id, text_id, args)
-            {
-                return Some(result);
-            }
-        }
-
-        None
+    let I18n {
+        language,
+        translations,
+        ..
+    } = expect_i18n();
+    let found = with!(|translations, language| {
+        translations
+            .iter()
+            .find_map(|tr| tr.try_lookup_with_args(&language.id, text_id, args))
     });
 
     #[cfg(feature = "tracing")]
