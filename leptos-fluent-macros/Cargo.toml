@@ -23,7 +23,7 @@ globwalk = "0.9"
 fluent-templates.workspace = true
 fluent-syntax = "0.11"
 pathdiff = "0.2"
-# TODO: using the same version for cfg-expr of system-deps until a new version is released
+# TODO: using the same version for cfg-expr of system-deps until a new system-deps is released
 # The problem related with trybuild locking https://github.com/dtolnay/trybuild/issues/261
 cfg-expr = ">=0.10,<0.16"
 current_platform = ">=0.2"
