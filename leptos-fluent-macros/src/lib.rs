@@ -728,9 +728,6 @@ pub fn leptos_fluent(
             for attr in html_tag_as_string.split(' ') {
                 let mut parts = attr.split('=');
                 let key = parts.next().unwrap_or("");
-                if key.is_empty() {
-                    continue;
-                }
                 let value = parts.next().unwrap_or("");
                 if key == "class" {
                     class = Some(value.trim_matches('"').to_string().into());
@@ -759,7 +756,7 @@ pub fn leptos_fluent(
                             };
 
                             match quote.is_empty() {
-                                true => quote! {},
+                                true => quote! { false },
                                 false => match param.exprpath {
                                     Some(ref path) => quote! { #path{#quote} },
                                     None => quote,
@@ -818,7 +815,7 @@ pub fn leptos_fluent(
                             };
 
                             match quote.is_empty() {
-                                true => quote! {},
+                                true => quote! { false },
                                 false => match param.exprpath {
                                     Some(ref path) => quote! { #path{#quote} },
                                     None => quote,
