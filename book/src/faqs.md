@@ -132,30 +132,6 @@ fn render_language(lang: &'static Language) -> impl IntoView {
 }
 ```
 
-### How to change `<html>` attributes on SSR
-
-Use the component [`leptos_fluent::SsrHtmlTag`]:
-
-```rust
-use leptos::*;
-use leptos_fluent::{leptos_fluent, SsrHtmlTag};
-
-#[component]
-pub fn App() -> impl IntoView {
-    leptos_fluent! {{
-        // ...
-    }};
-
-    view! {
-        <SsrHtmlTag/>
-        <LanguageSelector/>
-    }
-}
-
-#[component]
-fn LanguageSelector() -> impl IntoView { ... }
-```
-
 ### How to get values of `leptos_fluent!` macro at runtime?
 
 Use `provide_meta_context` at the macro initialization and get them
@@ -184,6 +160,5 @@ leptos_fluent! {{
 
 [configuration conditional checks]: https://doc.rust-lang.org/rust-by-example/attribute/cfg.html
 [`<For/>`]: https://docs.rs/leptos/latest/leptos/fn.For.html
-[`leptos_fluent::SsrHtmlTag`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.SsrHtmlTag.html
 [`leptos_fluent::Language`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html
 [`I18n`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html

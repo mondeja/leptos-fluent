@@ -3,7 +3,7 @@ use fluent_templates::once_cell::sync::Lazy;
 use fluent_templates::static_loader;
 use fluent_templates::StaticLoader;
 use leptos::*;
-use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, tr, SsrHtmlTag};
+use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, tr};
 use leptos_meta::*;
 use leptos_router::*;
 
@@ -18,7 +18,6 @@ pub static COMPOUND: &[&Lazy<StaticLoader>] = &[&TRANSLATIONS, &TRANSLATIONS];
 
 #[component]
 pub fn App() -> impl IntoView {
-    provide_meta_context();
     leptos_fluent! {{
         translations: [TRANSLATIONS, TRANSLATIONS] + COMPOUND,
         locales: "./locales",
@@ -45,7 +44,6 @@ pub fn App() -> impl IntoView {
     }};
 
     view! {
-        <SsrHtmlTag/>
         <Title text=move || tr!("welcome-to-leptos")/>
 
         // content for this welcome page

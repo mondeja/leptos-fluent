@@ -53,6 +53,8 @@ repos:
             clippy::uninlined_format_args,
             -D,
             clippy::semicolon_if_nothing_returned,
+            -A,
+            deprecated,
           ]
       - id: clippy
         alias: clippy-hydrate
@@ -75,6 +77,8 @@ repos:
             clippy::uninlined_format_args,
             -D,
             clippy::semicolon_if_nothing_returned,
+            -A,
+            deprecated,
           ]
       - id: clippy
         alias: clippy-ssr-actix
@@ -99,6 +103,8 @@ repos:
             clippy::uninlined_format_args,
             -D,
             clippy::semicolon_if_nothing_returned,
+            -A,
+            deprecated,
           ]
       - id: clippy
         alias: clippy-ssr-axum
@@ -123,6 +129,8 @@ repos:
             clippy::uninlined_format_args,
             -D,
             clippy::semicolon_if_nothing_returned,
+            -A,
+            deprecated,
           ]
   - repo: https://github.com/mondeja/rust-pc-hooks
     rev: v1.1.0

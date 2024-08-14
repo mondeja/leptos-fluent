@@ -1,6 +1,13 @@
 # CHANGELOG
 
-## Unreleased - [0.1.14]
+## 2024-08-14 - [0.1.14]
+
+### Enhancements
+
+- Deprecate `SsrHtmlTag` component. The `sync_html_tag_lang` and
+  `sync_html_tag_dir` parameters of `leptos_fluent!` macro are enough to sync
+  the `<html>` tag attributes with the current language and direction on SSR.
+  Will be removed on v0.2.
 
 ## 2024-08-11 - [0.1.13]
 
@@ -450,7 +457,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
-[0.1.14]: https://github.com/mondeja/leptos-fluent/compare/v0.1.13...master
+[0.1.14]: https://github.com/mondeja/leptos-fluent/compare/v0.1.13...v0.1.14
 [0.1.13]: https://github.com/mondeja/leptos-fluent/compare/v0.1.12...v0.1.13
 [0.1.12]: https://github.com/mondeja/leptos-fluent/compare/v0.1.11...v0.1.12
 [0.1.11]: https://github.com/mondeja/leptos-fluent/compare/v0.1.10...v0.1.11
