@@ -808,6 +808,12 @@ pub fn l(
 ///     <SsrHtmlTag/>
 /// }
 /// ```
+#[deprecated(
+    since = "0.1.14",
+    note = "The component SsrHtmlTag is not needed anymore and will be removed in v0.2. \
+          The `sync_html_tag_lang` and `sync_html_tag_dir` parameters of the `leptos_fluent!` \
+          macro are enough to set the `lang` and `dir` attributes of the `<html>` tag on SSR."
+)]
 #[component(transparent)]
 #[cfg(feature = "ssr")]
 #[cfg_attr(feature = "tracing", tracing::instrument(level = "trace"))]
@@ -829,6 +835,12 @@ pub fn SsrHtmlTag() -> impl IntoView {
 ///     <SsrHtmlTag/>
 /// }
 /// ```
+#[deprecated(
+    since = "0.1.14",
+    note = "The component `SsrHtmlTag` is not needed anymore and will be removed in v0.2. \
+          The `sync_html_tag_lang` and `sync_html_tag_dir` parameters of the `leptos_fluent!` \
+          macro are enough to set the `lang` and `dir` attributes of the `<html>` tag on SSR."
+)]
 #[component(transparent)]
 #[cfg(not(feature = "ssr"))]
 #[cfg_attr(feature = "tracing", tracing::instrument(level = "trace"))]

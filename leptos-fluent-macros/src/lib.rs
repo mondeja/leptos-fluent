@@ -712,106 +712,217 @@ pub fn leptos_fluent(
         }
     };
 
-    #[cfg(not(feature = "ssr"))]
-    let sync_html_tag_lang_quote: proc_macro2::TokenStream = {
-        let effect_quote = quote! {
-            ::leptos::create_effect(move |_| {
-                use leptos_fluent::web_sys::wasm_bindgen::JsCast;
-                _ = ::leptos::document()
-                    .document_element()
-                    .unwrap()
-                    .unchecked_into::<::leptos_fluent::web_sys::HtmlElement>()
-                    .set_attribute(
-                        "lang",
-                        &#get_language_quote.id.to_string()
+    let sync_html_tag_quote: proc_macro2::TokenStream = {
+        // TODO: optimize code size
+        // TODO: handle other attributes in Leptos v0.7
+        //       (in Leptos v0.6 attribute keys are static)
+
+        // Calling `provide_meta_context()` to not show a warning
+        #[cfg(feature = "ssr")]
+        let previous_html_tag_attrs_quote = quote! {{
+            ::leptos_meta::provide_meta_context();
+            let html_tag_as_string = ::leptos_meta::use_head().html.as_string().unwrap_or("".to_string());
+            let mut class: Option<::leptos::TextProp> = None;
+            let mut lang: Option<::leptos::TextProp> = None;
+            let mut dir: Option<::leptos::TextProp> = None;
+            for attr in html_tag_as_string.split(' ') {
+                let mut parts = attr.split('=');
+                let key = parts.next().unwrap_or("");
+                if key.is_empty() {
+                    continue;
+                }
+                let value = parts.next().unwrap_or("");
+                if key == "class" {
+                    class = Some(value.trim_matches('"').to_string().into());
+                } else if key == "lang" {
+                    lang = Some(value.trim_matches('"').to_string().into());
+                } else if key == "dir" {
+                    dir = Some(value.trim_matches('"').to_string().into());
+                }
+            }
+            (class, lang, dir)
+        }};
+
+        let sync_html_tag_lang_effect_quote = {
+            #[cfg(feature = "ssr")]
+            {
+                let sync_html_tag_dir_bool_quote: proc_macro2::TokenStream =
+                    sync_html_tag_dir
+                        .iter()
+                        .map(|param| {
+                            let quote = match param.lit {
+                                Some(ref lit) => quote! { #lit },
+                                None => match param.expr {
+                                    Some(ref expr) => quote! { #expr },
+                                    None => quote! { false },
+                                },
+                            };
+
+                            match quote.is_empty() {
+                                true => quote! {},
+                                false => match param.exprpath {
+                                    Some(ref path) => quote! { #path{#quote} },
+                                    None => quote,
+                                },
+                            }
+                        })
+                        .collect();
+
+                quote! {
+                    let l = #get_language_quote;
+                    let (class, _, dir) = #previous_html_tag_attrs_quote;
+                    ::leptos_meta::Html(
+                        ::leptos_meta::HtmlProps {
+                            lang: Some(l.id.to_string().into()),
+                            dir: if #sync_html_tag_dir_bool_quote {
+                                Some(l.dir.as_str().into())
+                            } else {
+                                dir
+                            },
+                            class,
+                            attributes: Vec::new(),
+                        }
                     );
-            });
+                }
+            }
+
+            #[cfg(not(feature = "ssr"))]
+            quote! {
+                ::leptos::create_effect(move |_| {
+                    use leptos_fluent::web_sys::wasm_bindgen::JsCast;
+                    _ = ::leptos::document()
+                        .document_element()
+                        .unwrap()
+                        .unchecked_into::<::leptos_fluent::web_sys::HtmlElement>()
+                        .set_attribute(
+                            "lang",
+                            &#get_language_quote.id.to_string()
+                        );
+                });
+            }
         };
 
-        sync_html_tag_lang
-            .iter()
-            .map(|param| {
-                let quote = match param.lit {
-                    Some(ref lit) => match lit.value {
-                        true => effect_quote.clone(),
-                        false => quote! {},
-                    },
-                    None => match param.expr {
-                        Some(ref expr) => quote! {
-                            if #expr {
-                                #effect_quote
+        let sync_html_tag_dir_effect_quote = {
+            #[cfg(feature = "ssr")]
+            {
+                let sync_html_tag_lang_bool_quote: proc_macro2::TokenStream =
+                    sync_html_tag_lang
+                        .iter()
+                        .map(|param| {
+                            let quote = match param.lit {
+                                Some(ref lit) => quote! { #lit },
+                                None => match param.expr {
+                                    Some(ref expr) => quote! { #expr },
+                                    None => quote! { false },
+                                },
+                            };
+
+                            match quote.is_empty() {
+                                true => quote! {},
+                                false => match param.exprpath {
+                                    Some(ref path) => quote! { #path{#quote} },
+                                    None => quote,
+                                },
                             }
-                        },
-                        None => quote! {},
-                    },
-                };
+                        })
+                        .collect();
 
-                match quote.is_empty() {
-                    true => quote! {},
-                    false => match param.exprpath {
-                        Some(ref path) => quote! { #path{#quote} },
-                        None => quote,
-                    },
-                }
-            })
-            .collect()
-    };
-
-    #[cfg(feature = "ssr")]
-    let sync_html_tag_lang_quote = {
-        _ = sync_html_tag_lang;
-        quote! {}
-    };
-
-    #[cfg(not(feature = "ssr"))]
-    let sync_html_tag_dir_quote: proc_macro2::TokenStream = {
-        let effect_quote = quote! {
-            ::leptos::create_effect(move |_| {
-                use leptos_fluent::web_sys::wasm_bindgen::JsCast;
-                _ = ::leptos::document()
-                    .document_element()
-                    .unwrap()
-                    .unchecked_into::<::leptos_fluent::web_sys::HtmlElement>()
-                    .set_attribute(
-                        "dir",
-                        &#get_language_quote.dir.as_str(),
+                quote! {
+                    let l = #get_language_quote;
+                    let (class, lang, _) = #previous_html_tag_attrs_quote;
+                    ::leptos_meta::Html(
+                        ::leptos_meta::HtmlProps {
+                            lang: if #sync_html_tag_lang_bool_quote {
+                                Some(l.id.to_string().into())
+                            } else {
+                                lang
+                            },
+                            dir: Some(l.dir.as_str().into()),
+                            class,
+                            attributes: Vec::new(),
+                        }
                     );
-            });
+                }
+            }
+
+            #[cfg(not(feature = "ssr"))]
+            quote! {
+                ::leptos::create_effect(move |_| {
+                    use leptos_fluent::web_sys::wasm_bindgen::JsCast;
+                    _ = ::leptos::document()
+                        .document_element()
+                        .unwrap()
+                        .unchecked_into::<::leptos_fluent::web_sys::HtmlElement>()
+                        .set_attribute(
+                            "dir",
+                            &#get_language_quote.dir.as_str(),
+                        );
+                });
+            }
         };
 
-        sync_html_tag_dir
-            .iter()
-            .map(|param| {
-                let quote = match param.lit {
-                    Some(ref lit) => match lit.value {
-                        true => effect_quote.clone(),
-                        false => quote! {},
-                    },
-                    None => match param.expr {
-                        Some(ref expr) => quote! {
-                            if #expr {
-                                #effect_quote
-                            }
+        let sync_html_tag_lang_quote: proc_macro2::TokenStream =
+            sync_html_tag_lang
+                .iter()
+                .map(|param| {
+                    let quote = match param.lit {
+                        Some(ref lit) => match lit.value {
+                            true => sync_html_tag_lang_effect_quote.clone(),
+                            false => quote! {},
                         },
-                        None => quote! {},
-                    },
-                };
+                        None => match param.expr {
+                            Some(ref expr) => quote! {
+                                if #expr {
+                                    #sync_html_tag_lang_effect_quote
+                                }
+                            },
+                            None => quote! {},
+                        },
+                    };
 
-                match quote.is_empty() {
-                    true => quote! {},
-                    false => match param.exprpath {
-                        Some(ref path) => quote! { #path{#quote} },
-                        None => quote,
-                    },
-                }
-            })
-            .collect()
-    };
+                    match quote.is_empty() {
+                        true => quote! {},
+                        false => match param.exprpath {
+                            Some(ref path) => quote! { #path{#quote} },
+                            None => quote,
+                        },
+                    }
+                })
+                .collect();
 
-    #[cfg(feature = "ssr")]
-    let sync_html_tag_dir_quote = {
-        _ = sync_html_tag_dir;
-        quote! {}
+        let sync_html_tag_dir_quote: proc_macro2::TokenStream =
+            sync_html_tag_dir
+                .iter()
+                .map(|param| {
+                    let quote = match param.lit {
+                        Some(ref lit) => match lit.value {
+                            true => sync_html_tag_dir_effect_quote.clone(),
+                            false => quote! {},
+                        },
+                        None => match param.expr {
+                            Some(ref expr) => quote! {
+                                if #expr {
+                                    #sync_html_tag_dir_effect_quote
+                                }
+                            },
+                            None => quote! {},
+                        },
+                    };
+
+                    match quote.is_empty() {
+                        true => quote! {},
+                        false => match param.exprpath {
+                            Some(ref path) => quote! { #path{#quote} },
+                            None => quote,
+                        },
+                    }
+                })
+                .collect();
+
+        quote! {
+            #sync_html_tag_lang_quote
+            #sync_html_tag_dir_quote
+        }
     };
 
     let url_param_quote = match url_param.lit {
@@ -2082,8 +2193,7 @@ pub fn leptos_fluent(
     };
 
     let other_quotes = quote! {
-        #sync_html_tag_lang_quote
-        #sync_html_tag_dir_quote
+        #sync_html_tag_quote
         #sync_language_with_server_function_quote
         #sync_language_with_localstorage_quote
         #sync_language_with_url_param_quote
