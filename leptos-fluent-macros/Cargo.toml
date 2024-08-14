@@ -23,7 +23,10 @@ globwalk = "0.9"
 fluent-templates.workspace = true
 fluent-syntax = "0.11"
 pathdiff = "0.2"
-cfg-expr = ">=0.10"
+cfg-expr = "0.15"
+# TODO: using the same of system-deps until a new version is released
+# The problem is with the locking of trybuild
+# See https://github.com/dtolnay/trybuild/issues/261
 current_platform = ">=0.2"
 serde = { version = "1", default-features = false, features = [
   "derive"

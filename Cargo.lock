@@ -574,15 +574,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "cfg-expr"
-version = "0.16.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "345c78335be0624ed29012dc10c49102196c6882c12dde65d9f35b02da2aada8"
-dependencies = [
- "smallvec",
-]
-
-[[package]]
 name = "cfg-if"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1868,7 +1859,7 @@ dependencies = [
 name = "leptos-fluent-macros"
 version = "0.1.13"
 dependencies = [
- "cfg-expr 0.16.0",
+ "cfg-expr",
  "current_platform",
  "fluent-syntax",
  "fluent-templates",
@@ -3266,7 +3257,7 @@ version = "7.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6c81f13d9a334a6c242465140bd262fae382b752ff2011c4f7419919a9c97922"
 dependencies = [
- "cfg-expr 0.15.8",
+ "cfg-expr",
  "heck",
  "pkg-config",
  "toml",
