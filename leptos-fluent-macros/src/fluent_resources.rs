@@ -1,11 +1,12 @@
 use std::collections::HashMap;
 use std::path::Path;
+use std::rc::Rc;
 
-pub(crate) type FluentResources = HashMap<String, Vec<String>>;
-pub(crate) type FluentFilePaths = HashMap<String, Vec<String>>;
+pub(crate) type FluentResources = HashMap<Rc<String>, Vec<String>>;
+pub(crate) type FluentFilePaths = HashMap<Rc<String>, Vec<String>>;
 
 pub(crate) fn build_fluent_resources_and_file_paths(
-    dir: impl AsRef<std::path::Path>,
+    dir: impl AsRef<Path>,
 ) -> ((FluentResources, FluentFilePaths), Vec<String>) {
     let mut resources = HashMap::new();
     let mut paths = HashMap::new();
@@ -19,10 +20,11 @@ pub(crate) fn build_fluent_resources_and_file_paths(
         if let Some(lang) = entry.file_name().into_string().ok().filter(|l| {
             l.parse::<fluent_templates::LanguageIdentifier>().is_ok()
         }) {
+            let l = Rc::new(lang);
             let ((file_paths, file_contents), read_errors) =
                 read_from_dir(entry.path());
-            resources.insert(lang.clone(), file_contents);
-            paths.insert(lang, file_paths);
+            resources.insert(Rc::clone(&l), file_contents);
+            paths.insert(l, file_paths);
             errors.extend(read_errors);
         } else {
             errors.push(format!(
@@ -34,8 +36,8 @@ pub(crate) fn build_fluent_resources_and_file_paths(
     ((resources, paths), errors)
 }
 
-fn read_from_dir<P: AsRef<Path>>(
-    path: P,
+fn read_from_dir(
+    path: impl AsRef<Path>,
 ) -> ((Vec<String>, Vec<String>), Vec<String>) {
     let mut paths = Vec::new();
     let mut contents = Vec::new();

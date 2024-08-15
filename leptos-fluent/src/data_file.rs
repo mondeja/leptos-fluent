@@ -38,7 +38,7 @@ pub fn get(data_file_key: &str) -> Option<String> {
             #[cfg(feature = "tracing")]
             tracing::trace!(
                 "Data directory \"{}\" does not exist, created. Language not found",
-                data_dir.display()
+                &data_dir.display()
             );
             return None;
         }
@@ -46,14 +46,11 @@ pub fn get(data_file_key: &str) -> Option<String> {
             #[cfg(feature = "tracing")]
             tracing::trace!(
                 "Data file \"{}\" does not exist. Language not found",
-                data_file.display()
+                &data_file.display()
             );
             return None;
         }
-        #[cfg(feature = "tracing")]
-        let mut file = File::open(data_file.clone()).unwrap();
-        #[cfg(not(feature = "tracing"))]
-        let mut file = File::open(data_file).unwrap();
+        let mut file = File::open(&data_file).unwrap();
         let mut contents = String::new();
         _ = file.read_to_string(&mut contents);
         if contents.is_empty() {

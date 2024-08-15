@@ -292,6 +292,7 @@ use leptos::{view, SignalGetUntracked};
 pub use leptos_fluent_macros::leptos_fluent;
 #[cfg(feature = "ssr")]
 use leptos_meta::Html;
+use std::rc::Rc;
 
 /// Direction of the text
 #[derive(Debug)]
@@ -429,7 +430,7 @@ pub struct I18n {
     /// Available languages for the application.
     pub languages: &'static [&'static Language],
     /// Signal with a vector of fluent-templates static loaders.
-    pub translations: Signal<Vec<&'static Lazy<StaticLoader>>>,
+    pub translations: Signal<Rc<Vec<&'static Lazy<StaticLoader>>>>,
 }
 
 impl I18n {

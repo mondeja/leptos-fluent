@@ -1,9 +1,13 @@
 use crate::{FluentFilePaths, FluentResources};
 use std::collections::HashMap;
+use std::rc::Rc;
+
+pub(in crate::translations_checker) type FluentEntries =
+    HashMap<Rc<String>, Vec<FluentEntry>>;
 
 #[cfg_attr(test, derive(PartialEq))]
 #[cfg_attr(any(debug_assertions, feature = "tracing"), derive(Debug))]
-pub(crate) struct FluentEntry {
+pub(in crate::translations_checker) struct FluentEntry {
     pub(crate) message_name: String,
     pub(crate) placeables: Vec<String>,
 }
@@ -62,13 +66,13 @@ pub(crate) fn build_fluent_entries(
     workspace_path: &str,
     core_locales_path: &Option<String>,
     core_locales_content: &Option<String>,
-) -> (HashMap<String, Vec<FluentEntry>>, Vec<String>) {
-    let mut fluent_entries: HashMap<String, Vec<FluentEntry>> = HashMap::new();
+) -> (FluentEntries, Vec<String>) {
+    let mut fluent_entries: FluentEntries = HashMap::new();
     let mut errors: Vec<String> = Vec::new();
 
     for (lang, resources) in fluent_resources {
-        fluent_entries.insert(lang.to_owned(), vec![]);
-        for (r, resource_str) in resources.iter().enumerate() {
+        fluent_entries.insert(Rc::clone(lang), vec![]);
+        for resource_str in resources {
             match fluent_templates::fluent_bundle::FluentResource::try_new(
                 resource_str.to_owned(),
             ) {
@@ -79,9 +83,13 @@ pub(crate) fn build_fluent_entries(
                         .extend(get_fluent_entries_from_resource(&resource));
                 }
                 Err((resource, errs)) => {
+                    let index = resources
+                        .iter()
+                        .position(|r| r == resource_str)
+                        .unwrap();
                     let file_path = fluent_file_paths
                         .get(lang)
-                        .and_then(|paths| paths.get(r))
+                        .and_then(|paths| paths.get(index))
                         .unwrap();
                     let rel_file_path =
                         pathdiff::diff_paths(file_path, workspace_path)
@@ -118,12 +126,8 @@ pub(crate) fn build_fluent_entries(
             resource_str.to_owned(),
         ) {
             Ok(resource) => {
-                let langs =
-                    fluent_entries.keys().cloned().collect::<Vec<String>>();
-                for lang in langs {
-                    fluent_entries
-                        .get_mut(&lang)
-                        .unwrap()
+                for resources in fluent_entries.values_mut() {
+                    resources
                         .extend(get_fluent_entries_from_resource(&resource));
                 }
             }
@@ -152,12 +156,8 @@ pub(crate) fn build_fluent_entries(
                         .collect::<Vec<String>>()
                         .join("\n   +")
                 ));
-                let langs =
-                    fluent_entries.keys().cloned().collect::<Vec<String>>();
-                for lang in langs {
-                    fluent_entries
-                        .get_mut(&lang)
-                        .unwrap()
+                for resources in fluent_entries.values_mut() {
+                    resources
                         .extend(get_fluent_entries_from_resource(&resource));
                 }
             }
@@ -186,21 +186,21 @@ mod tests {
     fn test_valid() {
         let fluent_resources = HashMap::from([
             (
-                "en-US".to_string(),
+                Rc::new("en-US".to_string()),
                 vec!["foo = Bar\nhello = Hello { $name }\n".to_string()],
             ),
             (
-                "es-ES".to_string(),
+                Rc::new("en-US".to_string()),
                 vec!["foo = Bar\nhello = Hola { $name }\n".to_string()],
             ),
         ]);
         let fluent_file_paths = HashMap::from([
             (
-                "en-US".to_string(),
+                Rc::new("en-US".to_string()),
                 vec!["./locales/en-US/foo.ftl".to_string()],
             ),
             (
-                "es-ES".to_string(),
+                Rc::new("en-US".to_string()),
                 vec!["./locales/es-ES/foo.ftl".to_string()],
             ),
         ]);
@@ -217,7 +217,7 @@ mod tests {
             entries,
             HashMap::from([
                 (
-                    "en-US".to_string(),
+                    Rc::new("en-US".to_string()),
                     vec![
                         FluentEntry {
                             message_name: "foo".to_string(),
@@ -230,7 +230,7 @@ mod tests {
                     ]
                 ),
                 (
-                    "es-ES".to_string(),
+                    Rc::new("en-US".to_string()),
                     vec![
                         FluentEntry {
                             message_name: "foo".to_string(),
@@ -248,10 +248,12 @@ mod tests {
 
     #[test]
     fn test_empty_resource() {
-        let fluent_resources =
-            HashMap::from([("en-US".to_string(), vec!["".to_string()])]);
+        let fluent_resources = HashMap::from([(
+            Rc::new("en-US".to_string()),
+            vec!["".to_string()],
+        )]);
         let fluent_file_paths = HashMap::from([(
-            "en-US".to_string(),
+            Rc::new("en-US".to_string()),
             vec!["./locales/en-US/foo.ftl".to_string()],
         )]);
         let workspace_path = "./";
@@ -263,17 +265,20 @@ mod tests {
             &None,
         );
         assert!(errors.is_empty());
-        assert_eq!(entries, HashMap::from([("en-US".to_string(), vec![])]));
+        assert_eq!(
+            entries,
+            HashMap::from([(Rc::new("en-US".to_string()), vec![])])
+        );
     }
 
     #[test]
     fn test_empty_message_name() {
         let fluent_resources = HashMap::from([(
-            "en-US".to_string(),
+            Rc::new("en-US".to_string()),
             vec!["foo =\nbar = Baz".to_string()],
         )]);
         let fluent_file_paths = HashMap::from([(
-            "en-US".to_string(),
+            Rc::new("en-US".to_string()),
             vec!["./locales/en-US/foo.ftl".to_string()],
         )]);
         let workspace_path = "./";
@@ -295,7 +300,7 @@ mod tests {
         assert_eq!(
             entries,
             HashMap::from([(
-                "en-US".to_string(),
+                Rc::new("en-US".to_string()),
                 vec![FluentEntry {
                     message_name: "bar".to_string(),
                     placeables: vec![]
@@ -307,11 +312,11 @@ mod tests {
     #[test]
     fn test_empty_variable_name() {
         let fluent_resources = HashMap::from([(
-            "en-US".to_string(),
+            Rc::new("en-US".to_string()),
             vec!["foo = Bar\nhello = Hello { $ }\n".to_string()],
         )]);
         let fluent_file_paths = HashMap::from([(
-            "en-US".to_string(),
+            Rc::new("en-US".to_string()),
             vec!["./locales/en-US/foo.ftl".to_string()],
         )]);
         let workspace_path = "./";
@@ -333,7 +338,7 @@ mod tests {
         assert_eq!(
             entries,
             HashMap::from([(
-                "en-US".to_string(),
+                Rc::new("en-US".to_string()),
                 vec![FluentEntry {
                     message_name: "foo".to_string(),
                     placeables: vec![]
@@ -345,7 +350,7 @@ mod tests {
     #[test]
     fn test_fluent_functions() {
         let fluent_resources = HashMap::from([(
-            "en-US".to_string(),
+            Rc::new("en-US".to_string()),
             vec![
                 r#"locale-date-format = { DATETIME($date, month: "long", year: "numeric", day: "numeric") }
 log-time2 = Entry time: { DATETIME($date) }
@@ -354,7 +359,7 @@ emails2 = Number of unread emails { NUMBER($unreadEmails) }
             ],
         )]);
         let fluent_file_paths = HashMap::from([(
-            "en-US".to_string(),
+            Rc::new("en-US".to_string()),
             vec!["./locales/en-US/foo.ftl".to_string()],
         )]);
         let workspace_path = "./";
@@ -369,7 +374,7 @@ emails2 = Number of unread emails { NUMBER($unreadEmails) }
         assert_eq!(
             entries,
             HashMap::from([(
-                "en-US".to_string(),
+                Rc::new("en-US".to_string()),
                 vec![
                     FluentEntry {
                         message_name: "locale-date-format".to_string(),

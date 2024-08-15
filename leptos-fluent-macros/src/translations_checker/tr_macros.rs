@@ -82,7 +82,7 @@ pub(crate) struct TranslationMacro {
 
     // On tests is easier to not use file paths
     #[cfg(not(test))]
-    pub(crate) file_path: String,
+    pub(crate) file_path: std::rc::Rc<String>,
 }
 
 impl PartialEq for TranslationMacro {
@@ -111,7 +111,7 @@ pub(crate) struct TranslationsMacrosVisitor {
     current_tr_macro_start: Option<proc_macro2::LineColumn>,
 
     #[cfg(not(test))]
-    file_path: String,
+    file_path: std::rc::Rc<String>,
 }
 
 impl TranslationsMacrosVisitor {
@@ -132,7 +132,7 @@ impl TranslationsMacrosVisitor {
             current_message_name: None,
             current_placeables: Vec::new(),
             #[cfg(not(test))]
-            file_path: rel_path,
+            file_path: std::rc::Rc::new(rel_path),
             #[cfg(feature = "nightly")]
             current_tr_macro_start: None,
         }
@@ -263,7 +263,7 @@ impl<'ast> TranslationsMacrosVisitor {
                             message_name: current_message_name.to_owned(),
                             placeables: self.current_placeables.to_owned(),
                             #[cfg(not(test))]
-                            file_path: self.file_path.clone(),
+                            file_path: std::rc::Rc::clone(&self.file_path),
                             #[cfg(feature = "nightly")]
                             start: self.current_tr_macro_start.unwrap(),
                         };
