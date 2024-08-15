@@ -1900,18 +1900,20 @@ pub fn leptos_fluent(
         }
     };
 
-    let translations = {
+    let translations_quote = {
         let loader::Translations { simple, compound } = translations;
 
-        quote! {{
-            let mut all_loaders = Vec::new();
-            all_loaders.extend([#(& #simple),*]);
-            #(
-                all_loaders.extend(#compound.iter());
-            );*
+        quote! {
+            {
+                let mut all_loaders = Vec::new();
+                all_loaders.extend([#(& #simple),*]);
+                #(
+                    all_loaders.extend(#compound.iter());
+                );*
 
-            all_loaders
-        }}
+                all_loaders
+            }
+        }
     };
 
     let leptos_fluent_provide_meta_context_quote: proc_macro2::TokenStream = {
@@ -2225,10 +2227,11 @@ pub fn leptos_fluent(
             LANGUAGES[0]
         };
 
+        let translations = ::std::rc::Rc::new(#translations_quote);
         let mut i18n = ::leptos_fluent::I18n {
             language: ::leptos::create_rw_signal(initial_lang),
             languages: &LANGUAGES,
-            translations: ::leptos::Signal::derive(|| #translations),
+            translations: ::leptos::Signal::derive(move || translations.clone()),
         };
         ::leptos::provide_context::<::leptos_fluent::I18n>(i18n);
     };

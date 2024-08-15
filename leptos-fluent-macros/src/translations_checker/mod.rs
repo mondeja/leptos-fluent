@@ -45,16 +45,13 @@ pub(crate) fn run(
         core_locales_path,
         core_locales_content,
     );
-    #[cfg(feature = "tracing")]
-    errors.extend(fluent_syntax_errors.clone());
-    #[cfg(not(feature = "tracing"))]
     errors.extend(fluent_syntax_errors);
 
     #[cfg(feature = "tracing")]
     if !fluent_syntax_errors.is_empty() {
         tracing::warn!(
             "Errors while building fluent entries: {:#?}",
-            fluent_syntax_errors
+            &fluent_syntax_errors
         );
     } else {
         tracing::trace!("Built fluent entries: {:#?}", fluent_entries);
@@ -75,7 +72,7 @@ pub(crate) fn run(
     if !check_messages.is_empty() {
         tracing::warn!(
             "Errors while checking translations: {:#?}",
-            check_messages
+            &check_messages
         );
     }
 

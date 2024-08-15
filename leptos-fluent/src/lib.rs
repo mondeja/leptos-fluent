@@ -279,6 +279,7 @@ pub use web_sys;
 
 use core::hash::{Hash, Hasher};
 use core::str::FromStr;
+use std::rc::Rc;
 use fluent_templates::{
     fluent_bundle::FluentValue, loader::Loader, once_cell::sync::Lazy,
     LanguageIdentifier, StaticLoader,
@@ -429,7 +430,7 @@ pub struct I18n {
     /// Available languages for the application.
     pub languages: &'static [&'static Language],
     /// Signal with a vector of fluent-templates static loaders.
-    pub translations: Signal<Vec<&'static Lazy<StaticLoader>>>,
+    pub translations: Signal<Rc<Vec<&'static Lazy<StaticLoader>>>>,
 }
 
 impl I18n {

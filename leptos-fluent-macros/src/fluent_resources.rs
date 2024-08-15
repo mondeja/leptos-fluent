@@ -5,7 +5,7 @@ pub(crate) type FluentResources = HashMap<String, Vec<String>>;
 pub(crate) type FluentFilePaths = HashMap<String, Vec<String>>;
 
 pub(crate) fn build_fluent_resources_and_file_paths(
-    dir: impl AsRef<std::path::Path>,
+    dir: impl AsRef<Path>,
 ) -> ((FluentResources, FluentFilePaths), Vec<String>) {
     let mut resources = HashMap::new();
     let mut paths = HashMap::new();
@@ -34,8 +34,8 @@ pub(crate) fn build_fluent_resources_and_file_paths(
     ((resources, paths), errors)
 }
 
-fn read_from_dir<P: AsRef<Path>>(
-    path: P,
+fn read_from_dir(
+    path: impl AsRef<Path>,
 ) -> ((Vec<String>, Vec<String>), Vec<String>) {
     let mut paths = Vec::new();
     let mut contents = Vec::new();

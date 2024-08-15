@@ -68,7 +68,7 @@ pub(crate) fn build_fluent_entries(
 
     for (lang, resources) in fluent_resources {
         fluent_entries.insert(lang.to_owned(), vec![]);
-        for (r, resource_str) in resources.iter().enumerate() {
+        for resource_str in resources {
             match fluent_templates::fluent_bundle::FluentResource::try_new(
                 resource_str.to_owned(),
             ) {
@@ -79,9 +79,10 @@ pub(crate) fn build_fluent_entries(
                         .extend(get_fluent_entries_from_resource(&resource));
                 }
                 Err((resource, errs)) => {
+                    let index = resources.iter().position(|r| r == resource_str).unwrap();
                     let file_path = fluent_file_paths
                         .get(lang)
-                        .and_then(|paths| paths.get(r))
+                        .and_then(|paths| paths.get(index))
                         .unwrap();
                     let rel_file_path =
                         pathdiff::diff_paths(file_path, workspace_path)
