@@ -743,8 +743,8 @@ pub fn leptos_fluent(
         let sync_html_tag_lang_effect_quote = {
             #[cfg(feature = "ssr")]
             {
-                let sync_html_tag_dir_bool_quote: proc_macro2::TokenStream =
-                    sync_html_tag_dir
+                let sync_html_tag_dir_bool_quote: proc_macro2::TokenStream = {
+                    let quote = sync_html_tag_dir
                         .iter()
                         .map(|param| {
                             let quote = match param.lit {
@@ -763,7 +763,13 @@ pub fn leptos_fluent(
                                 },
                             }
                         })
-                        .collect();
+                        .collect::<proc_macro2::TokenStream>();
+
+                    match quote.is_empty() {
+                        true => quote! { false },
+                        false => quote! { #quote },
+                    }
+                };
 
                 quote! {
                     let l = #get_language_quote;
@@ -802,8 +808,8 @@ pub fn leptos_fluent(
         let sync_html_tag_dir_effect_quote = {
             #[cfg(feature = "ssr")]
             {
-                let sync_html_tag_lang_bool_quote: proc_macro2::TokenStream =
-                    sync_html_tag_lang
+                let sync_html_tag_lang_bool_quote: proc_macro2::TokenStream = {
+                    let quote = sync_html_tag_lang
                         .iter()
                         .map(|param| {
                             let quote = match param.lit {
@@ -822,7 +828,13 @@ pub fn leptos_fluent(
                                 },
                             }
                         })
-                        .collect();
+                        .collect::<proc_macro2::TokenStream>();
+
+                    match quote.is_empty() {
+                        true => quote! { false },
+                        false => quote! { #quote },
+                    }
+                };
 
                 quote! {
                     let l = #get_language_quote;

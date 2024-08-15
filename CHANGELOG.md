@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2024-08-15 - [0.1.15]
+
+### Bug fixes
+
+- Fix syntax error produced at `leptos_fluent!` macro expansion when using
+  `sync_html_tag_dir` but not `sync_html_tag_lang` or vice versa on SSR
+  (regression from v0.1.14).
+
 ## 2024-08-14 - [0.1.14]
 
 ### Enhancements
@@ -457,6 +465,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.1.15]: https://github.com/mondeja/leptos-fluent/compare/v0.1.14...v0.1.15
 [0.1.14]: https://github.com/mondeja/leptos-fluent/compare/v0.1.13...v0.1.14
 [0.1.13]: https://github.com/mondeja/leptos-fluent/compare/v0.1.12...v0.1.13
 [0.1.12]: https://github.com/mondeja/leptos-fluent/compare/v0.1.11...v0.1.12
