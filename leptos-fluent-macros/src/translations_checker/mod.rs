@@ -23,10 +23,6 @@ pub(crate) fn run(
         #[cfg(not(test))]
         workspace_path,
     );
-    #[cfg(feature = "tracing")]
-    errors.extend(tr_macros_errors.clone());
-    #[cfg(not(feature = "tracing"))]
-    errors.extend(tr_macros_errors);
 
     #[cfg(feature = "tracing")]
     if !tr_macros_errors.is_empty() {
@@ -37,6 +33,8 @@ pub(crate) fn run(
     } else {
         tracing::trace!("Gathered tr macros: {:#?}", tr_macros);
     }
+
+    errors.extend(tr_macros_errors);
 
     let (fluent_entries, fluent_syntax_errors) = build_fluent_entries(
         fluent_resources,

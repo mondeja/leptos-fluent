@@ -23,7 +23,7 @@ pub(crate) fn build_fluent_resources_and_file_paths(
             let l = Rc::new(lang);
             let ((file_paths, file_contents), read_errors) =
                 read_from_dir(entry.path());
-            resources.insert(l.clone(), file_contents);
+            resources.insert(Rc::clone(&l), file_contents);
             paths.insert(l, file_paths);
             errors.extend(read_errors);
         } else {
