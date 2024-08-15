@@ -2,8 +2,8 @@ mod fluent_entries;
 mod tr_macros;
 
 use crate::{FluentFilePaths, FluentResources};
-use fluent_entries::{build_fluent_entries, FluentEntry};
-use std::collections::HashMap;
+use fluent_entries::build_fluent_entries;
+use fluent_entries::FluentEntries;
 use std::path::Path;
 use tr_macros::{gather_tr_macro_defs_from_rs_files, TranslationMacro};
 
@@ -45,10 +45,9 @@ pub(crate) fn run(
         core_locales_path,
         core_locales_content,
     );
-    errors.extend(fluent_syntax_errors);
 
     #[cfg(feature = "tracing")]
-    if !fluent_syntax_errors.is_empty() {
+    if !&fluent_syntax_errors.is_empty() {
         tracing::warn!(
             "Errors while building fluent entries: {:#?}",
             &fluent_syntax_errors
@@ -56,6 +55,8 @@ pub(crate) fn run(
     } else {
         tracing::trace!("Built fluent entries: {:#?}", fluent_entries);
     }
+
+    errors.extend(fluent_syntax_errors);
 
     let mut check_messages =
         check_tr_macros_against_fluent_entries(&tr_macros, &fluent_entries);
@@ -113,7 +114,7 @@ fn macro_location(tr_macro: &TranslationMacro) -> String {
 
 fn check_tr_macros_against_fluent_entries(
     tr_macros: &Vec<TranslationMacro>,
-    fluent_entries: &HashMap<String, Vec<FluentEntry>>,
+    fluent_entries: &FluentEntries,
 ) -> Vec<String> {
     let mut error_messages: Vec<String> = Vec::new();
 
@@ -186,7 +187,7 @@ fn check_tr_macros_against_fluent_entries(
 
 fn check_fluent_entries_against_tr_macros(
     tr_macros: &Vec<TranslationMacro>,
-    fluent_entries: &HashMap<String, Vec<FluentEntry>>,
+    fluent_entries: &FluentEntries,
 ) -> Vec<String> {
     let mut error_messages: Vec<String> = Vec::new();
 

@@ -1,9 +1,13 @@
 use crate::{FluentFilePaths, FluentResources};
 use std::collections::HashMap;
+use std::rc::Rc;
+
+pub(in crate::translations_checker) type FluentEntries =
+    HashMap<Rc<String>, Vec<FluentEntry>>;
 
 #[cfg_attr(test, derive(PartialEq))]
 #[cfg_attr(any(debug_assertions, feature = "tracing"), derive(Debug))]
-pub(crate) struct FluentEntry {
+pub(in crate::translations_checker) struct FluentEntry {
     pub(crate) message_name: String,
     pub(crate) placeables: Vec<String>,
 }
@@ -62,12 +66,12 @@ pub(crate) fn build_fluent_entries(
     workspace_path: &str,
     core_locales_path: &Option<String>,
     core_locales_content: &Option<String>,
-) -> (HashMap<String, Vec<FluentEntry>>, Vec<String>) {
-    let mut fluent_entries: HashMap<String, Vec<FluentEntry>> = HashMap::new();
+) -> (FluentEntries, Vec<String>) {
+    let mut fluent_entries: FluentEntries = HashMap::new();
     let mut errors: Vec<String> = Vec::new();
 
     for (lang, resources) in fluent_resources {
-        fluent_entries.insert(lang.to_owned(), vec![]);
+        fluent_entries.insert(lang.clone(), vec![]);
         for resource_str in resources {
             match fluent_templates::fluent_bundle::FluentResource::try_new(
                 resource_str.to_owned(),
@@ -79,7 +83,10 @@ pub(crate) fn build_fluent_entries(
                         .extend(get_fluent_entries_from_resource(&resource));
                 }
                 Err((resource, errs)) => {
-                    let index = resources.iter().position(|r| r == resource_str).unwrap();
+                    let index = resources
+                        .iter()
+                        .position(|r| r == resource_str)
+                        .unwrap();
                     let file_path = fluent_file_paths
                         .get(lang)
                         .and_then(|paths| paths.get(index))
@@ -119,12 +126,8 @@ pub(crate) fn build_fluent_entries(
             resource_str.to_owned(),
         ) {
             Ok(resource) => {
-                let langs =
-                    fluent_entries.keys().cloned().collect::<Vec<String>>();
-                for lang in langs {
-                    fluent_entries
-                        .get_mut(&lang)
-                        .unwrap()
+                for resources in fluent_entries.values_mut() {
+                    resources
                         .extend(get_fluent_entries_from_resource(&resource));
                 }
             }
@@ -153,12 +156,8 @@ pub(crate) fn build_fluent_entries(
                         .collect::<Vec<String>>()
                         .join("\n   +")
                 ));
-                let langs =
-                    fluent_entries.keys().cloned().collect::<Vec<String>>();
-                for lang in langs {
-                    fluent_entries
-                        .get_mut(&lang)
-                        .unwrap()
+                for resources in fluent_entries.values_mut() {
+                    resources
                         .extend(get_fluent_entries_from_resource(&resource));
                 }
             }

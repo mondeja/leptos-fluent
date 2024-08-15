@@ -279,7 +279,6 @@ pub use web_sys;
 
 use core::hash::{Hash, Hasher};
 use core::str::FromStr;
-use std::rc::Rc;
 use fluent_templates::{
     fluent_bundle::FluentValue, loader::Loader, once_cell::sync::Lazy,
     LanguageIdentifier, StaticLoader,
@@ -293,6 +292,7 @@ use leptos::{view, SignalGetUntracked};
 pub use leptos_fluent_macros::leptos_fluent;
 #[cfg(feature = "ssr")]
 use leptos_meta::Html;
+use std::rc::Rc;
 
 /// Direction of the text
 #[derive(Debug)]

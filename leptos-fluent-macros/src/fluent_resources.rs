@@ -1,8 +1,9 @@
 use std::collections::HashMap;
 use std::path::Path;
+use std::rc::Rc;
 
-pub(crate) type FluentResources = HashMap<String, Vec<String>>;
-pub(crate) type FluentFilePaths = HashMap<String, Vec<String>>;
+pub(crate) type FluentResources = HashMap<Rc<String>, Vec<String>>;
+pub(crate) type FluentFilePaths = HashMap<Rc<String>, Vec<String>>;
 
 pub(crate) fn build_fluent_resources_and_file_paths(
     dir: impl AsRef<Path>,
@@ -19,10 +20,11 @@ pub(crate) fn build_fluent_resources_and_file_paths(
         if let Some(lang) = entry.file_name().into_string().ok().filter(|l| {
             l.parse::<fluent_templates::LanguageIdentifier>().is_ok()
         }) {
+            let l = Rc::new(lang);
             let ((file_paths, file_contents), read_errors) =
                 read_from_dir(entry.path());
-            resources.insert(lang.clone(), file_contents);
-            paths.insert(lang, file_paths);
+            resources.insert(l.clone(), file_contents);
+            paths.insert(l, file_paths);
             errors.extend(read_errors);
         } else {
             errors.push(format!(
