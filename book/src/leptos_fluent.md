@@ -498,6 +498,18 @@ leptos_fluent! {{
 }}
 ```
 
+### <span style="opacity:.5">CSR </span> | `set_language_from_navigator`
+
+When the user changes the language in the browser settings, the language change
+will be reflected in the client.
+
+```rust
+leptos_fluent! {{
+    // ...
+    set_language_from_navigator: true,
+}}
+```
+
 ### <span style="opacity:.5">SSR </span> | `initial_language_from_accept_language_header`
 
 Get the initial language from the [`Accept-Language`] header.

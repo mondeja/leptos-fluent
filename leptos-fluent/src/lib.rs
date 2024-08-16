@@ -874,6 +874,7 @@ pub struct LeptosFluentMeta {
     pub initial_language_from_navigator_to_localstorage: bool,
     pub initial_language_from_navigator_to_cookie: bool,
     pub initial_language_from_navigator_to_server_function: bool, // *
+    pub set_language_from_navigator: bool,
     pub initial_language_from_accept_language_header: bool,
     pub cookie_name: &'static str,
     pub cookie_attrs: &'static str,

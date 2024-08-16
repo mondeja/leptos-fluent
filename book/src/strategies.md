@@ -57,6 +57,14 @@ following strategies are available:
 | Browser [local storage] | `set_language_to_localstorage`    |
 | [Server function]       | `set_language_to_server_function` |
 
+When the user changes the language in the browser settings, the framework can
+perform a side effect to reflect the language change in the client.
+The following strategies are available:
+
+| Strategy                        | [`leptos_fluent!`]            |
+| :------------------------------ | :---------------------------- |
+| Browser [`navigator.languages`] | `set_language_from_navigator` |
+
 ### <a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Desktop applications
 
 | Strategy  | [`leptos_fluent!`]          |

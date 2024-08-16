@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2024-08-17 - [0.1.17]
+
+### New features
+
+- Add `set_language_from_navigator` parameter to `leptos_fluent!` macro to set
+  the language at runtime from the browser language.
+
 ## 2024-08-16 - [0.1.16]
 
 ### Enhancements
@@ -473,6 +480,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.1.17]: https://github.com/mondeja/leptos-fluent/compare/v0.1.16...v0.1.17
 [0.1.16]: https://github.com/mondeja/leptos-fluent/compare/v0.1.15...v0.1.16
 [0.1.15]: https://github.com/mondeja/leptos-fluent/compare/v0.1.14...v0.1.15
 [0.1.14]: https://github.com/mondeja/leptos-fluent/compare/v0.1.13...v0.1.14
