@@ -657,6 +657,13 @@ following strategies are available:</p>
 <tr><td style="text-align: left"><a href="https://book.leptos.dev/server/25_server_functions.html">Server function</a></td><td style="text-align: left"><code>set_language_to_server_function</code></td></tr>
 </tbody></table>
 </div>
+<p>When the user changes the language in the browser settings, the framework can
+perform a side effect to reflect the language change in the client.
+The following strategies are available:</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a></th></tr></thead><tbody>
+<tr><td style="text-align: left">Browser <a href="https://developer.mozilla.org/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a></td><td style="text-align: left"><code>set_language_from_navigator</code></td></tr>
+</tbody></table>
+</div>
 <h3 id="system--desktop-applications"><a class="header" href="#system--desktop-applications"><a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Desktop applications</a></h3>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a></th></tr></thead><tbody>
 <tr><td style="text-align: left">Data file</td><td style="text-align: left"><code>set_language_to_data_file</code></td></tr>
@@ -1074,6 +1081,7 @@ locale. It is used in the root component of the application.</p>
 <li><a href="leptos_fluent.html#csr---initial_language_from_navigator">CSR  | <code>initial_language_from_navigator</code></a></li>
 <li><a href="leptos_fluent.html#csr---initial_language_from_navigator_to_localstorage">CSR  | <code>initial_language_from_navigator_to_localstorage</code></a></li>
 <li><a href="leptos_fluent.html#csr---initial_language_from_navigator_to_cookie">CSR  | <code>initial_language_from_navigator_to_cookie</code></a></li>
+<li><a href="leptos_fluent.html#csr---set_language_from_navigator">CSR  | <code>set_language_from_navigator</code></a></li>
 <li><a href="leptos_fluent.html#ssr---initial_language_from_accept_language_header">SSR  | <code>initial_language_from_accept_language_header</code></a></li>
 <li><a href="leptos_fluent.html#csr--ssr---cookie_name-lf-lang">CSR + SSR  | <code>cookie_name: </code>"lf-lang"</a></li>
 <li><a href="leptos_fluent.html#csr---cookie_attrs-">CSR  | <code>cookie_attrs: </code>""</a></li>
@@ -1449,6 +1457,13 @@ leptos_fluent! {{
 <pre><code class="language-rust">leptos_fluent! {{
     // ...
     initial_language_from_navigator_to_cookie: true,
+}}</code></pre>
+<h3 id="csr---set_language_from_navigator"><a class="header" href="#csr---set_language_from_navigator"><span style="opacity:.5">CSR </span> | <code>set_language_from_navigator</code></a></h3>
+<p>When the user changes the language in the browser settings, the language change
+will be reflected in the client.</p>
+<pre><code class="language-rust">leptos_fluent! {{
+    // ...
+    set_language_from_navigator: true,
 }}</code></pre>
 <h3 id="ssr---initial_language_from_accept_language_header"><a class="header" href="#ssr---initial_language_from_accept_language_header"><span style="opacity:.5">SSR </span> | <code>initial_language_from_accept_language_header</code></a></h3>
 <p>Get the initial language from the <a href="https://developer.mozilla.org/docs/Web/HTTP/Headers/Accept-Language"><code>Accept-Language</code></a> header.</p>
