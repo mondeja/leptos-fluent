@@ -398,6 +398,7 @@ pub(crate) struct I18nLoader {
     pub initial_language_from_navigator_to_cookie: Vec<LitBoolExpr>,
     pub initial_language_from_navigator_to_server_function: Vec<Identifier>,
     pub initial_language_from_accept_language_header: Vec<LitBoolExpr>,
+    pub set_language_from_navigator: Vec<LitBoolExpr>,
     pub cookie_name: LitStrExpr,
     pub cookie_attrs: LitStrExpr,
     pub initial_language_from_cookie: Vec<LitBoolExpr>,
@@ -472,6 +473,7 @@ impl Parse for I18nLoader {
         > = Vec::new();
         let mut initial_language_from_accept_language_header: Vec<LitBoolExpr> =
             Vec::new();
+        let mut set_language_from_navigator: Vec<LitBoolExpr> = Vec::new();
         let mut cookie_name = LitStrExpr::new();
         let mut cookie_attrs = LitStrExpr::new();
         let mut initial_language_from_cookie: Vec<LitBoolExpr> = Vec::new();
@@ -904,6 +906,22 @@ impl Parse for I18nLoader {
                     "initial_language_from_accept_language_header",
                 )?;
                 initial_language_from_accept_language_header.push(param);
+            } else if k == "set_language_from_navigator" {
+                let mut param = LitBoolExpr::new();
+                clone_runtime_exprpath!(exprpath, param);
+                parse_struct_field_init_shorthand!(
+                    struct_field_init_shorthand,
+                    param,
+                    k,
+                    set_language_from_navigator
+                );
+                parse_litbool_or_expr_param(
+                    &fields,
+                    &mut param.lit,
+                    &mut param.expr,
+                    "set_language_from_navigator",
+                )?;
+                set_language_from_navigator.push(param);
             } else if k == "cookie_name" {
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
@@ -1501,6 +1519,7 @@ impl Parse for I18nLoader {
             initial_language_from_navigator_to_cookie,
             initial_language_from_navigator_to_server_function,
             initial_language_from_accept_language_header,
+            set_language_from_navigator,
             cookie_name,
             cookie_attrs,
             initial_language_from_cookie,

@@ -121,6 +121,7 @@ pub fn leptos_fluent(
         initial_language_from_navigator_to_cookie,
         initial_language_from_navigator_to_server_function,
         initial_language_from_accept_language_header,
+        set_language_from_navigator,
         cookie_name,
         cookie_attrs,
         initial_language_from_cookie,
@@ -164,9 +165,19 @@ pub fn leptos_fluent(
         ::leptos_fluent::i18n()()
     };
 
+    #[cfg(all(feature = "nightly", not(feature = "ssr")))]
+    let set_language_quote = quote! {
+        ::leptos_fluent::i18n()(l)
+    };
+
     #[cfg(not(feature = "nightly"))]
     let get_language_quote = quote! {
         ::leptos_fluent::i18n().language.get()
+    };
+
+    #[cfg(all(not(feature = "nightly"), not(feature = "ssr")))]
+    let set_language_quote = quote! {
+        ::leptos_fluent::i18n().language.set(l)
     };
 
     let cookie_name_quote = match cookie_name.lit {
@@ -1490,6 +1501,74 @@ pub fn leptos_fluent(
         _ = initial_language_from_navigator_to_server_function;
     }
 
+    let set_language_from_navigator_quote: proc_macro2::TokenStream = {
+        #[cfg(not(feature = "ssr"))]
+        {
+            let effect_quote = quote! {
+                use ::leptos_fluent::web_sys::wasm_bindgen::JsCast;
+                let closure: Box<dyn FnMut(_)> = Box::new(
+                    move |_: web_sys::Window| {
+                        let languages = window().navigator().languages().to_vec();
+                        for raw_language in languages {
+                            let language = raw_language.as_string();
+                            if language.is_none() {
+                                continue;
+                            }
+                            let l = ::leptos_fluent::l(&language.unwrap(), &LANGUAGES);
+                            ::leptos::logging::log!("Language changed to {:?}", &l);
+                            if let Some(l) = l {
+                                #set_language_quote;
+                                break;
+                            }
+                        }
+                    }
+                );
+                let cb = ::leptos_fluent::web_sys::wasm_bindgen::closure::Closure::wrap(
+                    closure
+                );
+                ::leptos::window().add_event_listener_with_callback(
+                    "languagechange",
+                    cb.as_ref().unchecked_ref()
+                ).expect("Failed to add event listener for window languagechange");
+                cb.forget();
+            };
+
+            set_language_from_navigator
+                .iter()
+                .map(|param| {
+                    let quote = match param.lit {
+                        Some(ref lit) => match lit.value {
+                            true => effect_quote.clone(),
+                            false => quote!(),
+                        },
+                        None => match param.expr {
+                            Some(ref expr) => quote! {
+                                if #expr {
+                                    #effect_quote
+                                }
+                            },
+                            None => quote!(),
+                        },
+                    };
+
+                    match quote.is_empty() {
+                        true => quote!(),
+                        false => match param.exprpath {
+                            Some(ref path) => quote!(#path{#quote}),
+                            None => quote,
+                        },
+                    }
+                })
+                .collect()
+        }
+
+        #[cfg(feature = "ssr")]
+        {
+            _ = set_language_from_navigator;
+            quote!()
+        }
+    };
+
     // Accept-Language header
     //   Actix
     #[cfg(all(feature = "actix", feature = "ssr"))]
@@ -2070,6 +2149,8 @@ pub fn leptos_fluent(
                         identifiers_as_bools(
                             &initial_language_from_navigator_to_server_function,
                         );
+                    let set_language_from_navigator_quote =
+                        lit_bool_exprs(&set_language_from_navigator);
                     let initial_language_from_accept_language_header_quote =
                         lit_bool_exprs(
                             &initial_language_from_accept_language_header,
@@ -2176,6 +2257,7 @@ pub fn leptos_fluent(
                             initial_language_from_navigator_to_localstorage: #initial_language_from_navigator_to_localstorage_quote,
                             initial_language_from_navigator_to_cookie: #initial_language_from_navigator_to_cookie_quote,
                             initial_language_from_navigator_to_server_function: #initial_language_from_navigator_to_server_function_quote,
+                            set_language_from_navigator: #set_language_from_navigator_quote,
                             initial_language_from_accept_language_header: #initial_language_from_accept_language_header_quote,
                             cookie_name: #cookie_name_quote,
                             cookie_attrs: #cookie_attrs_quote,
@@ -2215,6 +2297,7 @@ pub fn leptos_fluent(
         #sync_language_with_url_param_quote
         #sync_language_with_cookie_quote
         #sync_language_with_data_file_quote
+        #set_language_from_navigator_quote
         #files_tracker_quote
         #leptos_fluent_provide_meta_context_quote
     };

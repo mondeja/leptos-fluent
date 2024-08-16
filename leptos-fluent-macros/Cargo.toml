@@ -2,7 +2,7 @@
 name = "leptos-fluent-macros"
 description = "Macros for leptos-fluent"
 edition.workspace = true
-version = "0.1.16"
+version = "0.1.17"
 license = "MIT"
 documentation.workspace = true
 repository.workspace = true
