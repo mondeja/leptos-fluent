@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2024-08-16 - [0.1.16]
+
+### Enhancements
+
+- Add `debug` feature to print debug information when using `leptos_fluent!`
+  macro.
+- Some performance improvements.
+
 ## 2024-08-15 - [0.1.15]
 
 ### Bug fixes
@@ -465,6 +473,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.1.16]: https://github.com/mondeja/leptos-fluent/compare/v0.1.15...v0.1.16
 [0.1.15]: https://github.com/mondeja/leptos-fluent/compare/v0.1.14...v0.1.15
 [0.1.14]: https://github.com/mondeja/leptos-fluent/compare/v0.1.13...v0.1.14
 [0.1.13]: https://github.com/mondeja/leptos-fluent/compare/v0.1.12...v0.1.13
