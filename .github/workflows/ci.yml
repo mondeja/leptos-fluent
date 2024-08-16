@@ -120,7 +120,14 @@ jobs:
   unit-tests:
     name: Unit tests
     needs: check-toolchain-is-stable
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runs-on }}
+    strategy:
+      fail-fast: false
+      matrix:
+        runs-on:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
     steps:
       - uses: actions/checkout@v4
       - name: Get toolchain
@@ -210,7 +217,7 @@ jobs:
   build-example:
     needs: check-toolchain-is-stable
     name: Build example
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runs-on }}
     strategy:
       fail-fast: false
       matrix:
@@ -223,6 +230,9 @@ jobs:
         toolchain:
           - stable
           - nightly
+        runs-on:
+          - ubuntu-latest
+          - macos-latest
     steps:
       - uses: actions/checkout@v4
       - name: Set nightly toolchain
@@ -276,11 +286,14 @@ jobs:
         run: |
           cd examples/${{ matrix.example }}
           cargo leptos build --release ${{ steps.build-features.outputs.features }}
-      - name: Install libgtk
-        if: endsWith(matrix.example, 'gtk')
+      - name: Install GTK4 on Ubuntu
+        if: endsWith(matrix.example, 'gtk') && startsWith(matrix.runs-on, 'ubuntu')
         run: |
           sudo apt-get update
           sudo apt-get install -y libgtk-4-dev
+      - name: Install GTK4 on MacOS
+        if: endsWith(matrix.example, 'gtk') && startsWith(matrix.runs-on, 'macos')
+        run: brew install gtk4
       - name: Build with cargo
         if: startsWith(matrix.example, 'system')
         run: |

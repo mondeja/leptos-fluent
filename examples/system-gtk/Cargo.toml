@@ -7,9 +7,19 @@ edition = "2021"
 leptos = { version = "0.6", features = ["csr"] }
 gtk = { version = "0.9", package = "gtk4" }
 leptos-fluent = { path = "../../leptos-fluent", default-features = false, features = [
-  "system", "tracing"
+  "system",
+  "tracing"
 ] }
 fluent-templates = "0.9"
-tracing = "0.1"
+tracing = { version = "0.1", default-features = false }
 tracing-appender = "0.2"
-tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+tracing-subscriber = { version = "0.3", default-features = false, features = [
+  "env-filter",
+  "ansi",
+] }
+
+[build-dependencies]
+system-deps = "7"
+
+[package.metadata.system-deps]
+gtk4 = "4"

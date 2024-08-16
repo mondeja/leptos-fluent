@@ -182,8 +182,19 @@ fn line_col_from_index_content(content: &str, index: usize) -> (usize, usize) {
 mod tests {
     use super::*;
 
+    fn cross_platform_path_repr(path: &str) -> String {
+        #[cfg(target_os = "windows")]
+        {
+            path.replace('/', "\\")
+        }
+        #[cfg(not(target_os = "windows"))]
+        {
+            path.to_string()
+        }
+    }
+
     #[test]
-    fn test_valid() {
+    fn valid() {
         let fluent_resources = HashMap::from([
             (
                 Rc::new("en-US".to_string()),
@@ -247,7 +258,7 @@ mod tests {
     }
 
     #[test]
-    fn test_empty_resource() {
+    fn empty_resource() {
         let fluent_resources = HashMap::from([(
             Rc::new("en-US".to_string()),
             vec!["".to_string()],
@@ -272,7 +283,7 @@ mod tests {
     }
 
     #[test]
-    fn test_empty_message_name() {
+    fn empty_message_name() {
         let fluent_resources = HashMap::from([(
             Rc::new("en-US".to_string()),
             vec!["foo =\nbar = Baz".to_string()],
@@ -291,11 +302,16 @@ mod tests {
         );
         assert_eq!(
             errors,
-            vec![concat!(
-                "Error parsing fluent resource in file locales/en-US/foo.ftl",
-                " for locale \"en-US\":\n",
-                "  + Expected a message field for \"foo\" (at line 1, col 1)"
-            )]
+            vec![
+                format!(
+                    concat!(
+                        "Error parsing fluent resource in file {}",
+                        " for locale \"en-US\":\n",
+                        "  + Expected a message field for \"foo\" (at line 1, col 1)"
+                    ),
+                    &cross_platform_path_repr("locales/en-US/foo.ftl"),
+                )
+            ]
         );
         assert_eq!(
             entries,
@@ -310,7 +326,7 @@ mod tests {
     }
 
     #[test]
-    fn test_empty_variable_name() {
+    fn empty_variable_name() {
         let fluent_resources = HashMap::from([(
             Rc::new("en-US".to_string()),
             vec!["foo = Bar\nhello = Hello { $ }\n".to_string()],
@@ -329,10 +345,13 @@ mod tests {
         );
         assert_eq!(
             errors,
-            vec![concat!(
-                "Error parsing fluent resource in file locales/en-US/foo.ftl",
-                " for locale \"en-US\":\n",
-                "  + Expected one of \"a-zA-Z\" (at line 2, col 18)"
+            vec![format!(
+                concat!(
+                    "Error parsing fluent resource in file {}",
+                    " for locale \"en-US\":\n",
+                    "  + Expected one of \"a-zA-Z\" (at line 2, col 18)"
+                ),
+                &cross_platform_path_repr("locales/en-US/foo.ftl"),
             )]
         );
         assert_eq!(
@@ -348,7 +367,7 @@ mod tests {
     }
 
     #[test]
-    fn test_fluent_functions() {
+    fn fluent_functions() {
         let fluent_resources = HashMap::from([(
             Rc::new("en-US".to_string()),
             vec![
