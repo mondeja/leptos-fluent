@@ -286,11 +286,14 @@ jobs:
         run: |
           cd examples/${{ matrix.example }}
           cargo leptos build --release ${{ steps.build-features.outputs.features }}
-      - name: Install libgtk
-        if: endsWith(matrix.example, 'gtk')
+      - name: Install GTK4 on Ubuntu
+        if: endsWith(matrix.example, 'gtk') && startsWith(matrix.runs-on, 'ubuntu')
         run: |
           sudo apt-get update
           sudo apt-get install -y libgtk-4-dev
+      - name: Install GTK4 on MacOS
+        if: endsWith(matrix.example, 'gtk') && startsWith(matrix.runs-on, 'macos')
+        run: brew install gtk4
       - name: Build with cargo
         if: startsWith(matrix.example, 'system')
         run: |
