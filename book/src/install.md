@@ -82,6 +82,7 @@ See the [GTK example](https://github.com/mondeja/leptos-fluent/tree/master/examp
 - **YAML languages file**: `yaml`
 - **JSON5 languages file**: `json5`
 - **Tracing support**: `tracing`
+- **Debugging**: `debug`
 
 ## Nightly toolchain
 
