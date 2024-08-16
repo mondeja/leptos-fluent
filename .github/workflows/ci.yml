@@ -120,7 +120,14 @@ jobs:
   unit-tests:
     name: Unit tests
     needs: check-toolchain-is-stable
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runs-on }}
+    strategy:
+      fail-fast: false
+      matrix:
+        runs-on:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
     steps:
       - uses: actions/checkout@v4
       - name: Get toolchain
@@ -210,7 +217,7 @@ jobs:
   build-example:
     needs: check-toolchain-is-stable
     name: Build example
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runs-on }}
     strategy:
       fail-fast: false
       matrix:
@@ -223,6 +230,10 @@ jobs:
         toolchain:
           - stable
           - nightly
+        runs-on:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
     steps:
       - uses: actions/checkout@v4
       - name: Set nightly toolchain
