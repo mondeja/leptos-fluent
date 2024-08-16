@@ -185,7 +185,7 @@ mod tests {
     fn cross_platform_path_repr(path: &str) -> String {
         #[cfg(target_os = "windows")]
         {
-            path.replace('/', "\\\\")
+            path.replace('/', "\\")
         }
         #[cfg(not(target_os = "windows"))]
         {
