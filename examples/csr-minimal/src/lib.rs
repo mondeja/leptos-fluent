@@ -9,19 +9,8 @@ static_loader! {
     };
 }
 
-#[derive(Clone)]
-struct Foo {
-    bar: String,
-}
-
 #[component]
 pub fn App() -> impl IntoView {
-    let foo = Foo {
-        bar: "baz".to_string(),
-    };
-    ::leptos::prelude::provide_context::<Foo>(foo);
-
-
     leptos_fluent! {{
         translations: [TRANSLATIONS],
         locales: "./locales",
@@ -32,7 +21,6 @@ pub fn App() -> impl IntoView {
 
 #[component]
 pub fn LanguageSelector() -> impl IntoView {
-
     let i18n = expect_i18n();
 
     view! {
@@ -43,8 +31,6 @@ pub fn LanguageSelector() -> impl IntoView {
                 i18n.languages
                     .iter()
                     .map(|lang| {
-                        ::leptos::prelude::expect_context::<Foo>();
-                        ::leptos::logging::log!("here");
                         view! {
                             <div>
                                 <input
@@ -53,10 +39,7 @@ pub fn LanguageSelector() -> impl IntoView {
                                     name="language"
                                     value=lang
                                     checked=lang.is_active()
-                                    on:click=move |_| {
-                                        ::leptos::prelude::expect_context::<Foo>();
-                                        lang.activate()
-                                    }
+                                    on:click=move |_| lang.activate()
                                 />
                                 <label for=lang>{lang.name}</label>
                             </div>
