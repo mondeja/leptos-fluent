@@ -255,7 +255,7 @@ pub fn leptos_fluent(
         };
 
         let effect_quote = quote! {
-            if let Ok(l) = ::leptos_fluent::current_locale() {
+            if let Ok(l) = ::leptos_fluent::current_locale::current_locale() {
                 lang = ::leptos_fluent::l(&l, &LANGUAGES);
                 if let Some(l) = lang {
                     #initial_language_from_system_to_data_file_quote
@@ -737,8 +737,8 @@ pub fn leptos_fluent(
         // Calling `provide_meta_context()` to not show a warning
         #[cfg(feature = "ssr")]
         let previous_html_tag_attrs_quote = quote! {{
-            ::leptos_meta::provide_meta_context();
-            let html_tag_as_string = ::leptos_meta::use_head().html.as_string().unwrap_or("".to_string());
+            ::leptos_fluent::leptos_meta::provide_meta_context();
+            let html_tag_as_string = ::leptos_fluent::leptos_meta::use_head().html.as_string().unwrap_or("".to_string());
             let mut class: Option<::leptos::TextProp> = None;
             let mut lang: Option<::leptos::TextProp> = None;
             let mut dir: Option<::leptos::TextProp> = None;
@@ -791,8 +791,8 @@ pub fn leptos_fluent(
                 quote! {
                     let l = #get_language_quote;
                     let (class, _, dir) = #previous_html_tag_attrs_quote;
-                    ::leptos_meta::Html(
-                        ::leptos_meta::HtmlProps {
+                    ::leptos_fluent::leptos_meta::Html(
+                        ::leptos_fluent::leptos_meta::HtmlProps {
                             lang: Some(l.id.to_string().into()),
                             dir: if #sync_html_tag_dir_bool_quote {
                                 Some(l.dir.as_str().into())
@@ -856,8 +856,8 @@ pub fn leptos_fluent(
                 quote! {
                     let l = #get_language_quote;
                     let (class, lang, _) = #previous_html_tag_attrs_quote;
-                    ::leptos_meta::Html(
-                        ::leptos_meta::HtmlProps {
+                    ::leptos_fluent::leptos_meta::Html(
+                        ::leptos_fluent::leptos_meta::HtmlProps {
                             lang: if #sync_html_tag_lang_bool_quote {
                                 Some(l.id.to_string().into())
                             } else {
