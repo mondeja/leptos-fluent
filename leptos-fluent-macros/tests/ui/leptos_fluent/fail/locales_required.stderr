@@ -4,6 +4,6 @@ error: Missing `locales` parameter
 14 | /     leptos_fluent! {
 15 | |         translations: [TRANSLATIONS],
 16 | |     };
-   | |______^
+   | |_____^
    |
    = note: this error originates in the macro `leptos_fluent` (in Nightly builds, run with -Z macro-backtrace for more info)
