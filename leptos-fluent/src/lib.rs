@@ -241,7 +241,7 @@
 //! - **Axum integration**: `axum`
 //! - **Nightly toolchain**: `nightly`
 //! - **Desktop applications**: `system`
-//! - **JSON languages file**: `json` (enabled by default)
+//! - **JSON languages file**: `json`
 //! - **YAML languages file**: `yaml`
 //! - **JSON5 languages file**: `json5`
 //! - **Tracing support**: `tracing`
