@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 leptos = { version = "0.6", features = ["csr"] }
 gtk = { version = "0.9", package = "gtk4" }
-leptos-fluent = { path = "../../leptos-fluent", default-features = false, features = [
+leptos-fluent = { path = "../../leptos-fluent", features = [
   "system",
   "tracing"
 ] }

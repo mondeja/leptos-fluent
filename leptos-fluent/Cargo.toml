@@ -30,7 +30,7 @@ directories = { version = "5", optional = true }
 tracing = { version = "0.1", optional = true }
 
 [features]
-default = ["json"]
+default = []
 system = [
   "dep:current_locale",
   "dep:directories",
