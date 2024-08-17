@@ -4,7 +4,9 @@
 
 ### Breaking changes
 
-- The feature `json` is not enabled by default anymore.
+- The feature `json` is not enabled by default anymore. Now leptos-fluent
+  does not includes features by default, so you don't need to use
+  `default-features = false` in your `Cargo.toml` file.
 
 ## 2024-08-17 - [0.1.17]
 
