@@ -244,17 +244,26 @@ development environment and contribute to the project.</p>
 <p>For client side rendering apps install <strong>leptos-fluent</strong> and <a href="https://github.com/XAMPPRocky/fluent-templates"><code>fluent-templates</code></a>:</p>
 <pre><code class="language-toml">[dependencies]
 leptos-fluent = "0.1"
-fluent-templates = "0.9"
+fluent-templates = "0.10"
 </code></pre>
 <details>
-<summary>Minimal</summary>
-<p>Using <code>default-features = false</code> the <code>json</code> default feature of
-<strong>leptos-fluent</strong> will not be enabled, so the <code>languages</code> parameter
-of <a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a> macro will not be available.</p>
+<summary>Minimal (recommended)</summary>
 <pre><code class="language-toml">[dependencies]
 leptos-fluent = { version = "0.1", default-features = false }
-fluent-templates = "0.9"
+fluent-templates = { version = "0.10", default-features = false, features = [
+  "macros",
+  "walkdir"
+] }
 </code></pre>
+<ul>
+<li>Using <code>default-features = false</code> for <code>leptos-fluent</code> the <code>json</code>
+default feature will not be enabled, so the <code>languages</code> parameter
+of <a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a> macro will not be available.</li>
+<li>Using <code>default-features = false</code> and <code>features = ["macros", "walkdir"]</code>
+for <code>fluent-templates</code> ensures that the dependency tree is the minimal
+possible because more dependencies are shared between <code>leptos-fluent</code>
+and <code>fluent-templates</code>.</li>
+</ul>
 </details>
 <h2 id="ssr"><a class="header" href="#ssr">SSR</a></h2>
 <p>For server side rendering apps install <strong>leptos-fluent</strong>, <a href="https://github.com/XAMPPRocky/fluent-templates"><code>fluent-templates</code></a>
@@ -262,7 +271,7 @@ and activate the <code>hydrate</code>, <code>ssr</code> and <code>actix</code>/<
 respective features set.</p>
 <pre><code class="language-toml">[dependencies]
 leptos-fluent = "0.1"
-fluent-templates = "0.9"
+fluent-templates = "0.10"
 
 [features]
 hydrate = [
@@ -283,7 +292,7 @@ applications. You need to install <code>leptos-fluent</code>, <a href="https://g
 and enable the <code>system</code> feature:</p>
 <pre><code class="language-toml">[dependencies]
 leptos-fluent = { version = "0.1", features = ["system"] }
-fluent-templates = "0.9"
+fluent-templates = "0.10"
 </code></pre>
 <div id="admonition-example" class="admonition admonish-example" role="note" aria-labelledby="admonition-example-title">
 <div class="admonition-title">
@@ -315,7 +324,7 @@ fluent-templates = "0.9"
 feature:</p>
 <pre><code class="language-toml">[dependencies]
 leptos-fluent = { version = "0.1", features = ["nightly"] }
-fluent-templates = "0.9"
+fluent-templates = "0.10"
 </code></pre>
 <h2 id="language-files"><a class="header" href="#language-files">Language files</a></h2>
 <p>By default, <strong>leptos-fluent</strong> supports JSON languages files. To use other
@@ -323,7 +332,7 @@ formats to load custom languages, the <code>json5</code> or <code>yaml</code> fe
 enabled:</p>
 <!-- markdownlint-disable MD013 -->
 <pre><code class="language-toml">[dependencies]
-fluent-templates = "0.9"
+fluent-templates = "0.10"
 leptos-fluent = { version = "0.1", features = ["json5"], default-features = false }
 </code></pre>
 <!-- markdownlint-enable MD013 -->
@@ -354,7 +363,7 @@ watch-additional-files = ["examples/csr/locales"]
 <p>To enable <a href="https://docs.rs/tracing/latest/tracing"><code>tracing</code></a> support, add the <code>tracing</code> feature to <strong>leptos-fluent</strong>:</p>
 <pre><code class="language-toml">[dependencies]
 leptos-fluent = { version = "0.1", features = ["tracing"] }
-fluent-templates = "0.9"
+fluent-templates = "0.10"
 </code></pre>
 <div id="admonition-example-1" class="admonition admonish-example" role="note" aria-labelledby="admonition-example-1-title">
 <div class="admonition-title">
@@ -480,7 +489,7 @@ path = "src/lib.rs"
 [dependencies]
 leptos = { version = "0.6.12", features = ["csr"] }
 leptos-fluent = "0.1"
-fluent-templates = "0.9"
+fluent-templates = "0.10"
 console_error_panic_hook = "0.1"
 
 # Using cargo-leptos
@@ -939,7 +948,7 @@ leptos_fluent! {{
     // ...
 }}</code></pre>
 <h3 id="how-to-get-the-fallback-language"><a class="header" href="#how-to-get-the-fallback-language">How to get the fallback language</a></h3>
-<p>From fluent-templates <code>v0.9.5</code> onwards can be obtained from your translations.</p>
+<p>From fluent-templates <code>v0.10</code> onwards can be obtained from your translations.</p>
 <pre><code class="language-rust">let fallback_language = expect_i18n().translations.get()[0].fallback();</code></pre>
 <h3 id="why-examples-dont-use-for-component"><a class="header" href="#why-examples-dont-use-for-component">Why examples don't use <a href="https://docs.rs/leptos/latest/leptos/fn.For.html"><code>&lt;For/&gt;</code></a> component?</a></h3>
 <div id="admonition-bug" class="admonition admonish-bug" role="note" aria-labelledby="admonition-bug-title">
