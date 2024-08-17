@@ -273,10 +273,14 @@ pub mod localstorage;
 #[doc(hidden)]
 pub mod url;
 
-#[cfg(feature = "system")]
-pub use current_locale::current_locale;
 #[doc(hidden)]
-pub use web_sys;
+#[cfg(feature = "system")]
+pub extern crate current_locale;
+#[cfg(feature = "ssr")]
+#[doc(hidden)]
+pub extern crate leptos_meta;
+#[doc(hidden)]
+pub extern crate web_sys;
 
 use core::hash::{Hash, Hasher};
 use core::str::FromStr;
@@ -285,14 +289,10 @@ use fluent_templates::{
     LanguageIdentifier, StaticLoader,
 };
 use leptos::{
-    component, use_context, with, Attribute, IntoAttribute, IntoView, Oco,
-    RwSignal, Signal, SignalGet, SignalSet,
+    use_context, with, Attribute, IntoAttribute, Oco, RwSignal, Signal,
+    SignalGet, SignalSet,
 };
-#[cfg(feature = "ssr")]
-use leptos::{view, SignalGetUntracked};
 pub use leptos_fluent_macros::leptos_fluent;
-#[cfg(feature = "ssr")]
-use leptos_meta::Html;
 use std::rc::Rc;
 
 /// Direction of the text
@@ -796,57 +796,6 @@ pub fn l(
 ) -> Option<&'static Language> {
     language_from_str_between_languages(code, languages)
 }
-
-/// Reactive HTML tag to set attributes on SSR
-///
-/// Currently there is not a way to set the `dir` and `lang` attributes
-/// of `<html>` tags on SSR. This components updates it on SSR. Must be
-/// rendered in a view.
-///
-/// ```rust,ignore
-/// use leptos_fluent::SsrHtmlTag;
-///
-/// view! {
-///     <SsrHtmlTag/>
-/// }
-/// ```
-#[deprecated(
-    since = "0.1.14",
-    note = "The component SsrHtmlTag is not needed anymore and will be removed in v0.2. \
-          The `sync_html_tag_lang` and `sync_html_tag_dir` parameters of the `leptos_fluent!` \
-          macro are enough to set the `lang` and `dir` attributes of the `<html>` tag on SSR."
-)]
-#[component(transparent)]
-#[cfg(feature = "ssr")]
-#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace"))]
-pub fn SsrHtmlTag() -> impl IntoView {
-    let lang = expect_i18n().language.get_untracked();
-    view! { <Html lang=lang.id.to_string() dir=lang.dir.as_str()/> }
-}
-
-/// Reactive HTML tag to set attributes on SSR
-///
-/// Currently there is not a way to set the `dir` and `lang` attributes
-/// of `<html>` tags on SSR. This components updates it on SSR. Must be
-/// rendered in a view.
-///
-/// ```rust,ignore
-/// use leptos_fluent::SsrHtmlTag;
-///
-/// view! {
-///     <SsrHtmlTag/>
-/// }
-/// ```
-#[deprecated(
-    since = "0.1.14",
-    note = "The component `SsrHtmlTag` is not needed anymore and will be removed in v0.2. \
-          The `sync_html_tag_lang` and `sync_html_tag_dir` parameters of the `leptos_fluent!` \
-          macro are enough to set the `lang` and `dir` attributes of the `<html>` tag on SSR."
-)]
-#[component(transparent)]
-#[cfg(not(feature = "ssr"))]
-#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace"))]
-pub fn SsrHtmlTag() -> impl IntoView {}
 
 /// Parameters passed to `leptos_fluent!` macro at creation of `i18n` context
 #[derive(Clone, Debug)]
