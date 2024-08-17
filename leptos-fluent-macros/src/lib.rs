@@ -58,7 +58,7 @@ pub(crate) fn debug(msg: &str) {
 ///
 /// #[component]
 /// pub fn App() -> impl IntoView {
-///     leptos_fluent! {{
+///     leptos_fluent! {
 ///         translations: [TRANSLATIONS],
 ///         languages: "./locales/languages.json",
 ///         sync_html_tag_lang: true,
@@ -78,7 +78,7 @@ pub(crate) fn debug(msg: &str) {
 ///         cookie_attrs: "SameSite=Strict; Secure; path=/; max-age=2592000",
 ///         initial_language_from_cookie: true,
 ///         set_language_to_cookie: true,
-///     }};
+///     };
 ///
 ///     view! {
 ///         ...

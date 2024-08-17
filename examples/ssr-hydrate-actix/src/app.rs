@@ -14,7 +14,7 @@ static_loader! {
 #[component]
 pub fn App() -> impl IntoView {
     provide_meta_context();
-    leptos_fluent! {{
+    leptos_fluent! {
         translations: [TRANSLATIONS],
         locales: "./locales",
         #[cfg(debug_assertions)] check_translations: "./src/**/*.rs",
@@ -49,7 +49,7 @@ pub fn App() -> impl IntoView {
         initial_language_from_url_path_to_cookie: true,
         initial_language_from_url_path_to_localstorage: true,
         initial_language_from_url_path_to_server_function: set_language_server_function,
-    }};
+    };
 
     view! {
         <Title text=move || tr!("welcome-to-leptos")/>

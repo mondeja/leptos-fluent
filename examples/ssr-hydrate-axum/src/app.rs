@@ -18,7 +18,7 @@ pub static COMPOUND: &[&Lazy<StaticLoader>] = &[&TRANSLATIONS, &TRANSLATIONS];
 
 #[component]
 pub fn App() -> impl IntoView {
-    leptos_fluent! {{
+    leptos_fluent! {
         translations: [TRANSLATIONS, TRANSLATIONS] + COMPOUND,
         locales: "./locales",
         check_translations: "./src/**/*.rs",
@@ -41,7 +41,7 @@ pub fn App() -> impl IntoView {
         initial_language_from_navigator: true,
         initial_language_from_navigator_to_localstorage: true,
         initial_language_from_accept_language_header: true,
-    }};
+    };
 
     view! {
         <Title text=move || tr!("welcome-to-leptos")/>

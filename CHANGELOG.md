@@ -65,13 +65,13 @@
   `leptos_fluent!` macro:
 
   ```rust
-  leptos_fluent! {{
+  leptos_fluent! {
       // ...
       #[cfg(debug_assertions)]
       set_language_to_url_param: true,
       #[cfg(not(debug_assertions))]
       set_language_to_url_param: false,
-  }}
+  }
   ```
 
 ## 2024-08-03 - [0.1.10]
@@ -84,11 +84,11 @@
   For example, only use a languages file when compiling on Unix systems:
 
   ```rust
-  leptos_fluent! {{
+  leptos_fluent! {
       // ...
       #[cfg(target_family = "unix")]
       languages: "./locales/languages.json",
-  }}
+  }
   ```
 
 ## 2024-08-02 - [0.1.9]
@@ -159,13 +159,13 @@
 - Accept [configuration conditional checks] directly in most macro parameters:
 
   ```rust
-  leptos_fluent! {{
+  leptos_fluent! {
       // ...
       #[cfg(debug_assertions)]
       initial_language_from_url_param: true,
       #[cfg(debug_assertions)]
       set_language_to_url_param: true,
-  }}
+  }
   ```
 
 [configuration conditional checks]: https://doc.rust-lang.org/rust-by-example/attribute/cfg.html

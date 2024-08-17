@@ -46,10 +46,10 @@ static_loader! {
 
 #[component]
 pub fn App() -> impl IntoView {
-    leptos_fluent! {{
+    leptos_fluent! {
         translations: [TRANSLATIONS],
         locales: "./locales",
-    }};
+    };
 
     view! { <LanguageSelector/> }
 }

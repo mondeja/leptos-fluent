@@ -23,9 +23,9 @@ whichs provides utilities for parsing the Fluent syntax.
 ```rust
 use leptos_fluent::leptos_fluent;
 
-let i18n = leptos_fluent! {{
+let i18n = leptos_fluent! {
     // ...
-}};
+};
 
 leptos::logging::log!("i18n context: {i18n:?}");
 ```
@@ -38,10 +38,10 @@ Use an expression to set the cookie attributes and will not be validated.
 
 ```rust
 let attrs = "SameSite=Strict; MyCustomAttr=MyCustomValue;";
-leptos_fluent! {{
+leptos_fluent! {
     cookie_attrs: attrs,
     // ...
-}}
+};
 ```
 
 [cookie attributes]: https://developer.mozilla.org/docs/Web/API/Document/cookie#write_a_new_cookie
@@ -138,10 +138,10 @@ Use `provide_meta_context` at the macro initialization and get them
 with the method `I18n::meta`:
 
 ```rust
-let i18n = leptos_fluent! {{
+let i18n = leptos_fluent! {
     // ...
     provide_meta_context: true,
-}};
+};
 
 println!("Macro parameters: {:?}", i18n.meta().unwrap());
 ```
@@ -149,13 +149,13 @@ println!("Macro parameters: {:?}", i18n.meta().unwrap());
 ### [Configuration conditional checks]
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     #[cfg(debug_assertions)]
     set_language_to_url_param: true,
     #[cfg(not(debug_assertions))]
     set_language_to_url_param: false,
-}}
+}
 ```
 
 [configuration conditional checks]: https://doc.rust-lang.org/rust-by-example/attribute/cfg.html

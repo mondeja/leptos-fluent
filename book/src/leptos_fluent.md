@@ -6,10 +6,10 @@ The `leptos_fluent!` macro is used to load the translations and set the current
 locale. It is used in the root component of the application.
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     locales: "./locales",
     translations: [TRANSLATIONS],
-}}
+};
 ```
 
 <!-- toc -->
@@ -19,7 +19,7 @@ leptos_fluent! {{
 ### <span style="opacity:.5">CSR </span> | Local storage from navigator
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     locales: "./locales",
     translations: [TRANSLATIONS],
 
@@ -30,13 +30,13 @@ leptos_fluent! {{
     initial_language_from_url_param: true,
     initial_language_from_url_param_to_localstorage: true,
     localstorage_key: "lang",
-}}
+}
 ```
 
 ### <span style="opacity:.5">CSR + SSR </span> | Cookie from navigator and header
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     locales: "./locales",
     translations: [TRANSLATIONS],
 
@@ -48,7 +48,7 @@ leptos_fluent! {{
     initial_language_from_url_param_to_cookie: true,
     initial_language_from_accept_language_header: true,
     cookie_name: "lf-lang",
-}}
+}
 ```
 
 <!-- markdownlint-disable MD013 -->
@@ -58,7 +58,7 @@ leptos_fluent! {{
 <!-- markdownlint-enable MD013 -->
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     locales: "./locales",
     translations: [TRANSLATIONS],
 
@@ -67,7 +67,7 @@ leptos_fluent! {{
     initial_language_from_data_file: true,
     set_language_to_data_file: true,
     data_file_key: "system-language-example",
-}}
+}
 ```
 
 ## Processing steps
@@ -94,7 +94,7 @@ Sources are read-only and targets are read-write.
 
 ````admonish example
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ..
     // Get the initial language from the source operative system
     initial_language_from_system: true,
@@ -106,7 +106,7 @@ leptos_fluent! {{
     set_language_to_data_file: true,
     // Unique file name to set the language for this app:
     data_file_key: "system-language-example",
-}};
+};
 ```
 ````
 
@@ -128,11 +128,11 @@ static_loader! {
     };
 }
 
-leptos_fluent! {{
+leptos_fluent! {
     locales: "./locales",
     translations: [TRANSLATIONS],
     // ^^^^^^^^^^^^^^^^^^^^^^^^^
-}}
+}
 ```
 
 Must be the same identifier used in the [`fluent_templates::static_loader!`]
@@ -145,11 +145,11 @@ files for the translations. Must be relative to the _Cargo.toml_ file, the same
 used in the [`fluent_templates::static_loader!`] macro.
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     locales: "./locales",
     // ^^^^^^^^^^^^^^^^^
     translations: [TRANSLATIONS],
-}}
+}
 ```
 
 ### `core_locales`
@@ -166,12 +166,12 @@ static_loader! {
     };
 }
 
-leptos_fluent! {{
+leptos_fluent! {
     locales: "./locales",
     core_locales: "./locales/core",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^
     translations: [TRANSLATIONS],
-}}
+}
 ```
 
 ### `languages`
@@ -180,12 +180,12 @@ Path to a file containing the list of languages supported by the application.
 Must be relative to the _Cargo.toml_ file.
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     locales: "./locales",
     languages: "./locales/languages.json",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     translations: [TRANSLATIONS],
-}}
+}
 ```
 
 ```admonish tip
@@ -248,23 +248,23 @@ Must be a [glob] relative to the _Cargo.toml_ file.
 - For single crate projects:
 
   ```rust
-  leptos_fluent! {{
+  leptos_fluent! {
       locales: "./locales",
       translations: [TRANSLATIONS],
       check_translations: "./src/**/*.rs",
       // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  }}
+  }
   ```
 
 - For workspace projects:
 
   ```rust
-  leptos_fluent! {{
+  leptos_fluent! {
       locales: "./locales",
       translations: [TRANSLATIONS],
       check_translations: "../{app,components}/src/**/*.rs",
       // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  }}
+  }
   ```
 
 ### <span style="opacity:.5">CSR </span> | `sync_html_tag_lang`
@@ -274,10 +274,10 @@ using [`leptos::create_effect`]. Can be a literal boolean or an expression
 that will be evaluated at runtime.
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     sync_html_tag_lang: true,
-}}
+}
 ```
 
 ### <span style="opacity:.5">CSR </span> | `sync_html_tag_dir`
@@ -288,10 +288,10 @@ using [`leptos::create_effect`].
 Can be a literal boolean or an expression that will be evaluated at runtime.
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     sync_html_tag_dir: true,
-}}
+}
 ```
 
 For custom languages from a languages file, specify a third element in
@@ -314,10 +314,10 @@ language.
 Name of [URL parameter] used to manage the current language.
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     url_param: "lang",
-}}
+}
 ```
 
 ### <span style="opacity:.5">CSR + SSR </span> | `initial_language_from_url_param`
@@ -325,10 +325,10 @@ leptos_fluent! {{
 Set initial language from [URL parameter].
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     initial_language_from_url_param: true,
-}}
+}
 ```
 
 ### <span style="opacity:.5">CSR </span> | `initial_language_from_url_param_to_localstorage`
@@ -336,10 +336,10 @@ leptos_fluent! {{
 Get initial language from [URL parameter] and save it to [local storage].
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     initial_language_from_url_param_to_localstorage: true,
-}}
+}
 ```
 
 ### <span style="opacity:.5">CSR </span> | `initial_language_from_url_param_to_cookie`
@@ -347,10 +347,10 @@ leptos_fluent! {{
 Get initial language from [URL parameter] and save it to a [cookie].
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     initial_language_from_url_param_to_cookie: true,
-}}
+}
 ```
 
 ### <span style="opacity:.5">CSR </span> | `set_language_to_url_param`
@@ -358,10 +358,10 @@ leptos_fluent! {{
 Synchronize current language with [URL parameter].
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     set_language_to_url_param: true,
-}}
+}
 ```
 
 ### <span style="opacity:.5">CSR + SSR </span> | `url_path`
@@ -378,10 +378,10 @@ fn get_language_from_url_path(path: &str) -> &str {
     ""
 }
 
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     url_path: get_language_from_url_path,
-}}
+}
 ```
 
 ### <span style="opacity:.5">CSR + SSR </span> | `initial_language_from_url_path`
@@ -389,10 +389,10 @@ leptos_fluent! {{
 Set initial language from [URL path].
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     initial_language_from_url_path: true,
-}}
+}
 ```
 
 ### <span style="opacity:.5">CSR </span> | `initial_language_from_url_path_to_cookie`
@@ -400,10 +400,10 @@ leptos_fluent! {{
 Set initial language from [URL path] to a [cookie].
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     initial_language_from_url_path_to_cookie: true,
-}}
+}
 ```
 
 ### <span style="opacity:.5">CSR </span> | `initial_language_from_url_path_to_localstorage`
@@ -411,10 +411,10 @@ leptos_fluent! {{
 Set initial language from [URL path] to [local storage].
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     initial_language_from_url_path_to_localstorage: true,
-}}
+}
 ```
 
 <!-- markdownlint-disable MD013 -->
@@ -426,10 +426,10 @@ leptos_fluent! {{
 [Local storage] key to manage the current language.
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     localstorage_key: "lang",
-}}
+}
 ```
 
 ### <span style="opacity:.5">CSR </span> | `initial_language_from_localstorage`
@@ -437,10 +437,10 @@ leptos_fluent! {{
 Get initial language from [local storage].
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     initial_language_from_localstorage: true,
-}}
+}
 ```
 
 ### <span style="opacity:.5">CSR </span> | `initial_language_from_localstorage_to_cookie`
@@ -448,10 +448,10 @@ leptos_fluent! {{
 Get initial language from [local storage] and save it to a [cookie].
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     initial_language_from_localstorage_to_cookie: true,
-}}
+}
 ```
 
 ### <span style="opacity:.5">CSR </span> | `set_language_to_localstorage`
@@ -459,10 +459,10 @@ leptos_fluent! {{
 Set the current language to [local storage].
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     set_language_to_localstorage: true,
-}}
+}
 ```
 
 ### <span style="opacity:.5">CSR </span> | `initial_language_from_navigator`
@@ -470,10 +470,10 @@ leptos_fluent! {{
 Get the initial language from [`navigator.languages`].
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     initial_language_from_navigator: true,
-}}
+}
 ```
 
 ### <span style="opacity:.5">CSR </span> | `initial_language_from_navigator_to_localstorage`
@@ -481,10 +481,10 @@ leptos_fluent! {{
 Get the initial language from [`navigator.languages`] and save it in the [local storage].
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     initial_language_from_navigator_to_localstorage: true,
-}}
+}
 ```
 
 ### <span style="opacity:.5">CSR </span> | `initial_language_from_navigator_to_cookie`
@@ -492,10 +492,10 @@ leptos_fluent! {{
 Get the initial language from [`navigator.languages`] and save it in a [cookie].
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     initial_language_from_navigator_to_cookie: true,
-}}
+}
 ```
 
 ### <span style="opacity:.5">CSR </span> | `set_language_from_navigator`
@@ -504,10 +504,10 @@ When the user changes the language in the browser settings, the language change
 will be reflected in the client.
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     set_language_from_navigator: true,
-}}
+}
 ```
 
 ### <span style="opacity:.5">SSR </span> | `initial_language_from_accept_language_header`
@@ -515,10 +515,10 @@ leptos_fluent! {{
 Get the initial language from the [`Accept-Language`] header.
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     initial_language_from_accept_language_header: true,
-}}
+}
 ```
 
 <!-- markdownlint-disable MD013 -->
@@ -531,10 +531,10 @@ Name of the [cookie] that will be used to manage the current language. By defaul
 it is `"lf-lang"`.
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     cookie_name: "lang",
-}}
+}
 ```
 
 <!-- markdownlint-disable MD013 -->
@@ -546,20 +546,20 @@ leptos_fluent! {{
 [Cookie attributes] to set on the language [cookie].
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     cookie_attrs: "SameSite=Strict; Secure",
-}}
+}
 ```
 
 If value is an expression the [cookie] will not be validated at compile time:
 
 ```rust
 let attrs = "SameSite=Strict; Secure; MyCustomCookie=value"
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     cookie_attrs: attrs,
-}}
+}
 ```
 
 ### <span style="opacity:.5">CSR + SSR </span> | `initial_language_from_cookie`
@@ -567,10 +567,10 @@ leptos_fluent! {{
 Get the initial language from the cookie.
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     initial_language_from_cookie: true,
-}}
+}
 ```
 
 ### <span style="opacity:.5">CSR </span> | `initial_language_from_cookie_to_localstorage`
@@ -578,10 +578,10 @@ leptos_fluent! {{
 Get the initial language from the cookie and save it in the [local storage].
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     initial_language_from_cookie_to_localstorage: true,
-}}
+}
 ```
 
 ### <span style="opacity:.5">CSR </span> | `set_language_to_cookie`
@@ -589,10 +589,10 @@ leptos_fluent! {{
 Set the current language to the cookie.
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     set_language_to_cookie: true,
-}}
+}
 ```
 
 <!-- markdownlint-disable MD013 -->
@@ -604,10 +604,10 @@ leptos_fluent! {{
 Get the initial language from the system.
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     initial_language_from_system: true,
-}}
+}
 ```
 
 <!-- markdownlint-disable MD013 -->
@@ -619,10 +619,10 @@ leptos_fluent! {{
 Get the initial language from a data file.
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     initial_language_from_data_file: true,
-}}
+}
 ```
 
 <!-- markdownlint-disable MD013 -->
@@ -634,10 +634,10 @@ leptos_fluent! {{
 Get the initial language from the system and save it in a data file.
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     initial_language_from_system_to_data_file: true,
-}}
+}
 ```
 
 <!-- markdownlint-disable MD013 -->
@@ -649,10 +649,10 @@ leptos_fluent! {{
 Set the current language to a data file.
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     set_language_to_data_file: true,
-}}
+}
 ```
 
 <!-- markdownlint-disable MD013 -->
@@ -665,10 +665,10 @@ Key to manage the current language in the data file. It should be unique
 per application.
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     data_file_key: "my-app",
-}}
+}
 ```
 
 ### `provide_meta_context`
@@ -677,10 +677,10 @@ Provide the macro meta information at runtime as a context.
 Get it using `I18n::meta`:
 
 ```rust
-let i18n = leptos_fluent! {{
+let i18n = leptos_fluent! {
     // ...
     provide_meta_context: true,
-}};
+};
 
 println!("Macro parameters: {:?}", i18n.meta().unwrap());
 ```
@@ -690,10 +690,10 @@ println!("Macro parameters: {:?}", i18n.meta().unwrap());
 Get the initial language from a [server function].
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     initial_language_from_server_function: initial_language_server_function,
-}}
+}
 
 /// Server function to set the initial language
 #[server(InitialLanguage, "/api")]
@@ -715,10 +715,10 @@ The function must return a `Result<Option<String>, ServerFnError>`.
 Set the current language to a [server function].
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     set_language_to_server_function: set_language_server_function,
-}}
+}
 
 /// Server function to update the current language
 #[server(SetLanguage, "/api")]
@@ -742,10 +742,10 @@ Get the initial language from [local storage] and set it to a
 [server function].
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     initial_language_from_localstorage_to_server_function: set_language_server_function,
-}}
+}
 
 #[server(SetLanguage, "/api")]
 pub async fn set_language_server_function(
@@ -762,10 +762,10 @@ Get the initial language from a [cookie] and set it to a
 [server function].
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     initial_language_from_cookie_to_server_function: set_language_server_function,
-}}
+}
 
 #[server(SetLanguage, "/api")]
 pub async fn set_language_server_function(
@@ -782,10 +782,10 @@ Get the initial language from [`navigator.languages`] and set it to a
 [server function].
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     initial_language_from_navigator_to_server_function: set_language_server_function,
-}}
+}
 
 #[server(SetLanguage, "/api")]
 pub async fn set_language_server_function(
@@ -802,10 +802,10 @@ Get the initial language from a [URL parameter] and set it to a
 [server function].
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     initial_language_from_url_param_to_server_function: set_language_server_function,
-}}
+}
 
 #[server(SetLanguage, "/api")]
 pub async fn set_language_server_function(
@@ -821,10 +821,10 @@ pub async fn set_language_server_function(
 Get the initial language from a [URL path] and set it to a [server function].
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     initial_language_from_url_path_to_server_function: set_language_server_function,
-}}
+}
 
 #[server(SetLanguage, "/api")]
 pub async fn set_language_server_function(
@@ -841,10 +841,10 @@ Get the initial language from a [server function] and set it to a
 [cookie].
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     initial_language_from_server_function_to_cookie: true,
-}}
+}
 ```
 
 ### `initial_language_from_server_function_to_localstorage`
@@ -853,10 +853,10 @@ Get the initial language from a [server function] and set it to
 [local storage].
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     // ...
     initial_language_from_server_function_to_localstorage: true,
-}}
+}
 ```
 
 [`fluent_templates::static_loader!`]: https://docs.rs/fluent-templates/latest/fluent_templates/macro.static_loader.html
