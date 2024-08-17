@@ -65,6 +65,24 @@ leptos_fluent! {{
 ]
 ```
 
+### Languages file format
+
+In order to use a languages file, you must enable the feature for the file
+format you want to use in the _Cargo.toml_ file:
+
+```toml
+[dependencies]
+leptos-fluent = { version = "*", features = ["json5"] }
+```
+
+Available features for languages file formats are:
+
+- `json`: JSON
+- `yaml`: YAML
+- `json5`: JSON5
+
+### Languages file layout
+
 The languages file must expose an array of arrays with the structure:
 
 ```json5
@@ -81,9 +99,9 @@ will be the same as in the file regardless of the alphabetical order
 of the names.
 ```
 
-The first in the languages file will used as the initial of the user when any
-other initialization value is discovered. Use the same as the one configured
-as `fallback_language` in `static_loader!`.
+The first one in the languages file will used as the initial of the user when
+no other initialization language is discovered. Use the same as the one
+configured as `fallback_language` in `static_loader!`.
 
 ```rust
 static_loader! {
@@ -109,23 +127,6 @@ pub fn App() -> impl IntoView {
   ["es-ES", "Español (España)"],
 ]
 ```
-
-### File format
-
-By default, the `json` feature is enabled, which only allows to set the
-languages file in JSON format. To use other formats, disable the feature
-and enable another.
-
-```toml
-[dependencies]
-leptos-fluent = { version = "*", default-features = false, features = ["json5"] }
-```
-
-Available features for languages file formats are:
-
-- `json`: JSON (default)
-- `yaml`: YAML
-- `json5`: JSON5
 
 [ISO 639-1 code]: https://en.wikipedia.org/wiki/ISO_639-1
 [`leptos_fluent!`]: https://mondeja.github.io/leptos-fluent/leptos_fluent.html

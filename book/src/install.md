@@ -19,20 +19,17 @@ fluent-templates = "0.10"
 
 ```toml
 [dependencies]
-leptos-fluent = { version = "0.1", default-features = false }
+leptos-fluent = "0.1"
 fluent-templates = { version = "0.10", default-features = false, features = [
   "macros",
   "walkdir"
 ] }
 ```
 
-- Using `default-features = false` for `leptos-fluent` the `json`
-  default feature will not be enabled, so the `languages` parameter
-  of [`leptos_fluent!`] macro will not be available.
-- Using `default-features = false` and `features = ["macros", "walkdir"]`
-  for `fluent-templates` ensures that the dependency tree is the minimal
-  possible because more dependencies are shared between `leptos-fluent`
-  and `fluent-templates`.
+Using `default-features = false` and `features = ["macros", "walkdir"]`
+for `fluent-templates` ensures that the dependency tree is the minimal
+possible because more dependencies are shared between `leptos-fluent`
+and `fluent-templates`.
 
 </details>
 
@@ -156,6 +153,5 @@ See the [GTK example](https://github.com/mondeja/leptos-fluent/tree/master/examp
 ```
 
 [`fluent-templates`]: https://github.com/XAMPPRocky/fluent-templates
-[`leptos_fluent!`]: https://mondeja.github.io/leptos-fluent/leptos_fluent.html
 [`cargo leptos`]: https://github.com/leptos-rs/cargo-leptos
 [`tracing`]: https://docs.rs/tracing/latest/tracing

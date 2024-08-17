@@ -19,9 +19,7 @@ leptos = "0.6"
 leptos_meta = "0.6"
 leptos_axum = { version = "0.6", optional = true }
 leptos_router = "0.6"
-leptos-fluent = { path = "../../leptos-fluent", features = [
-  "yaml"
-], default-features = false }
+leptos-fluent = { path = "../../leptos-fluent", features = ["yaml"] }
 fluent-templates = { version = "0.10", default-features = false, features = [
   "macros",
   "walkdir"

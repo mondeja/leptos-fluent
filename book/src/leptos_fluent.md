@@ -179,6 +179,11 @@ leptos_fluent! {{
 Path to a file containing the list of languages supported by the application.
 Must be relative to the _Cargo.toml_ file.
 
+```admonish tip
+In order to use this parameter a languages file feature must be enabled.
+See [**4. Languages**](https://mondeja.github.io/leptos-fluent/languages.html)
+```
+
 ```rust
 leptos_fluent! {{
     locales: "./locales",
@@ -186,56 +191,6 @@ leptos_fluent! {{
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     translations: [TRANSLATIONS],
 }}
-```
-
-```admonish tip
-See [**4. Languages**](https://mondeja.github.io/leptos-fluent/languages.html)
-```
-
-The languages file should contain an array of arrays where each inner array
-contains a language identifier and a language name, respectively, at least.
-
-The language identifier should be a valid language tag, such as `en-US`, `en`,
-`es-ES`, etc. By default, the languages file should be a JSON with a `.json`
-extension because the `json` feature is enabled. For example:
-
-```json
-[
-  ["en-US", "English (United States)"],
-  ["es-ES", "Español (España)"]
-]
-```
-
-Set `default-features = false` and enable the `yaml` or the `json5` feature
-to use a YAML or JSON5 files. For example:
-
-```yaml
-# locales/languages.yaml
-- - en-US
-  - English (United States)
-- - es-ES
-  - Español (España)
-```
-
-```json5
-// locales/languages.json5
-[
-  ["en-US", "English (United States)"],
-  ["es-ES", "Español (España)"],
-]
-```
-
-Define a third element in the inner array with the direction of the language,
-to use it in the [`<html dir="...">` attribute] (see [`sync_html_tag_dir`]).
-For example:
-
-```json
-[
-  ["en-US", "English (United States)", "ltr"],
-  ["es-ES", "Español (España)", "auto"],
-  ["ar", "العربية", "rtl"],
-  ["it", "Italiano"]
-]
 ```
 
 ### `check_translations`
@@ -871,6 +826,5 @@ leptos_fluent! {{
 [glob]: https://docs.rs/globwalk/latest/globwalk/fn.glob.html
 [URL parameter]: https://developer.mozilla.org/docs/Web/API/URLSearchParams
 [URL path]: https://developer.mozilla.org/docs/Web/API/URL/pathname
-[`sync_html_tag_dir`]: #csr---sync_html_tag_dir
 [cookie]: https://developer.mozilla.org/docs/Web/HTTP/Cookies
 [Server function]: https://book.leptos.dev/server/25_server_functions.html

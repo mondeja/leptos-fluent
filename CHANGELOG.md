@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## Unreleased - 0.2.0
+
+### Breaking changes
+
+- The feature `json` is not enabled by default anymore.
+
 ## 2024-08-17 - [0.1.17]
 
 ### New features
