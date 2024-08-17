@@ -12,7 +12,10 @@ keywords.workspace = true
 
 [dependencies]
 leptos-fluent-macros = { path = "../leptos-fluent-macros" }
-fluent-templates.workspace = true
+fluent-templates = { version = "0.10", default-features = false, features = [
+  "macros",
+  "walkdir"
+] }
 leptos = "0.6"
 leptos_meta = { version = "0.6", optional = true }
 web-sys = { version = ">=0.1", features = [

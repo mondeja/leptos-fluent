@@ -11,21 +11,28 @@ For client side rendering apps install **leptos-fluent** and [`fluent-templates`
 ```toml
 [dependencies]
 leptos-fluent = "0.1"
-fluent-templates = "0.9"
+fluent-templates = "0.10"
 ```
 
 <details>
-<summary>Minimal</summary>
-
-Using `default-features = false` the `json` default feature of
-**leptos-fluent** will not be enabled, so the `languages` parameter
-of [`leptos_fluent!`] macro will not be available.
+<summary>Minimal (recommended)</summary>
 
 ```toml
 [dependencies]
 leptos-fluent = { version = "0.1", default-features = false }
-fluent-templates = "0.9"
+fluent-templates = { version = "0.10", default-features = false, features = [
+  "macros",
+  "walkdir"
+] }
 ```
+
+- Using `default-features = false` for `leptos-fluent` the `json`
+  default feature will not be enabled, so the `languages` parameter
+  of [`leptos_fluent!`] macro will not be available.
+- Using `default-features = false` and `features = ["macros", "walkdir"]`
+  for `fluent-templates` ensures that the dependency tree is the minimal
+  possible because more dependencies are shared between `leptos-fluent`
+  and `fluent-templates`.
 
 </details>
 
@@ -38,7 +45,7 @@ respective features set.
 ```toml
 [dependencies]
 leptos-fluent = "0.1"
-fluent-templates = "0.9"
+fluent-templates = "0.10"
 
 [features]
 hydrate = [
@@ -63,7 +70,7 @@ and enable the `system` feature:
 ```toml
 [dependencies]
 leptos-fluent = { version = "0.1", features = ["system"] }
-fluent-templates = "0.9"
+fluent-templates = "0.10"
 ```
 
 ```admonish example
@@ -92,7 +99,7 @@ feature:
 ```toml
 [dependencies]
 leptos-fluent = { version = "0.1", features = ["nightly"] }
-fluent-templates = "0.9"
+fluent-templates = "0.10"
 ```
 
 ## Language files
@@ -105,7 +112,7 @@ enabled:
 
 ```toml
 [dependencies]
-fluent-templates = "0.9"
+fluent-templates = "0.10"
 leptos-fluent = { version = "0.1", features = ["json5"], default-features = false }
 ```
 
@@ -141,7 +148,7 @@ To enable [`tracing`] support, add the `tracing` feature to **leptos-fluent**:
 ```toml
 [dependencies]
 leptos-fluent = { version = "0.1", features = ["tracing"] }
-fluent-templates = "0.9"
+fluent-templates = "0.10"
 ```
 
 ```admonish example
