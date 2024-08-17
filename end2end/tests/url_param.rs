@@ -28,17 +28,17 @@ async fn test_url_param() {
 
     // set_language_to_url_param
     mount!(App);
-    assert_eq!(leptos::window().location().search().unwrap(), "");
+    assert_eq!(leptos::prelude::window().location().search().unwrap(), "");
     es().click();
     sleep(30).await;
     assert_eq!(
-        leptos::window().location().search().unwrap(),
+        leptos::prelude::window().location().search().unwrap(),
         format!("?{URL_PARAM}=es")
     );
     en().click();
     sleep(30).await;
     assert_eq!(
-        leptos::window().location().search().unwrap(),
+        leptos::prelude::window().location().search().unwrap(),
         format!("?{URL_PARAM}=en")
     );
     unmount!();
