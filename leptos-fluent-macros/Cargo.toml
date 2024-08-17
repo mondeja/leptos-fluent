@@ -20,7 +20,10 @@ quote = "1"
 syn = { version = "2", features = ["visit", "full"] }
 walkdir = ">=2"
 globwalk = "0.9"
-fluent-templates.workspace = true
+fluent-templates = { version = "0.10", default-features = false, features = [
+  "macros",
+  "walkdir"
+] }
 fluent-syntax = "0.11"
 pathdiff = "0.2"
 # TODO: using the same version for cfg-expr of system-deps until a new system-deps is released
