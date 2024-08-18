@@ -3,7 +3,7 @@
 async fn main() -> std::io::Result<()> {
     use actix_files::Files;
     use actix_web::*;
-    use leptos::*;
+    use leptos::prelude::*;
     use leptos_actix::{generate_route_list, LeptosRoutes};
     use leptos_fluent_ssr_hydrate_actix_example::app::App;
 
@@ -49,5 +49,5 @@ pub fn main() {
 
     console_error_panic_hook::set_once();
 
-    leptos::mount_to_body(App);
+    leptos::mount::mount_to_body(App);
 }

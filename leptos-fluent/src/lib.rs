@@ -73,7 +73,7 @@
 //!
 //! ```rust,ignore
 //! use fluent_templates::static_loader;
-//! use leptos::*;
+//! use leptos::prelude::*;
 //! use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, tr};
 //!
 //! static_loader! {
@@ -205,7 +205,7 @@
 //! fn LanguageSelector() -> impl IntoView {
 //!     // `expect_i18n()` to get the i18n context
 //!     // `i18n.languages` is a static array with the available languages
-//!     // `i18n.language.get()` to get the current language
+//!     // `i18n.language.read()` to get the current language
 //!     // `lang.activate()` to set the current language
 //!     // `lang.is_active()` to check if a language is the current selected one
 //!
@@ -288,12 +288,12 @@ use fluent_templates::{
 use leptos::{
     attr::AttributeValue,
     prelude::{
-        component, guards::ReadGuard, use_context, ArcRwSignal, ArcSignal,
-        IntoView, Read, Renderer, RwSignal, Set, With,
+        component, guards::ReadGuard, use_context, RwSignal, Signal,
+        IntoView, Read, Renderer, Set, With,
     },
 };
 #[cfg(feature = "ssr")]
-use leptos::{view, SignalGetUntracked};
+use leptos::prelude::{view, GetUntracked};
 pub use leptos_fluent_macros::leptos_fluent;
 #[cfg(feature = "ssr")]
 use leptos_meta::Html;
@@ -496,14 +496,14 @@ where
 /// Used to provide the current language, the available languages and all
 /// the translations. It is capable of doing what is needed to translate
 /// and manage translations in a whole application.
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 pub struct I18n {
     /// Signal that holds the current language.
-    pub language: ArcRwSignal<&'static Language>,
+    pub language: RwSignal<&'static Language>,
     /// Available languages for the application.
     pub languages: &'static [&'static Language],
     /// Signal with a vector of fluent-templates static loaders.
-    pub translations: ArcSignal<Vec<&'static Lazy<StaticLoader>>>,
+    pub translations: Signal<Vec<&'static Lazy<StaticLoader>>>,
 }
 
 impl I18n {
@@ -872,57 +872,6 @@ pub fn l(
 ) -> Option<&'static Language> {
     language_from_str_between_languages(code, languages)
 }
-
-/// Reactive HTML tag to set attributes on SSR
-///
-/// Currently there is not a way to set the `dir` and `lang` attributes
-/// of `<html>` tags on SSR. This components updates it on SSR. Must be
-/// rendered in a view.
-///
-/// ```rust,ignore
-/// use leptos_fluent::SsrHtmlTag;
-///
-/// view! {
-///     <SsrHtmlTag/>
-/// }
-/// ```
-#[deprecated(
-    since = "0.1.14",
-    note = "The component SsrHtmlTag is not needed anymore and will be removed in v0.2. \
-          The `sync_html_tag_lang` and `sync_html_tag_dir` parameters of the `leptos_fluent!` \
-          macro are enough to set the `lang` and `dir` attributes of the `<html>` tag on SSR."
-)]
-#[component(transparent)]
-#[cfg(feature = "ssr")]
-#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace"))]
-pub fn SsrHtmlTag() -> impl IntoView {
-    let lang = expect_i18n().language.get_untracked();
-    view! { <Html lang=lang.id.to_string() dir=lang.dir.as_str()/> }
-}
-
-/// Reactive HTML tag to set attributes on SSR
-///
-/// Currently there is not a way to set the `dir` and `lang` attributes
-/// of `<html>` tags on SSR. This components updates it on SSR. Must be
-/// rendered in a view.
-///
-/// ```rust,ignore
-/// use leptos_fluent::SsrHtmlTag;
-///
-/// view! {
-///     <SsrHtmlTag/>
-/// }
-/// ```
-#[deprecated(
-    since = "0.1.14",
-    note = "The component `SsrHtmlTag` is not needed anymore and will be removed in v0.2. \
-          The `sync_html_tag_lang` and `sync_html_tag_dir` parameters of the `leptos_fluent!` \
-          macro are enough to set the `lang` and `dir` attributes of the `<html>` tag on SSR."
-)]
-#[component(transparent)]
-#[cfg(not(feature = "ssr"))]
-#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace"))]
-pub fn SsrHtmlTag() -> impl IntoView {}
 
 /// Parameters passed to `leptos_fluent!` macro at creation of `i18n` context
 #[derive(Clone, Debug)]

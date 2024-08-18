@@ -2,10 +2,10 @@ use crate::error_template::{AppError, ErrorTemplate};
 use fluent_templates::once_cell::sync::Lazy;
 use fluent_templates::static_loader;
 use fluent_templates::StaticLoader;
-use leptos::*;
+use leptos::prelude::*;
 use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, tr};
 use leptos_meta::*;
-use leptos_router::*;
+use leptos_router::{path, components::{Router, Routes, Route}};
 
 static_loader! {
     static TRANSLATIONS = {
@@ -47,14 +47,14 @@ pub fn App() -> impl IntoView {
         <Title text=move || tr!("welcome-to-leptos")/>
 
         // content for this welcome page
-        <Router fallback=|| {
-            let mut outside_errors = Errors::default();
-            outside_errors.insert_with_default_key(AppError::NotFound);
-            view! { <ErrorTemplate outside_errors/> }.into_view()
-        }>
+        <Router>
             <main>
-                <Routes>
-                    <Route path="" view=HomePage/>
+                <Routes fallback=|| {
+                    let mut outside_errors = Errors::default();
+                    outside_errors.insert_with_default_key(AppError::NotFound);
+                    view! { <ErrorTemplate outside_errors/> }
+                }>
+                    <Route path=path!("") view=HomePage/>
                 </Routes>
             </main>
         </Router>

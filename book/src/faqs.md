@@ -90,7 +90,7 @@ accessed as context on server actions. Pass the translations as values
 if the bandwidth is not a problem or use your own statics on server side.
 
 ```rust
-use leptos::*;
+use leptos::prelude::*;
 use leptos_fluent::{tr, Language};
 
 /// Server action showing client-side translated message on console

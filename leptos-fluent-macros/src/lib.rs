@@ -46,7 +46,7 @@ pub(crate) fn debug(msg: &str) {
 ///
 /// ```rust,ignore
 /// use fluent_templates::static_loader;
-/// use leptos::*;
+/// use leptos::prelude::*;
 /// use leptos_fluent::leptos_fluent;
 ///
 /// static_loader! {
@@ -330,7 +330,7 @@ pub fn leptos_fluent(
 
                 // TODO: optimize checking if empty at compile time when literal
                 let effect_quote = quote! {
-                    ::leptos::create_effect(move |_| {
+                    ::leptos::prelude::Effect::new(move |_| {
                         if #set_language_to_data_file_quote.is_empty() {
                             return;
                         }
@@ -565,7 +565,7 @@ pub fn leptos_fluent(
         set_language_to_server_function.iter().map(|param| {
             let ident = &param.ident;
             let effect_quote = quote! {
-                ::leptos::create_effect(move |_| {
+                ::leptos::prelude::Effect::new(move |_| {
                     spawn_local(async {
                         _ = #ident(#get_language_quote.id.to_string()).await;
                     });
@@ -733,15 +733,16 @@ pub fn leptos_fluent(
         // TODO: optimize code size
         // TODO: handle other attributes in Leptos v0.7
         //       (in Leptos v0.6 attribute keys are static)
+        // TODO: update this code for Leptos v0.7
 
         // Calling `provide_meta_context()` to not show a warning
         #[cfg(feature = "ssr")]
         let previous_html_tag_attrs_quote = quote! {{
             ::leptos_meta::provide_meta_context();
             let html_tag_as_string = ::leptos_meta::use_head().html.as_string().unwrap_or("".to_string());
-            let mut class: Option<::leptos::TextProp> = None;
-            let mut lang: Option<::leptos::TextProp> = None;
-            let mut dir: Option<::leptos::TextProp> = None;
+            let mut class: Option<::leptos::text_prop::TextProp> = None;
+            let mut lang: Option<::leptos::text_prop::TextProp> = None;
+            let mut dir: Option<::leptos::text_prop::TextProp> = None;
             for attr in html_tag_as_string.split(' ') {
                 let mut parts = attr.split('=');
                 let key = parts.next().unwrap_or("");
@@ -808,9 +809,9 @@ pub fn leptos_fluent(
 
             #[cfg(not(feature = "ssr"))]
             quote! {
-                ::leptos::create_effect(move |_| {
+                ::leptos::prelude::Effect::new(move |_| {
                     use leptos_fluent::web_sys::wasm_bindgen::JsCast;
-                    _ = ::leptos::document()
+                    _ = ::leptos::prelude::document()
                         .document_element()
                         .unwrap()
                         .unchecked_into::<::leptos_fluent::web_sys::HtmlElement>()
@@ -873,9 +874,9 @@ pub fn leptos_fluent(
 
             #[cfg(not(feature = "ssr"))]
             quote! {
-                ::leptos::create_effect(move |_| {
+                ::leptos::prelude::Effect::new(move |_| {
                     use leptos_fluent::web_sys::wasm_bindgen::JsCast;
-                    _ = ::leptos::document()
+                    _ = ::leptos::prelude::document()
                         .document_element()
                         .unwrap()
                         .unchecked_into::<::leptos_fluent::web_sys::HtmlElement>()
@@ -961,7 +962,7 @@ pub fn leptos_fluent(
 
     let sync_language_with_localstorage_quote: proc_macro2::TokenStream = {
         let effect_quote = quote! {
-            ::leptos::create_effect(move |_| {
+            ::leptos::prelude::Effect::new(move |_| {
                 ::leptos_fluent::localstorage::set(
                     #localstorage_key_quote,
                     &#get_language_quote.id.to_string()
@@ -1001,7 +1002,7 @@ pub fn leptos_fluent(
     let initial_language_from_url_param_quote: proc_macro2::TokenStream = {
         #[cfg(feature = "hydrate")]
         let hydrate_rerender_quote = quote! {
-            ::leptos::create_effect(move |prev| {
+            ::leptos::prelude::Effect::new(move |prev| {
                 if prev.is_none() {
                     l.activate();
                 }
@@ -1313,7 +1314,7 @@ pub fn leptos_fluent(
 
     let sync_language_with_url_param_quote: proc_macro2::TokenStream = {
         let effect_quote = quote! {
-            ::leptos::create_effect(move |_| {
+            ::leptos::prelude::Effect::new(move |_| {
                 ::leptos_fluent::url::param::set(
                     #url_param_quote,
                     &#get_language_quote.id.to_string()
@@ -1526,7 +1527,7 @@ pub fn leptos_fluent(
                 let cb = ::leptos_fluent::web_sys::wasm_bindgen::closure::Closure::wrap(
                     closure
                 );
-                ::leptos::window().add_event_listener_with_callback(
+                ::leptos::prelude::window().add_event_listener_with_callback(
                     "languagechange",
                     cb.as_ref().unchecked_ref()
                 ).expect("Failed to add event listener for window languagechange");
@@ -1785,7 +1786,7 @@ pub fn leptos_fluent(
     #[cfg(not(feature = "ssr"))]
     let sync_language_with_cookie_quote: proc_macro2::TokenStream = {
         let effect_quote = quote! {
-            ::leptos::create_effect(move |_| {
+            ::leptos::prelude::Effect::new(move |_| {
                 ::leptos_fluent::cookie::set(
                     #cookie_name_quote,
                     &#get_language_quote.id.to_string(),
@@ -2316,9 +2317,9 @@ pub fn leptos_fluent(
         };
 
         let mut i18n = ::leptos_fluent::I18n {
-            language: ::leptos::prelude::ArcRwSignal::new(initial_lang),
+            language: ::leptos::prelude::RwSignal::new(initial_lang),
             languages: &LANGUAGES,
-            translations: ::leptos::prelude::ArcSignal::derive(move || #translations_quote),
+            translations: ::leptos::prelude::Signal::derive(move || #translations_quote),
         };
         ::leptos::prelude::provide_context::<::leptos_fluent::I18n>(i18n);
     };

@@ -34,7 +34,7 @@ language-selected-is = El idioma seleccionado es { $lang }.
 ```rust
 // src/lib.rs
 use fluent_templates::static_loader;
-use leptos::*;
+use leptos::prelude::*;
 use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, Language};
 
 static_loader! {
@@ -98,7 +98,7 @@ fn render_language(lang: &'static Language) -> impl IntoView {
 // src/main.rs
 pub fn main() {
     console_error_panic_hook::set_once();
-    leptos::mount_to_body(minimal_example::App);
+    leptos::mount::mount_to_body(minimal_example::App);
 }
 ```
 
@@ -163,7 +163,7 @@ The main difference is that [`move_tr!`] encapsulates the movement in a
 [`leptos::Signal`], strictly would be rewritten as:
 
 ```rust
-leptos::Signal::derive(move || tr!("select-a-language"))
+Signal::derive(move || tr!("select-a-language"))
 ```
 
 ## Retrieving the [`I18n`] context
@@ -259,7 +259,7 @@ lang.is_active()
 [`languages`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.languages
 [`translations`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.translations
 [fluent-templates]: https://docs.rs/fluent-templates/latest/fluent_templates
-[`leptos::Signal`]: https://docs.rs/leptos/latest/leptos/struct.Signal.html
+[`leptos::Signal TODO update`]: https://docs.rs/leptos/latest/leptos/struct.Signal.html
 [`expect_i18n`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.expect_i18n.html
 [`i18n`-f]: https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.i18n.html
 [`use_i18n`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.use_i18n.html

@@ -272,6 +272,7 @@ version = "0.1.1"
 dependencies = [
  "futures",
  "thiserror",
+ "tokio",
  "wasm-bindgen-futures",
 ]
 
@@ -1696,11 +1697,13 @@ name = "hydration_context"
 version = "0.2.0-beta2"
 dependencies = [
  "futures",
+ "js-sys",
  "once_cell",
  "or_poisoned",
  "pin-project-lite",
  "serde",
  "throw_error",
+ "wasm-bindgen",
 ]
 
 [[package]]
@@ -1915,6 +1918,7 @@ name = "leptos"
 version = "0.7.0-beta2"
 dependencies = [
  "any_spawner",
+ "base64",
  "cfg-if",
  "either_of",
  "futures",
@@ -1927,6 +1931,7 @@ dependencies = [
  "oco_ref 0.2.0",
  "or_poisoned",
  "paste",
+ "rand",
  "reactive_graph",
  "rustc-hash 2.0.0",
  "send_wrapper",
@@ -1937,6 +1942,7 @@ dependencies = [
  "tachys",
  "thiserror",
  "throw_error",
+ "tracing",
  "typed-builder 0.19.1",
  "typed-builder-macro 0.19.1",
  "wasm-bindgen",
@@ -1963,7 +1969,7 @@ version = "0.1.0"
 dependencies = [
  "console_error_panic_hook",
  "fluent-templates",
- "leptos 0.6.14",
+ "leptos 0.7.0-beta2",
  "leptos-fluent",
  "web-sys",
 ]
@@ -2028,7 +2034,7 @@ dependencies = [
  "leptos-fluent",
  "leptos_actix",
  "leptos_meta 0.6.14",
- "leptos_router",
+ "leptos_router 0.6.14",
  "wasm-bindgen",
 ]
 
@@ -2040,11 +2046,11 @@ dependencies = [
  "console_error_panic_hook",
  "fluent-templates",
  "http 1.1.0",
- "leptos 0.6.14",
+ "leptos 0.7.0-beta2",
  "leptos-fluent",
  "leptos_axum",
- "leptos_meta 0.6.14",
- "leptos_router",
+ "leptos_meta 0.7.0-beta2",
+ "leptos_router 0.7.0-beta2",
  "thiserror",
  "tokio",
  "tower",
@@ -2077,10 +2083,10 @@ dependencies = [
  "actix-web",
  "futures",
  "leptos 0.6.14",
- "leptos_integration_utils",
+ "leptos_integration_utils 0.6.14",
  "leptos_macro 0.6.14",
  "leptos_meta 0.6.14",
- "leptos_router",
+ "leptos_router 0.6.14",
  "parking_lot",
  "regex",
  "serde_json",
@@ -2091,25 +2097,25 @@ dependencies = [
 
 [[package]]
 name = "leptos_axum"
-version = "0.6.14"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ee520a923a9c93f68ca78d6b8884fc69066c6d88ce294eafa0fb9a157873bec0"
+version = "0.7.0-beta2"
 dependencies = [
+ "any_spawner",
  "axum",
- "cfg-if",
  "futures",
+ "http 1.1.0",
  "http-body-util",
- "leptos 0.6.14",
- "leptos_integration_utils",
- "leptos_macro 0.6.14",
- "leptos_meta 0.6.14",
- "leptos_router",
- "once_cell",
+ "hydration_context",
+ "leptos 0.7.0-beta2",
+ "leptos_integration_utils 0.7.0-beta2",
+ "leptos_macro 0.7.0-beta2",
+ "leptos_meta 0.7.0-beta2",
+ "leptos_router 0.7.0-beta2",
  "parking_lot",
  "serde_json",
- "server_fn 0.6.14",
+ "server_fn 0.7.0-beta2",
  "tokio",
- "tokio-util",
+ "tower",
+ "tower-http",
  "tracing",
 ]
 
@@ -2176,6 +2182,7 @@ dependencies = [
  "reactive_graph",
  "send_wrapper",
  "tachys",
+ "tracing",
  "wasm-bindgen",
  "web-sys",
 ]
@@ -2229,6 +2236,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "leptos_integration_utils"
+version = "0.7.0-beta2"
+dependencies = [
+ "futures",
+ "hydration_context",
+ "leptos 0.7.0-beta2",
+ "leptos_config 0.7.0-beta2",
+ "leptos_meta 0.7.0-beta2",
+ "leptos_router 0.7.0-beta2",
+ "reactive_graph",
+ "tracing",
+]
+
+[[package]]
 name = "leptos_macro"
 version = "0.6.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2268,6 +2289,7 @@ dependencies = [
  "rstml",
  "server_fn_macro 0.7.0-beta2",
  "syn 2.0.74",
+ "tracing",
  "uuid",
 ]
 
@@ -2295,6 +2317,7 @@ dependencies = [
  "once_cell",
  "or_poisoned",
  "send_wrapper",
+ "tracing",
  "wasm-bindgen",
  "web-sys",
 ]
@@ -2340,7 +2363,7 @@ dependencies = [
  "js-sys",
  "lazy_static",
  "leptos 0.6.14",
- "leptos_integration_utils",
+ "leptos_integration_utils 0.6.14",
  "leptos_meta 0.6.14",
  "linear-map",
  "lru",
@@ -2357,6 +2380,39 @@ dependencies = [
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "web-sys",
+]
+
+[[package]]
+name = "leptos_router"
+version = "0.7.0-beta2"
+dependencies = [
+ "any_spawner",
+ "either_of",
+ "futures",
+ "gloo-net",
+ "js-sys",
+ "leptos 0.7.0-beta2",
+ "leptos_router_macro",
+ "once_cell",
+ "or_poisoned",
+ "paste",
+ "percent-encoding",
+ "reactive_graph",
+ "send_wrapper",
+ "tachys",
+ "thiserror",
+ "url",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "leptos_router_macro"
+version = "0.7.0-beta2"
+dependencies = [
+ "proc-macro-error",
+ "proc-macro2",
+ "quote",
 ]
 
 [[package]]
@@ -3336,7 +3392,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "024b400db1aca5bd4188714f7bbbf7a2e1962b9a12a80b2a21e937e509086963"
 dependencies = [
  "actix-web",
- "axum",
  "bytes",
  "ciborium",
  "const_format",
@@ -3344,8 +3399,6 @@ dependencies = [
  "futures",
  "gloo-net",
  "http 1.1.0",
- "http-body-util",
- "hyper",
  "inventory",
  "js-sys",
  "once_cell",
@@ -3355,8 +3408,6 @@ dependencies = [
  "serde_qs 0.12.0",
  "server_fn_macro_default 0.6.14",
  "thiserror",
- "tower",
- "tower-layer",
  "url",
  "wasm-bindgen",
  "wasm-bindgen-futures",
@@ -3369,12 +3420,16 @@ dependencies = [
 name = "server_fn"
 version = "0.7.0-beta2"
 dependencies = [
+ "axum",
  "bytes",
  "const_format",
  "dashmap 6.0.1",
  "futures",
  "gloo-net",
  "http 1.1.0",
+ "http-body-util",
+ "hyper",
+ "inventory",
  "js-sys",
  "once_cell",
  "pin-project-lite",
@@ -3385,6 +3440,8 @@ dependencies = [
  "server_fn_macro_default 0.7.0-beta2",
  "thiserror",
  "throw_error",
+ "tower",
+ "tower-layer",
  "url",
  "wasm-bindgen",
  "wasm-bindgen-futures",
@@ -3775,8 +3832,6 @@ dependencies = [
  "bytes",
  "futures-core",
  "futures-sink",
- "futures-util",
- "hashbrown 0.14.5",
  "pin-project-lite",
  "tokio",
 ]

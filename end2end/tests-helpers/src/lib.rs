@@ -1,7 +1,7 @@
 #[macro_export]
 macro_rules! mount {
     ($app:ident) => {{
-        ::leptos::mount_to_body(
+        ::leptos::mount::mount_to_body(
             move || ::leptos::view! { <div id="wrapper"><$app/></div> },
         );
     }};
@@ -11,11 +11,11 @@ macro_rules! mount {
 macro_rules! unmount {
     () => {{
         use wasm_bindgen::JsCast;
-        ::leptos::document()
+        ::leptos::prelude::document()
             .body()
             .unwrap()
             .remove_child(
-                ::leptos::document()
+                ::leptos::prelude::document()
                     .get_element_by_id("wrapper")
                     .unwrap()
                     .unchecked_ref(),
@@ -26,7 +26,7 @@ macro_rules! unmount {
 
 pub async fn sleep(delay: i32) {
     let mut cb = |resolve: js_sys::Function, _reject: js_sys::Function| {
-        ::leptos::window()
+        ::leptos::prelude::window()
             .set_timeout_with_callback_and_timeout_and_arguments_0(
                 &resolve, delay,
             )
@@ -38,7 +38,7 @@ pub async fn sleep(delay: i32) {
 }
 
 pub fn element_text(selector: &str) -> String {
-    ::leptos::document()
+    ::leptos::prelude::document()
         .query_selector(selector)
         .unwrap()
         .unwrap()
@@ -48,7 +48,7 @@ pub fn element_text(selector: &str) -> String {
 
 pub fn input_by_id(id: &str) -> web_sys::HtmlInputElement {
     use wasm_bindgen::JsCast;
-    leptos::document()
+    leptos::prelude::document()
         .get_element_by_id(id)
         .unwrap()
         .unchecked_into::<web_sys::HtmlInputElement>()
@@ -56,7 +56,7 @@ pub fn input_by_id(id: &str) -> web_sys::HtmlInputElement {
 
 pub fn html() -> web_sys::HtmlHtmlElement {
     use wasm_bindgen::JsCast;
-    leptos::document()
+    leptos::prelude::document()
         .document_element()
         .unwrap()
         .unchecked_into::<web_sys::HtmlHtmlElement>()

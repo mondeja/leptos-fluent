@@ -1,5 +1,5 @@
 use fluent_templates::static_loader;
-use leptos::*;
+use leptos::prelude::*;
 use leptos_fluent::move_tr;
 use leptos_fluent_macros::leptos_fluent;
 

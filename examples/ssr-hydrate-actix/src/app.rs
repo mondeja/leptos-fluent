@@ -1,5 +1,5 @@
 use fluent_templates::static_loader;
-use leptos::*;
+use leptos::prelude::*;
 use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, tr, Language};
 use leptos_meta::*;
 use leptos_router::*;
