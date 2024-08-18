@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2024-08-18 - [0.1.18]
+
+- Relax `fluent-templates` dependency.
+
 ## 2024-08-17 - [0.1.17]
 
 ### New features
@@ -480,6 +484,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.1.18]: https://github.com/mondeja/leptos-fluent/compare/v0.1.17...v0.1.18
 [0.1.17]: https://github.com/mondeja/leptos-fluent/compare/v0.1.16...v0.1.17
 [0.1.16]: https://github.com/mondeja/leptos-fluent/compare/v0.1.15...v0.1.16
 [0.1.15]: https://github.com/mondeja/leptos-fluent/compare/v0.1.14...v0.1.15
