@@ -597,4 +597,27 @@ mod tests {
             ]
         );
     }
+
+    #[test]
+    fn context_as_first_macro_parameters() {
+        let content = quote! {
+            fn App() -> impl IntoView {
+                tr!(i18n, "select-a-language");
+                tr!(i18n, "html-tag-lang-is", { "foo" => "value1", "bar" => "value2" });
+            }
+        };
+        let tr_macros = tr_macros_from_file_content(&content.to_string());
+
+        assert_eq!(
+            tr_macros,
+            vec![
+                tr_macro!("tr", "select-a-language", Vec::new()),
+                tr_macro!(
+                    "tr",
+                    "html-tag-lang-is",
+                    vec!["foo".to_string(), "bar".to_string()]
+                ),
+            ]
+        );
+    }
 }

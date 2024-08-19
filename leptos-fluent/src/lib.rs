@@ -545,6 +545,18 @@ pub fn use_i18n() -> Option<I18n> {
     use_context::<I18n>()
 }
 
+const EXPECT_I18N_ERROR_MESSAGE: &str = concat!(
+    "I18n context is missing, use the `leptos_fluent!` macro to provide it.\n\n",
+    "If you're sure that the context has been provided probably the invocation",
+    " resides outside of the reactive ownership tree, thus the context is not",
+    " reachable. Use instead:\n",
+    "  - `tr!(i18n, \"text-id\")` instead of `tr!(\"text-id\")`.\n",
+    "  - `move_tr!(i18n, \"text-id\")` instead of `move_tr!(\"text-id\")`.\n",
+    "  - `i18n.language.set(lang)` instead of `lang.activate()`.\n",
+    "  - `lang == i18n.language.get()` instead of `lang.is_active()`.\n",
+    "  - Copy `i18n` context instead of getting it `expect_i18n()`.",
+);
+
 /// Expect the current context for localization.
 #[cfg_attr(feature = "tracing", tracing::instrument(level = "trace"))]
 #[inline(always)]
@@ -552,9 +564,7 @@ pub fn expect_i18n() -> I18n {
     if let Some(i18n) = use_i18n() {
         i18n
     } else {
-        let error_message = concat!(
-            "I18n context is missing, use the leptos_fluent! macro to provide it."
-        );
+        let error_message = EXPECT_I18N_ERROR_MESSAGE;
         #[cfg(feature = "tracing")]
         tracing::error!(error_message);
         panic!("{}", error_message)
@@ -568,9 +578,7 @@ pub fn i18n() -> I18n {
     if let Some(i18n) = use_i18n() {
         i18n
     } else {
-        let error_message = concat!(
-            "I18n context is missing, use the leptos_fluent! macro to provide it."
-        );
+        let error_message = EXPECT_I18N_ERROR_MESSAGE;
         #[cfg(feature = "tracing")]
         tracing::error!(error_message);
         panic!("{}", error_message)
@@ -579,12 +587,12 @@ pub fn i18n() -> I18n {
 
 #[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
 #[doc(hidden)]
-pub fn tr_impl(text_id: &str) -> String {
+pub fn tr_impl(i18n: I18n, text_id: &str) -> String {
     let I18n {
         language,
         translations,
         ..
-    } = expect_i18n();
+    } = i18n;
     let found = with!(|translations, language| {
         translations
             .iter()
@@ -618,6 +626,7 @@ pub fn tr_impl(text_id: &str) -> String {
 #[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
 #[doc(hidden)]
 pub fn tr_with_args_impl(
+    i18n: I18n,
     text_id: &str,
     args: &std::collections::HashMap<String, FluentValue>,
 ) -> String {
@@ -625,7 +634,7 @@ pub fn tr_with_args_impl(
         language,
         translations,
         ..
-    } = expect_i18n();
+    } = i18n;
     let found = with!(|translations, language| {
         translations
             .iter()
@@ -667,16 +676,26 @@ pub fn tr_with_args_impl(
 /// ```
 #[macro_export]
 macro_rules! tr {
-    ($text_id:literal$(,)?) => {::leptos_fluent::tr_impl($text_id)};
+    ($text_id:literal$(,)?) => {$crate::tr_impl($crate::expect_i18n(), $text_id)};
     ($text_id:literal, {$($key:literal => $value:expr),*$(,)?}$(,)?) => {{
-        ::leptos_fluent::tr_with_args_impl($text_id, &{
+        $crate::tr_with_args_impl($crate::expect_i18n(), $text_id, &{
             let mut map = ::std::collections::HashMap::new();
             $(
                 map.insert($key.to_string(), $value.into());
             )*
             map
         })
-    }}
+    }};
+    ($i18n:expr, $text_id:literal$(,)?) => {$crate::tr_impl($i18n, $text_id)};
+    ($i18n:expr, $text_id:literal, {$($key:literal => $value:expr),*$(,)?}$(,)?) => {{
+        $crate::tr_with_args_impl($i18n, $text_id, &{
+            let mut map = ::std::collections::HashMap::new();
+            $(
+                map.insert($key.to_string(), $value.into());
+            )*
+            map
+        })
+    }};
 }
 
 /// [`leptos::Signal`] that translates a text identifier to the current language.
@@ -707,6 +726,16 @@ macro_rules! move_tr {
     };
     ($text_id:literal, {$($key:literal => $value:expr),*$(,)?}$(,)?) => {
         ::leptos::Signal::derive(move || $crate::tr!($text_id, {
+            $(
+                $key => $value,
+            )*
+        }))
+    };
+    ($i18n:expr, $text_id:literal$(,)?) => {
+        ::leptos::Signal::derive(move || $crate::tr!($i18n, $text_id))
+    };
+    ($i18n:expr, $text_id:literal, {$($key:literal => $value:expr),*$(,)?}$(,)?) => {
+        ::leptos::Signal::derive(move || $crate::tr!($i18n, $text_id, {
             $(
                 $key => $value,
             )*
