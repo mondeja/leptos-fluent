@@ -4,7 +4,7 @@
 use leptos::*;
 use leptos_fluent::{expect_i18n, leptos_fluent};
 use leptos_fluent_csr_minimal_example::TRANSLATIONS;
-use tests_helpers::{input_by_id, mount, sleep, unmount};
+use tests_helpers::{input_by_id, mount, unmount};
 use wasm_bindgen_test::*;
 
 wasm_bindgen_test_configure!(run_in_browser);
