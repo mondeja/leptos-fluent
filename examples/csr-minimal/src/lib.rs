@@ -16,7 +16,7 @@ pub fn App() -> impl IntoView {
         locales: "./locales",
     }};
 
-    view! { <LanguageSelector/> }
+    LanguageSelector
 }
 
 #[component]

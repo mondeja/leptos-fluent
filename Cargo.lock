@@ -1799,7 +1799,7 @@ dependencies = [
 
 [[package]]
 name = "leptos-fluent"
-version = "0.1.18"
+version = "0.1.19"
 dependencies = [
  "current_locale",
  "directories",
@@ -1848,7 +1848,7 @@ dependencies = [
 
 [[package]]
 name = "leptos-fluent-macros"
-version = "0.1.18"
+version = "0.1.19"
 dependencies = [
  "cfg-expr 0.15.8",
  "current_platform",
