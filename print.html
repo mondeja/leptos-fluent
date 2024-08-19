@@ -586,7 +586,9 @@ let lang = i18n();</code></pre>
 <h3 id="check-if-a-language-is-active"><a class="header" href="#check-if-a-language-is-active">Check if a language is active</a></h3>
 <p>To check if a language is the active one, use <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html#method.is_active"><code>is_active</code></a> method of a
 <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html"><code>leptos_fluent::Language</code></a> struct:</p>
-<pre><code class="language-rust">lang.is_active()</code></pre>
+<pre><code class="language-rust">lang.is_active()
+
+lang == expect_i18n().language.get()</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><!-- markdownlint-disable MD013 MD033 MD055 MD056 -->
 <h1 id="strategies"><a class="header" href="#strategies">Strategies</a></h1>
 <p>All the features of the framework are optional, following a declarative
@@ -912,6 +914,7 @@ separation of contexts in the codebase.</p>
 <li><a href="faqs.html#how-to-get-the-i18n-context-at-initialization">How to get the i18n context at initialization?</a></li>
 <li><a href="faqs.html#custom-cookie-attributes-are-invalid">Custom cookie attributes are invalid</a></li>
 <li><a href="faqs.html#how-to-get-the-fallback-language">How to get the fallback language</a></li>
+<li><a href="faqs.html#using-tr-and-move_tr-macros-on-event-panics">Using <code>tr!</code> and <code>move_tr!</code> macros on event panics</a></li>
 <li><a href="faqs.html#why-examples-dont-use-for-component">Why examples don't use <code>&lt;For/&gt;</code> component?</a></li>
 <li><a href="faqs.html#how-to-manage-translations-on-server-actions">How to manage translations on server actions</a></li>
 <li><a href="faqs.html#how-to-get-values-of-leptos_fluent-macro-at-runtime">How to get values of <code>leptos_fluent!</code> macro at runtime?</a></li>
@@ -950,6 +953,60 @@ leptos_fluent! {{
 <h3 id="how-to-get-the-fallback-language"><a class="header" href="#how-to-get-the-fallback-language">How to get the fallback language</a></h3>
 <p>From fluent-templates <code>v0.10</code> onwards can be obtained from your translations.</p>
 <pre><code class="language-rust">let fallback_language = expect_i18n().translations.get()[0].fallback();</code></pre>
+<h3 id="using-tr-and-move_tr-macros-on-event-panics"><a class="header" href="#using-tr-and-move_tr-macros-on-event-panics">Using <code>tr!</code> and <code>move_tr!</code> macros on event panics</a></h3>
+<p>The i18n context can't be obtained from outside the reactive ownership tree.
+This means there are certain locations where we can't use <code>tr!("my-translation")</code>,
+like inside <code>on:</code> events. For example, the next code panics:</p>
+<pre><code class="language-rust">#[component]
+pub fn App() -&gt; impl IntoView {
+    view! {
+        &lt;Show when=|| true&gt;
+            &lt;Child/&gt;
+        &lt;/Show&gt;
+    }
+}
+
+#[component]
+pub fn Child() -&gt; impl IntoView {
+    leptos_fluent! {{
+        // ...
+    }};
+    view! {
+        &lt;div on:click=|_| {
+            tr!("my-translation");
+        }&gt;"CLICK ME!"&lt;/div&gt;
+    }
+}</code></pre>
+<p>With Leptos v0.7, whatever <code>tr!</code> macro used in the <code>on:</code> event will panic,
+but with Leptos v0.6, this outsiding of the ownership tree has been ignored
+from the majority of the cases as unintended behavior.</p>
+<p>To avoid that, pass the i18n context as first parameter to <code>tr!</code> or <code>move_tr!</code>:</p>
+<pre><code class="language-rust">#[component]
+pub fn App() -&gt; impl IntoView {
+    view! {
+        &lt;Show when=|| true&gt;
+            &lt;Child/&gt;
+        &lt;/Show&gt;
+    }
+}
+
+#[component]
+pub fn Child() -&gt; impl IntoView {
+    let i18n = leptos_fluent! {{
+        // ...
+    }};
+    view! {
+        &lt;div on:click=|_| {
+            tr!(i18n, "my-translation");
+        }&gt;"CLICK ME!"&lt;/div&gt;
+    }
+}</code></pre>
+<p>And shortcuts cannot be used. Rewrite all the code that calls <code>expect_context</code>
+internally:</p>
+<ul>
+<li>Use <code>i18n.language.set(lang)</code> instead of <code>lang.activate()</code>.</li>
+<li>Use <code>lang == i18n.language.get()</code> instead of <code>lang.is_active()</code>.</li>
+</ul>
 <h3 id="why-examples-dont-use-for-component"><a class="header" href="#why-examples-dont-use-for-component">Why examples don't use <a href="https://docs.rs/leptos/latest/leptos/fn.For.html"><code>&lt;For/&gt;</code></a> component?</a></h3>
 <div id="admonition-bug" class="admonition admonish-bug" role="note" aria-labelledby="admonition-bug-title">
 <div class="admonition-title">

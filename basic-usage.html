@@ -390,7 +390,9 @@ let lang = i18n();</code></pre>
 <h3 id="check-if-a-language-is-active"><a class="header" href="#check-if-a-language-is-active">Check if a language is active</a></h3>
 <p>To check if a language is the active one, use <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html#method.is_active"><code>is_active</code></a> method of a
 <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html"><code>leptos_fluent::Language</code></a> struct:</p>
-<pre><code class="language-rust">lang.is_active()</code></pre>
+<pre><code class="language-rust">lang.is_active()
+
+lang == expect_i18n().language.get()</code></pre>
 
                     </main>
 
