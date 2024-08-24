@@ -224,6 +224,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f26201604c87b1e01bd3d98f8d5d9a8fcbb815e8cedb41ffccbeb4bf593a35fe"
 
 [[package]]
+name = "adler2"
+version = "2.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "512761e0bb2578dd7380c6baaa0f4ce03e84f95e960231d1dec8bf4d7d6e2627"
+
+[[package]]
 name = "ahash"
 version = "0.8.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -396,7 +402,7 @@ dependencies = [
  "cc",
  "cfg-if",
  "libc",
- "miniz_oxide",
+ "miniz_oxide 0.7.4",
  "object",
  "rustc-demangle",
 ]
@@ -934,22 +940,12 @@ dependencies = [
 
 [[package]]
 name = "flate2"
-version = "1.0.31"
+version = "1.0.32"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7f211bbe8e69bbd0cfdea405084f128ae8b4aaa6b0b522fc8f2b009084797920"
+checksum = "9c0596c1eac1f9e04ed902702e9878208b336edc9d6fddc8a48387349bab3666"
 dependencies = [
  "crc32fast",
- "miniz_oxide",
-]
-
-[[package]]
-name = "fluent"
-version = "0.16.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bb74634707bebd0ce645a981148e8fb8c7bccd4c33c652aeffd28bf2f96d555a"
-dependencies = [
- "fluent-bundle",
- "unic-langid",
+ "miniz_oxide 0.8.0",
 ]
 
 [[package]]
@@ -988,9 +984,9 @@ dependencies = [
 
 [[package]]
 name = "fluent-template-macros"
-version = "0.10.0"
+version = "0.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "da77a943b6ad467c33ea31ce0998c33b3c566c5ef3f64416995ed61b4c473404"
+checksum = "b86ebacac709a063f57ee83d37c451d60dc873554f9bd828531fd1ec43209c80"
 dependencies = [
  "once_cell",
  "proc-macro2",
@@ -1002,11 +998,10 @@ dependencies = [
 
 [[package]]
 name = "fluent-templates"
-version = "0.10.0"
+version = "0.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4e311f7dcf02d2af6c66cf6fda01348cefb912976698ac99abf0498ee2a62155"
+checksum = "f339cc149c01ba2f7b0feba2acde6dd6e4a48472daffe2ddfdd6073e564c60b3"
 dependencies = [
- "fluent",
  "fluent-bundle",
  "fluent-langneg",
  "fluent-syntax",
@@ -1819,7 +1814,6 @@ dependencies = [
  "fluent-templates",
  "leptos",
  "leptos-fluent",
- "web-sys",
 ]
 
 [[package]]
@@ -1830,6 +1824,21 @@ dependencies = [
  "fluent-templates",
  "leptos",
  "leptos-fluent",
+]
+
+[[package]]
+name = "leptos-fluent-end2end-tests"
+version = "0.1.0"
+dependencies = [
+ "fluent-templates",
+ "leptos",
+ "leptos-fluent",
+ "leptos-fluent-csr-complete-example",
+ "leptos-fluent-csr-minimal-example",
+ "tests-helpers",
+ "wasm-bindgen",
+ "wasm-bindgen-test",
+ "web-sys",
 ]
 
 [[package]]
@@ -1904,21 +1913,6 @@ dependencies = [
  "tower",
  "tower-http",
  "wasm-bindgen",
-]
-
-[[package]]
-name = "leptos-fluent-tests"
-version = "0.1.0"
-dependencies = [
- "fluent-templates",
- "leptos",
- "leptos-fluent",
- "leptos-fluent-csr-complete-example",
- "leptos-fluent-csr-minimal-example",
- "tests-helpers",
- "wasm-bindgen",
- "wasm-bindgen-test",
- "web-sys",
 ]
 
 [[package]]
@@ -2157,9 +2151,9 @@ dependencies = [
 
 [[package]]
 name = "libc"
-version = "0.2.157"
+version = "0.2.158"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "374af5f94e54fa97cf75e945cce8a6b201e88a1a07e688b47dfd2a59c66dbd86"
+checksum = "d8adc4bb1803a324070e64a98ae98f38934d91957a99cfb3a43dcbc01bc56439"
 
 [[package]]
 name = "libredox"
@@ -2324,6 +2318,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b8a240ddb74feaf34a79a7add65a741f3167852fba007066dcac1ca548d89c08"
 dependencies = [
  "adler",
+]
+
+[[package]]
+name = "miniz_oxide"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e2d80299ef12ff69b16a84bb182e3b9df68b5a91574d3d4fa6e41b65deec4df1"
+dependencies = [
+ "adler2",
 ]
 
 [[package]]
@@ -2771,9 +2774,9 @@ dependencies = [
 
 [[package]]
 name = "redox_users"
-version = "0.4.5"
+version = "0.4.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bd283d9651eeda4b2a83a43c1c91b266c40fd76ecd39a50a8c630ae69dc72891"
+checksum = "ba009ff324d1fc1b900bd1fdb31564febe58a8ccc8a6fdbb93b543d33b13ca43"
 dependencies = [
  "getrandom",
  "libredox",
@@ -3707,9 +3710,9 @@ checksum = "d4c87d22b6e3f4a18d4d40ef354e97c90fcb14dd91d7dc0aa9d8a1172ebf7202"
 
 [[package]]
 name = "unicode-xid"
-version = "0.2.4"
+version = "0.2.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f962df74c8c05a667b5ee8bcf162993134c104e96440b663c8daa176dc772d8c"
+checksum = "229730647fbc343e3a80e463c1db7f78f3855d3f3739bee0dda773c9a037c90a"
 
 [[package]]
 name = "unsafe-libyaml"
