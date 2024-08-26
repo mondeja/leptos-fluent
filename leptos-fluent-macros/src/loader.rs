@@ -370,8 +370,21 @@ impl LitBool {
     }
 }
 
+#[derive(Default)]
+pub(crate) struct Expr {
+    pub expr: Option<syn::Expr>,
+    pub exprpath: Option<proc_macro2::TokenStream>,
+}
+
+impl Expr {
+    pub fn new() -> Self {
+        Self::default()
+    }
+}
+
 pub(crate) struct I18nLoader {
     pub fluent_file_paths: FluentFilePaths,
+    pub child: Vec<Expr>,
     pub translations: Translations,
     pub languages: Vec<ParsedLanguage>,
     pub languages_path: Option<String>,
@@ -434,6 +447,7 @@ impl Parse for I18nLoader {
 
         let fields;
         braced!(fields in input);
+        let mut child: Vec<Expr> = Vec::new();
         let mut locales_path: Option<syn::LitStr> = None;
         let mut languages_path: Option<syn::LitStr> = None;
         let mut core_locales_path: Option<syn::LitStr> = None;
@@ -585,7 +599,17 @@ impl Parse for I18nLoader {
                 fields.parse::<syn::Token![:]>()?;
             }
 
-            if k == "translations" {
+            if k == "child" {
+                let mut param = Expr::new();
+                clone_runtime_exprpath!(exprpath, param);
+                parse_struct_field_init_shorthand!(
+                    struct_field_init_shorthand,
+                    param,
+                    k
+                );
+                param.expr = Some(fields.parse()?);
+                child.push(param);
+            } else if k == "translations" {
                 struct_field_init_shorthand_not_supported!(
                     struct_field_init_shorthand,
                     k
@@ -1493,6 +1517,7 @@ impl Parse for I18nLoader {
 
         Ok(Self {
             fluent_file_paths: fluent_resources_and_file_paths.1,
+            child,
             translations,
             languages,
             languages_path: languages_file_path,

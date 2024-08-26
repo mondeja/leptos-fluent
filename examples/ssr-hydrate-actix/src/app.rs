@@ -1,8 +1,8 @@
 use fluent_templates::static_loader;
-use leptos::prelude::*;
+use leptos::{prelude::*, spawn::spawn_local};
 use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, tr, Language};
 use leptos_meta::*;
-use leptos_router::*;
+use leptos_router::{path, components::{Route, Router, Routes}};
 
 static_loader! {
     static TRANSLATIONS = {
@@ -13,13 +13,13 @@ static_loader! {
 
 #[component]
 pub fn App() -> impl IntoView {
-    provide_meta_context();
     leptos_fluent! {{
+        child: AppRouter,
         translations: [TRANSLATIONS],
         locales: "./locales",
         #[cfg(debug_assertions)] check_translations: "./src/**/*.rs",
-        sync_html_tag_lang: true,
-        sync_html_tag_dir: true,
+        //sync_html_tag_lang: true,
+        //sync_html_tag_dir: true,
         cookie_name: "lang",
         cookie_attrs: "SameSite=Strict; Secure; path=/; max-age=600",
         initial_language_from_cookie: true,
@@ -49,19 +49,22 @@ pub fn App() -> impl IntoView {
         initial_language_from_url_path_to_cookie: true,
         initial_language_from_url_path_to_localstorage: true,
         initial_language_from_url_path_to_server_function: set_language_server_function,
-    }};
+    }}
+}
+
+#[component]
+fn AppRouter() -> impl IntoView {
+    provide_meta_context();
 
     view! {
         <Title text=move || tr!("welcome-to-leptos")/>
 
-        // content for this welcome page
         <Router>
             <main>
-                <Routes>
-                    <Route path="" view=HomePage/>
-                    <Route path="/en" view=HomePage/>
-                    <Route path="/es" view=HomePage/>
-                    <Route path="/*any" view=NotFound/>
+                <Routes fallback=NotFound>
+                    <Route path=path!("") view=HomePage/>
+                    <Route path=path!("/en") view=HomePage/>
+                    <Route path=path!("/es") view=HomePage/>
                 </Routes>
             </main>
         </Router>

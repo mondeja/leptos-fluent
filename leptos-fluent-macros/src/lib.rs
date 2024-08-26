@@ -59,6 +59,7 @@ pub(crate) fn debug(msg: &str) {
 /// #[component]
 /// pub fn App() -> impl IntoView {
 ///     leptos_fluent! {{
+///         child: view! { ... },
 ///         translations: [TRANSLATIONS],
 ///         languages: "./locales/languages.json",
 ///         sync_html_tag_lang: true,
@@ -78,11 +79,7 @@ pub(crate) fn debug(msg: &str) {
 ///         cookie_attrs: "SameSite=Strict; Secure; path=/; max-age=2592000",
 ///         initial_language_from_cookie: true,
 ///         set_language_to_cookie: true,
-///     }};
-///
-///     view! {
-///         ...
-///     }
+///     }}
 /// }
 /// ```
 ///
@@ -95,6 +92,7 @@ pub fn leptos_fluent(
 ) -> proc_macro::TokenStream {
     let I18nLoader {
         fluent_file_paths,
+        child,
         translations,
         languages,
         languages_path,
@@ -528,7 +526,7 @@ pub fn leptos_fluent(
             .map(|param| {
                 let ident = &param.ident;
                 let effect_quote = quote! {
-                    spawn_local(async move {
+                    ::leptos::spawn::spawn_local(async move {
                         let lang_result = #ident().await;
                         if let Ok(maybe_lang) = lang_result {
                             if let Some(l) = maybe_lang {
@@ -537,7 +535,6 @@ pub fn leptos_fluent(
                                     #set_to_cookie_quote
                                     #set_to_localstorage_quote
                                 }
-
                             }
                         }
                     });
@@ -566,7 +563,7 @@ pub fn leptos_fluent(
             let ident = &param.ident;
             let effect_quote = quote! {
                 ::leptos::prelude::Effect::new(move |_| {
-                    spawn_local(async {
+                    ::leptos::spawn::spawn_local(async {
                         _ = #ident(#get_language_quote.id.to_string()).await;
                     });
                 });
@@ -586,7 +583,7 @@ pub fn leptos_fluent(
             match param.ident {
                 Some(ref ident) => {
                     let quote = quote! {
-                        spawn_local(async move {
+                        ::leptos::spawn::spawn_local(async move {
                             _ = #ident(l.id.to_string()).await;
                         });
                     };
@@ -1002,7 +999,7 @@ pub fn leptos_fluent(
     let initial_language_from_url_param_quote: proc_macro2::TokenStream = {
         #[cfg(feature = "hydrate")]
         let hydrate_rerender_quote = quote! {
-            ::leptos::prelude::Effect::new(move |prev| {
+            ::leptos::prelude::Effect::new(move |prev: Option<()>| {
                 if prev.is_none() {
                     l.activate();
                 }
@@ -1101,7 +1098,7 @@ pub fn leptos_fluent(
                 .map(|param| match param.ident {
                     Some(ref ident) => {
                         let quote = quote! {
-                            spawn_local(async move {
+                            ::leptos::spawn::spawn_local(async move {
                                 _ = #ident(l.id.to_string()).await;
                             });
                         };
@@ -1248,7 +1245,7 @@ pub fn leptos_fluent(
                 match param.ident {
                     Some(ref ident) => {
                         let quote = quote! {
-                            spawn_local(async move {
+                            ::leptos::spawn::spawn_local(async move {
                                 _ = #ident(l.id.to_string()).await;
                             });
                         };
@@ -1431,7 +1428,7 @@ pub fn leptos_fluent(
                 match param.ident {
                     Some(ref ident) => {
                         let quote = quote! {
-                            spawn_local(async move {
+                            ::leptos::spawn::spawn_local(async move {
                                 _ = #ident(l.id.to_string()).await;
                             });
                         };
@@ -1508,7 +1505,7 @@ pub fn leptos_fluent(
             let effect_quote = quote! {
                 use ::leptos_fluent::web_sys::wasm_bindgen::JsCast;
                 let closure: Box<dyn FnMut(_)> = Box::new(
-                    move |_: web_sys::Window| {
+                    move |_: ::leptos_fluent::web_sys::Window| {
                         let languages = window().navigator().languages().to_vec();
                         for raw_language in languages {
                             let language = raw_language.as_string();
@@ -1691,7 +1688,7 @@ pub fn leptos_fluent(
             match param.ident {
                 Some(ref ident) => {
                     let quote = quote! {
-                        spawn_local(async move {
+                        ::leptos::spawn::spawn_local(async move {
                             _ = #ident(l.id.to_string()).await;
                         });
                     };
@@ -2327,11 +2324,21 @@ pub fn leptos_fluent(
     #[cfg(feature = "tracing")]
     tracing::trace!("{}", debug_quote);
 
+    let child_quote: proc_macro2::TokenStream = child.iter().map(|param| {
+        let expr = param.expr.as_ref().unwrap();
+        match param.exprpath {
+            Some(ref path) => quote!(#path{#expr}),
+            None => quote!(#expr),
+        }
+    }).collect();
+
     let quote = quote! {
         {
             #debug_quote
             #other_quotes
-        }
+        };
+
+        #child_quote
     };
 
     #[cfg(feature = "debug")]

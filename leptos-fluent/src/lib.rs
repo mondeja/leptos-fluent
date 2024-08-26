@@ -88,6 +88,10 @@
 //!     // See all options in the reference at
 //!     // https://mondeja.github.io/leptos-fluent/leptos_fluent.html
 //!     leptos_fluent! {{
+//!         child: view! {
+//!             <TranslatableComponent />
+//!             <LanguageSelector />
+//!         },
 //!         // Path to the locales directory, relative to Cargo.toml.
 //!         locales: "./locales",
 //!         // Static translations struct provided by fluent-templates.
@@ -176,12 +180,7 @@
 //!         data_file_key: "my-app",
 //!         // Set the language selected to a data file.
 //!         set_language_to_data_file: true,
-//!     }};
-//!
-//!     view! {
-//!         <TranslatableComponent />
-//!         <LanguageSelector />
-//!     }
+//!     }}
 //! }
 //!
 //! #[component]
@@ -206,8 +205,9 @@
 //!     // `expect_i18n()` to get the i18n context
 //!     // `i18n.languages` is a static array with the available languages
 //!     // `i18n.language.read()` to get the current language
-//!     // `lang.activate()` to set the current language
+//!     // `lang.activate()` or `i18n.language.set(lang)` to set the current language
 //!     // `lang.is_active()` to check if a language is the current selected one
+//!     let i18n = expect_i18n();
 //!
 //!     view! {
 //!         <fieldset>
@@ -221,7 +221,7 @@
 //!                                 name="language"
 //!                                 value=lang
 //!                                 checked=lang.is_active()
-//!                                 on:click=move |_| lang.activate()
+//!                                 on:click=move |_| i18n.language.set(lang)
 //!                             />
 //!                             <label for=lang>{lang.name}</label>
 //!                         </div>
@@ -276,7 +276,7 @@ pub mod url;
 #[cfg(feature = "system")]
 pub use current_locale::current_locale;
 #[doc(hidden)]
-pub use web_sys;
+pub extern crate web_sys;
 
 use core::hash::{Hash, Hasher};
 use core::ops::Deref;
@@ -288,8 +288,8 @@ use fluent_templates::{
 use leptos::{
     attr::AttributeValue,
     prelude::{
-        component, guards::ReadGuard, use_context, RwSignal, Signal,
-        IntoView, Read, Renderer, Set, With,
+        guards::ReadGuard, use_context, RwSignal, Signal,
+        Read, Renderer, Set, With,
     },
 };
 #[cfg(feature = "ssr")]
@@ -664,7 +664,7 @@ pub fn tr_impl(i18n: I18n, text_id: &str) -> String {
         language,
         translations,
         ..
-    } = expect_i18n();
+    } = i18n;
     let found = translations.with(|translations| {
         language.with(|language| {
             translations
@@ -708,7 +708,7 @@ pub fn tr_with_args_impl(
         language,
         translations,
         ..
-    } = expect_i18n();
+    } = i18n;
     let found = translations.with(|translations| {
         language.with(|language| {
             translations.iter().find_map(|tr| {

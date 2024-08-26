@@ -9,10 +9,10 @@ name = "leptos_fluent_csr_minimal_example"
 path = "src/lib.rs"
 
 [dependencies]
-leptos = { path = "../../../leptos/leptos", version = "0.7.0-beta2", features = [
-  "csr"
+leptos = { version = "0.7.0-beta2", features = ["csr"] }
+leptos-fluent = { path = "../../leptos-fluent", default-features = false, features = [
+  "debug"
 ] }
-leptos-fluent = { path = "../../leptos-fluent", default-features = false, features = ["debug"] }
 fluent-templates = { version = "0.10", default-features = false, features = [
   "macros",
   "walkdir"
