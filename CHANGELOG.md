@@ -1,5 +1,25 @@
 # CHANGELOG
 
+## 2024-08-26 - [0.1.20]
+
+### Bug fixes
+
+- Fix variables in Fluent selectors not being extracted as placeables when
+  checking translations.
+
+## 2024-08-19 - [0.1.19]
+
+### Bug fixes
+
+- Allow to pass `i18n` as first argument to `tr!` and `move_tr!` macros.
+  This is an alternative to panicking when using the macros in event handlers.
+
+## 2024-08-18 - [0.1.18]
+
+### Bug fixes
+
+- Relax `fluent-templates` dependency.
+
 ## 2024-08-17 - [0.1.17]
 
 ### New features
@@ -480,6 +500,9 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.1.20]: https://github.com/mondeja/leptos-fluent/compare/v0.1.19...v0.1.20
+[0.1.19]: https://github.com/mondeja/leptos-fluent/compare/v0.1.18...v0.1.19
+[0.1.18]: https://github.com/mondeja/leptos-fluent/compare/v0.1.17...v0.1.18
 [0.1.17]: https://github.com/mondeja/leptos-fluent/compare/v0.1.16...v0.1.17
 [0.1.16]: https://github.com/mondeja/leptos-fluent/compare/v0.1.15...v0.1.16
 [0.1.15]: https://github.com/mondeja/leptos-fluent/compare/v0.1.14...v0.1.15

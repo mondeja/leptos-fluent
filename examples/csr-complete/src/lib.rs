@@ -38,11 +38,13 @@ pub fn App() -> impl IntoView {
         set_language_from_navigator: true,
     }};
 
-    view! { <ChildComponent/> }
+    LanguageSelector
 }
 
 #[component]
-fn ChildComponent() -> impl IntoView {
+fn LanguageSelector() -> impl IntoView {
+    let i18n = expect_i18n();
+
     view! {
         <p>{move_tr!("select-a-language")}</p>
         <fieldset>

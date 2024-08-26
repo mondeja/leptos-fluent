@@ -18,7 +18,6 @@ fluent-templates = { version = "0.10", default-features = false, features = [
   "walkdir"
 ] }
 console_error_panic_hook = "0"
-web-sys = "0"
 
 [[bin]]
 name = "main"
