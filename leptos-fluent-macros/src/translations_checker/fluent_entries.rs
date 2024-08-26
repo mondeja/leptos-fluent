@@ -47,6 +47,28 @@ fn get_fluent_entries_from_resource(
                                     placeables.push(id.name.to_string());
                                 }
                             }
+                        } else if let fluent_syntax::ast::Expression::Select {
+                            selector: fluent_syntax::ast::InlineExpression::VariableReference { id },
+                            ..
+                        } = expression {
+                            placeables.push(id.name.to_string());
+                        } else if let fluent_syntax::ast::Expression::Select {
+                            selector: fluent_syntax::ast::InlineExpression::FunctionReference {
+                                arguments: fluent_syntax::ast::CallArguments {
+                                    positional,
+                                    ..
+                                },
+                                ..
+                            },
+                            ..
+                        } = expression {
+                            for arg in positional {
+                                if let fluent_syntax::ast::InlineExpression::VariableReference {
+                                    id
+                                } = arg {
+                                    placeables.push(id.name.to_string());
+                                }
+                            }
                         }
                     }
                 }
@@ -201,7 +223,7 @@ mod tests {
                 vec!["foo = Bar\nhello = Hello { $name }\n".to_string()],
             ),
             (
-                Rc::new("en-US".to_string()),
+                Rc::new("es-ES".to_string()),
                 vec!["foo = Bar\nhello = Hola { $name }\n".to_string()],
             ),
         ]);
@@ -211,7 +233,7 @@ mod tests {
                 vec!["./locales/en-US/foo.ftl".to_string()],
             ),
             (
-                Rc::new("en-US".to_string()),
+                Rc::new("es-ES".to_string()),
                 vec!["./locales/es-ES/foo.ftl".to_string()],
             ),
         ]);
@@ -241,7 +263,7 @@ mod tests {
                     ]
                 ),
                 (
-                    Rc::new("en-US".to_string()),
+                    Rc::new("es-ES".to_string()),
                     vec![
                         FluentEntry {
                             message_name: "foo".to_string(),
@@ -409,6 +431,65 @@ emails2 = Number of unread emails { NUMBER($unreadEmails) }
                     }
                 ]
             )])
+        );
+    }
+
+    #[test]
+    fn fluent_selectors() {
+        let fluent_resources = HashMap::from([(
+            Rc::new("en-US".to_string()),
+            vec![r#"emails =
+    { $unreadEmails ->
+        [one] You have one unread email.
+       *[other] You have { $unreadEmails } unread emails.
+    }
+your-score =
+    { NUMBER($score, minimumFractionDigits: 1) ->
+        [0.0]   You scored zero points. What happened?
+       *[other] You scored { NUMBER($score, minimumFractionDigits: 1) } points.
+    }
+your-rank = { NUMBER($pos, type: "ordinal") ->
+   [1] You finished first!
+   [one] You finished {$pos}st
+   [two] You finished {$pos}nd
+   [few] You finished {$pos}rd
+  *[other] You finished {$pos}th
+}
+"#
+            .to_string()],
+        )]);
+        let fluent_file_paths = HashMap::from([(
+            Rc::new("en-US".to_string()),
+            vec!["./locales/en-US/foo.ftl".to_string()],
+        )]);
+        let workspace_path = "./";
+        let (entries, errors) = build_fluent_entries(
+            &fluent_resources,
+            &fluent_file_paths,
+            workspace_path,
+            &None,
+            &None,
+        );
+        assert!(errors.is_empty());
+        assert_eq!(
+            entries,
+            HashMap::from([(
+                Rc::new("en-US".to_string()),
+                vec![
+                    FluentEntry {
+                        message_name: "emails".to_string(),
+                        placeables: vec!["unreadEmails".to_string()]
+                    },
+                    FluentEntry {
+                        message_name: "your-score".to_string(),
+                        placeables: vec!["score".to_string()]
+                    },
+                    FluentEntry {
+                        message_name: "your-rank".to_string(),
+                        placeables: vec!["pos".to_string()]
+                    }
+                ]
+            ),])
         );
     }
 }
