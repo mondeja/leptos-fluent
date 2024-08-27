@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2024-08-27 - [0.1.21]
+
+- Fix translation macros not extracted from some locations when a variable
+  binding is not used in translations checker.
+
 ## 2024-08-26 - [0.1.20]
 
 ### Bug fixes
@@ -500,6 +505,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.1.21]: https://github.com/mondeja/leptos-fluent/compare/v0.1.20...v0.1.21
 [0.1.20]: https://github.com/mondeja/leptos-fluent/compare/v0.1.19...v0.1.20
 [0.1.19]: https://github.com/mondeja/leptos-fluent/compare/v0.1.18...v0.1.19
 [0.1.18]: https://github.com/mondeja/leptos-fluent/compare/v0.1.17...v0.1.18

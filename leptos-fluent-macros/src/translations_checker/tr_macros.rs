@@ -38,7 +38,7 @@ pub(crate) fn gather_tr_macro_defs_from_rs_files(
             (tr_macros, errors)
         }
         Err(error) => (
-            vec![],
+            Vec::new(),
             vec![format!(
                 r#"Error parsing glob pattern "{}": {}"#,
                 glob_pattern, error,
@@ -302,19 +302,12 @@ impl<'ast> TranslationsMacrosVisitor {
 
 impl<'ast> Visit<'ast> for TranslationsMacrosVisitor {
     fn visit_macro(&mut self, node: &'ast syn::Macro) {
-        for token in node.tokens.clone() {
-            if let proc_macro2::TokenTree::Group(group) = token {
-                self.visit_maybe_macro_tokens_stream(&group.stream());
-            }
-        }
-
+        self.visit_maybe_macro_tokens_stream(&node.to_token_stream());
         syn::visit::visit_macro(self, node);
     }
 
     fn visit_stmt_macro(&mut self, node: &'ast syn::StmtMacro) {
-        let stream = node.to_token_stream();
-        self.visit_maybe_macro_tokens_stream(&stream);
-
+        self.visit_maybe_macro_tokens_stream(&node.to_token_stream());
         syn::visit::visit_stmt_macro(self, node);
     }
 
@@ -570,7 +563,7 @@ mod tests {
 
         let tr_macros = tr_macros_from_file_content(&content.to_string());
 
-        assert_eq!(tr_macros, vec![]);
+        assert_eq!(tr_macros, Vec::new());
     }
 
     #[test]
@@ -617,6 +610,35 @@ mod tests {
                     "html-tag-lang-is",
                     vec!["foo".to_string(), "bar".to_string()]
                 ),
+            ]
+        );
+    }
+
+    #[test]
+    fn at_return() {
+        let content = quote! {
+            pub fn foo() -> String {
+                tr!("now")
+            }
+
+            pub fn bar() -> String {
+                return move_tr!("after");
+            }
+
+            fn baz() -> String {
+                (tr!("before"), move_tr!("tomorrow"))
+            }
+        };
+
+        let tr_macros = tr_macros_from_file_content(&content.to_string());
+
+        assert_eq!(
+            tr_macros,
+            vec![
+                tr_macro!("tr", "now", Vec::new()),
+                tr_macro!("move_tr", "after", Vec::new()),
+                tr_macro!("tr", "before", Vec::new()),
+                tr_macro!("move_tr", "tomorrow", Vec::new()),
             ]
         );
     }
