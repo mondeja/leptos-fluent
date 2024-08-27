@@ -2,6 +2,8 @@
 
 ## 2024-08-27 - [0.1.21]
 
+### Bug fixes
+
 - Fix translation macros not extracted from some locations when a variable
   binding is not used in translations checker.
 
