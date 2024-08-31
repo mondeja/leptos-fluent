@@ -1,5 +1,5 @@
 use fluent_templates::static_loader;
-use leptos::*;
+use leptos::prelude::*;
 use leptos_fluent::{expect_i18n, leptos_fluent, move_tr};
 
 static_loader! {
@@ -12,11 +12,10 @@ static_loader! {
 #[component]
 pub fn App() -> impl IntoView {
     leptos_fluent! {{
+        child: LanguageSelector,
         translations: [TRANSLATIONS],
         locales: "./locales",
-    }};
-
-    LanguageSelector
+    }}
 }
 
 #[component]
@@ -39,7 +38,7 @@ pub fn LanguageSelector() -> impl IntoView {
                                     name="language"
                                     value=lang
                                     checked=lang.is_active()
-                                    on:click=move |_| lang.activate()
+                                    on:click=move |_| i18n.language.set(lang)
                                 />
                                 <label for=lang>{lang.name}</label>
                             </div>

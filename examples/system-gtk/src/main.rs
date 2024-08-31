@@ -1,6 +1,6 @@
 use fluent_templates::static_loader;
 use gtk::{prelude::*, Application, ApplicationWindow, Button};
-use leptos::*;
+use leptos::prelude::*;
 use leptos_fluent::{expect_i18n, leptos_fluent, tr};
 
 const APP_ID: &str = "dev.leptos.Counter";

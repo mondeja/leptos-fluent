@@ -75,7 +75,7 @@ You can use `leptos-fluent` as follows:
 
 ```rust
 use fluent_templates::static_loader;
-use leptos::*;
+use leptos::prelude::*;
 use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, tr};
 
 static_loader! {
@@ -207,7 +207,7 @@ fn TranslatableComponent() -> impl IntoView {
 fn LanguageSelector() -> impl IntoView {
     // `expect_i18n()` to get the i18n context
     // `i18n.languages` is a static array with the available languages
-    // `i18n.language.get()` to get the current language
+    // `i18n.language.read()` to get the current language
     // `lang.activate()` to set the current language
     // `lang.is_active()` to check if a language is the current selected one
 

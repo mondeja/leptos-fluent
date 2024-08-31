@@ -6,7 +6,7 @@ use axum::{
     http::{Request, Response, StatusCode},
     response::IntoResponse,
 };
-use leptos::*;
+use leptos::prelude::*;
 use std::convert::Infallible;
 use tower::ServiceExt;
 use tower_http::services::{fs::ServeFileSystemResponseBody, ServeDir};

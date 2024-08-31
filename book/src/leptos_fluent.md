@@ -270,7 +270,7 @@ Must be a [glob] relative to the _Cargo.toml_ file.
 ### <span style="opacity:.5">CSR </span> | `sync_html_tag_lang`
 
 Synchronize the global [`<html lang="...">` attribute] with current language
-using [`leptos::create_effect`]. Can be a literal boolean or an expression
+using [`leptos::Effect`]. Can be a literal boolean or an expression
 that will be evaluated at runtime.
 
 ```rust
@@ -283,7 +283,7 @@ leptos_fluent! {{
 ### <span style="opacity:.5">CSR </span> | `sync_html_tag_dir`
 
 Synchronize the global [`<html dir="...">` attribute] with current language
-using [`leptos::create_effect`].
+using [`leptos::Effect`].
 
 Can be a literal boolean or an expression that will be evaluated at runtime.
 

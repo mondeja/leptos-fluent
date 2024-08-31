@@ -2,7 +2,7 @@
 #[tokio::main]
 async fn main() {
     use axum::Router;
-    use leptos::*;
+    use leptos::prelude::*;
     use leptos_axum::{generate_route_list, LeptosRoutes};
     use leptos_fluent_ssr_hydrate_axum_example::app::App;
     use leptos_fluent_ssr_hydrate_axum_example::fileserv::file_and_error_handler;
@@ -45,5 +45,5 @@ pub fn main() {
 
     console_error_panic_hook::set_once();
 
-    leptos::mount_to_body(App);
+    leptos::mount::mount_to_body(App);
 }

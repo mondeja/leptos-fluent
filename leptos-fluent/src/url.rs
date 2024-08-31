@@ -5,7 +5,7 @@ pub mod param {
     )]
     pub fn get(k: &str) -> Option<String> {
         #[cfg(not(feature = "ssr"))]
-        if let Ok(search) = leptos::window().location().search() {
+        if let Ok(search) = leptos::prelude::window().location().search() {
             if let Ok(search_params) =
                 web_sys::UrlSearchParams::new_with_str(&search)
             {
@@ -45,14 +45,14 @@ pub mod param {
         #[cfg(not(feature = "ssr"))]
         {
             let url = web_sys::Url::new(
-                &leptos::window()
+                &leptos::prelude::window()
                     .location()
                     .href()
                     .expect("Failed to get location.href from the browser"),
             )
             .expect("Failed to parse location.href from the browser");
             url.search_params().set(k, v);
-            leptos::window()
+            leptos::prelude::window()
                 .history()
                 .expect("Failed to get the history from the browser")
                 .replace_state_with_url(
@@ -85,14 +85,14 @@ pub mod param {
         #[cfg(not(feature = "ssr"))]
         {
             let url = web_sys::Url::new(
-                &leptos::window()
+                &leptos::prelude::window()
                     .location()
                     .href()
                     .expect("Failed to get location.href from the browser"),
             )
             .expect("Failed to parse location.href from the browser");
             url.search_params().delete(k);
-            leptos::window()
+            leptos::prelude::window()
                 .history()
                 .expect("Failed to get the history from the browser")
                 .replace_state_with_url(
@@ -123,7 +123,7 @@ pub mod path {
     )]
     pub fn get() -> Option<String> {
         #[cfg(not(feature = "ssr"))]
-        if let Ok(pathname) = leptos::window().location().pathname() {
+        if let Ok(pathname) = leptos::prelude::window().location().pathname() {
             return Some(pathname);
         }
 
