@@ -87,7 +87,7 @@
 //! fn App() -> impl IntoView {
 //!     // See all options in the reference at
 //!     // https://mondeja.github.io/leptos-fluent/leptos_fluent.html
-//!     leptos_fluent! {{
+//!     leptos_fluent! {
 //!         // Path to the locales directory, relative to Cargo.toml.
 //!         locales: "./locales",
 //!         // Static translations struct provided by fluent-templates.
@@ -176,7 +176,7 @@
 //!         data_file_key: "my-app",
 //!         // Set the language selected to a data file.
 //!         set_language_to_data_file: true,
-//!     }};
+//!     };
 //!
 //!     view! {
 //!         <TranslatableComponent />
@@ -443,10 +443,10 @@ impl I18n {
     /// raise an error message.
     ///
     /// ```rust,ignore
-    /// let i18n = leptos_fluent! {{
+    /// let i18n = leptos_fluent! {
     ///     // ...
     ///     provide_meta_context: true,
-    /// }};
+    /// };
     ///
     /// leptos::logging::log!("Macro parameters: {:?}", i18n.meta().unwrap());
     /// ```

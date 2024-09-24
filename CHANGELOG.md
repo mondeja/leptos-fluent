@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2024-09-25 - [0.1.23]
+
+### Enhancements
+
+- Allow single braces syntax for `leptos_fluent!` macro. The current
+  syntax `leptos_fluent! {{ ... }}` is still supported but now triggers
+  a deprecation warning. It will not be supported from `v0.2`.
+  Use `leptos_fluent! { ... }` instead.
+
 ## 2024-09-24 - [0.1.22]
 
 ### Bug fixes
@@ -99,13 +108,13 @@
   `leptos_fluent!` macro:
 
   ```rust
-  leptos_fluent! {{
+  leptos_fluent! {
       // ...
       #[cfg(debug_assertions)]
       set_language_to_url_param: true,
       #[cfg(not(debug_assertions))]
       set_language_to_url_param: false,
-  }}
+  }
   ```
 
 ## 2024-08-03 - [0.1.10]
@@ -118,11 +127,11 @@
   For example, only use a languages file when compiling on Unix systems:
 
   ```rust
-  leptos_fluent! {{
+  leptos_fluent! {
       // ...
       #[cfg(target_family = "unix")]
       languages: "./locales/languages.json",
-  }}
+  }
   ```
 
 ## 2024-08-02 - [0.1.9]
@@ -193,13 +202,13 @@
 - Accept [configuration conditional checks] directly in most macro parameters:
 
   ```rust
-  leptos_fluent! {{
+  leptos_fluent! {
       // ...
       #[cfg(debug_assertions)]
       initial_language_from_url_param: true,
       #[cfg(debug_assertions)]
       set_language_to_url_param: true,
-  }}
+  }
   ```
 
 [configuration conditional checks]: https://doc.rust-lang.org/rust-by-example/attribute/cfg.html
@@ -514,6 +523,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.1.23]: https://github.com/mondeja/leptos-fluent/compare/v0.1.22...v0.1.23
 [0.1.22]: https://github.com/mondeja/leptos-fluent/compare/v0.1.21...v0.1.22
 [0.1.21]: https://github.com/mondeja/leptos-fluent/compare/v0.1.20...v0.1.21
 [0.1.20]: https://github.com/mondeja/leptos-fluent/compare/v0.1.19...v0.1.20

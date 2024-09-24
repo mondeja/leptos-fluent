@@ -7,32 +7,31 @@ use crate::{
 use quote::ToTokens;
 use std::path::PathBuf;
 use syn::{
-    braced,
     parse::{Parse, ParseStream},
     spanned::Spanned,
     token, Result,
 };
 
 fn parse_litstr_or_expr_param(
-    fields: ParseStream,
+    input: ParseStream,
     strlit: &mut Option<syn::LitStr>,
     expr: &mut Option<syn::Expr>,
     param_name: &'static str,
 ) -> Result<()> {
-    match fields.parse::<syn::LitStr>() {
+    match input.parse::<syn::LitStr>() {
         Ok(lit) => {
             *strlit = Some(lit);
             Ok(())
         }
-        Err(_) => match fields.parse::<syn::Expr>() {
+        Err(_) => match input.parse::<syn::Expr>() {
             Ok(e) => {
                 *expr = Some(e);
                 Ok(())
             }
             Err(_) => {
-                let fields_str = fields.to_string();
+                let input_str = input.to_string();
                 Err(syn::Error::new(
-                    fields.span(),
+                    input.span(),
                     format!(
                         concat!(
                             "Not a valid value for '{}' of leptos_fluent! macro.",
@@ -40,9 +39,9 @@ fn parse_litstr_or_expr_param(
                             " Found {}",
                         ),
                         param_name,
-                        match fields_str.is_empty() {
+                        match input_str.is_empty() {
                             true => "(empty)",
-                            false => &fields_str,
+                            false => &input_str,
                         },
                     ),
                 ))
@@ -52,17 +51,17 @@ fn parse_litstr_or_expr_param(
 }
 
 fn parse_litstr_or_expr_param_noop(
-    fields: ParseStream,
+    input: ParseStream,
     param_name: &'static str,
 ) -> Result<()> {
-    match fields.parse::<syn::LitStr>() {
+    match input.parse::<syn::LitStr>() {
         Ok(_) => Ok(()),
-        Err(_) => match fields.parse::<syn::Expr>() {
+        Err(_) => match input.parse::<syn::Expr>() {
             Ok(_) => Ok(()),
             Err(_) => {
-                let fields_str = fields.to_string();
+                let input_str = input.to_string();
                 Err(syn::Error::new(
-                    fields.span(),
+                    input.span(),
                     format!(
                         concat!(
                             "Not a valid value for '{}' of leptos_fluent! macro.",
@@ -70,9 +69,9 @@ fn parse_litstr_or_expr_param_noop(
                             " Found {}",
                         ),
                         param_name,
-                        match fields_str.is_empty() {
+                        match input_str.is_empty() {
                             true => "(empty)",
-                            false => &fields_str,
+                            false => &input_str,
                         },
                     ),
                 ))
@@ -82,7 +81,7 @@ fn parse_litstr_or_expr_param_noop(
 }
 
 macro_rules! parse_litstr_or_expr_param_with_maybe_comptime_exprpath {
-    ($exprpath:ident, $k:ident, $fields:ident, $param:ident, $param_name:literal) => {
+    ($exprpath:ident, $k:ident, $input:ident, $param:ident, $param_name:literal) => {
         if let Some(ref e) = $exprpath {
             let evaluated_exprpath = $crate::evaluate_exprpath(e);
             if !evaluated_exprpath.supported {
@@ -91,10 +90,10 @@ macro_rules! parse_litstr_or_expr_param_with_maybe_comptime_exprpath {
                     exprpath_not_supported_error_message(e, &$k),
                 ));
             } else if !evaluated_exprpath.result {
-                parse_litstr_or_expr_param_noop(&$fields, $param_name)?;
+                parse_litstr_or_expr_param_noop(&$input, $param_name)?;
             } else {
                 parse_litstr_or_expr_param(
-                    &$fields,
+                    &$input,
                     &mut $param.lit,
                     &mut $param.expr,
                     $param_name,
@@ -102,7 +101,7 @@ macro_rules! parse_litstr_or_expr_param_with_maybe_comptime_exprpath {
             }
         } else {
             parse_litstr_or_expr_param(
-                &$fields,
+                &$input,
                 &mut $param.lit,
                 &mut $param.expr,
                 $param_name,
@@ -112,25 +111,25 @@ macro_rules! parse_litstr_or_expr_param_with_maybe_comptime_exprpath {
 }
 
 fn parse_litbool_or_expr_param(
-    fields: ParseStream,
+    input: ParseStream,
     litbool: &mut Option<syn::LitBool>,
     expr: &mut Option<syn::Expr>,
     param_name: &'static str,
 ) -> Result<()> {
-    match fields.parse::<syn::LitBool>() {
+    match input.parse::<syn::LitBool>() {
         Ok(lit) => {
             *litbool = Some(lit);
             Ok(())
         }
-        Err(_) => match fields.parse::<syn::Expr>() {
+        Err(_) => match input.parse::<syn::Expr>() {
             Ok(e) => {
                 *expr = Some(e);
                 Ok(())
             }
             Err(_) => {
-                let fields_str = fields.to_string();
+                let input_str = input.to_string();
                 Err(syn::Error::new(
-                    fields.span(),
+                    input.span(),
                     format!(
                         concat!(
                             "Not a valid value for '{}' of leptos_fluent! macro.",
@@ -138,9 +137,9 @@ fn parse_litbool_or_expr_param(
                             " Found {}",
                         ),
                         param_name,
-                        match fields_str.is_empty() {
+                        match input_str.is_empty() {
                             true => "(empty)",
-                            false => &fields_str,
+                            false => &input_str,
                         },
                     ),
                 ))
@@ -271,10 +270,10 @@ fn exprpath_not_supported_error_message(
     let {}_dyn = {{ ... }};
 }}
 
-leptos_fluent! {{{{
+leptos_fluent! {{
     // ...
     {}: {}_dyn,
-}}}};
+}};
 ```
 ",
         ),
@@ -432,8 +431,6 @@ impl Parse for I18nLoader {
             std::env::var("CARGO_MANIFEST_DIR").unwrap_or_else(|_| "./".into()),
         );
 
-        let fields;
-        braced!(fields in input);
         let mut locales_path: Option<syn::LitStr> = None;
         let mut languages_path: Option<syn::LitStr> = None;
         let mut core_locales_path: Option<syn::LitStr> = None;
@@ -515,27 +512,26 @@ impl Parse for I18nLoader {
         let mut initial_language_from_data_file: Vec<LitBoolExpr> = Vec::new();
         let mut data_file_key = LitStrExpr::new();
 
-        while !fields.is_empty() {
+        while !input.is_empty() {
             let mut exprpath: Option<proc_macro2::TokenStream> = None;
             let k;
-            if fields.peek(syn::Ident)
-                && (fields.peek2(syn::Token![:])
-                    || fields.peek2(syn::Token![,]))
+            if input.peek(syn::Ident)
+                && (input.peek2(syn::Token![:]) || input.peek2(syn::Token![,]))
             {
-                k = fields.parse::<syn::Ident>()?;
+                k = input.parse::<syn::Ident>()?;
                 // `expression:` or `expression,`
             } else {
-                let maybe_expr = fields.parse::<syn::Expr>();
+                let maybe_expr = input.parse::<syn::Expr>();
                 if maybe_expr.is_err() {
                     return Err(syn::Error::new(
-                        fields.span(),
+                        input.span(),
                         format!(
                             concat!(
                                 "Expected an expression with",
                                 " 'key: value', '#[...] key: value', 'key,' or `#[...] key,` format.",
                                 " Found:\n{}"
                             ),
-                            fields,
+                            input,
                         ),
                     ));
                 }
@@ -578,11 +574,11 @@ impl Parse for I18nLoader {
             }
 
             let mut struct_field_init_shorthand = false;
-            if fields.peek(syn::Token![,]) {
-                fields.parse::<syn::Token![,]>()?;
+            if input.peek(syn::Token![,]) {
+                input.parse::<syn::Token![,]>()?;
                 struct_field_init_shorthand = true;
             } else {
-                fields.parse::<syn::Token![:]>()?;
+                input.parse::<syn::Token![:]>()?;
             }
 
             if k == "translations" {
@@ -590,7 +586,7 @@ impl Parse for I18nLoader {
                     struct_field_init_shorthand,
                     k
                 );
-                translations = Some(fields.parse()?);
+                translations = Some(input.parse()?);
                 evaluate_compile_time_exprpath_set_none!(
                     exprpath,
                     k,
@@ -601,7 +597,7 @@ impl Parse for I18nLoader {
                     struct_field_init_shorthand,
                     k
                 );
-                locales_path = Some(fields.parse()?);
+                locales_path = Some(input.parse()?);
                 evaluate_compile_time_exprpath_set_none!(
                     exprpath,
                     k,
@@ -612,7 +608,7 @@ impl Parse for I18nLoader {
                     struct_field_init_shorthand,
                     k
                 );
-                core_locales_path = Some(fields.parse()?);
+                core_locales_path = Some(input.parse()?);
                 evaluate_compile_time_exprpath_set_none!(
                     exprpath,
                     k,
@@ -623,7 +619,7 @@ impl Parse for I18nLoader {
                     struct_field_init_shorthand,
                     k
                 );
-                languages_path = Some(fields.parse()?);
+                languages_path = Some(input.parse()?);
                 evaluate_compile_time_exprpath_set_none!(
                     exprpath,
                     k,
@@ -634,7 +630,7 @@ impl Parse for I18nLoader {
                     struct_field_init_shorthand,
                     k
                 );
-                check_translations = Some(fields.parse()?);
+                check_translations = Some(input.parse()?);
                 evaluate_compile_time_exprpath_set_none!(
                     exprpath,
                     k,
@@ -650,7 +646,7 @@ impl Parse for I18nLoader {
                     sync_html_tag_lang
                 );
                 parse_litbool_or_expr_param(
-                    &fields,
+                    input,
                     &mut param.lit,
                     &mut param.expr,
                     "sync_html_tag_lang",
@@ -666,7 +662,7 @@ impl Parse for I18nLoader {
                     sync_html_tag_dir
                 );
                 parse_litbool_or_expr_param(
-                    &fields,
+                    input,
                     &mut param.lit,
                     &mut param.expr,
                     "sync_html_tag_dir",
@@ -681,7 +677,7 @@ impl Parse for I18nLoader {
                 parse_litstr_or_expr_param_with_maybe_comptime_exprpath!(
                     exprpath,
                     k,
-                    fields,
+                    input,
                     url_param,
                     "url_param"
                 );
@@ -695,7 +691,7 @@ impl Parse for I18nLoader {
                     initial_language_from_url_param
                 );
                 parse_litbool_or_expr_param(
-                    &fields,
+                    input,
                     &mut param.lit,
                     &mut param.expr,
                     "initial_language_from_url_param",
@@ -711,7 +707,7 @@ impl Parse for I18nLoader {
                     initial_language_from_url_param_to_localstorage
                 );
                 parse_litbool_or_expr_param(
-                    &fields,
+                    input,
                     &mut param.lit,
                     &mut param.expr,
                     "initial_language_from_url_param_to_localstorage",
@@ -727,7 +723,7 @@ impl Parse for I18nLoader {
                     initial_language_from_url_param_to_cookie
                 );
                 parse_litbool_or_expr_param(
-                    &fields,
+                    input,
                     &mut param.lit,
                     &mut param.expr,
                     "initial_language_from_url_param_to_cookie",
@@ -740,7 +736,7 @@ impl Parse for I18nLoader {
                 if struct_field_init_shorthand {
                     param.ident = Some(k);
                 } else {
-                    param.ident = Some(fields.parse()?);
+                    param.ident = Some(input.parse()?);
                 }
                 initial_language_from_url_param_to_server_function.push(param);
             } else if k == "set_language_to_url_param" {
@@ -753,7 +749,7 @@ impl Parse for I18nLoader {
                     set_language_to_url_param
                 );
                 parse_litbool_or_expr_param(
-                    &fields,
+                    input,
                     &mut param.lit,
                     &mut param.expr,
                     "set_language_to_url_param",
@@ -768,7 +764,7 @@ impl Parse for I18nLoader {
                 parse_litstr_or_expr_param_with_maybe_comptime_exprpath!(
                     exprpath,
                     k,
-                    fields,
+                    input,
                     localstorage_key,
                     "localstorage_key"
                 );
@@ -782,7 +778,7 @@ impl Parse for I18nLoader {
                     initial_language_from_localstorage
                 );
                 parse_litbool_or_expr_param(
-                    &fields,
+                    input,
                     &mut param.lit,
                     &mut param.expr,
                     "initial_language_from_localstorage",
@@ -798,7 +794,7 @@ impl Parse for I18nLoader {
                     initial_language_from_localstorage_to_cookie
                 );
                 parse_litbool_or_expr_param(
-                    &fields,
+                    input,
                     &mut param.lit,
                     &mut param.expr,
                     "initial_language_from_localstorage_to_cookie",
@@ -812,7 +808,7 @@ impl Parse for I18nLoader {
                 if struct_field_init_shorthand {
                     param.ident = Some(k);
                 } else {
-                    param.ident = Some(fields.parse()?);
+                    param.ident = Some(input.parse()?);
                 }
                 initial_language_from_localstorage_to_server_function
                     .push(param);
@@ -826,7 +822,7 @@ impl Parse for I18nLoader {
                     set_language_to_localstorage
                 );
                 parse_litbool_or_expr_param(
-                    &fields,
+                    input,
                     &mut param.lit,
                     &mut param.expr,
                     "set_language_to_localstorage",
@@ -842,7 +838,7 @@ impl Parse for I18nLoader {
                     initial_language_from_navigator
                 );
                 parse_litbool_or_expr_param(
-                    &fields,
+                    input,
                     &mut param.lit,
                     &mut param.expr,
                     "initial_language_from_navigator",
@@ -858,7 +854,7 @@ impl Parse for I18nLoader {
                     initial_language_from_navigator_to_localstorage
                 );
                 parse_litbool_or_expr_param(
-                    &fields,
+                    input,
                     &mut param.lit,
                     &mut param.expr,
                     "initial_language_from_navigator_to_localstorage",
@@ -874,7 +870,7 @@ impl Parse for I18nLoader {
                     initial_language_from_navigator_to_cookie
                 );
                 parse_litbool_or_expr_param(
-                    &fields,
+                    input,
                     &mut param.lit,
                     &mut param.expr,
                     "initial_language_from_navigator_to_cookie",
@@ -887,7 +883,7 @@ impl Parse for I18nLoader {
                 if struct_field_init_shorthand {
                     param.ident = Some(k);
                 } else {
-                    param.ident = Some(fields.parse()?);
+                    param.ident = Some(input.parse()?);
                 }
                 initial_language_from_navigator_to_server_function.push(param);
             } else if k == "initial_language_from_accept_language_header" {
@@ -900,7 +896,7 @@ impl Parse for I18nLoader {
                     initial_language_from_accept_language_header
                 );
                 parse_litbool_or_expr_param(
-                    &fields,
+                    input,
                     &mut param.lit,
                     &mut param.expr,
                     "initial_language_from_accept_language_header",
@@ -916,7 +912,7 @@ impl Parse for I18nLoader {
                     set_language_from_navigator
                 );
                 parse_litbool_or_expr_param(
-                    &fields,
+                    input,
                     &mut param.lit,
                     &mut param.expr,
                     "set_language_from_navigator",
@@ -931,7 +927,7 @@ impl Parse for I18nLoader {
                 parse_litstr_or_expr_param_with_maybe_comptime_exprpath!(
                     exprpath,
                     k,
-                    fields,
+                    input,
                     cookie_name,
                     "cookie_name"
                 );
@@ -944,7 +940,7 @@ impl Parse for I18nLoader {
                 parse_litstr_or_expr_param_with_maybe_comptime_exprpath!(
                     exprpath,
                     k,
-                    fields,
+                    input,
                     cookie_attrs,
                     "cookie_attrs"
                 );
@@ -958,7 +954,7 @@ impl Parse for I18nLoader {
                     initial_language_from_cookie
                 );
                 parse_litbool_or_expr_param(
-                    &fields,
+                    input,
                     &mut param.lit,
                     &mut param.expr,
                     "initial_language_from_cookie",
@@ -974,7 +970,7 @@ impl Parse for I18nLoader {
                     initial_language_from_cookie_to_localstorage
                 );
                 parse_litbool_or_expr_param(
-                    &fields,
+                    input,
                     &mut param.lit,
                     &mut param.expr,
                     "initial_language_from_cookie_to_localstorage",
@@ -986,7 +982,7 @@ impl Parse for I18nLoader {
                 if struct_field_init_shorthand {
                     param.ident = Some(k);
                 } else {
-                    param.ident = Some(fields.parse()?);
+                    param.ident = Some(input.parse()?);
                 }
                 initial_language_from_cookie_to_server_function.push(param);
             } else if k == "set_language_to_cookie" {
@@ -999,7 +995,7 @@ impl Parse for I18nLoader {
                     set_language_to_cookie
                 );
                 parse_litbool_or_expr_param(
-                    &fields,
+                    input,
                     &mut param.lit,
                     &mut param.expr,
                     "set_language_to_cookie",
@@ -1011,7 +1007,7 @@ impl Parse for I18nLoader {
                 if struct_field_init_shorthand {
                     param.ident = Some(k);
                 } else {
-                    param.ident = Some(fields.parse()?);
+                    param.ident = Some(input.parse()?);
                 }
                 initial_language_from_server_function.push(param);
             } else if k == "initial_language_from_server_function_to_cookie" {
@@ -1024,7 +1020,7 @@ impl Parse for I18nLoader {
                     initial_language_from_server_function_to_cookie
                 );
                 parse_litbool_or_expr_param(
-                    &fields,
+                    input,
                     &mut param.lit,
                     &mut param.expr,
                     "initial_language_from_server_function_to_cookie",
@@ -1042,7 +1038,7 @@ impl Parse for I18nLoader {
                     initial_language_from_server_function_to_localstorage
                 );
                 parse_litbool_or_expr_param(
-                    &fields,
+                    input,
                     &mut param.lit,
                     &mut param.expr,
                     "initial_language_from_server_function_to_localstorage",
@@ -1055,7 +1051,7 @@ impl Parse for I18nLoader {
                 if struct_field_init_shorthand {
                     param.ident = Some(k);
                 } else {
-                    param.ident = Some(fields.parse()?);
+                    param.ident = Some(input.parse()?);
                 }
                 set_language_to_server_function.push(param);
             } else if k == "url_path" {
@@ -1070,13 +1066,13 @@ impl Parse for I18nLoader {
                         if struct_field_init_shorthand {
                             url_path = Some(k);
                         } else {
-                            url_path = Some(fields.parse()?);
+                            url_path = Some(input.parse()?);
                         }
                     }
                 } else if struct_field_init_shorthand {
                     url_path = Some(k);
                 } else {
-                    url_path = Some(fields.parse()?);
+                    url_path = Some(input.parse()?);
                 }
             } else if k == "initial_language_from_url_path" {
                 let mut param = LitBoolExpr::new();
@@ -1088,7 +1084,7 @@ impl Parse for I18nLoader {
                     initial_language_from_url_path
                 );
                 parse_litbool_or_expr_param(
-                    &fields,
+                    input,
                     &mut param.lit,
                     &mut param.expr,
                     "initial_language_from_url_path",
@@ -1104,7 +1100,7 @@ impl Parse for I18nLoader {
                     initial_language_from_url_path_to_cookie
                 );
                 parse_litbool_or_expr_param(
-                    &fields,
+                    input,
                     &mut param.lit,
                     &mut param.expr,
                     "initial_language_from_url_path_to_cookie",
@@ -1120,7 +1116,7 @@ impl Parse for I18nLoader {
                     initial_language_from_url_path_to_localstorage
                 );
                 parse_litbool_or_expr_param(
-                    &fields,
+                    input,
                     &mut param.lit,
                     &mut param.expr,
                     "initial_language_from_url_path_to_localstorage",
@@ -1132,7 +1128,7 @@ impl Parse for I18nLoader {
                 if struct_field_init_shorthand {
                     param.ident = Some(k);
                 } else {
-                    param.ident = Some(fields.parse()?);
+                    param.ident = Some(input.parse()?);
                 }
                 initial_language_from_url_path_to_server_function.push(param);
             } else if k == "initial_language_from_system" {
@@ -1147,7 +1143,7 @@ impl Parse for I18nLoader {
                         initial_language_from_system
                     );
                     parse_litbool_or_expr_param(
-                        &fields,
+                        input,
                         &mut param.lit,
                         &mut param.expr,
                         "initial_language_from_system",
@@ -1178,7 +1174,7 @@ impl Parse for I18nLoader {
                         initial_language_from_data_file
                     );
                     parse_litbool_or_expr_param(
-                        &fields,
+                        input,
                         &mut param.lit,
                         &mut param.expr,
                         "initial_language_from_data_file",
@@ -1209,7 +1205,7 @@ impl Parse for I18nLoader {
                         initial_language_from_system_to_data_file
                     );
                     parse_litbool_or_expr_param(
-                        &fields,
+                        input,
                         &mut param.lit,
                         &mut param.expr,
                         "initial_language_from_system_to_data_file",
@@ -1240,7 +1236,7 @@ impl Parse for I18nLoader {
                         set_language_to_data_file
                     );
                     parse_litbool_or_expr_param(
-                        &fields,
+                        input,
                         &mut param.lit,
                         &mut param.expr,
                         "set_language_to_data_file",
@@ -1268,7 +1264,7 @@ impl Parse for I18nLoader {
                 parse_litstr_or_expr_param_with_maybe_comptime_exprpath!(
                     exprpath,
                     k,
-                    fields,
+                    input,
                     data_file_key,
                     "data_file_key"
                 );
@@ -1279,7 +1275,7 @@ impl Parse for I18nLoader {
                     struct_field_init_shorthand,
                     k
                 );
-                param.lit = Some(fields.parse()?);
+                param.lit = Some(input.parse()?);
                 provide_meta_context.push(param);
             } else {
                 return Err(syn::Error::new(
@@ -1290,10 +1286,10 @@ impl Parse for I18nLoader {
                 ));
             }
 
-            if fields.is_empty() {
+            if input.is_empty() {
                 break;
             }
-            fields.parse::<token::Comma>()?;
+            input.parse::<token::Comma>()?;
         }
 
         // translations

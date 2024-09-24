@@ -13,7 +13,7 @@ wasm_bindgen_test_configure!(run_in_browser);
 fn App() -> impl IntoView {
     view! {
         <Show when=|| true>
-            <Child/>
+            <Child />
         </Show>
     }
 }
@@ -21,10 +21,10 @@ fn App() -> impl IntoView {
 #[component]
 fn Child() -> impl IntoView {
     use wasm_bindgen::JsCast;
-    leptos_fluent! {{
+    leptos_fluent! {
         translations: [TRANSLATIONS],
         locales: "../examples/csr-minimal/locales",
-    }};
+    };
     view! {
         <div
             id="fails"
