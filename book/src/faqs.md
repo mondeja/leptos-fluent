@@ -54,6 +54,70 @@ From fluent-templates `v0.10` onwards can be obtained from your translations.
 let fallback_language = expect_i18n().translations.get()[0].fallback();
 ```
 
+### Using `tr!` and `move_tr!` macros on event panics
+
+The i18n context can't be obtained from outside the reactive ownership tree.
+This means there are certain locations where we can't use `tr!("my-translation")`,
+like inside `on:` events. For example, the next code panics:
+
+```rust
+#[component]
+pub fn App() -> impl IntoView {
+    view! {
+        <Show when=|| true>
+            <Child/>
+        </Show>
+    }
+}
+
+#[component]
+pub fn Child() -> impl IntoView {
+    leptos_fluent! {{
+        // ...
+    }};
+    view! {
+        <div on:click=|_| {
+            tr!("my-translation");
+        }>"CLICK ME!"</div>
+    }
+}
+```
+
+With Leptos v0.7, whatever `tr!` macro used in the `on:` event will panic,
+but with Leptos v0.6, this outsiding of the ownership tree has been ignored
+from the majority of the cases as unintended behavior.
+
+To avoid that, pass the i18n context as first parameter to `tr!` or `move_tr!`:
+
+```rust
+#[component]
+pub fn App() -> impl IntoView {
+    view! {
+        <Show when=|| true>
+            <Child/>
+        </Show>
+    }
+}
+
+#[component]
+pub fn Child() -> impl IntoView {
+    let i18n = leptos_fluent! {{
+        // ...
+    }};
+    view! {
+        <div on:click=|_| {
+            tr!(i18n, "my-translation");
+        }>"CLICK ME!"</div>
+    }
+}
+```
+
+And shortcuts cannot be used. Rewrite all the code that calls `expect_context`
+internally:
+
+- Use `i18n.language.set(lang)` instead of `lang.activate()`.
+- Use `lang == i18n.language.get()` instead of `lang.is_active()`.
+
 ### Why examples don't use [`<For/>`] component?
 
 ```admonish bug

@@ -248,6 +248,8 @@ To check if a language is the active one, use [`is_active`] method of a
 
 ```rust
 lang.is_active()
+
+lang == expect_i18n().language.get()
 ```
 
 [`tr!`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.tr.html
