@@ -211,18 +211,18 @@ whichs provides utilities for parsing the Fluent syntax.</p>
 <h3 id="how-to-get-the-i18n-context-at-initialization"><a class="header" href="#how-to-get-the-i18n-context-at-initialization">How to get the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html">i18n context</a> at initialization?</a></h3>
 <pre><code class="language-rust">use leptos_fluent::leptos_fluent;
 
-let i18n = leptos_fluent! {{
+let i18n = leptos_fluent! {
     // ...
-}};
+};
 
 leptos::logging::log!("i18n context: {i18n:?}");</code></pre>
 <h3 id="custom-cookie-attributes-are-invalid"><a class="header" href="#custom-cookie-attributes-are-invalid">Custom <a href="https://developer.mozilla.org/docs/Web/API/Document/cookie#write_a_new_cookie">cookie attributes</a> are invalid</a></h3>
 <p>Use an expression to set the cookie attributes and will not be validated.</p>
 <pre><code class="language-rust">let attrs = "SameSite=Strict; MyCustomAttr=MyCustomValue;";
-leptos_fluent! {{
+leptos_fluent! {
     cookie_attrs: attrs,
     // ...
-}}</code></pre>
+};</code></pre>
 <h3 id="how-to-get-the-fallback-language"><a class="header" href="#how-to-get-the-fallback-language">How to get the fallback language</a></h3>
 <p>From fluent-templates <code>v0.10</code> onwards can be obtained from your translations.</p>
 <pre><code class="language-rust">let fallback_language = expect_i18n().translations.get()[0].fallback();</code></pre>
@@ -241,9 +241,9 @@ pub fn App() -&gt; impl IntoView {
 
 #[component]
 pub fn Child() -&gt; impl IntoView {
-    leptos_fluent! {{
+    leptos_fluent! {
         // ...
-    }};
+    };
     view! {
         &lt;div on:click=|_| {
             tr!("my-translation");
@@ -265,9 +265,9 @@ pub fn App() -&gt; impl IntoView {
 
 #[component]
 pub fn Child() -&gt; impl IntoView {
-    let i18n = leptos_fluent! {{
+    let i18n = leptos_fluent! {
         // ...
-    }};
+    };
     view! {
         &lt;div on:click=|_| {
             tr!(i18n, "my-translation");
@@ -358,20 +358,20 @@ fn render_language(lang: &amp;'static Language) -&gt; impl IntoView {
 <h3 id="how-to-get-values-of-leptos_fluent-macro-at-runtime"><a class="header" href="#how-to-get-values-of-leptos_fluent-macro-at-runtime">How to get values of <code>leptos_fluent!</code> macro at runtime?</a></h3>
 <p>Use <code>provide_meta_context</code> at the macro initialization and get them
 with the method <code>I18n::meta</code>:</p>
-<pre><code class="language-rust">let i18n = leptos_fluent! {{
+<pre><code class="language-rust">let i18n = leptos_fluent! {
     // ...
     provide_meta_context: true,
-}};
+};
 
 println!("Macro parameters: {:?}", i18n.meta().unwrap());</code></pre>
 <h3 id="configuration-conditional-checks"><a class="header" href="#configuration-conditional-checks"><a href="https://doc.rust-lang.org/rust-by-example/attribute/cfg.html">Configuration conditional checks</a></a></h3>
-<pre><code class="language-rust">leptos_fluent! {{
+<pre><code class="language-rust">leptos_fluent! {
     // ...
     #[cfg(debug_assertions)]
     set_language_to_url_param: true,
     #[cfg(not(debug_assertions))]
     set_language_to_url_param: false,
-}}</code></pre>
+}</code></pre>
 
                     </main>
 
