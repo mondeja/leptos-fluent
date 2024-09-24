@@ -303,6 +303,11 @@ impl<'ast> TranslationsMacrosVisitor {
 impl<'ast> Visit<'ast> for TranslationsMacrosVisitor {
     fn visit_macro(&mut self, node: &'ast syn::Macro) {
         self.visit_maybe_macro_tokens_stream(&node.to_token_stream());
+        for token in node.tokens.clone() {
+            if let proc_macro2::TokenTree::Group(group) = token {
+                self.visit_maybe_macro_tokens_stream(&group.stream());
+            }
+        }
         syn::visit::visit_macro(self, node);
     }
 
@@ -639,6 +644,42 @@ mod tests {
                 tr_macro!("move_tr", "after", Vec::new()),
                 tr_macro!("tr", "before", Vec::new()),
                 tr_macro!("move_tr", "tomorrow", Vec::new()),
+            ]
+        );
+    }
+
+    #[test]
+    fn tr_in_move_tr_params() {
+        let content = quote! {
+            #[component]
+            fn App() -> impl IntoView {
+                let download_svg_msg =
+                    move_tr!("download-filetype", {"filetype" => tr!("svg")});
+                let download_colored_svg_msg =
+                    move_tr!("download-filetype", {"filetype" => tr!("colored-svg")});
+                let download_pdf_msg =
+                    move_tr!("download-filetype", {"filetype" => tr!("pdf")});
+                let download_jpg_msg =
+                    move_tr!("download-filetype", {"filetype" => tr!("jpg")});
+                let download_png_msg =
+                    move_tr!("download-filetype", {"filetype" => tr!("png")});
+            }
+        };
+        let tr_macros = tr_macros_from_file_content(&content.to_string());
+
+        assert_eq!(
+            tr_macros,
+            vec![
+                tr_macro!(
+                    "move_tr",
+                    "download-filetype",
+                    vec!["filetype".to_string()]
+                ),
+                tr_macro!("tr", "svg", Vec::new()),
+                tr_macro!("tr", "colored-svg", Vec::new()),
+                tr_macro!("tr", "pdf", Vec::new()),
+                tr_macro!("tr", "jpg", Vec::new()),
+                tr_macro!("tr", "png", Vec::new()),
             ]
         );
     }
