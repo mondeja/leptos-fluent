@@ -529,9 +529,20 @@ impl Parse for I18nLoader {
                             concat!(
                                 "Expected an expression with",
                                 " 'key: value', '#[...] key: value', 'key,' or `#[...] key,` format.",
-                                " Found:\n{}"
+                                " Found:{}"
                             ),
-                            input,
+                            &match input.to_string().len() {
+                                0 => concat!(
+                                    " (empty).\n",
+                                    "If you're using double curly braces syntax",
+                                    " (`leptos_fluent! {{ ... }}` make sure to",
+                                    " use single curly braces syntax",
+                                    " (`leptos_fluent! { ... }`)."
+                                ).to_string(),
+                                _ => format!(
+                                    "\n{}", &input.to_string()
+                                ),
+                            },
                         ),
                     ));
                 }
