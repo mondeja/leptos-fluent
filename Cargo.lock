@@ -1868,6 +1868,7 @@ dependencies = [
  "leptos",
  "leptos-fluent",
  "pathdiff",
+ "proc-macro-warning",
  "proc-macro2",
  "quote",
  "serde",
@@ -2688,6 +2689,17 @@ dependencies = [
  "proc-macro2",
  "quote",
  "smallvec",
+]
+
+[[package]]
+name = "proc-macro-warning"
+version = "1.0.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "834da187cfe638ae8abb0203f0b33e5ccdb02a28e7199f2f47b3e2754f50edca"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.76",
 ]
 
 [[package]]

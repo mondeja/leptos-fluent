@@ -72,9 +72,9 @@ pub fn App() -> impl IntoView {
 
 #[component]
 pub fn Child() -> impl IntoView {
-    leptos_fluent! {{
+    leptos_fluent! {
         // ...
-    }};
+    };
     view! {
         <div on:click=|_| {
             tr!("my-translation");
@@ -101,9 +101,9 @@ pub fn App() -> impl IntoView {
 
 #[component]
 pub fn Child() -> impl IntoView {
-    let i18n = leptos_fluent! {{
+    let i18n = leptos_fluent! {
         // ...
-    }};
+    };
     view! {
         <div on:click=|_| {
             tr!(i18n, "my-translation");
