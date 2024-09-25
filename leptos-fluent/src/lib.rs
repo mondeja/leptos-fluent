@@ -850,7 +850,7 @@ pub fn l(
 #[cfg_attr(feature = "tracing", tracing::instrument(level = "trace"))]
 pub fn SsrHtmlTag() -> impl IntoView {
     let lang = expect_i18n().language.get_untracked();
-    view! { <Html lang=lang.id.to_string() dir=lang.dir.as_str()/> }
+    view! { <Html lang=lang.id.to_string() dir=lang.dir.as_str() /> }
 }
 
 /// Reactive HTML tag to set attributes on SSR

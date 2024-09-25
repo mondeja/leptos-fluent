@@ -52,16 +52,16 @@ pub fn App() -> impl IntoView {
     };
 
     view! {
-        <Title text=move || tr!("welcome-to-leptos")/>
+        <Title text=move || tr!("welcome-to-leptos") />
 
         // content for this welcome page
         <Router>
             <main>
                 <Routes>
-                    <Route path="" view=HomePage/>
-                    <Route path="/en" view=HomePage/>
-                    <Route path="/es" view=HomePage/>
-                    <Route path="/*any" view=NotFound/>
+                    <Route path="" view=HomePage />
+                    <Route path="/en" view=HomePage />
+                    <Route path="/es" view=HomePage />
+                    <Route path="/*any" view=NotFound />
                 </Routes>
             </main>
         </Router>

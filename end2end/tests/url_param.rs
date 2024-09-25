@@ -18,7 +18,7 @@ pub fn App() -> impl IntoView {
         set_language_to_url_param: true,
     };
 
-    view! { <LanguageSelector/> }
+    view! { <LanguageSelector /> }
 }
 
 #[wasm_bindgen_test]

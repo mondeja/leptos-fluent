@@ -20,7 +20,7 @@ pub fn App() -> impl IntoView {
         cookie_name: COOKIE_NAME,
     };
 
-    view! { <LanguageSelector/> }
+    view! { <LanguageSelector /> }
 }
 
 #[wasm_bindgen_test]

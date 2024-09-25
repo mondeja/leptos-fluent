@@ -18,7 +18,7 @@ pub fn App() -> impl IntoView {
         set_language_to_localstorage: true,
     };
 
-    view! { <LanguageSelector/> }
+    view! { <LanguageSelector /> }
 }
 
 #[wasm_bindgen_test]
