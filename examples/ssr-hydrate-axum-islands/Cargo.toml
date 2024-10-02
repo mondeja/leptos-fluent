@@ -24,9 +24,7 @@ thiserror = "1"
 tracing = { version = "0.1", optional = true }
 http = "1"
 
-leptos-fluent = { path = "../../leptos-fluent", features = [
-  "yaml",
-], default-features = false }
+leptos-fluent = { path = "../../leptos-fluent" }
 fluent-templates = { version = "0.10", default-features = false, features = [
   "macros",
   "walkdir",
