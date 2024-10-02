@@ -24,7 +24,7 @@ pub fn HomePage() -> impl IntoView {
 
 #[island]
 fn Counter() -> impl IntoView {
-    let i18n = i18n!([TRANSLATIONS, TRANSLATIONS] + COMPOUND);
+    i18n!([TRANSLATIONS, TRANSLATIONS] + COMPOUND);
 
     // Creates a reactive value to update the button
     let (count, set_count) = create_signal(0);
