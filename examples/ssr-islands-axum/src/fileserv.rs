@@ -7,8 +7,9 @@ use axum::{
     response::IntoResponse,
 };
 use leptos::*;
+use std::convert::Infallible;
 use tower::ServiceExt;
-use tower_http::services::ServeDir;
+use tower_http::services::{fs::ServeFileSystemResponseBody, ServeDir};
 
 pub async fn file_and_error_handler(
     State(options): State<LeptosOptions>,
@@ -25,14 +26,18 @@ pub async fn file_and_error_handler(
             .insert("accept-encoding", encodings.clone());
     }
 
-    let res = get_static_file(Request::from_parts(static_parts, Body::empty()), &root)
-        .await
-        .unwrap();
+    let res = get_static_file(
+        Request::from_parts(static_parts, Body::empty()),
+        &root,
+    )
+    .await
+    .unwrap();
 
     if res.status() == StatusCode::OK {
         res.into_response()
     } else {
-        let handler = leptos_axum::render_app_to_stream(options.to_owned(), App);
+        let handler =
+            leptos_axum::render_app_to_stream(options.to_owned(), App);
         handler(Request::from_parts(parts, body))
             .await
             .into_response()
@@ -42,19 +47,12 @@ pub async fn file_and_error_handler(
 async fn get_static_file(
     request: Request<Body>,
     root: &str,
-) -> Result<Response<Body>, (StatusCode, String)> {
+) -> Result<Response<ServeFileSystemResponseBody>, Infallible> {
     // `ServeDir` implements `tower::Service` so we can call it with `tower::ServiceExt::oneshot`
     // This path is relative to the cargo root
-    match ServeDir::new(root)
+    ServeDir::new(root)
         .precompressed_gzip()
         .precompressed_br()
         .oneshot(request)
         .await
-    {
-        Ok(res) => Ok(res.into_response()),
-        Err(err) => Err((
-            StatusCode::INTERNAL_SERVER_ERROR,
-            format!("Error serving files: {err}"),
-        )),
-    }
 }
