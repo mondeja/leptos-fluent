@@ -10,7 +10,8 @@ mod home;
 
 static_loader! {
     static TRANSLATIONS = {
-        locales: "./locales",
+        locales: "./locales/server",
+        // core_locales: "./locales/core",
         fallback_language: "en",
     };
 }
@@ -19,12 +20,13 @@ pub static COMPOUND: &[&Lazy<StaticLoader>] = &[&TRANSLATIONS, &TRANSLATIONS];
 
 #[macro_export]
 macro_rules! i18n {
-    ($translations:expr$(,)?) => {{
+    ($translations:expr, $locales:expr$(,)?) => {{
         use leptos_fluent::leptos_fluent;
         leptos_fluent! {
             translations: $translations,
             languages: "./locales/languages.json",
-            locales: "./locales",
+            locales: $locales,
+            // core_locales: "./locales/core",
             sync_html_tag_lang: true,
             sync_html_tag_dir: true,
             cookie_name: "lang",
@@ -53,7 +55,7 @@ pub fn App() -> impl IntoView {
     // Provides context that manages stylesheets, titles, meta tags, etc.
     provide_meta_context();
 
-    i18n!([TRANSLATIONS, TRANSLATIONS] + COMPOUND);
+    i18n!([TRANSLATIONS, TRANSLATIONS] + COMPOUND, "./locales/server");
 
     view! {
         <Stylesheet id="leptos" href="/pkg/leptos-fluent-ssr-hydrate-axum-islands-example.css"/>
