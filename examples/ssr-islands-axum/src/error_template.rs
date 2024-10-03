@@ -38,7 +38,10 @@ pub fn ErrorTemplate(
         .into_iter()
         .filter_map(|(_k, v)| v.downcast_ref::<AppError>().cloned())
         .collect();
-    println!("Errors: {errors:#?}");
+    #[allow(clippy::print_stdout)]
+    {
+        println!("Errors: {errors:#?}");
+    };
 
     // Only the response code for the first error is actually sent from the server
     // this may be customized by the specific application

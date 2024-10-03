@@ -1,4 +1,7 @@
 body {
-	font-family: sans-serif;
-	text-align: center;
+  font-family: sans-serif;
+}
+
+button {
+  margin-bottom: 10px;
 }

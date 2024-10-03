@@ -87,6 +87,7 @@ repos:
           [
             "--features=ssr,actix",
             --exclude=leptos-fluent-ssr-hydrate-axum-example,
+            --exclude=leptos-fluent-ssr-islands-axum-example,
             --exclude=leptos-fluent-csr-complete-example,
             --exclude=leptos-fluent-csr-minimal-example,
             --workspace,

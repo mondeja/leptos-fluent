@@ -1919,7 +1919,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "leptos-fluent-ssr-hydrate-axum-islands-example"
+name = "leptos-fluent-ssr-islands-axum-example"
 version = "0.1.0"
 dependencies = [
  "axum",
@@ -1935,7 +1935,6 @@ dependencies = [
  "tokio",
  "tower",
  "tower-http",
- "tracing",
  "wasm-bindgen",
 ]
 

@@ -214,7 +214,7 @@ jobs:
             cd end2end
             wasm-pack test --headless --${{ matrix.browser }}
 
-  build-example:
+  build-examples:
     needs: check-toolchain-is-stable
     name: Build example
     runs-on: ${{ matrix.runs-on }}
@@ -226,6 +226,7 @@ jobs:
           - csr-complete
           - ssr-hydrate-actix
           - ssr-hydrate-axum
+          - ssr-islands-axum
           - system-gtk
         toolchain:
           - stable
@@ -305,7 +306,7 @@ jobs:
       - qa
       - unit-tests
       - end2end-tests
-      - build-example
+      - build-examples
       - build-book
     if: |
       '${{ github.event.pull_request.user.login }}' == 'mondeja' ||

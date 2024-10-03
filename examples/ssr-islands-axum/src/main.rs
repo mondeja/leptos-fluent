@@ -4,8 +4,8 @@ async fn main() {
     use axum::Router;
     use leptos::*;
     use leptos_axum::{generate_route_list, LeptosRoutes};
-    use leptos_fluent_ssr_hydrate_axum_islands_example::app::*;
-    use leptos_fluent_ssr_hydrate_axum_islands_example::fileserv::file_and_error_handler;
+    use leptos_fluent_ssr_islands_axum_example::app::*;
+    use leptos_fluent_ssr_islands_axum_example::fileserv::file_and_error_handler;
 
     // Setting get_configuration(None) means we'll be using cargo-leptos's env values
     // For deployment these variables are:
