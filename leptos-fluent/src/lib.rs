@@ -473,7 +473,6 @@ impl core::fmt::Debug for I18n {
             .debug_struct("I18n")
             .field("language", language)
             .field("languages", &self.languages)
-            .field("translations", &self.translations)
             .finish())
     }
 }
