@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [Unreleased]
+
+### Enhancements
+
+- Add `translations` field to `I18n`'s `Debug` implementation.
+
 ## 2024-09-25 - [0.1.23]
 
 ### Enhancements
@@ -523,6 +529,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[Unreleased]: https://github.com/mondeja/leptos-fluent/compare/v0.1.23...master
 [0.1.23]: https://github.com/mondeja/leptos-fluent/compare/v0.1.22...v0.1.23
 [0.1.22]: https://github.com/mondeja/leptos-fluent/compare/v0.1.21...v0.1.22
 [0.1.21]: https://github.com/mondeja/leptos-fluent/compare/v0.1.20...v0.1.21

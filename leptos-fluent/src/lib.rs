@@ -424,7 +424,7 @@ impl IntoAttribute for &&'static Language {
 /// Used to provide the current language, the available languages and all
 /// the translations. It is capable of doing what is needed to translate
 /// and manage translations in a whole application.
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct I18n {
     /// Signal that holds the current language.
     pub language: RwSignal<&'static Language>,
@@ -463,17 +463,6 @@ impl I18n {
             )
             .to_string(),
         )
-    }
-}
-
-impl core::fmt::Debug for I18n {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        let language = self.language;
-        with!(|language| f
-            .debug_struct("I18n")
-            .field("language", language)
-            .field("languages", &self.languages)
-            .finish())
     }
 }
 
