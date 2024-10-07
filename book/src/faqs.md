@@ -27,7 +27,7 @@ let i18n = leptos_fluent! {
     // ...
 };
 
-leptos::logging::log!("i18n context: {i18n:?}");
+leptos::logging::log!("i18n context: {i18n:#?}");
 ```
 
 [i18n context]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html
@@ -54,11 +54,30 @@ From fluent-templates `v0.10` onwards can be obtained from your translations.
 let fallback_language = expect_i18n().translations.get()[0].fallback();
 ```
 
-### Using `tr!` and `move_tr!` macros on event panics
+### `tr!` and `move_tr!` outside reactive graph
 
-The i18n context can't be obtained from outside the reactive ownership tree.
-This means there are certain locations where we can't use `tr!("my-translation")`,
-like inside `on:` events. For example, the next code panics:
+Outside the reactive ownership tree, mainly known as the _reactive graph_,
+we can't obtain the context of `I18n` using `expect_context::<leptos_fluent::I18n>()`,
+which is what `tr!` and `move_tr!` do internally. Instead, we can pass the context
+as first parameter to the macros:
+
+```rust
+let i18n = leptos_fluent! {
+    // ...
+};
+
+let translated_signal = move_tr!(i18n, "my-translation");
+```
+
+And some shortcuts cannot be used. Rewrite all the code that calls `expect_context`
+internally:
+
+- Use `i18n.language.set(lang)` instead of `lang.activate()`.
+- Use `lang == i18n.language.get()` instead of `lang.is_active()`.
+
+#### On events, panics
+
+For example, the next code panics when the `<div>` container is clicked:
 
 ```rust
 #[component]
@@ -112,11 +131,110 @@ pub fn Child() -> impl IntoView {
 }
 ```
 
-And shortcuts cannot be used. Rewrite all the code that calls `expect_context`
-internally:
+#### Confused about what context is used?
 
-- Use `i18n.language.set(lang)` instead of `lang.activate()`.
-- Use `lang == i18n.language.get()` instead of `lang.is_active()`.
+Take into account that the reactive ownership graph is not the same as the component
+tree in Leptos. For example, the next code:
+
+```rust
+#[component]
+fn Foo() -> impl IntoView {
+    provide_context::<usize>(0);
+
+    view! {
+        <h1>"Foo"</h1>
+        {
+            let value = expect_context::<usize>();
+            view! {
+                <p>"Context value before Bar: "{value}</p>
+            }
+        }
+        <Bar/>
+        {
+            let value = expect_context::<usize>();
+            view! {
+                <p>"Context value after Bar -> Baz: "{value}</p>
+            }
+        }
+    }
+}
+
+#[component]
+fn Bar() -> impl IntoView {
+    provide_context::<usize>(1);
+    view! {
+        <h1>"Bar"</h1>
+        {
+            let value = expect_context::<usize>();
+            view! {
+                <p>"Context value before Baz: "{value}</p>
+            }
+        }
+        <Baz/>
+    }
+}
+
+#[component]
+fn Baz() -> impl IntoView {
+    provide_context::<usize>(2);
+    view! {
+        <h1>"Baz"</h1>
+    }
+}
+```
+
+Renders:
+
+```html
+<h1>Foo</h1>
+<p>
+  Context value before Bar:
+  <!---->0
+</p>
+<h1>Bar</h1>
+<p>
+  Context value before Baz:
+  <!---->1
+</p>
+<h1>Baz</h1>
+<p>
+  Context value after Bar -&gt; Baz:
+  <!---->2
+</p>
+```
+
+Because `Baz` is a sibling of `Foo` children in the reactive graph. But maybe
+you think that is just a children of `Bar` in the component tree and that is
+outside the scope of `Foo` children. That doesn't matter for Leptos.
+
+In those cases where you're using two or more contexts, pass the context as the
+first argument to the `tr!` and `move_tr!` macros to avoid confusion.
+
+```rust
+#[component]
+fn Foo() -> impl IntoView {
+    let i18n = leptos_fluent! {
+        translations: [TRANSLATION_WITH_ONLY_FOO],
+        // ...
+    };
+    <p>{move_tr!("my-translation-from-foo")}</p>
+    <Bar/>
+    // The next message will not be translated because after `<Bar>`
+    // now the i18n context accessed by `move_tr!` is the one from `Bar`
+    <p>{move_tr!("my-translation-from-foo")}</p>
+    // instead, use:
+    <p>{move_tr!(i18n, "my-translation-from-foo")}</p>
+}
+
+#[component]
+fn Bar() -> impl IntoView {
+    let i18n = leptos_fluent! {
+        translations: [TRANSLATION_WITH_ONLY_BAR],
+        // ...
+    };
+    <p>{move_tr!("my-translation-from-bar")}</p>
+}
+```
 
 ### Why examples don't use [`<For/>`] component?
 
