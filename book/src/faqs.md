@@ -187,20 +187,11 @@ Renders:
 
 ```html
 <h1>Foo</h1>
-<p>
-  Context value before Bar:
-  <!---->0
-</p>
+<p>Context value before Bar: 0</p>
 <h1>Bar</h1>
-<p>
-  Context value before Baz:
-  <!---->1
-</p>
+<p>Context value before Baz: 1</p>
 <h1>Baz</h1>
-<p>
-  Context value after Bar -&gt; Baz:
-  <!---->2
-</p>
+<p>Context value after Bar -&gt; Baz: 2</p>
 ```
 
 Because `Baz` is a sibling of `Foo` children in the reactive graph. But maybe
