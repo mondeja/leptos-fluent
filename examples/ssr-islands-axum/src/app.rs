@@ -50,19 +50,19 @@ pub fn App() -> impl IntoView {
     i18n!([COMPONENTS_TRANSLATIONS], "./locales/server");
 
     view! {
-        <Stylesheet id="leptos" href="/pkg/leptos-fluent-ssr-hydrate-axum-islands-example.css"/>
+        <Stylesheet id="leptos" href="/pkg/leptos-fluent-ssr-hydrate-axum-islands-example.css" />
 
-        <Title text=tr!("welcome-to-leptos")/>
+        <Title text=tr!("welcome-to-leptos") />
 
         <Router fallback=|| {
             let mut outside_errors = Errors::default();
             outside_errors.insert_with_default_key(AppError::NotFound);
-            view! { <ErrorTemplate outside_errors/> }.into_view()
+            view! { <ErrorTemplate outside_errors /> }.into_view()
         }>
             <Routes>
                 <Route path="" view=BodyView>
-                    <Route path="" view=home::View/>
-                    <Route path="/page-2" view=page_2::View/>
+                    <Route path="" view=home::View />
+                    <Route path="/page-2" view=page_2::View />
                 </Route>
             </Routes>
         </Router>
@@ -74,7 +74,7 @@ pub fn BodyView() -> impl IntoView {
     view! {
         <header::View></header::View>
         <main>
-            <Outlet/>
+            <Outlet />
         </main>
     }
 }
@@ -94,11 +94,12 @@ mod header {
 
     #[component]
     pub fn View() -> impl IntoView {
+        let i18n = expect_i18n();
         view! {
             <header>
-                <A href="/">{move_tr!("home")}</A>
-                <LanguageSelector/>
-                <A href="/page-2">{move_tr!("page-2")}</A>
+                <A href="/">{move_tr!(i18n, "home")}</A>
+                <LanguageSelector />
+                <A href="/page-2">{move_tr!(i18n, "page-2")}</A>
             </header>
         }
     }
@@ -154,12 +155,12 @@ mod home {
         view! {
             <h1>{move_tr!("home-title")}</h1>
             <Archipelago>
-                <Counter1/>
-                <Counter2/>
+                <Counter1 />
+                <Counter2 />
             </Archipelago>
             <p>{move_tr!("home-title")}</p>
             <Archipelago>
-                <Counter3/>
+                <Counter3 />
             </Archipelago>
         }
     }
@@ -223,7 +224,7 @@ mod page_2 {
         i18n!([crate::app::COMPONENTS_TRANSLATIONS], "./locales/server");
         view! {
             <h1>{move_tr!("page-2-title")}</h1>
-            <Counter4/>
+            <Counter4 />
             <p>{move_tr!("page-2-title")}</p>
         }
     }
