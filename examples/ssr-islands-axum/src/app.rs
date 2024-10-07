@@ -106,11 +106,10 @@ mod header {
 
     #[island]
     fn LanguageSelector() -> impl IntoView {
-        i18n!([TRANSLATIONS], "./locales/header");
-        let i18n = expect_i18n();
+        let i18n = i18n!([TRANSLATIONS], "./locales/header");
         view! {
             <div style="display: inline-flex; margin-left: 10px">
-                {move_tr!("select-language")} ": "
+                {move_tr!(i18n, "select-language")} ": "
                 {move || {
                     i18n.languages
                         .iter()
@@ -151,14 +150,15 @@ mod home {
 
     #[component]
     pub fn View() -> impl IntoView {
-        i18n!([crate::app::COMPONENTS_TRANSLATIONS], "./locales/server");
+        let i18n =
+            i18n!([crate::app::COMPONENTS_TRANSLATIONS], "./locales/server");
         view! {
-            <h1>{move_tr!("home-title")}</h1>
+            <h1>{move_tr!(i18n, "home-title")}</h1>
             <Archipelago>
                 <Counter1 />
                 <Counter2 />
             </Archipelago>
-            <p>{move_tr!("home-title")}</p>
+            <p>{move_tr!(i18n, "home-title")}</p>
             <Archipelago>
                 <Counter3 />
             </Archipelago>
@@ -221,11 +221,12 @@ mod page_2 {
 
     #[component]
     pub fn View() -> impl IntoView {
-        i18n!([crate::app::COMPONENTS_TRANSLATIONS], "./locales/server");
+        let i18n =
+            i18n!([crate::app::COMPONENTS_TRANSLATIONS], "./locales/server");
         view! {
-            <h1>{move_tr!("page-2-title")}</h1>
+            <h1>{move_tr!(i18n, "page-2-title")}</h1>
             <Counter4 />
-            <p>{move_tr!("page-2-title")}</p>
+            <p>{move_tr!(i18n, "page-2-title")}</p>
         }
     }
 
