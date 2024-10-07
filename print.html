@@ -914,7 +914,12 @@ separation of contexts in the codebase.</p>
 <li><a href="faqs.html#how-to-get-the-i18n-context-at-initialization">How to get the i18n context at initialization?</a></li>
 <li><a href="faqs.html#custom-cookie-attributes-are-invalid">Custom cookie attributes are invalid</a></li>
 <li><a href="faqs.html#how-to-get-the-fallback-language">How to get the fallback language</a></li>
-<li><a href="faqs.html#using-tr-and-move_tr-macros-on-event-panics">Using <code>tr!</code> and <code>move_tr!</code> macros on event panics</a></li>
+<li><a href="faqs.html#tr-and-move_tr-outside-reactive-graph"><code>tr!</code> and <code>move_tr!</code> outside reactive graph</a>
+<ul>
+<li><a href="faqs.html#on-events-panics">On events, panics</a></li>
+<li><a href="faqs.html#confused-about-what-context-is-used">Confused about what context is used?</a></li>
+</ul>
+</li>
 <li><a href="faqs.html#why-examples-dont-use-for-component">Why examples don't use <code>&lt;For/&gt;</code> component?</a></li>
 <li><a href="faqs.html#how-to-manage-translations-on-server-actions">How to manage translations on server actions</a></li>
 <li><a href="faqs.html#how-to-get-values-of-leptos_fluent-macro-at-runtime">How to get values of <code>leptos_fluent!</code> macro at runtime?</a></li>
@@ -942,7 +947,7 @@ let i18n = leptos_fluent! {
     // ...
 };
 
-leptos::logging::log!("i18n context: {i18n:?}");</code></pre>
+leptos::logging::log!("i18n context: {i18n:#?}");</code></pre>
 <h3 id="custom-cookie-attributes-are-invalid"><a class="header" href="#custom-cookie-attributes-are-invalid">Custom <a href="https://developer.mozilla.org/docs/Web/API/Document/cookie#write_a_new_cookie">cookie attributes</a> are invalid</a></h3>
 <p>Use an expression to set the cookie attributes and will not be validated.</p>
 <pre><code class="language-rust">let attrs = "SameSite=Strict; MyCustomAttr=MyCustomValue;";
@@ -953,10 +958,24 @@ leptos_fluent! {
 <h3 id="how-to-get-the-fallback-language"><a class="header" href="#how-to-get-the-fallback-language">How to get the fallback language</a></h3>
 <p>From fluent-templates <code>v0.10</code> onwards can be obtained from your translations.</p>
 <pre><code class="language-rust">let fallback_language = expect_i18n().translations.get()[0].fallback();</code></pre>
-<h3 id="using-tr-and-move_tr-macros-on-event-panics"><a class="header" href="#using-tr-and-move_tr-macros-on-event-panics">Using <code>tr!</code> and <code>move_tr!</code> macros on event panics</a></h3>
-<p>The i18n context can't be obtained from outside the reactive ownership tree.
-This means there are certain locations where we can't use <code>tr!("my-translation")</code>,
-like inside <code>on:</code> events. For example, the next code panics:</p>
+<h3 id="tr-and-move_tr-outside-reactive-graph"><a class="header" href="#tr-and-move_tr-outside-reactive-graph"><code>tr!</code> and <code>move_tr!</code> outside reactive graph</a></h3>
+<p>Outside the reactive ownership tree, mainly known as the <em>reactive graph</em>,
+we can't obtain the context of <code>I18n</code> using <code>expect_context::&lt;leptos_fluent::I18n&gt;()</code>,
+which is what <code>tr!</code> and <code>move_tr!</code> do internally. Instead, we can pass the context
+as first parameter to the macros:</p>
+<pre><code class="language-rust">let i18n = leptos_fluent! {
+    // ...
+};
+
+let translated_signal = move_tr!(i18n, "my-translation");</code></pre>
+<p>And some shortcuts cannot be used. Rewrite all the code that calls <code>expect_context</code>
+internally:</p>
+<ul>
+<li>Use <code>i18n.language.set(lang)</code> instead of <code>lang.activate()</code>.</li>
+<li>Use <code>lang == i18n.language.get()</code> instead of <code>lang.is_active()</code>.</li>
+</ul>
+<h4 id="on-events-panics"><a class="header" href="#on-events-panics">On events, panics</a></h4>
+<p>For example, the next code panics when the <code>&lt;div&gt;</code> container is clicked:</p>
 <pre><code class="language-rust">#[component]
 pub fn App() -&gt; impl IntoView {
     view! {
@@ -1001,12 +1020,89 @@ pub fn Child() -&gt; impl IntoView {
         }&gt;"CLICK ME!"&lt;/div&gt;
     }
 }</code></pre>
-<p>And shortcuts cannot be used. Rewrite all the code that calls <code>expect_context</code>
-internally:</p>
-<ul>
-<li>Use <code>i18n.language.set(lang)</code> instead of <code>lang.activate()</code>.</li>
-<li>Use <code>lang == i18n.language.get()</code> instead of <code>lang.is_active()</code>.</li>
-</ul>
+<h4 id="confused-about-what-context-is-used"><a class="header" href="#confused-about-what-context-is-used">Confused about what context is used?</a></h4>
+<p>Take into account that the reactive ownership graph is not the same as the component
+tree in Leptos. For example, the next code:</p>
+<pre><code class="language-rust">#[component]
+fn Foo() -&gt; impl IntoView {
+    provide_context::&lt;usize&gt;(0);
+
+    view! {
+        &lt;h1&gt;"Foo"&lt;/h1&gt;
+        {
+            let value = expect_context::&lt;usize&gt;();
+            view! {
+                &lt;p&gt;"Context value before Bar: "{value}&lt;/p&gt;
+            }
+        }
+        &lt;Bar/&gt;
+        {
+            let value = expect_context::&lt;usize&gt;();
+            view! {
+                &lt;p&gt;"Context value after Bar -&gt; Baz: "{value}&lt;/p&gt;
+            }
+        }
+    }
+}
+
+#[component]
+fn Bar() -&gt; impl IntoView {
+    provide_context::&lt;usize&gt;(1);
+    view! {
+        &lt;h1&gt;"Bar"&lt;/h1&gt;
+        {
+            let value = expect_context::&lt;usize&gt;();
+            view! {
+                &lt;p&gt;"Context value before Baz: "{value}&lt;/p&gt;
+            }
+        }
+        &lt;Baz/&gt;
+    }
+}
+
+#[component]
+fn Baz() -&gt; impl IntoView {
+    provide_context::&lt;usize&gt;(2);
+    view! {
+        &lt;h1&gt;"Baz"&lt;/h1&gt;
+    }
+}</code></pre>
+<p>Renders:</p>
+<pre><code class="language-html">&lt;h1&gt;Foo&lt;/h1&gt;
+&lt;p&gt;Context value before Bar: 0&lt;/p&gt;
+&lt;h1&gt;Bar&lt;/h1&gt;
+&lt;p&gt;Context value before Baz: 1&lt;/p&gt;
+&lt;h1&gt;Baz&lt;/h1&gt;
+&lt;p&gt;Context value after Bar -&amp;gt; Baz: 2&lt;/p&gt;
+</code></pre>
+<p>Because <code>Baz</code> is a sibling of <code>Foo</code> children in the reactive graph. But maybe
+you think that is just a children of <code>Bar</code> in the component tree and that is
+outside the scope of <code>Foo</code> children. That doesn't matter for Leptos.</p>
+<p>In those cases where you're using two or more contexts, pass the context as the
+first argument to the <code>tr!</code> and <code>move_tr!</code> macros to avoid confusion.</p>
+<pre><code class="language-rust">#[component]
+fn Foo() -&gt; impl IntoView {
+    let i18n = leptos_fluent! {
+        translations: [TRANSLATION_WITH_ONLY_FOO],
+        // ...
+    };
+    &lt;p&gt;{move_tr!("my-translation-from-foo")}&lt;/p&gt;
+    &lt;Bar/&gt;
+    // The next message will not be translated because after `&lt;Bar&gt;`
+    // now the i18n context accessed by `move_tr!` is the one from `Bar`
+    &lt;p&gt;{move_tr!("my-translation-from-foo")}&lt;/p&gt;
+    // instead, use:
+    &lt;p&gt;{move_tr!(i18n, "my-translation-from-foo")}&lt;/p&gt;
+}
+
+#[component]
+fn Bar() -&gt; impl IntoView {
+    let i18n = leptos_fluent! {
+        translations: [TRANSLATION_WITH_ONLY_BAR],
+        // ...
+    };
+    &lt;p&gt;{move_tr!("my-translation-from-bar")}&lt;/p&gt;
+}</code></pre>
 <h3 id="why-examples-dont-use-for-component"><a class="header" href="#why-examples-dont-use-for-component">Why examples don't use <a href="https://docs.rs/leptos/latest/leptos/fn.For.html"><code>&lt;For/&gt;</code></a> component?</a></h3>
 <div id="admonition-bug" class="admonition admonish-bug" role="note" aria-labelledby="admonition-bug-title">
 <div class="admonition-title">
