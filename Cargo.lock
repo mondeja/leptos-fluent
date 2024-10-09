@@ -1919,6 +1919,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "leptos-fluent-ssr-islands-axum-2-example"
+version = "0.1.0"
+dependencies = [
+ "axum",
+ "console_error_panic_hook",
+ "fluent-templates",
+ "http 1.1.0",
+ "leptos",
+ "leptos-fluent",
+ "leptos_axum",
+ "leptos_meta",
+ "leptos_router",
+ "thiserror",
+ "tokio",
+ "tower",
+ "tower-http",
+ "wasm-bindgen",
+]
+
+[[package]]
 name = "leptos-fluent-ssr-islands-axum-example"
 version = "0.1.0"
 dependencies = [

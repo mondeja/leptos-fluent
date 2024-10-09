@@ -57,7 +57,7 @@ pub fn App() -> impl IntoView {
     i18n!([SERVER_TRANSLATIONS], "./locales/server");
 
     view! {
-        <Stylesheet id="leptos" href="/pkg/leptos-fluent-ssr-islands-axum-example.css"/>
+        <Stylesheet id="leptos" href="/pkg/leptos-fluent-ssr-islands-axum-2-example.css"/>
 
         <Title text=tr!("welcome-to-leptos")/>
 
@@ -79,57 +79,35 @@ pub fn App() -> impl IntoView {
 #[component]
 pub fn BodyView() -> impl IntoView {
     view! {
-        <Archipelago>
-            <header::HeaderView></header::HeaderView>
-            <main>
-                <Outlet/>
-            </main>
-        </Archipelago>
+        <header::HeaderView></header::HeaderView>
+        <main>
+            <Outlet/>
+        </main>
     }
-}
-
-#[island]
-fn Archipelago(children: Children) -> impl IntoView {
-    i18n!([CLIENT_TRANSLATIONS], "./locales/client");
-
-    // Children will be executed when the i18n context is ready.
-    // See https://book.leptos.dev/islands.html#passing-context-between-islands
-    //
-    // > That’s why in `HomePage`, I made `let tabs = move ||` a function, and
-    // > called it like `{tabs()}`: creating the tabs lazily this way meant that
-    // > the `Tabs` island would already have provided the `selected` context by
-    // > the time each `Tab` went looking for it.
-    children()
 }
 
 mod header {
     use leptos::*;
     use leptos_fluent::{expect_i18n, move_tr};
+    use leptos_router::A;
 
     #[component]
     pub fn HeaderView() -> impl IntoView {
         view! {
             <header>
-                <HeaderLinks/>
+                <A href="/">{move_tr!("home")}</A>
+                <A href="/page-2">{move_tr!("page-2")}</A>
                 <LanguageSelector/>
             </header>
         }
     }
 
     #[island]
-    fn HeaderLinks() -> impl IntoView {
-        view! {
-                <a href="/">{move_tr!("home")}</a>
-                <a href="/page-2">{move_tr!("page-2")}</a>
-        }
-    }
-
-    #[island]
     fn LanguageSelector() -> impl IntoView {
+        i18n!([super::SERVER_TRANSLATIONS], "./locales/client");
         let i18n = expect_i18n();
         view! {
             <div style="display: inline-flex; margin-left: 10px">
-                {move_tr!(i18n, "select-language")} ": "
                 {move || {
                     i18n.languages
                         .iter()
@@ -142,8 +120,15 @@ mod header {
                                         name="language"
                                         value=lang
                                         checked=lang.is_active()
-                                        on:click=move |_| i18n.language.set(lang)
+                                        on:click=move |_| {
+                                            i18n.language.set(lang);
+                                            window()
+                                                .location()
+                                                .reload()
+                                                .expect("Failed to reload the page");
+                                        }
                                     />
+
                                     <label for=lang>{lang.name}</label>
                                 </div>
                             }
@@ -163,53 +148,39 @@ mod home {
     #[component]
     pub fn HomeView() -> impl IntoView {
         view! {
-            <Section1/>
-            <Counter1/>
-            <Counter2/>
-            <Section2/>
-            <Counter3/>
-        }
-    }
-
-    #[island]
-    fn Section1() -> impl IntoView {
-        view! {
             <h1>{move_tr!("home-title")}</h1>
-        }
-    }
-
-    #[island]
-    fn Counter1() -> impl IntoView {
-        // Creates a reactive value to update the button
-        let (count, set_count) = create_signal(0);
-        let on_click = move |_| set_count.update(|count| *count += 1);
-
-        view! { <button on:click=on_click>{move_tr!("click-me")} " - " {count}</button> }
-    }
-
-    #[island]
-    fn Counter2() -> impl IntoView {
-        // Creates a reactive value to update the button
-        let (count, set_count) = create_signal(0);
-        let on_click = move |_| set_count.update(|count| *count += 1);
-
-        view! { <button on:click=on_click>{move_tr!("click-me")} " - " {count}</button> }
-    }
-
-    #[island]
-    fn Section2() -> impl IntoView {
-        view! {
+            <Counter1>{move_tr!("click-me").get()}</Counter1>
+            <Counter2>{move_tr!("click-me").get()}</Counter2>
             <p>{move_tr!("home-title")}</p>
+            <Counter3>{move_tr!("click-me").get()}</Counter3>
         }
     }
 
     #[island]
-    fn Counter3() -> impl IntoView {
+    fn Counter1(children: Children) -> impl IntoView {
         // Creates a reactive value to update the button
         let (count, set_count) = create_signal(0);
         let on_click = move |_| set_count.update(|count| *count += 1);
 
-        view! { <button on:click=on_click>{move_tr!("click-me")} " - " {count}</button> }
+        view! { <button on:click=on_click>{children()} " - " {count}</button> }
+    }
+
+    #[island]
+    fn Counter2(children: Children) -> impl IntoView {
+        // Creates a reactive value to update the button
+        let (count, set_count) = create_signal(0);
+        let on_click = move |_| set_count.update(|count| *count += 1);
+
+        view! { <button on:click=on_click>{children()} " - " {count}</button> }
+    }
+
+    #[island]
+    fn Counter3(children: Children) -> impl IntoView {
+        // Creates a reactive value to update the button
+        let (count, set_count) = create_signal(0);
+        let on_click = move |_| set_count.update(|count| *count += 1);
+
+        view! { <button on:click=on_click>{children()} " - " {count}</button> }
     }
 }
 
@@ -220,25 +191,18 @@ mod page_2 {
     #[component]
     pub fn View() -> impl IntoView {
         view! {
-            <Page2Section1/>
-            <Counter4/>
+            <h1>{move_tr!("page-2-title")}</h1>
+            <Counter4>{move_tr!("click-me").get()}</Counter4>
             <p>{move_tr!("page-2-title")}</p>
         }
     }
 
     #[island]
-    fn Page2Section1() -> impl IntoView {
-        view! {
-            <h1>{move_tr!("page-2-title")}</h1>
-        }
-    }
-
-    #[island]
-    fn Counter4() -> impl IntoView {
+    fn Counter4(children: Children) -> impl IntoView {
         // Creates a reactive value to update the button
         let (count, set_count) = create_signal(0);
         let on_click = move |_| set_count.update(|count| *count += 1);
 
-        view! { <button on:click=on_click>{move_tr!("click-me")} " - " {count}</button> }
+        view! { <button on:click=on_click>{children()} " - " {count}</button> }
     }
 }

@@ -1,5 +1,5 @@
 [package]
-name = "leptos-fluent-ssr-islands-axum-example"
+name = "leptos-fluent-ssr-islands-axum-2-example"
 version = "0.1.0"
 edition = "2021"
 publish = false
@@ -52,10 +52,10 @@ ssr = [
 [package.metadata.leptos]
 # Additional files your application could depends on.
 # A change to any file in those directories will trigger a rebuild.
-watch-additional-files = ["examples/ssr-islands-axum/locales"]
+watch-additional-files = ["examples/ssr-islands-axum-2/locales"]
 
 # The name used by wasm-bindgen/cargo-leptos for the JS/WASM bundle. Defaults to the crate name
-output-name = "leptos-fluent-ssr-islands-axum-example"
+output-name = "leptos-fluent-ssr-islands-axum-2-example"
 
 # The site root folder is where cargo-leptos generate all output. WARNING: all content of this folder will be erased on a rebuild. Use it in your server setup.
 site-root = "target/site"

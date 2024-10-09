@@ -1,0 +1,19 @@
+body {
+  font-family: sans-serif;
+}
+
+header {
+  text-align: center;
+  background-color: bisque;
+  padding: 10px;
+}
+
+button {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+a {
+  margin-left: 10px;
+  margin-right: 10px;
+}

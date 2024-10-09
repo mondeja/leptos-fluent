@@ -1,1 +1,0 @@
-click-me = Click me
