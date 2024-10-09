@@ -6,47 +6,10 @@ use leptos_meta::*;
 use leptos_router::*;
 
 static_loader! {
-    pub static SERVER_TRANSLATIONS = {
-        locales: "./locales/server",
+    static TRANSLATIONS = {
+        locales: "./locales",
         fallback_language: "en",
     };
-}
-
-static_loader! {
-    static CLIENT_TRANSLATIONS = {
-        locales: "./locales/client",
-        fallback_language: "en",
-    };
-}
-
-#[macro_export]
-macro_rules! i18n {
-    ($translations:expr, $locales:expr$(,)?) => {{
-        ::leptos_fluent::leptos_fluent! {
-            translations: $translations,
-            languages: "./locales/languages.json",
-            locales: $locales,
-            sync_html_tag_lang: true,
-            sync_html_tag_dir: true,
-            cookie_name: "lang",
-            cookie_attrs: "SameSite=Strict; Secure; path=/; max-age=600",
-            initial_language_from_cookie: true,
-            initial_language_from_cookie_to_localstorage: true,
-            set_language_to_cookie: true,
-            url_param: "lang",
-            initial_language_from_url_param: true,
-            initial_language_from_url_param_to_localstorage: true,
-            initial_language_from_url_param_to_cookie: true,
-            set_language_to_url_param: true,
-            localstorage_key: "language",
-            initial_language_from_localstorage: true,
-            initial_language_from_localstorage_to_cookie: true,
-            set_language_to_localstorage: true,
-            initial_language_from_navigator: true,
-            initial_language_from_navigator_to_localstorage: true,
-            initial_language_from_accept_language_header: true,
-        }
-    }};
 }
 
 #[component]
@@ -54,12 +17,8 @@ pub fn App() -> impl IntoView {
     // Provides context that manages stylesheets, titles, meta tags, etc.
     provide_meta_context();
 
-    i18n!([SERVER_TRANSLATIONS], "./locales/server");
-
     view! {
         <Stylesheet id="leptos" href="/pkg/leptos-fluent-ssr-islands-axum-example.css"/>
-
-        <Title text=tr!("welcome-to-leptos")/>
 
         <Router fallback=|| {
             let mut outside_errors = Errors::default();
@@ -80,6 +39,7 @@ pub fn App() -> impl IntoView {
 pub fn BodyView() -> impl IntoView {
     view! {
         <Archipelago>
+            <Title text=tr!("welcome-to-leptos")/>
             <header::HeaderView></header::HeaderView>
             <main>
                 <Outlet/>
@@ -90,7 +50,30 @@ pub fn BodyView() -> impl IntoView {
 
 #[island]
 fn Archipelago(children: Children) -> impl IntoView {
-    i18n!([CLIENT_TRANSLATIONS], "./locales/client");
+    leptos_fluent::leptos_fluent! {
+        translations: [TRANSLATIONS],
+        languages: "./locales/languages.json",
+        locales: "./locales",
+        sync_html_tag_lang: true,
+        sync_html_tag_dir: true,
+        cookie_name: "lang",
+        cookie_attrs: "SameSite=Strict; Secure; path=/; max-age=600",
+        initial_language_from_cookie: true,
+        initial_language_from_cookie_to_localstorage: true,
+        set_language_to_cookie: true,
+        url_param: "lang",
+        initial_language_from_url_param: true,
+        initial_language_from_url_param_to_localstorage: true,
+        initial_language_from_url_param_to_cookie: true,
+        set_language_to_url_param: true,
+        localstorage_key: "language",
+        initial_language_from_localstorage: true,
+        initial_language_from_localstorage_to_cookie: true,
+        set_language_to_localstorage: true,
+        initial_language_from_navigator: true,
+        initial_language_from_navigator_to_localstorage: true,
+        initial_language_from_accept_language_header: true,
+    };
 
     // Children will be executed when the i18n context is ready.
     // See https://book.leptos.dev/islands.html#passing-context-between-islands
@@ -119,8 +102,8 @@ mod header {
     #[island]
     fn HeaderLinks() -> impl IntoView {
         view! {
-                <a href="/">{move_tr!("home")}</a>
-                <a href="/page-2">{move_tr!("page-2")}</a>
+            <a href="/">{move_tr!("home")}</a>
+            <a href="/page-2">{move_tr!("page-2")}</a>
         }
     }
 
@@ -173,9 +156,7 @@ mod home {
 
     #[island]
     fn Section1() -> impl IntoView {
-        view! {
-            <h1>{move_tr!("home-title")}</h1>
-        }
+        view! { <h1>{move_tr!("home-title")}</h1> }
     }
 
     #[island]
@@ -198,9 +179,7 @@ mod home {
 
     #[island]
     fn Section2() -> impl IntoView {
-        view! {
-            <p>{move_tr!("home-title")}</p>
-        }
+        view! { <p>{move_tr!("home-title")}</p> }
     }
 
     #[island]
@@ -228,9 +207,7 @@ mod page_2 {
 
     #[island]
     fn Page2Section1() -> impl IntoView {
-        view! {
-            <h1>{move_tr!("page-2-title")}</h1>
-        }
+        view! { <h1>{move_tr!("page-2-title")}</h1> }
     }
 
     #[island]

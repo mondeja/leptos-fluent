@@ -1,3 +1,4 @@
+welcome-to-leptos = Bienvenido a Leptos
 select-language = Selecciona un idioma
 home = Inicio
 home-title = Bienvenido a la página de inicio
