@@ -9,7 +9,6 @@ members = [
   "examples/ssr-hydrate-actix",
   "examples/ssr-hydrate-axum",
   "examples/ssr-islands-axum",
-  "examples/ssr-islands-axum-2",
   "examples/system-gtk",
 ]
 resolver = "2"
