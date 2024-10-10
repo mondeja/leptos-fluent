@@ -8,6 +8,7 @@ members = [
   "examples/csr-minimal",
   "examples/ssr-hydrate-actix",
   "examples/ssr-hydrate-axum",
+  "examples/ssr-islands-axum",
   "examples/system-gtk",
 ]
 resolver = "2"
@@ -17,13 +18,7 @@ edition = "2021"
 documentation = "https://docs.rs/leptos-fluent"
 repository = "https://github.com/mondeja/leptos-fluent"
 homepage = "https://mondeja.github.io/leptos-fluent"
-keywords = [
-  "leptos",
-  "fluent",
-  "i18n",
-  "localization",
-  "wasm",
-]
+keywords = ["leptos", "fluent", "i18n", "localization", "wasm"]
 
 [profile.wasm-release]
 inherits = "release"
