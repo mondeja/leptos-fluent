@@ -58,7 +58,7 @@ header {
   z-index: 20;
 }
 
-.mobile-menu-panel>* {
+.mobile-menu-panel > * {
   padding-top: 5px;
 }
 

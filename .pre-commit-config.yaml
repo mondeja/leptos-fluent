@@ -36,9 +36,9 @@ repos:
       - id: clippy
         alias: clippy-no-features
         name: clippy-no-features
-        args:
-          [
+        args: [
             --exclude=leptos-fluent-ssr-hydrate-axum-example,
+            --exclude=leptos-fluent-ssr-islands-axum-example, # TODO: excluded by Leptos bug
             --workspace,
             --,
             -D,
@@ -116,6 +116,7 @@ repos:
             --exclude=leptos-fluent-ssr-hydrate-actix-example,
             --exclude=leptos-fluent-csr-complete-example,
             --exclude=leptos-fluent-csr-minimal-example,
+            --exclude=leptos-fluent-ssr-islands-axum-example,
             --workspace,
             --,
             -D,

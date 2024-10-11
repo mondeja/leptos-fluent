@@ -22,6 +22,7 @@ tower-http = { version = "0.5", features = ["fs"], optional = true }
 wasm-bindgen = "=0.2.93"
 thiserror = "1"
 http = "1"
+serde = "1"
 
 leptos-fluent = { path = "../../leptos-fluent" }
 fluent-templates = { version = "0.10", default-features = false, features = [
@@ -114,3 +115,6 @@ lib-default-features = false
 #
 # Optional. Defaults to "release".
 lib-profile-release = "wasm-release"
+
+[package.metadata.cargo-machete]
+ignored = ["serde"]  # needed by Leptos to pass arguments to islands
