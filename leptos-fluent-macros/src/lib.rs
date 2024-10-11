@@ -2010,16 +2010,33 @@ pub fn leptos_fluent(
     let translations_quote = {
         let loader::Translations { simple, compound } = translations;
 
-        quote! {
-            {
-                let mut all_loaders = Vec::new();
-                all_loaders.extend([#(& #simple),*]);
-                #(
-                    all_loaders.extend(#compound.iter());
-                );*
+        let simple_loaders_quote = quote!([#(& #simple),*]);
+        let extend_simple_loaders_quote =
+            match simple_loaders_quote.to_string() == "[]" {
+                true => quote!(),
+                false => quote! {
+                    for loader in #simple_loaders_quote {
+                        all_loaders.push(loader);
+                    }
+                },
+            };
+        let extend_compound_loaders_quote = quote!(#(
+            all_loaders.extend(#compound);
+        );*);
 
-                all_loaders
-            }
+        match extend_simple_loaders_quote.is_empty()
+            && extend_compound_loaders_quote.is_empty()
+        {
+            true => quote!(Vec::new()),
+            false => quote! {
+                {
+                    let mut all_loaders = Vec::new();
+                    #extend_simple_loaders_quote
+                    #extend_compound_loaders_quote
+
+                    all_loaders
+                }
+            },
         }
     };
 
