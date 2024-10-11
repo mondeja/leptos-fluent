@@ -6,8 +6,15 @@ use leptos_meta::*;
 use leptos_router::{Outlet, Route, Router, Routes};
 
 static_loader! {
-    static TRANSLATIONS = {
-        locales: "./locales",
+    static SERVER_TRANSLATIONS = {
+        locales: "./locales/server",
+        fallback_language: "en",
+    };
+}
+
+static_loader! {
+    static CLIENT_TRANSLATIONS = {
+        locales: "./locales/client",
         fallback_language: "en",
     };
 }
@@ -40,9 +47,9 @@ pub fn App() -> impl IntoView {
 
 pub fn provide_i18n_context() {
     leptos_fluent! {
-        translations: [TRANSLATIONS],
+        translations: [SERVER_TRANSLATIONS],
         languages: "./locales/languages.json",
-        locales: "./locales",
+        locales: "./locales/server",
         cookie_name: "lang",
         cookie_attrs: "SameSite=Strict; Secure; path=/; max-age=600",
         initial_language_from_cookie: true,
@@ -77,6 +84,7 @@ mod header {
                     <LargeMenu />
                     <MobileMenu />
                 </Archipelago>
+                {super::provide_i18n_context();}
             </header>
         }
     }
@@ -84,9 +92,9 @@ mod header {
     #[island]
     fn Archipelago(children: Children) -> impl IntoView {
         leptos_fluent! {
-            translations: [super::TRANSLATIONS],
+            translations: [super::CLIENT_TRANSLATIONS],
             languages: "./locales/languages.json",
-            locales: "./locales",
+            locales: "./locales/client",
             sync_html_tag_lang: true,
             sync_html_tag_dir: true,
             cookie_name: "lang",
