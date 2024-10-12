@@ -9,11 +9,9 @@ header {
   padding: 10px;
 }
 
-.header {
-  position: relative;
-  z-index: 20;
-  background-color: red;
-  padding: 10px;
+a {
+  margin-left: 5px;
+  margin-right: 5px;
 }
 
 .hidden {
@@ -41,6 +39,7 @@ header {
 .mobile-button {
   background: none;
   border: none;
+  cursor: pointer;
 }
 
 .mobile-menu-panel {
@@ -75,14 +74,4 @@ header {
 
 .language-selector {
   display: inline-flex;
-}
-
-button {
-  margin-left: 5px;
-  margin-right: 5px;
-}
-
-a {
-  margin-left: 10px;
-  margin-right: 10px;
 }

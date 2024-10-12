@@ -155,7 +155,6 @@ mod header {
 
         view! {
             <button
-                type="button"
                 class="mobile-button"
                 on:click=move |_| {
                     set_mobile_menu_visibility.update(|is_visible| *is_visible = !*is_visible);
@@ -255,7 +254,6 @@ mod home {
 
     #[island]
     fn HomeCounter(children: Children) -> impl IntoView {
-        // Creates a reactive value to update the button
         let (count, set_count) = create_signal(0);
         let on_click = move |_| set_count.update(|count| *count += 1);
 
@@ -277,7 +275,6 @@ mod page_2 {
 
     #[island]
     fn Page2Counter(children: Children) -> impl IntoView {
-        // Creates a reactive value to update the button
         let (count, set_count) = create_signal(0);
         let on_click = move |_| set_count.update(|count| *count += 1);
 
