@@ -1,11 +1,30 @@
-use crate::error_template::{AppError, ErrorTemplate};
 use fluent_templates::once_cell::sync::Lazy;
-use fluent_templates::static_loader;
-use fluent_templates::StaticLoader;
+use fluent_templates::{static_loader, StaticLoader};
 use leptos::prelude::*;
 use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, tr};
-use leptos_meta::*;
-use leptos_router::{path, components::{Router, Routes, Route}};
+use leptos_meta::{MetaTags, Title};
+use leptos_router::{
+    components::{Route, Router, Routes},
+    StaticSegment,
+};
+
+pub fn shell(options: LeptosOptions) -> impl IntoView {
+    view! {
+        "<!DOCTYPE html>"
+        <html lang="en">
+            <head>
+                <meta charset="utf-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <AutoReload options=options.clone() />
+                <HydrationScripts options />
+                <MetaTags />
+            </head>
+            <body>
+                <App />
+            </body>
+        </html>
+    }
+}
 
 static_loader! {
     static TRANSLATIONS = {
@@ -17,8 +36,9 @@ static_loader! {
 pub static COMPOUND: &[&Lazy<StaticLoader>] = &[&TRANSLATIONS, &TRANSLATIONS];
 
 #[component]
-pub fn App() -> impl IntoView {
+fn I18n(children: Children) -> impl IntoView {
     leptos_fluent! {
+        children: children(),
         translations: [TRANSLATIONS, TRANSLATIONS] + COMPOUND,
         locales: "./locales",
         check_translations: "./src/**/*.rs",
@@ -41,33 +61,32 @@ pub fn App() -> impl IntoView {
         initial_language_from_navigator: true,
         initial_language_from_navigator_to_localstorage: true,
         initial_language_from_accept_language_header: true,
-    };
-
-    view! {
-        <Title text=move || tr!("welcome-to-leptos") />
-
-        // content for this welcome page
-        <Router>
-            <main>
-                <Routes fallback=|| {
-                    let mut outside_errors = Errors::default();
-                    outside_errors.insert_with_default_key(AppError::NotFound);
-                    view! { <ErrorTemplate outside_errors/> }
-                }>
-                    <Route path=path!("") view=HomePage/>
-                </Routes>
-            </main>
-        </Router>
     }
 }
 
-/// Renders the home page of your application.
 #[component]
-fn HomePage() -> impl IntoView {
+pub fn App() -> impl IntoView {
+    view! {
+        <I18n>
+            <Title text=move || tr!("welcome-to-leptos") />
+
+            <Router>
+                <main>
+                    <Routes fallback=|| tr!("not-found").into_view()>
+                        <Route path=StaticSegment("/") view=Home />
+                    </Routes>
+                </main>
+            </Router>
+        </I18n>
+    }
+}
+
+#[component]
+fn Home() -> impl IntoView {
     let i18n = expect_i18n();
 
     view! {
-        <h1>{move_tr!("welcome-to-leptos")}</h1>
+        <h1>{move_tr!("select-a-language")}</h1>
         <fieldset>
 
             {move || {

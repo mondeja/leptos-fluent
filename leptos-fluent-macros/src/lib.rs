@@ -36,7 +36,10 @@ use std::str::FromStr;
 #[cfg(feature = "debug")]
 #[inline(always)]
 pub(crate) fn debug(msg: &str) {
-    println!("[leptos-fluent/debug] {}", msg);
+    #[allow(clippy::print_stdout)]
+    {
+        println!("[leptos-fluent/debug] {msg}");
+    };
 }
 
 /// Create the i18n context for internationalization.
@@ -58,9 +61,9 @@ pub(crate) fn debug(msg: &str) {
 /// }
 ///
 /// #[component]
-/// pub fn App() -> impl IntoView {
+/// pub fn I18n(children: Children) -> impl IntoView {
 ///     leptos_fluent! {
-///         child: view! { ... },
+///         children: children(),
 ///         translations: [TRANSLATIONS],
 ///         languages: "./locales/languages.json",
 ///         sync_html_tag_lang: true,
@@ -80,6 +83,15 @@ pub(crate) fn debug(msg: &str) {
 ///         cookie_attrs: "SameSite=Strict; Secure; path=/; max-age=2592000",
 ///         initial_language_from_cookie: true,
 ///         set_language_to_cookie: true,
+///     }
+/// }
+///
+/// #[component]
+/// fn App() -> impl IntoView {
+///     view! {
+///         <I18n>
+///             <LanguageSelector/>
+///         </I18n>
 ///     }
 /// }
 /// ```
@@ -115,7 +127,7 @@ pub fn leptos_fluent(
 
     let I18nLoader {
         fluent_file_paths,
-        child,
+        children,
         translations,
         languages,
         languages_path,
@@ -549,7 +561,7 @@ pub fn leptos_fluent(
             .map(|param| {
                 let ident = &param.ident;
                 let effect_quote = quote! {
-                    ::leptos::spawn::spawn_local(async move {
+                    ::leptos::task::spawn(async move {
                         let lang_result = #ident().await;
                         if let Ok(maybe_lang) = lang_result {
                             if let Some(l) = maybe_lang {
@@ -586,7 +598,7 @@ pub fn leptos_fluent(
             let ident = &param.ident;
             let effect_quote = quote! {
                 ::leptos::prelude::Effect::new(move |_| {
-                    ::leptos::spawn::spawn_local(async {
+                    ::leptos::task::spawn(async {
                         _ = #ident(#get_language_quote.id.to_string()).await;
                     });
                 });
@@ -606,7 +618,7 @@ pub fn leptos_fluent(
             match param.ident {
                 Some(ref ident) => {
                     let quote = quote! {
-                        ::leptos::spawn::spawn_local(async move {
+                        ::leptos::task::spawn(async move {
                             _ = #ident(l.id.to_string()).await;
                         });
                     };
@@ -750,225 +762,87 @@ pub fn leptos_fluent(
     };
 
     let sync_html_tag_quote: proc_macro2::TokenStream = {
-        // TODO: optimize code size
         // TODO: handle other attributes in Leptos v0.7
-        //       (in Leptos v0.6 attribute keys are static)
-        // TODO: update this code for Leptos v0.7
+        // See https://github.com/leptos-rs/leptos/issues/2856
 
-        // Calling `provide_meta_context()` to not show a warning
-        #[cfg(feature = "ssr")]
-        let previous_html_tag_attrs_quote = quote! {{
-            ::leptos_meta::provide_meta_context();
-            let html_tag_as_string = ::leptos_meta::use_head().html.as_string().unwrap_or("".to_string());
-            let mut class: Option<::leptos::text_prop::TextProp> = None;
-            let mut lang: Option<::leptos::text_prop::TextProp> = None;
-            let mut dir: Option<::leptos::text_prop::TextProp> = None;
-            for attr in html_tag_as_string.split(' ') {
-                let mut parts = attr.split('=');
-                let key = parts.next().unwrap_or("");
-                let value = parts.next().unwrap_or("");
-                if key == "class" {
-                    class = Some(value.trim_matches('"').to_string().into());
-                } else if key == "lang" {
-                    lang = Some(value.trim_matches('"').to_string().into());
-                } else if key == "dir" {
-                    dir = Some(value.trim_matches('"').to_string().into());
-                }
-            }
-            (class, lang, dir)
-        }};
-
-        let sync_html_tag_lang_effect_quote = {
-            #[cfg(feature = "ssr")]
-            {
-                let sync_html_tag_dir_bool_quote: proc_macro2::TokenStream = {
-                    let quote = sync_html_tag_dir
-                        .iter()
-                        .map(|param| {
-                            let quote = match param.lit {
-                                Some(ref lit) => quote! { #lit },
-                                None => match param.expr {
-                                    Some(ref expr) => quote! { #expr },
-                                    None => quote! { false },
-                                },
-                            };
-
-                            match quote.is_empty() {
-                                true => quote! { false },
-                                false => match param.exprpath {
-                                    Some(ref path) => quote!(#path{#quote}),
-                                    None => quote,
-                                },
-                            }
-                        })
-                        .collect::<proc_macro2::TokenStream>();
-
-                    match quote.is_empty() {
-                        true => quote! { false },
-                        false => quote! { #quote },
-                    }
-                };
-
-                quote! {
-                    let l = #get_language_quote;
-                    let (class, _, dir) = #previous_html_tag_attrs_quote;
-                    ::leptos_meta::Html(
-                        ::leptos_meta::HtmlProps {
-                            lang: Some(l.id.to_string().into()),
-                            dir: if #sync_html_tag_dir_bool_quote {
-                                Some(l.dir.as_str().into())
-                            } else {
-                                dir
-                            },
-                            class,
-                            attributes: Vec::new(),
-                        }
-                    );
-                }
-            }
-
-            #[cfg(not(feature = "ssr"))]
-            quote! {
-                ::leptos::prelude::Effect::new(move |_| {
-                    use leptos_fluent::web_sys::wasm_bindgen::JsCast;
-                    _ = ::leptos::prelude::document()
-                        .document_element()
-                        .unwrap()
-                        .unchecked_into::<::leptos_fluent::web_sys::HtmlElement>()
-                        .set_attribute(
-                            "lang",
-                            &#get_language_quote.id.to_string()
-                        );
-                });
-            }
-        };
-
-        let sync_html_tag_dir_effect_quote = {
-            #[cfg(feature = "ssr")]
-            {
-                let sync_html_tag_lang_bool_quote: proc_macro2::TokenStream = {
-                    let quote = sync_html_tag_lang
-                        .iter()
-                        .map(|param| {
-                            let quote = match param.lit {
-                                Some(ref lit) => quote! { #lit },
-                                None => match param.expr {
-                                    Some(ref expr) => quote! { #expr },
-                                    None => quote! { false },
-                                },
-                            };
-
-                            match quote.is_empty() {
-                                true => quote! { false },
-                                false => match param.exprpath {
-                                    Some(ref path) => quote!(#path{#quote}),
-                                    None => quote,
-                                },
-                            }
-                        })
-                        .collect::<proc_macro2::TokenStream>();
-
-                    match quote.is_empty() {
-                        true => quote! { false },
-                        false => quote! { #quote },
-                    }
-                };
-
-                quote! {
-                    let l = #get_language_quote;
-                    let (class, lang, _) = #previous_html_tag_attrs_quote;
-                    ::leptos_meta::Html(
-                        ::leptos_meta::HtmlProps {
-                            lang: if #sync_html_tag_lang_bool_quote {
-                                Some(l.id.to_string().into())
-                            } else {
-                                lang
-                            },
-                            dir: Some(l.dir.as_str().into()),
-                            class,
-                            attributes: Vec::new(),
-                        }
-                    );
-                }
-            }
-
-            #[cfg(not(feature = "ssr"))]
-            quote! {
-                ::leptos::prelude::Effect::new(move |_| {
-                    use leptos_fluent::web_sys::wasm_bindgen::JsCast;
-                    _ = ::leptos::prelude::document()
-                        .document_element()
-                        .unwrap()
-                        .unchecked_into::<::leptos_fluent::web_sys::HtmlElement>()
-                        .set_attribute(
-                            "dir",
-                            &#get_language_quote.dir.as_str()
-                        );
-                });
-            }
-        };
-
-        let sync_html_tag_lang_quote: proc_macro2::TokenStream =
-            sync_html_tag_lang
+        let sync_html_tag_lang_bool_quote: proc_macro2::TokenStream = {
+            let quote = sync_html_tag_lang
                 .iter()
                 .map(|param| {
                     let quote = match param.lit {
-                        Some(ref lit) => match lit.value {
-                            true => sync_html_tag_lang_effect_quote.clone(),
-                            false => quote!(),
-                        },
+                        Some(ref lit) => quote! { #lit },
                         None => match param.expr {
-                            Some(ref expr) => quote! {
-                                if #expr {
-                                    #sync_html_tag_lang_effect_quote
-                                }
-                            },
-                            None => quote!(),
+                            Some(ref expr) => quote! { #expr },
+                            None => quote! { false },
                         },
                     };
 
                     match quote.is_empty() {
-                        true => quote!(),
+                        true => quote! { false },
                         false => match param.exprpath {
                             Some(ref path) => quote!(#path{#quote}),
                             None => quote,
                         },
                     }
                 })
-                .collect();
+                .collect::<proc_macro2::TokenStream>();
 
-        let sync_html_tag_dir_quote: proc_macro2::TokenStream =
-            sync_html_tag_dir
+            match quote.is_empty() {
+                true => quote! { false },
+                false => quote! { #quote },
+            }
+        };
+
+        let sync_html_tag_dir_bool_quote: proc_macro2::TokenStream = {
+            let quote = sync_html_tag_dir
                 .iter()
                 .map(|param| {
                     let quote = match param.lit {
-                        Some(ref lit) => match lit.value {
-                            true => sync_html_tag_dir_effect_quote.clone(),
-                            false => quote!(),
-                        },
+                        Some(ref lit) => quote! { #lit },
                         None => match param.expr {
-                            Some(ref expr) => quote! {
-                                if #expr {
-                                    #sync_html_tag_dir_effect_quote
-                                }
-                            },
-                            None => quote!(),
+                            Some(ref expr) => quote! { #expr },
+                            None => quote! { false },
                         },
                     };
 
                     match quote.is_empty() {
-                        true => quote!(),
+                        true => quote! { false },
                         false => match param.exprpath {
                             Some(ref path) => quote!(#path{#quote}),
                             None => quote,
                         },
                     }
                 })
-                .collect();
+                .collect::<proc_macro2::TokenStream>();
 
-        quote! {
-            #sync_html_tag_lang_quote
-            #sync_html_tag_dir_quote
+            match quote.is_empty() {
+                true => quote! { false },
+                false => quote! { #quote },
+            }
+        };
+
+        let attr_lang_quote = match sync_html_tag_lang_bool_quote.to_string()
+            == "false"
+        {
+            true => quote! {},
+            false => quote! { attr:lang=|| #get_language_quote.id.to_string() },
+        };
+        let attr_dir_quote = match sync_html_tag_dir_bool_quote.to_string()
+            == "false"
+        {
+            true => quote! {},
+            false => quote! { attr:dir=|| #get_language_quote.dir.as_str() },
+        };
+
+        match attr_lang_quote.is_empty() && attr_dir_quote.is_empty() {
+            true => quote! {},
+            false => quote! {{
+                use ::leptos_meta::{provide_meta_context, Html};
+                provide_meta_context();
+                view! {
+                    <Html #attr_lang_quote #attr_dir_quote/>
+                }
+            }},
         }
     };
 
@@ -1121,7 +995,7 @@ pub fn leptos_fluent(
                 .map(|param| match param.ident {
                     Some(ref ident) => {
                         let quote = quote! {
-                            ::leptos::spawn::spawn_local(async move {
+                            ::leptos::task::spawn(async move {
                                 _ = #ident(l.id.to_string()).await;
                             });
                         };
@@ -1268,7 +1142,7 @@ pub fn leptos_fluent(
                 match param.ident {
                     Some(ref ident) => {
                         let quote = quote! {
-                            ::leptos::spawn::spawn_local(async move {
+                            ::leptos::task::spawn(async move {
                                 _ = #ident(l.id.to_string()).await;
                             });
                         };
@@ -1451,7 +1325,7 @@ pub fn leptos_fluent(
                 match param.ident {
                     Some(ref ident) => {
                         let quote = quote! {
-                            ::leptos::spawn::spawn_local(async move {
+                            ::leptos::task::spawn(async move {
                                 _ = #ident(l.id.to_string()).await;
                             });
                         };
@@ -1711,7 +1585,7 @@ pub fn leptos_fluent(
             match param.ident {
                 Some(ref ident) => {
                     let quote = quote! {
-                        ::leptos::spawn::spawn_local(async move {
+                        ::leptos::task::spawn(async move {
                             _ = #ident(l.id.to_string()).await;
                         });
                     };
@@ -2315,7 +2189,7 @@ pub fn leptos_fluent(
                             provide_meta_context: true,
                             #system_quote
                         };
-                        ::leptos::provide_context::<::leptos_fluent::LeptosFluentMeta>(meta);
+                        ::leptos::context::provide_context::<::leptos_fluent::LeptosFluentMeta>(meta);
                     };
 
                     match param.exprpath {
@@ -2329,7 +2203,6 @@ pub fn leptos_fluent(
     };
 
     let other_quotes = quote! {
-        #sync_html_tag_quote
         #sync_language_with_server_function_quote
         #sync_language_with_localstorage_quote
         #sync_language_with_url_param_quote
@@ -2340,50 +2213,66 @@ pub fn leptos_fluent(
         #leptos_fluent_provide_meta_context_quote
     };
 
-    let debug_quote = quote! {
-        const LANGUAGES: [&::leptos_fluent::Language; #n_languages] =
-            #languages_quote;
+    let init_quote = quote! {
+        {
 
-        let mut lang: Option<&'static ::leptos_fluent::Language> = None;
-        #initial_language_quote;
 
-        let initial_lang = if let Some(l) = lang {
-            l
-        } else {
-            LANGUAGES[0]
-        };
+            let mut lang: Option<&'static ::leptos_fluent::Language> = None;
+            #initial_language_quote;
 
-        let mut i18n = ::leptos_fluent::I18n {
-            language: ::leptos::prelude::RwSignal::new(initial_lang),
-            languages: &LANGUAGES,
-            translations: ::leptos::prelude::Signal::derive(move || #translations_quote),
-        };
-        ::leptos::prelude::provide_context::<::leptos_fluent::I18n>(i18n);
+            let initial_lang = if let Some(l) = lang {
+                l
+            } else {
+                LANGUAGES[0]
+            };
+
+            let i18n = ::leptos_fluent::I18n {
+                language: ::leptos::prelude::RwSignal::new(initial_lang),
+                languages: &LANGUAGES,
+                translations: ::leptos::prelude::Signal::derive(move || #translations_quote),
+            };
+            ::leptos::context::provide_context::<::leptos_fluent::I18n>(i18n);
+            i18n
+        }
     };
 
-    #[cfg(feature = "tracing")]
-    tracing::trace!("{}", debug_quote);
-
-    let child_quote: proc_macro2::TokenStream = child.iter().map(|param| {
-        let expr = param.expr.as_ref().unwrap();
-        match param.exprpath {
-            Some(ref path) => quote!(#path{#expr}),
-            None => quote!(#expr),
-        }
-    }).collect();
+    let children_quote: proc_macro2::TokenStream = children
+        .iter()
+        .map(|param| {
+            let expr = param.expr.as_ref().unwrap();
+            match param.exprpath {
+                Some(ref path) => quote!(#path{#expr}),
+                None => quote!(#expr),
+            }
+        })
+        .collect();
 
     let quote = quote! {
         #double_braced_warning
-        {
-            #debug_quote
+        let i18n = {
+            const LANGUAGES: [&::leptos_fluent::Language; #n_languages] =
+                #languages_quote;
+            let i18n = #init_quote;
             #other_quotes
+            i18n
         };
+        {
+            use ::leptos::context::Provider;
+            ::leptos::view! {
+                <Provider value={i18n}>
+                    #sync_html_tag_quote
+                    {#children_quote}
+                </Provider>
+            }
+        }
 
-        #child_quote
     };
 
     #[cfg(feature = "debug")]
     debug(&format!("\n{}", &quote.to_string()));
+
+    #[cfg(feature = "tracing")]
+    tracing::trace!("{}", &quote.to_string());
 
     proc_macro::TokenStream::from(quote)
 }

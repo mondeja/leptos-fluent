@@ -320,7 +320,7 @@ macro_rules! struct_field_init_shorthand_not_supported {
     };
 }
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub(crate) struct LitBoolExpr {
     pub lit: Option<syn::LitBool>,
     pub expr: Option<syn::Expr>,
@@ -333,7 +333,7 @@ impl LitBoolExpr {
     }
 }
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub(crate) struct LitStrExpr {
     pub lit: Option<syn::LitStr>,
     pub expr: Option<syn::Expr>,
@@ -345,7 +345,7 @@ impl LitStrExpr {
     }
 }
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub(crate) struct Identifier {
     pub ident: Option<syn::Ident>,
     pub exprpath: Option<proc_macro2::TokenStream>,
@@ -357,7 +357,7 @@ impl Identifier {
     }
 }
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub(crate) struct LitBool {
     pub lit: Option<syn::LitBool>,
     pub exprpath: Option<proc_macro2::TokenStream>,
@@ -369,7 +369,7 @@ impl LitBool {
     }
 }
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub(crate) struct Expr {
     pub expr: Option<syn::Expr>,
     pub exprpath: Option<proc_macro2::TokenStream>,
@@ -383,7 +383,7 @@ impl Expr {
 
 pub(crate) struct I18nLoader {
     pub fluent_file_paths: FluentFilePaths,
-    pub child: Vec<Expr>,
+    pub children: Vec<Expr>,
     pub translations: Translations,
     pub languages: Vec<ParsedLanguage>,
     pub languages_path: Option<String>,
@@ -444,6 +444,7 @@ impl Parse for I18nLoader {
             std::env::var("CARGO_MANIFEST_DIR").unwrap_or_else(|_| "./".into()),
         );
 
+        let mut children: Vec<Expr> = Vec::new();
         let mut locales_path: Option<syn::LitStr> = None;
         let mut languages_path: Option<syn::LitStr> = None;
         let mut core_locales_path: Option<syn::LitStr> = None;
@@ -594,16 +595,17 @@ impl Parse for I18nLoader {
                 input.parse::<syn::Token![:]>()?;
             }
 
-            if k == "child" {
+            if k == "children" {
                 let mut param = Expr::new();
                 clone_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     param,
-                    k
+                    k,
+                    children
                 );
-                param.expr = Some(fields.parse()?);
-                child.push(param);
+                param.expr = Some(input.parse()?);
+                children.push(param);
             } else if k == "translations" {
                 struct_field_init_shorthand_not_supported!(
                     struct_field_init_shorthand,
@@ -1512,7 +1514,7 @@ impl Parse for I18nLoader {
 
         Ok(Self {
             fluent_file_paths: fluent_resources_and_file_paths.1,
-            child,
+            children,
             translations,
             languages,
             languages_path: languages_file_path,

@@ -10,9 +10,9 @@ static_loader! {
 }
 
 #[component]
-pub fn App() -> impl IntoView {
+fn I18n(children: Children) -> impl IntoView {
     leptos_fluent! {
-        child: LanguageSelector,
+        children: children(),
         translations: [TRANSLATIONS],
         languages: "./locales/languages.json",
         locales: "./locales",
@@ -41,6 +41,15 @@ pub fn App() -> impl IntoView {
 }
 
 #[component]
+pub fn App() -> impl IntoView {
+    view! {
+        <I18n>
+            <LanguageSelector />
+        </I18n>
+    }
+}
+
+#[component]
 fn LanguageSelector() -> impl IntoView {
     view! {
         <p>{move_tr!("select-a-language")}</p>
@@ -55,13 +64,17 @@ fn LanguageSelector() -> impl IntoView {
         <ul>
             <li>
                 <p>
-                    {move_tr!("html-tag-lang-is", { "lang" => expect_i18n().language.read().id.to_string() })}
+                    {move_tr!(
+                        "html-tag-lang-is", { "lang" => expect_i18n().language.read().id.to_string() }
+                    )}
                 </p>
                 <p>{move_tr!("add-es-en-url-param")}</p>
             </li>
             <li>
                 <p>
-                    {move_tr!("html-tag-dir-is", { "dir" => expect_i18n().language.read().dir.to_string() })}
+                    {move_tr!(
+                        "html-tag-dir-is", { "dir" => expect_i18n().language.read().dir.to_string() }
+                    )}
                 </p>
             </li>
         </ul>

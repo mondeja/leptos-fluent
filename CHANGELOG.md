@@ -2,6 +2,63 @@
 
 ## [Unreleased]
 
+## ? - [0.2.0]
+
+### Breaking changes
+
+#### Declarative API
+
+Previously, the `leptos_fluent!` macro was providing the I18n context
+using `provide_context`, so the app would be configured as:
+
+```rust
+#[component]
+fn App() -> impl IntoView {
+    leptos_fluent! {
+        // ...
+    }
+
+    view! {
+        // ...
+    }
+}
+```
+
+Now a `children` option has been added to the macro and need to be used
+to declare a I18n component:
+
+```rust
+#[component]
+fn I18n(children: Children) -> impl IntoView {
+    leptos_fluent! {
+        children: children(),
+        // ...
+    }
+}
+
+#[component]
+fn App() -> impl IntoView {
+    view! {
+        <I18n>
+            // ...
+        </I18n>
+    }
+}
+```
+
+By this way `leptos_fluent!` does not return the I18n context anymore.
+
+#### No more double curly braces
+
+Support for deprecated double curly braces syntax for the `leptos_fluent!`
+macro has been removed. Use single curly braces instead:
+
+```rust
+leptos_fluent! {
+    // ...
+}
+```
+
 ## 2024-10-11 - [0.1.24]
 
 ### Enhancements
@@ -534,6 +591,7 @@ version to `0.1` during installation.
 - Added all ISO-639-1 and ISO-639-2 languages.
 
 [Unreleased]: https://github.com/mondeja/leptos-fluent/compare/v0.1.24...master
+[0.2.0]: https://github.com/mondeja/leptos-fluent/compare/v0.1.24...v0.2.0
 [0.1.24]: https://github.com/mondeja/leptos-fluent/compare/v0.1.23...v0.1.24
 [0.1.23]: https://github.com/mondeja/leptos-fluent/compare/v0.1.22...v0.1.23
 [0.1.22]: https://github.com/mondeja/leptos-fluent/compare/v0.1.21...v0.1.22

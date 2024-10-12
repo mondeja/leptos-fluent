@@ -1,12 +1,12 @@
 #[cfg(feature = "ssr")]
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    use actix_files::Files;
+    use actix_web::*;
     use leptos::prelude::*;
     use leptos_actix::{generate_route_list, LeptosRoutes};
-    use leptos_meta::MetaTags;
     use leptos_fluent_ssr_hydrate_actix_example::app::App;
-    use actix_web::*;
-    use actix_files::Files;
+    use leptos_meta::MetaTags;
 
     let conf = get_configuration(None).unwrap();
     let addr = conf.leptos_options.site_addr;
@@ -23,23 +23,26 @@ async fn main() -> std::io::Result<()> {
                     use leptos::prelude::*;
 
                     view! {
-                        <!DOCTYPE html>
-                        <html lang="en">
+                        "<!DOCTYPE html>"
+                        <html>
                             <head>
-                                <meta charset="utf-8"/>
-                                <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                                <meta charset="utf-8" />
+                                <meta
+                                    name="viewport"
+                                    content="width=device-width, initial-scale=1"
+                                />
                                 <AutoReload options=leptos_options.clone() />
-                                <HydrationScripts options=leptos_options.clone()/>
-                                <MetaTags/>
+                                <HydrationScripts options=leptos_options.clone() />
+                                <MetaTags />
                             </head>
                             <body>
-                                <App/>
+                                <App />
                             </body>
                         </html>
                     }
             }})
             .service(Files::new("/", site_root))
-        //.wrap(middleware::Compress::default())
+            .wrap(middleware::Compress::default())
     })
     .bind(&addr)?
     .run()
@@ -48,10 +51,7 @@ async fn main() -> std::io::Result<()> {
 
 #[cfg(not(feature = "ssr"))]
 pub fn main() {
-    // a client-side main function is required for using `trunk serve`
-    // prefer using `cargo leptos serve` instead
-    // to run: `trunk serve --open --features csr`
-    use leptos_fluent_ssr_hydrate_actix_example::app::App;
-    console_error_panic_hook::set_once();
-    leptos::mount::mount_to_body(App);
+    // no client-side main function
+    // unless we want this to work with e.g., Trunk for a purely client-side app
+    // see lib.rs for hydration function instead
 }

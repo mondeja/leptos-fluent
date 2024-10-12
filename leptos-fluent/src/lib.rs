@@ -84,14 +84,11 @@
 //! }
 //!
 //! #[component]
-//! fn App() -> impl IntoView {
+//! fn I18n(children: Children) -> impl IntoView {
 //!     // See all options in the reference at
 //!     // https://mondeja.github.io/leptos-fluent/leptos_fluent.html
 //!     leptos_fluent! {
-//!         child: view! {
-//!             <TranslatableComponent />
-//!             <LanguageSelector />
-//!         },
+//!         children: children(),
 //!         // Path to the locales directory, relative to Cargo.toml.
 //!         locales: "./locales",
 //!         // Static translations struct provided by fluent-templates.
@@ -184,6 +181,16 @@
 //! }
 //!
 //! #[component]
+//! pub fn App() -> impl IntoView {
+//!     view! {
+//!         <I18n>
+//!             <TranslatableComponent/>
+//!             <LanguageSelector/>
+//!         </I18n>
+//!     }
+//! }
+//!
+//! #[component]
 //! fn TranslatableComponent() -> impl IntoView {
 //!     // Use `tr!` and `move_tr!` macros to translate strings:
 //!     view! {
@@ -203,10 +210,11 @@
 //! #[component]
 //! fn LanguageSelector() -> impl IntoView {
 //!     // `expect_i18n()` to get the i18n context
-//!     // `i18n.languages` is a static array with the available languages
+//!     // `i18n.languages` exposes a static array with the available languages
 //!     // `i18n.language.read()` to get the current language
 //!     // `lang.activate()` or `i18n.language.set(lang)` to set the current language
 //!     // `lang.is_active()` to check if a language is the current selected one
+//!
 //!     let i18n = expect_i18n();
 //!
 //!     view! {
@@ -288,16 +296,10 @@ use fluent_templates::{
 use leptos::{
     attr::AttributeValue,
     prelude::{
-        guards::ReadGuard, use_context, RwSignal, Signal,
-        Read, Renderer, Set, With,
+        guards::ReadGuard, use_context, Read, RwSignal, Set, Signal, With,
     },
 };
-#[cfg(feature = "ssr")]
-use leptos::prelude::{view, GetUntracked};
 pub use leptos_fluent_macros::leptos_fluent;
-#[cfg(feature = "ssr")]
-use leptos_meta::Html;
-use std::sync::Arc;
 
 /// Direction of the text
 #[derive(Debug)]
@@ -413,17 +415,17 @@ impl FromStr for Language {
 
 macro_rules! impl_into_attr_for_language {
     () => {
-        type State = (R::Element, String);
+        type State = <String as AttributeValue>::State;
         type AsyncOutput = String;
         type Cloneable = String;
-        type CloneableOwned = Arc<str>;
+        type CloneableOwned = String;
 
         fn html_len(&self) -> usize {
             self.id.to_string().len()
         }
 
         fn to_html(self, key: &str, buf: &mut String) {
-            <&str as AttributeValue<R>>::to_html(
+            <&str as AttributeValue>::to_html(
                 self.id.to_string().as_str(),
                 key,
                 buf,
@@ -435,30 +437,25 @@ macro_rules! impl_into_attr_for_language {
         fn hydrate<const FROM_SERVER: bool>(
             self,
             key: &str,
-            el: &R::Element,
+            el: &leptos::tachys::renderer::types::Element,
         ) -> Self::State {
-            let id = self.id.to_string();
-            let (el, _) = <&str as AttributeValue<R>>::hydrate::<FROM_SERVER>(
-                id.as_str(),
+            <String as AttributeValue>::hydrate::<FROM_SERVER>(
+                self.id.to_string(),
                 key,
                 el,
-            );
-            (el, id)
+            )
         }
 
-        fn build(self, el: &R::Element, key: &str) -> Self::State {
-            let id = self.id.to_string();
-            R::set_attribute(el, key, id.as_str());
-            (el.clone(), id)
+        fn build(
+            self,
+            el: &leptos::tachys::renderer::types::Element,
+            key: &str,
+        ) -> Self::State {
+            <String as AttributeValue>::build(self.id.to_string(), el, key)
         }
 
         fn rebuild(self, key: &str, state: &mut Self::State) {
-            let id = self.id.to_string();
-            let (el, prev_value) = state;
-            if id != *prev_value {
-                R::set_attribute(el, key, id.as_str());
-            }
-            *prev_value = id;
+            <String as AttributeValue>::rebuild(self.id.to_string(), key, state)
         }
 
         fn into_cloneable(self) -> Self::Cloneable {
@@ -466,28 +463,22 @@ macro_rules! impl_into_attr_for_language {
         }
 
         fn into_cloneable_owned(self) -> Self::CloneableOwned {
-            self.id.to_string().as_str().into()
+            self.id.to_string()
         }
 
         fn dry_resolve(&mut self) {}
 
         async fn resolve(self) -> Self::AsyncOutput {
-            self.id.to_string().as_str().into()
+            self.id.to_string()
         }
     };
 }
 
-impl<'a, R> AttributeValue<R> for &'a Language
-where
-    R: Renderer,
-{
+impl<'a> AttributeValue for &'a Language {
     impl_into_attr_for_language!();
 }
 
-impl<'a, R> AttributeValue<R> for &&'a Language
-where
-    R: Renderer,
-{
+impl<'a> AttributeValue for &&'a Language {
     impl_into_attr_for_language!();
 }
 
@@ -658,7 +649,7 @@ pub fn tr_impl(i18n: I18n, text_id: &str) -> String {
         language.with(|language| {
             translations
                 .iter()
-                .find_map(|tr| tr.try_lookup(&language.id, text_id))
+                .find_map(|tr| tr.try_lookup(language.id, text_id))
         })
     });
 
@@ -701,7 +692,7 @@ pub fn tr_with_args_impl(
     let found = translations.with(|translations| {
         language.with(|language| {
             translations.iter().find_map(|tr| {
-                tr.try_lookup_with_args(&language.id, text_id, args)
+                tr.try_lookup_with_args(language.id, text_id, args)
             })
         })
     });

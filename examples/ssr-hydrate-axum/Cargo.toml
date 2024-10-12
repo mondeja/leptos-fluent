@@ -10,19 +10,16 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 axum = { version = "0.7", optional = true }
 console_error_panic_hook = "0.1"
-tower = { version = "0.4", optional = true }
-tower-http = { version = "0.5", features = ["fs"], optional = true }
 http = "1"
-thiserror = "1"
 tokio = { version = "1", features = ["rt-multi-thread"], optional = true }
-leptos = { path = "../../../leptos/leptos", version = "0.7.0-beta2" }
-leptos_meta = { path = "../../../leptos/meta", version = "0.7.0-beta2" }
-leptos_axum = { path = "../../../leptos/integrations/axum", version = "0.7.0-beta2", optional = true }
-leptos_router = { path = "../../../leptos/router", version = "0.7.0-beta2" }
+leptos = "0.7.0-gamma2"
+leptos_meta = "0.7.0-gamma2"
+leptos_axum = { version = "0.7.0-gamma2", optional = true }
+leptos_router = "0.7.0-gamma2"
 leptos-fluent = { path = "../../leptos-fluent", features = [
   "yaml"
 ], default-features = false }
-fluent-templates = { version = "0.10", default-features = false, features = [
+fluent-templates = { version = "0.11", default-features = false, features = [
   "macros",
   "walkdir"
 ] }
@@ -38,8 +35,6 @@ ssr = [
   "dep:axum",
   "dep:tokio",
   "dep:leptos_axum",
-  "dep:tower",
-  "dep:tower-http",
   "leptos/ssr",
   "leptos_meta/ssr",
   "leptos_router/ssr",

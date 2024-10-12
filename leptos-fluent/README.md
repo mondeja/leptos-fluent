@@ -86,10 +86,11 @@ static_loader! {
 }
 
 #[component]
-fn App() -> impl IntoView {
+fn I18n(children: Children) -> impl IntoView {
     // See all options in the reference at
     // https://mondeja.github.io/leptos-fluent/leptos_fluent.html
     leptos_fluent! {
+        children: children(),
         // Path to the locales directory, relative to Cargo.toml.
         locales: "./locales",
         // Static translations struct provided by fluent-templates.
@@ -178,11 +179,16 @@ fn App() -> impl IntoView {
         data_file_key: "my-app",
         // Set the language selected to a data file.
         set_language_to_data_file: true,
-    };
+    }
+}
 
+#[component]
+pub fn App() -> impl IntoView {
     view! {
-        <TranslatableComponent />
-        <LanguageSelector />
+        <I18n>
+            <TranslatableComponent/>
+            <LanguageSelector/>
+        </I18n>
     }
 }
 
@@ -206,10 +212,12 @@ fn TranslatableComponent() -> impl IntoView {
 #[component]
 fn LanguageSelector() -> impl IntoView {
     // `expect_i18n()` to get the i18n context
-    // `i18n.languages` is a static array with the available languages
+    // `i18n.languages` exposes a static array with the available languages
     // `i18n.language.read()` to get the current language
-    // `lang.activate()` to set the current language
+    // `lang.activate()` or `i18n.language.set(lang)` to set the current language
     // `lang.is_active()` to check if a language is the current selected one
+
+    let i18n = expect_i18n();
 
     view! {
         <fieldset>
@@ -223,7 +231,7 @@ fn LanguageSelector() -> impl IntoView {
                                 name="language"
                                 value=lang
                                 checked=lang.is_active()
-                                on:click=move |_| lang.activate()
+                                on:click=move |_| i18n.language.set(lang)
                             />
                             <label for=lang>{lang.name}</label>
                         </div>

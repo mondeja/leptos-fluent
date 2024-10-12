@@ -10,11 +10,20 @@ static_loader! {
 }
 
 #[component]
-pub fn App() -> impl IntoView {
+pub fn I18n(children: Children) -> impl IntoView {
     leptos_fluent! {
-        child: LanguageSelector,
+        children: children(),
         translations: [TRANSLATIONS],
         locales: "./locales",
+    }
+}
+
+#[component]
+pub fn App() -> impl IntoView {
+    view! {
+        <I18n>
+            <LanguageSelector />
+        </I18n>
     }
 }
 
