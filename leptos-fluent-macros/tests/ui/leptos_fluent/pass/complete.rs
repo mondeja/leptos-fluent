@@ -11,7 +11,7 @@ static_loader! {
 
 #[component]
 pub fn App() -> impl IntoView {
-    leptos_fluent! {{
+    leptos_fluent! {
         translations: [TRANSLATIONS],
         locales: "../../../../examples/csr-minimal/locales",
         sync_html_tag_lang: true,
@@ -31,7 +31,7 @@ pub fn App() -> impl IntoView {
         initial_language_from_localstorage_to_cookie: true,
         set_language_to_localstorage: true,
         initial_language_from_navigator: true,
-    }};
+    };
 
     view! { <p>Foo</p> }
 }

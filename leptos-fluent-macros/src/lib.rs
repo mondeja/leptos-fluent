@@ -31,6 +31,7 @@ use languages::build_languages_quote;
 pub(crate) use languages::ParsedLanguage;
 use loader::{I18nLoader, Identifier, LitBoolExpr};
 use quote::quote;
+use std::str::FromStr;
 
 #[cfg(feature = "debug")]
 #[inline(always)]
@@ -58,7 +59,7 @@ pub(crate) fn debug(msg: &str) {
 ///
 /// #[component]
 /// pub fn App() -> impl IntoView {
-///     leptos_fluent! {{
+///     leptos_fluent! {
 ///         child: view! { ... },
 ///         translations: [TRANSLATIONS],
 ///         languages: "./locales/languages.json",
@@ -79,7 +80,7 @@ pub(crate) fn debug(msg: &str) {
 ///         cookie_attrs: "SameSite=Strict; Secure; path=/; max-age=2592000",
 ///         initial_language_from_cookie: true,
 ///         set_language_to_cookie: true,
-///     }}
+///     }
 /// }
 /// ```
 ///
@@ -90,6 +91,28 @@ pub(crate) fn debug(msg: &str) {
 pub fn leptos_fluent(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
+    // optional double braces (must be removed in v0.2)
+    let input_as_str = input.to_string();
+    let loader_input;
+    let double_braced_warning;
+    if input_as_str.starts_with('{') && input_as_str.ends_with('}') {
+        loader_input = proc_macro::TokenStream::from(
+            proc_macro2::TokenStream::from_str(
+                &input_as_str[1..input_as_str.len() - 1],
+            )
+            .unwrap(),
+        );
+        let warning = proc_macro_warning::FormattedWarning::new_deprecated(
+            "leptos_fluent",
+            "The double braced syntax `leptos_fluent! {{ ... }}` is deprecated and will be removed in v0.2. Use `leptos_fluent! { ... }` instead.",
+            proc_macro2::Span::call_site(),
+        );
+        double_braced_warning = quote!(#warning);
+    } else {
+        loader_input = input;
+        double_braced_warning = quote!();
+    }
+
     let I18nLoader {
         fluent_file_paths,
         child,
@@ -145,7 +168,7 @@ pub fn leptos_fluent(
         initial_language_from_data_file,
         #[cfg(feature = "system")]
         data_file_key,
-    } = syn::parse_macro_input!(input as I18nLoader);
+    } = syn::parse_macro_input!(loader_input as I18nLoader);
 
     let n_languages = languages.len();
     let languages_quote = build_languages_quote(&languages);
@@ -1985,16 +2008,33 @@ pub fn leptos_fluent(
     let translations_quote = {
         let loader::Translations { simple, compound } = translations;
 
-        quote! {
-            {
-                let mut all_loaders = Vec::new();
-                all_loaders.extend([#(& #simple),*]);
-                #(
-                    all_loaders.extend(#compound.iter());
-                );*
+        let simple_loaders_quote = quote!([#(& #simple),*]);
+        let extend_simple_loaders_quote =
+            match simple_loaders_quote.to_string() == "[]" {
+                true => quote!(),
+                false => quote! {
+                    for loader in #simple_loaders_quote {
+                        all_loaders.push(loader);
+                    }
+                },
+            };
+        let extend_compound_loaders_quote = quote!(#(
+            all_loaders.extend(#compound);
+        );*);
 
-                all_loaders
-            }
+        match extend_simple_loaders_quote.is_empty()
+            && extend_compound_loaders_quote.is_empty()
+        {
+            true => quote!(Vec::new()),
+            false => quote! {
+                {
+                    let mut all_loaders = Vec::new();
+                    #extend_simple_loaders_quote
+                    #extend_compound_loaders_quote
+
+                    all_loaders
+                }
+            },
         }
     };
 
@@ -2333,6 +2373,7 @@ pub fn leptos_fluent(
     }).collect();
 
     let quote = quote! {
+        #double_braced_warning
         {
             #debug_quote
             #other_quotes

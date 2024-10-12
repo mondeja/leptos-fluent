@@ -10,15 +10,15 @@ const URL_PARAM: &str = "my-weird-url-param";
 
 #[component]
 pub fn App() -> impl IntoView {
-    leptos_fluent! {{
+    leptos_fluent! {
         translations: [TRANSLATIONS],
         locales: "../examples/csr-minimal/locales",
         initial_language_from_url_param: true,
         url_param: URL_PARAM,
         set_language_to_url_param: true,
-    }};
+    };
 
-    view! { <LanguageSelector/> }
+    view! { <LanguageSelector /> }
 }
 
 #[wasm_bindgen_test]

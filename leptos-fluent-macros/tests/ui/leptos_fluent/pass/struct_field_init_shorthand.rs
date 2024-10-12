@@ -14,12 +14,12 @@ pub fn App() -> impl IntoView {
     let cookie_name = "my_cookie";
     let initial_language_from_cookie = true;
 
-    leptos_fluent! {{
+    leptos_fluent! {
         translations: [TRANSLATIONS],
         cookie_name,
         locales: "../../../../examples/csr-minimal/locales",
         initial_language_from_cookie,
-    }};
+    };
 
     view! { <p>Foo</p> }
 }

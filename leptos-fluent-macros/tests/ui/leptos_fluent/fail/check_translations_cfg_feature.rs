@@ -12,12 +12,12 @@ static_loader! {
 
 #[component]
 pub fn App() -> impl IntoView {
-    leptos_fluent! {{
+    leptos_fluent! {
         translations: [TRANSLATIONS],
         locales: "../../../../examples/csr-minimal/locales",
         #[cfg(feature = "ssr")]
         check_translations: "../../../../leptos-fluent-macros/tests/ui/leptos_fluent/fail/check_translations_cfg_feature.rs"
-    }};
+    };
 
     view! { <p>{move_tr!("select-a-language")}</p> }
 }

@@ -87,7 +87,7 @@
 //! fn App() -> impl IntoView {
 //!     // See all options in the reference at
 //!     // https://mondeja.github.io/leptos-fluent/leptos_fluent.html
-//!     leptos_fluent! {{
+//!     leptos_fluent! {
 //!         child: view! {
 //!             <TranslatableComponent />
 //!             <LanguageSelector />
@@ -180,7 +180,7 @@
 //!         data_file_key: "my-app",
 //!         // Set the language selected to a data file.
 //!         set_language_to_data_file: true,
-//!     }}
+//!     }
 //! }
 //!
 //! #[component]
@@ -496,7 +496,7 @@ where
 /// Used to provide the current language, the available languages and all
 /// the translations. It is capable of doing what is needed to translate
 /// and manage translations in a whole application.
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct I18n {
     /// Signal that holds the current language.
     pub language: RwSignal<&'static Language>,
@@ -515,10 +515,10 @@ impl I18n {
     /// raise an error message.
     ///
     /// ```rust,ignore
-    /// let i18n = leptos_fluent! {{
+    /// let i18n = leptos_fluent! {
     ///     // ...
     ///     provide_meta_context: true,
-    /// }};
+    /// };
     ///
     /// leptos::logging::log!("Macro parameters: {:?}", i18n.meta().unwrap());
     /// ```
@@ -535,17 +535,6 @@ impl I18n {
             )
             .to_string(),
         )
-    }
-}
-
-impl core::fmt::Debug for I18n {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        self.language.with(|language| {
-            f.debug_struct("I18n")
-                .field("language", language)
-                .field("languages", &self.languages)
-                .finish()
-        })
     }
 }
 

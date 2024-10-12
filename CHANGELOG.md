@@ -1,5 +1,38 @@
 # CHANGELOG
 
+## [Unreleased]
+
+## 2024-10-11 - [0.1.24]
+
+### Enhancements
+
+- Add `translations` field to `I18n`'s `Debug` implementation.
+- Allow to pass empty translations array to `leptos_fluent!` with
+  `translations: []`.
+
+## 2024-09-25 - [0.1.23]
+
+### Enhancements
+
+- Allow single braces syntax for `leptos_fluent!` macro. The current
+  syntax `leptos_fluent! {{ ... }}` is still supported but now triggers
+  a deprecation warning. It will not be supported from `v0.2`.
+  Use `leptos_fluent! { ... }` instead.
+
+## 2024-09-24 - [0.1.22]
+
+### Bug fixes
+
+- Fix translations checker not detecting translation macros inside macro
+  calls (regression from v0.1.21).
+
+## 2024-08-27 - [0.1.21]
+
+### Bug fixes
+
+- Fix translation macros not extracted from some locations when a variable
+  binding is not used in translations checker.
+
 ## 2024-08-26 - [0.1.20]
 
 ### Bug fixes
@@ -85,13 +118,13 @@
   `leptos_fluent!` macro:
 
   ```rust
-  leptos_fluent! {{
+  leptos_fluent! {
       // ...
       #[cfg(debug_assertions)]
       set_language_to_url_param: true,
       #[cfg(not(debug_assertions))]
       set_language_to_url_param: false,
-  }}
+  }
   ```
 
 ## 2024-08-03 - [0.1.10]
@@ -104,11 +137,11 @@
   For example, only use a languages file when compiling on Unix systems:
 
   ```rust
-  leptos_fluent! {{
+  leptos_fluent! {
       // ...
       #[cfg(target_family = "unix")]
       languages: "./locales/languages.json",
-  }}
+  }
   ```
 
 ## 2024-08-02 - [0.1.9]
@@ -179,13 +212,13 @@
 - Accept [configuration conditional checks] directly in most macro parameters:
 
   ```rust
-  leptos_fluent! {{
+  leptos_fluent! {
       // ...
       #[cfg(debug_assertions)]
       initial_language_from_url_param: true,
       #[cfg(debug_assertions)]
       set_language_to_url_param: true,
-  }}
+  }
   ```
 
 [configuration conditional checks]: https://doc.rust-lang.org/rust-by-example/attribute/cfg.html
@@ -500,6 +533,11 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[Unreleased]: https://github.com/mondeja/leptos-fluent/compare/v0.1.24...master
+[0.1.24]: https://github.com/mondeja/leptos-fluent/compare/v0.1.23...v0.1.24
+[0.1.23]: https://github.com/mondeja/leptos-fluent/compare/v0.1.22...v0.1.23
+[0.1.22]: https://github.com/mondeja/leptos-fluent/compare/v0.1.21...v0.1.22
+[0.1.21]: https://github.com/mondeja/leptos-fluent/compare/v0.1.20...v0.1.21
 [0.1.20]: https://github.com/mondeja/leptos-fluent/compare/v0.1.19...v0.1.20
 [0.1.19]: https://github.com/mondeja/leptos-fluent/compare/v0.1.18...v0.1.19
 [0.1.18]: https://github.com/mondeja/leptos-fluent/compare/v0.1.17...v0.1.18

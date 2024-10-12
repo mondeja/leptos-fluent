@@ -18,12 +18,12 @@ pub fn App() -> impl IntoView {
 #[cfg(debug_assertions)]
 #[component]
 pub fn App() -> impl IntoView {
-    leptos_fluent! {{
+    leptos_fluent! {
         translations: [TRANSLATIONS],
         locales: "../../../../examples/csr-minimal/locales",
         #[cfg(not(debug_assertions))]
         check_translations: "../../../../leptos-fluent-macros/tests/ui/leptos_fluent/pass/check_translations_cfg.rs"
-    }};
+    };
 
     view! { <p>{move_tr!("select-a-language")}</p> }
 }

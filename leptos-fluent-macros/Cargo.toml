@@ -2,7 +2,7 @@
 name = "leptos-fluent-macros"
 description = "Macros for leptos-fluent"
 edition.workspace = true
-version = "0.1.20"
+version = "0.1.24"
 license = "MIT"
 documentation.workspace = true
 repository.workspace = true
@@ -37,6 +37,7 @@ serde_json = { version = "1", optional = true }
 serde_yaml = { version = "0.9", optional = true }
 json5 = { version = "0.4", optional = true }
 tracing = { version = "0.1", optional = true }
+proc-macro-warning = "1"
 
 [dev-dependencies]
 trybuild = "1"
