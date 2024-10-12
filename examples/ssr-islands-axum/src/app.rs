@@ -1,7 +1,7 @@
 use crate::error_template::{AppError, ErrorTemplate};
 use fluent_templates::static_loader;
 use leptos::*;
-use leptos_fluent::{leptos_fluent, tr};
+use leptos_fluent::{expect_i18n, leptos_fluent, tr, I18n};
 use leptos_meta::*;
 use leptos_router::{Outlet, Route, Router, Routes};
 
@@ -50,6 +50,8 @@ pub fn provide_i18n_context() {
         translations: [SERVER_TRANSLATIONS],
         languages: "./locales/languages.json",
         locales: "./locales/server",
+        sync_html_tag_lang: true,
+        sync_html_tag_dir: true,
         cookie_name: "lang",
         cookie_attrs: "SameSite=Strict; Secure; path=/; max-age=600",
         initial_language_from_cookie: true,
@@ -63,8 +65,13 @@ pub fn provide_i18n_context() {
 
 #[component]
 pub fn BodyView() -> impl IntoView {
+    let i18n = expect_i18n();
+
+    // Reproviding the context after the header makes server
+    // translations available for `Outlet`
     view! {
-        <header::View></header::View>
+        <header::View />
+        {provide_context::<I18n>(i18n)}
         <main>
             <Outlet />
         </main>
@@ -84,7 +91,6 @@ mod header {
                     <LargeMenu />
                     <MobileMenu />
                 </Archipelago>
-                {super::provide_i18n_context();}
             </header>
         }
     }
@@ -106,6 +112,14 @@ mod header {
             initial_language_from_url_param_to_cookie: true,
             set_language_to_url_param: true,
         };
+
+        // Children will be executed when the i18n context is ready.
+        // See https://book.leptos.dev/islands.html#passing-context-between-islands
+        //
+        // > That’s why in `HomePage`, I made `let tabs = move ||` a function, and
+        // > called it like `{tabs()}`: creating the tabs lazily this way meant that
+        // > the `Tabs` island would already have provided the `selected` context by
+        // > the time each `Tab` went looking for it.
         children()
     }
 
@@ -191,8 +205,9 @@ mod header {
     fn LanguageSelector(name: String) -> impl IntoView {
         let i18n = expect_i18n();
 
-        // A page reload is necessary after changing the language because the translations are stored on the server.
-        // This ensures that all content is updated to reflect the selected language. For more details, refer to the README.md.
+        // A page reload is necessary after changing the language because
+        // the translations are stored on the server. This ensures that all
+        // content is updated to reflect the selected language.
         view! {
             <div class="language-selector">
                 {i18n
