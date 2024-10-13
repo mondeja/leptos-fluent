@@ -135,7 +135,7 @@ repos:
             deprecated,
           ]
   - repo: https://github.com/mondeja/rust-pc-hooks
-    rev: v1.2.0
+    rev: v1.3.0
     hooks:
       - id: cargo-machete
         args:
@@ -160,12 +160,4 @@ repos:
         args:
           - --project-root=leptos-fluent-macros
           - --output=README.md
-  - repo: https://github.com/tcort/markdown-link-check
-    rev: v3.12.2
-    hooks:
-      - id: markdown-link-check
-        name: markdown-link-check
-        files: ^README\.md$
-        args:
-          - --config
-          - .markdown-link-check.json
+      - id: lychee
