@@ -73,7 +73,7 @@
 //!
 //! ```rust,ignore
 //! use fluent_templates::static_loader;
-//! use leptos::*;
+//! use leptos::prelude::*;
 //! use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, tr};
 //!
 //! static_loader! {
@@ -84,10 +84,11 @@
 //! }
 //!
 //! #[component]
-//! fn App() -> impl IntoView {
+//! fn I18n(children: Children) -> impl IntoView {
 //!     // See all options in the reference at
 //!     // https://mondeja.github.io/leptos-fluent/leptos_fluent.html
 //!     leptos_fluent! {
+//!         children: children(),
 //!         // Path to the locales directory, relative to Cargo.toml.
 //!         locales: "./locales",
 //!         // Static translations struct provided by fluent-templates.
@@ -176,11 +177,16 @@
 //!         data_file_key: "my-app",
 //!         // Set the language selected to a data file.
 //!         set_language_to_data_file: true,
-//!     };
+//!     }
+//! }
 //!
+//! #[component]
+//! pub fn App() -> impl IntoView {
 //!     view! {
-//!         <TranslatableComponent />
-//!         <LanguageSelector />
+//!         <I18n>
+//!             <TranslatableComponent/>
+//!             <LanguageSelector/>
+//!         </I18n>
 //!     }
 //! }
 //!
@@ -204,10 +210,12 @@
 //! #[component]
 //! fn LanguageSelector() -> impl IntoView {
 //!     // `expect_i18n()` to get the i18n context
-//!     // `i18n.languages` is a static array with the available languages
-//!     // `i18n.language.get()` to get the current language
-//!     // `lang.activate()` to set the current language
+//!     // `i18n.languages` exposes a static array with the available languages
+//!     // `i18n.language.read()` to get the current language
+//!     // `lang.activate()` or `i18n.language.set(lang)` to set the current language
 //!     // `lang.is_active()` to check if a language is the current selected one
+//!
+//!     let i18n = expect_i18n();
 //!
 //!     view! {
 //!         <fieldset>
@@ -221,7 +229,7 @@
 //!                                 name="language"
 //!                                 value=lang
 //!                                 checked=lang.is_active()
-//!                                 on:click=move |_| lang.activate()
+//!                                 on:click=move |_| i18n.language.set(lang)
 //!                             />
 //!                             <label for=lang>{lang.name}</label>
 //!                         </div>
@@ -276,24 +284,22 @@ pub mod url;
 #[cfg(feature = "system")]
 pub use current_locale::current_locale;
 #[doc(hidden)]
-pub use web_sys;
+pub extern crate web_sys;
 
 use core::hash::{Hash, Hasher};
+use core::ops::Deref;
 use core::str::FromStr;
 use fluent_templates::{
     fluent_bundle::FluentValue, loader::Loader, once_cell::sync::Lazy,
     LanguageIdentifier, StaticLoader,
 };
 use leptos::{
-    component, use_context, with, Attribute, IntoAttribute, IntoView, Oco,
-    RwSignal, Signal, SignalGet, SignalSet,
+    attr::AttributeValue,
+    prelude::{
+        guards::ReadGuard, use_context, Read, RwSignal, Set, Signal, With,
+    },
 };
-#[cfg(feature = "ssr")]
-use leptos::{view, SignalGetUntracked};
 pub use leptos_fluent_macros::leptos_fluent;
-#[cfg(feature = "ssr")]
-use leptos_meta::Html;
-use std::rc::Rc;
 
 /// Direction of the text
 #[derive(Debug)]
@@ -329,7 +335,7 @@ pub struct Language {
     /// Language identifier
     ///
     /// Can be any valid language tag, such as `en`, `es`, `en-US`, `es-ES`, etc.
-    pub id: LanguageIdentifier,
+    pub id: &'static LanguageIdentifier,
     /// Language name
     ///
     /// The name of the language, such as `English`, `Español`, etc.
@@ -344,20 +350,38 @@ pub struct Language {
 impl Language {
     /// Get if the language is the active language.
     #[inline(always)]
-    pub fn is_active(&self) -> bool {
-        self == expect_i18n().language.get()
+    pub fn is_active(&'static self) -> bool {
+        self == expect_i18n().language.read()
     }
 
     /// Set the language as the active language.
     #[inline(always)]
     pub fn activate(&'static self) {
+        ::leptos::logging::log!("Activating language: {:?}", self);
         expect_i18n().language.set(self);
+        ::leptos::logging::log!("Activated language: {:?}", self);
     }
 }
 
 impl PartialEq for Language {
     fn eq(&self, other: &Self) -> bool {
         self.id == other.id
+    }
+}
+
+// Implementation for `&Language == ReadGuard<&Language, Plain<&Language>>`
+//
+// This implementation is required to ensure symmetry with
+// `ReadGuard<&Language, Plain<&Language>> == &Language`, implemented by Leptos.
+// That implementation cannot be included in Leptos as it would generate
+// the problem of transitive chains that criss-cross crate boundaries.
+// See `PartiaEq` documentation.
+impl<'a, Inner> PartialEq<ReadGuard<&'a Language, Inner>> for &Language
+where
+    Inner: Deref<Target = &'a Language>,
+{
+    fn eq(&self, other: &ReadGuard<&'a Language, Inner>) -> bool {
+        self == other.deref()
     }
 }
 
@@ -369,7 +393,7 @@ impl Hash for Language {
         // between different hydrate and SSR contexts, so implement `Language`s
         // is currently discouraged. This needs to be fully debugged and open
         // an issue in the `leptos` repository if necessary.
-        let current_lang = expect_i18n().language.get();
+        let current_lang = expect_i18n().language.read();
         let key = format!(
             "{}{}",
             self.id,
@@ -391,31 +415,70 @@ impl FromStr for Language {
 
 macro_rules! impl_into_attr_for_language {
     () => {
-        /// Convert a language to an HTML attribute passing the language identifier.
-        ///
-        /// ```rust,ignore
-        /// // The following code:
-        /// <input id={lang} ... >
-        /// // is the same as
-        /// <input id={lang.id.to_string()} ... >
-        /// ```
-        #[inline(always)]
-        fn into_attribute(self) -> Attribute {
-            Attribute::String(Oco::Owned(self.id.to_string()))
+        type State = <String as AttributeValue>::State;
+        type AsyncOutput = String;
+        type Cloneable = String;
+        type CloneableOwned = String;
+
+        fn html_len(&self) -> usize {
+            self.id.to_string().len()
         }
 
-        #[inline(always)]
-        fn into_attribute_boxed(self: Box<Self>) -> Attribute {
-            self.into_attribute()
+        fn to_html(self, key: &str, buf: &mut String) {
+            <&str as AttributeValue>::to_html(
+                self.id.to_string().as_str(),
+                key,
+                buf,
+            );
+        }
+
+        fn to_template(_key: &str, _buf: &mut String) {}
+
+        fn hydrate<const FROM_SERVER: bool>(
+            self,
+            key: &str,
+            el: &leptos::tachys::renderer::types::Element,
+        ) -> Self::State {
+            <String as AttributeValue>::hydrate::<FROM_SERVER>(
+                self.id.to_string(),
+                key,
+                el,
+            )
+        }
+
+        fn build(
+            self,
+            el: &leptos::tachys::renderer::types::Element,
+            key: &str,
+        ) -> Self::State {
+            <String as AttributeValue>::build(self.id.to_string(), el, key)
+        }
+
+        fn rebuild(self, key: &str, state: &mut Self::State) {
+            <String as AttributeValue>::rebuild(self.id.to_string(), key, state)
+        }
+
+        fn into_cloneable(self) -> Self::Cloneable {
+            self.id.to_string()
+        }
+
+        fn into_cloneable_owned(self) -> Self::CloneableOwned {
+            self.id.to_string()
+        }
+
+        fn dry_resolve(&mut self) {}
+
+        async fn resolve(self) -> Self::AsyncOutput {
+            self.id.to_string()
         }
     };
 }
 
-impl IntoAttribute for &'static Language {
+impl<'a> AttributeValue for &'a Language {
     impl_into_attr_for_language!();
 }
 
-impl IntoAttribute for &&'static Language {
+impl<'a> AttributeValue for &&'a Language {
     impl_into_attr_for_language!();
 }
 
@@ -431,7 +494,7 @@ pub struct I18n {
     /// Available languages for the application.
     pub languages: &'static [&'static Language],
     /// Signal with a vector of fluent-templates static loaders.
-    pub translations: Signal<Rc<Vec<&'static Lazy<StaticLoader>>>>,
+    pub translations: Signal<Vec<&'static Lazy<StaticLoader>>>,
 }
 
 impl I18n {
@@ -455,7 +518,7 @@ impl I18n {
         tracing::instrument(level = "trace", err(Debug))
     )]
     pub fn meta(&self) -> Result<LeptosFluentMeta, String> {
-        leptos::use_context::<LeptosFluentMeta>().ok_or(
+        leptos::prelude::use_context::<LeptosFluentMeta>().ok_or(
             concat!(
                 "You need to call `leptos_fluent!` with the parameter",
                 " 'provide_meta_context' enabled to provide the meta context",
@@ -582,10 +645,12 @@ pub fn tr_impl(i18n: I18n, text_id: &str) -> String {
         translations,
         ..
     } = i18n;
-    let found = with!(|translations, language| {
-        translations
-            .iter()
-            .find_map(|tr| tr.try_lookup(&language.id, text_id))
+    let found = translations.with(|translations| {
+        language.with(|language| {
+            translations
+                .iter()
+                .find_map(|tr| tr.try_lookup(language.id, text_id))
+        })
     });
 
     #[cfg(feature = "tracing")]
@@ -624,10 +689,12 @@ pub fn tr_with_args_impl(
         translations,
         ..
     } = i18n;
-    let found = with!(|translations, language| {
-        translations
-            .iter()
-            .find_map(|tr| tr.try_lookup_with_args(&language.id, text_id, args))
+    let found = translations.with(|translations| {
+        language.with(|language| {
+            translations.iter().find_map(|tr| {
+                tr.try_lookup_with_args(language.id, text_id, args)
+            })
+        })
     });
 
     #[cfg(feature = "tracing")]
@@ -687,7 +754,7 @@ macro_rules! tr {
     }};
 }
 
-/// [`leptos::Signal`] that translates a text identifier to the current language.
+/// [`Signal`] that translates a text identifier to the current language.
 ///
 /// ```rust,ignore
 /// move_tr!("hello-world")
@@ -707,14 +774,14 @@ macro_rules! tr {
 /// Signal::derive(move || tr!("hello-world", { "name" => name, "age" => 30 }));
 /// ```
 ///
-/// [`leptos::Signal`]: https://docs.rs/leptos/latest/leptos/struct.Signal.html
+/// [`Signal`]: https://docs.rs/leptos/latest/leptos/struct.Signal.html
 #[macro_export]
 macro_rules! move_tr {
     ($text_id:literal$(,)?) => {
-        ::leptos::Signal::derive(move || $crate::tr!($text_id))
+        ::leptos::prelude::Signal::derive(move || $crate::tr!($text_id))
     };
     ($text_id:literal, {$($key:literal => $value:expr),*$(,)?}$(,)?) => {
-        ::leptos::Signal::derive(move || $crate::tr!($text_id, {
+        ::leptos::prelude::Signal::derive(move || $crate::tr!($text_id, {
             $(
                 $key => $value,
             )*
@@ -814,57 +881,6 @@ pub fn l(
 ) -> Option<&'static Language> {
     language_from_str_between_languages(code, languages)
 }
-
-/// Reactive HTML tag to set attributes on SSR
-///
-/// Currently there is not a way to set the `dir` and `lang` attributes
-/// of `<html>` tags on SSR. This components updates it on SSR. Must be
-/// rendered in a view.
-///
-/// ```rust,ignore
-/// use leptos_fluent::SsrHtmlTag;
-///
-/// view! {
-///     <SsrHtmlTag/>
-/// }
-/// ```
-#[deprecated(
-    since = "0.1.14",
-    note = "The component SsrHtmlTag is not needed anymore and will be removed in v0.2. \
-          The `sync_html_tag_lang` and `sync_html_tag_dir` parameters of the `leptos_fluent!` \
-          macro are enough to set the `lang` and `dir` attributes of the `<html>` tag on SSR."
-)]
-#[component(transparent)]
-#[cfg(feature = "ssr")]
-#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace"))]
-pub fn SsrHtmlTag() -> impl IntoView {
-    let lang = expect_i18n().language.get_untracked();
-    view! { <Html lang=lang.id.to_string() dir=lang.dir.as_str() /> }
-}
-
-/// Reactive HTML tag to set attributes on SSR
-///
-/// Currently there is not a way to set the `dir` and `lang` attributes
-/// of `<html>` tags on SSR. This components updates it on SSR. Must be
-/// rendered in a view.
-///
-/// ```rust,ignore
-/// use leptos_fluent::SsrHtmlTag;
-///
-/// view! {
-///     <SsrHtmlTag/>
-/// }
-/// ```
-#[deprecated(
-    since = "0.1.14",
-    note = "The component `SsrHtmlTag` is not needed anymore and will be removed in v0.2. \
-          The `sync_html_tag_lang` and `sync_html_tag_dir` parameters of the `leptos_fluent!` \
-          macro are enough to set the `lang` and `dir` attributes of the `<html>` tag on SSR."
-)]
-#[component(transparent)]
-#[cfg(not(feature = "ssr"))]
-#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace"))]
-pub fn SsrHtmlTag() -> impl IntoView {}
 
 /// Parameters passed to `leptos_fluent!` macro at creation of `i18n` context
 #[derive(Clone, Debug)]
