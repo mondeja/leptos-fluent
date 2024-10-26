@@ -1467,7 +1467,7 @@ pub fn leptos_fluent(
             }).collect();
 
         let window_navigator_languages_quote = quote! {
-            let languages = window().navigator().languages().to_vec();
+            let languages = ::leptos::leptos_dom::window().navigator().languages().to_vec();
             for raw_language in languages {
                 let language = raw_language.as_string();
                 if language.is_none() {
