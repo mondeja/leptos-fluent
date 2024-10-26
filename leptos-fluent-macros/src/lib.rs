@@ -1467,7 +1467,7 @@ pub fn leptos_fluent(
             }).collect();
 
         let window_navigator_languages_quote = quote! {
-            let languages = ::leptos::leptos_dom::window().navigator().languages().to_vec();
+            let languages = ::leptos::window().navigator().languages().to_vec();
             for raw_language in languages {
                 let language = raw_language.as_string();
                 if language.is_none() {
@@ -1531,7 +1531,7 @@ pub fn leptos_fluent(
                 use ::leptos_fluent::web_sys::wasm_bindgen::JsCast;
                 let closure: Box<dyn FnMut(_)> = Box::new(
                     move |_: web_sys::Window| {
-                        let languages = window().navigator().languages().to_vec();
+                        let languages = ::leptos::window().navigator().languages().to_vec();
                         for raw_language in languages {
                             let language = raw_language.as_string();
                             if language.is_none() {

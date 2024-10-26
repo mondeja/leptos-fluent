@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## 2024-10-26 - [0.1.25]
+
+### Bug fixes
+
+- Fix unhygienic use of `leptos::window` in `leptos_fluent!` macro expansion.
+
 ## 2024-10-11 - [0.1.24]
 
 ### Enhancements
@@ -533,7 +539,8 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
-[Unreleased]: https://github.com/mondeja/leptos-fluent/compare/v0.1.24...master
+[Unreleased]: https://github.com/mondeja/leptos-fluent/compare/v0.1.25...master
+[0.1.25]: https://github.com/mondeja/leptos-fluent/compare/v0.1.24...v0.1.25
 [0.1.24]: https://github.com/mondeja/leptos-fluent/compare/v0.1.23...v0.1.24
 [0.1.23]: https://github.com/mondeja/leptos-fluent/compare/v0.1.22...v0.1.23
 [0.1.22]: https://github.com/mondeja/leptos-fluent/compare/v0.1.21...v0.1.22
