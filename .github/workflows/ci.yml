@@ -65,7 +65,7 @@ jobs:
             ~/.cargo/git
             target
             ~/.cache/pre-commit
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/pre-commit') }}
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/.pre-commit-config.yaml') }}
       - name: Install libgtk
         run: |
           sudo apt-get update
