@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: check-toolchain-is-stable
     env:
-      PRE_COMMIT_HOME: ~/.cargo/pre-commit
+      XDG_CACHE_HOME: ~/.cache
     strategy:
       fail-fast: false
       matrix:
@@ -64,8 +64,8 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-            ~/.cargo/pre-commit
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/.pre-commit-config.yaml') }}
+            ~/.cache/pre-commit
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/pre-commit') }}
       - name: Install libgtk
         run: |
           sudo apt-get update
