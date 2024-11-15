@@ -10,7 +10,7 @@ leptos-fluent = { path = "../../leptos-fluent", default-features = false, featur
   "system",
   "tracing"
 ] }
-fluent-templates = { version = "0.10", default-features = false, features = [
+fluent-templates = { version = "0.11", default-features = false, features = [
   "macros",
   "walkdir"
 ] }

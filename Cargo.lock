@@ -1974,7 +1974,7 @@ name = "leptos-fluent-csr-complete-example"
 version = "0.1.0"
 dependencies = [
  "console_error_panic_hook",
- "fluent-templates 0.10.1",
+ "fluent-templates 0.11.0",
  "leptos",
  "leptos-fluent",
 ]
@@ -1984,7 +1984,7 @@ name = "leptos-fluent-csr-minimal-example"
 version = "0.1.0"
 dependencies = [
  "console_error_panic_hook",
- "fluent-templates 0.10.1",
+ "fluent-templates 0.11.0",
  "leptos",
  "leptos-fluent",
 ]
@@ -2008,7 +2008,7 @@ dependencies = [
 name = "leptos-fluent-gtk-example"
 version = "0.1.0"
 dependencies = [
- "fluent-templates 0.10.1",
+ "fluent-templates 0.11.0",
  "gtk4",
  "leptos",
  "leptos-fluent",
@@ -2050,7 +2050,7 @@ dependencies = [
  "actix-files",
  "actix-web",
  "console_error_panic_hook",
- "fluent-templates 0.10.1",
+ "fluent-templates 0.11.0",
  "leptos",
  "leptos-fluent",
  "leptos_actix",
@@ -2065,7 +2065,7 @@ version = "0.1.0"
 dependencies = [
  "axum",
  "console_error_panic_hook",
- "fluent-templates 0.10.1",
+ "fluent-templates 0.11.0",
  "http 1.1.0",
  "leptos",
  "leptos-fluent",
@@ -2085,7 +2085,7 @@ version = "0.1.0"
 dependencies = [
  "axum",
  "console_error_panic_hook",
- "fluent-templates 0.10.1",
+ "fluent-templates 0.11.0",
  "http 1.1.0",
  "leptos",
  "leptos-fluent",
