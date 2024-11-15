@@ -201,7 +201,7 @@ mod header {
     }
 
     #[island]
-    fn LanguageSelector(name: String) -> impl IntoView {
+    fn LanguageSelector(#[allow(dead_code)] name: String) -> impl IntoView {
         let i18n = expect_i18n();
 
         // A page reload is necessary after changing the language because

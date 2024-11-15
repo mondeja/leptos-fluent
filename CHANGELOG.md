@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## 2024-11-15 - [0.1.26]
+
+### Enhancements
+
+- Let rustc infer literal expressions booleans in `leptos_fluent!` macro
+  parameters, which optimizes compilation times.
+
 ## 2024-10-26 - [0.1.25]
 
 ### Bug fixes
@@ -539,7 +546,8 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
-[Unreleased]: https://github.com/mondeja/leptos-fluent/compare/v0.1.25...master
+[Unreleased]: https://github.com/mondeja/leptos-fluent/compare/v0.1.26...master
+[0.1.26]: https://github.com/mondeja/leptos-fluent/compare/v0.1.25...v0.1.26
 [0.1.25]: https://github.com/mondeja/leptos-fluent/compare/v0.1.24...v0.1.25
 [0.1.24]: https://github.com/mondeja/leptos-fluent/compare/v0.1.23...v0.1.24
 [0.1.23]: https://github.com/mondeja/leptos-fluent/compare/v0.1.22...v0.1.23

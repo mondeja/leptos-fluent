@@ -8,7 +8,7 @@ use axum::{
 };
 use leptos::*;
 use std::convert::Infallible;
-use tower::ServiceExt;
+use tower::util::ServiceExt;
 use tower_http::services::{fs::ServeFileSystemResponseBody, ServeDir};
 
 pub async fn file_and_error_handler(
