@@ -166,26 +166,6 @@ initialization, different modes of persistent storage, and more.</p>
 <a href="https://github.com/mondeja/leptos-fluent/blob/master/LICENSE.md"><img src="https://img.shields.io/crates/l/leptos-fluent?logo=mit" alt="License" /></a>
 <a href="https://docs.rs/leptos-fluent"><img src="https://img.shields.io/docsrs/leptos-fluent?logo=docs.rs" alt="docs.rs" /></a>
 <a href="https://crates.io/crates/leptos-fluent"><img src="https://img.shields.io/crates/d/leptos-fluent" alt="Crates.io downloads" /></a></p>
-<h2 id="alternatives"><a class="header" href="#alternatives">Alternatives</a></h2>
-<p>The unique alternative to <strong>leptos-fluent</strong> currently is <a href="https://github.com/Baptistemontan/leptos_i18n">Leptos i18n</a>, which
-follows a different approach. The main differences are:</p>
-<ul>
-<li><code>leptos-fluent</code> uses <a href="https://projectfluent.org">Fluent</a> files and the Fluent syntax for translations,
-while <code>leptos_i18n</code> uses JSON files and a custom syntax.</li>
-<li><code>leptos-fluent</code> defines all the configuration in a macro and an optional
-languages file, while <code>leptos_i18n</code> defines the configuration in a
-<code>[package.metadata.leptos-i18n]</code> section in <em>Cargo.toml</em>.</li>
-<li><code>leptos-fluent</code> allows to instantiate multiple internationalization contexts,
-while <code>leptos_i18n</code> only allows one.</li>
-<li><code>leptos-fluent</code> has a lot of strategies for activating the initial language
-of the user at initialization and updating it when the user changes the
-language, while <code>leptos_i18n</code> only follows the cookie strategy.</li>
-<li><code>leptos-fluent</code> automatically builds language names and directions based on
-language codes, while <code>leptos_i18n</code> don't.</li>
-<li><code>leptos-fluent</code> has multiple side effects for updating the language in the
-client, while <code>leptos_i18n</code> only has the <code>&lt;html lang="..."&gt;</code> attribute
-and is not configurable.</li>
-</ul>
 <h2 id="project-goals"><a class="header" href="#project-goals">Project goals</a></h2>
 <p>The main goals of <strong>leptos-fluent</strong> are:</p>
 <ul>
@@ -194,8 +174,6 @@ applications.</li>
 <li>Be the most fully featured internationalization framework in any language.</li>
 <li>Be the most performant internationalization framework available.</li>
 </ul>
-<p>Defining the internationalization strategy using a macro allows to generate
-the less code possible for each possible configuration.</p>
 <h2 id="help-and-support"><a class="header" href="#help-and-support">Help and support</a></h2>
 <!-- markdownlint-disable MD013 -->
 <p><a href="https://discord.com/channels/1031524867910148188/1251579884371705927"><img src="https://img.shields.io/badge/Discord-grey?logo=discord&amp;logoColor=white" alt="Discord channel" /></a></p>
