@@ -977,20 +977,6 @@ dependencies = [
 
 [[package]]
 name = "fluent-template-macros"
-version = "0.10.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b86ebacac709a063f57ee83d37c451d60dc873554f9bd828531fd1ec43209c80"
-dependencies = [
- "once_cell",
- "proc-macro2",
- "quote",
- "syn 2.0.87",
- "unic-langid",
- "walkdir",
-]
-
-[[package]]
-name = "fluent-template-macros"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "007d176e568a4f73ad4225df02aa29ccfecffd8eda31ce78da0bc8b4b310f20a"
@@ -1005,24 +991,6 @@ dependencies = [
 
 [[package]]
 name = "fluent-templates"
-version = "0.10.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f339cc149c01ba2f7b0feba2acde6dd6e4a48472daffe2ddfdd6073e564c60b3"
-dependencies = [
- "fluent-bundle",
- "fluent-langneg",
- "fluent-syntax",
- "fluent-template-macros 0.10.1",
- "intl-memoizer",
- "log",
- "once_cell",
- "thiserror",
- "unic-langid",
- "walkdir",
-]
-
-[[package]]
-name = "fluent-templates"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "74f22f61b2c8551163ea13c16a381484e5360b089401c6e47c4bfcf6b62bb7ac"
@@ -1030,7 +998,7 @@ dependencies = [
  "fluent-bundle",
  "fluent-langneg",
  "fluent-syntax",
- "fluent-template-macros 0.11.0",
+ "fluent-template-macros",
  "intl-memoizer",
  "log",
  "once_cell",
@@ -1961,7 +1929,7 @@ version = "0.1.26"
 dependencies = [
  "current_locale",
  "directories",
- "fluent-templates 0.11.0",
+ "fluent-templates",
  "leptos",
  "leptos-fluent-macros",
  "leptos_meta",
@@ -1974,7 +1942,7 @@ name = "leptos-fluent-csr-complete-example"
 version = "0.1.0"
 dependencies = [
  "console_error_panic_hook",
- "fluent-templates 0.11.0",
+ "fluent-templates",
  "leptos",
  "leptos-fluent",
 ]
@@ -1984,7 +1952,7 @@ name = "leptos-fluent-csr-minimal-example"
 version = "0.1.0"
 dependencies = [
  "console_error_panic_hook",
- "fluent-templates 0.11.0",
+ "fluent-templates",
  "leptos",
  "leptos-fluent",
 ]
@@ -1993,7 +1961,7 @@ dependencies = [
 name = "leptos-fluent-end2end-tests"
 version = "0.1.0"
 dependencies = [
- "fluent-templates 0.10.1",
+ "fluent-templates",
  "leptos",
  "leptos-fluent",
  "leptos-fluent-csr-complete-example",
@@ -2008,7 +1976,7 @@ dependencies = [
 name = "leptos-fluent-gtk-example"
 version = "0.1.0"
 dependencies = [
- "fluent-templates 0.11.0",
+ "fluent-templates",
  "gtk4",
  "leptos",
  "leptos-fluent",
@@ -2025,7 +1993,7 @@ dependencies = [
  "cfg-expr 0.15.8",
  "current_platform",
  "fluent-syntax",
- "fluent-templates 0.11.0",
+ "fluent-templates",
  "globwalk",
  "json5",
  "leptos",
@@ -2050,7 +2018,7 @@ dependencies = [
  "actix-files",
  "actix-web",
  "console_error_panic_hook",
- "fluent-templates 0.11.0",
+ "fluent-templates",
  "leptos",
  "leptos-fluent",
  "leptos_actix",
@@ -2065,7 +2033,7 @@ version = "0.1.0"
 dependencies = [
  "axum",
  "console_error_panic_hook",
- "fluent-templates 0.11.0",
+ "fluent-templates",
  "http 1.1.0",
  "leptos",
  "leptos-fluent",
@@ -2085,7 +2053,7 @@ version = "0.1.0"
 dependencies = [
  "axum",
  "console_error_panic_hook",
- "fluent-templates 0.11.0",
+ "fluent-templates",
  "http 1.1.0",
  "leptos",
  "leptos-fluent",

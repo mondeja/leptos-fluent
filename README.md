@@ -22,7 +22,7 @@ Add the following to your `Cargo.toml` file:
 ```toml
 [dependencies]
 leptos-fluent = "0.1"
-fluent-templates = "0.10"
+fluent-templates = "0.11"
 
 [features]
 hydrate = [
