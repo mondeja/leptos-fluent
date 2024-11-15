@@ -30,8 +30,6 @@ jobs:
     name: QA
     runs-on: ubuntu-latest
     needs: check-toolchain-is-stable
-    env:
-      XDG_CACHE_HOME: ~/.cache
     strategy:
       fail-fast: false
       matrix:
