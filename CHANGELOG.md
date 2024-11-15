@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### Enhancements
+
+- Let rustc infer literal expressions booleans in `leptos_fluent!` macro
+  parameters, which optimizes compilation times.
+
 ## 2024-10-26 - [0.1.25]
 
 ### Bug fixes

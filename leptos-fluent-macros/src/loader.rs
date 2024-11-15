@@ -112,13 +112,15 @@ macro_rules! parse_litstr_or_expr_param_with_maybe_comptime_exprpath {
 
 fn parse_litbool_or_expr_param(
     input: ParseStream,
-    litbool: &mut Option<syn::LitBool>,
     expr: &mut Option<syn::Expr>,
     param_name: &'static str,
 ) -> Result<()> {
     match input.parse::<syn::LitBool>() {
         Ok(lit) => {
-            *litbool = Some(lit);
+            *expr = Some(syn::Expr::Lit(syn::ExprLit {
+                attrs: Vec::new(),
+                lit: syn::Lit::Bool(lit.clone()),
+            }));
             Ok(())
         }
         Err(_) => match input.parse::<syn::Expr>() {
@@ -322,7 +324,6 @@ macro_rules! struct_field_init_shorthand_not_supported {
 
 #[derive(Default)]
 pub(crate) struct LitBoolExpr {
-    pub lit: Option<syn::LitBool>,
     pub expr: Option<syn::Expr>,
     pub exprpath: Option<proc_macro2::TokenStream>,
 }
@@ -647,7 +648,6 @@ impl Parse for I18nLoader {
                 );
                 parse_litbool_or_expr_param(
                     input,
-                    &mut param.lit,
                     &mut param.expr,
                     "sync_html_tag_lang",
                 )?;
@@ -663,7 +663,6 @@ impl Parse for I18nLoader {
                 );
                 parse_litbool_or_expr_param(
                     input,
-                    &mut param.lit,
                     &mut param.expr,
                     "sync_html_tag_dir",
                 )?;
@@ -692,7 +691,6 @@ impl Parse for I18nLoader {
                 );
                 parse_litbool_or_expr_param(
                     input,
-                    &mut param.lit,
                     &mut param.expr,
                     "initial_language_from_url_param",
                 )?;
@@ -708,7 +706,6 @@ impl Parse for I18nLoader {
                 );
                 parse_litbool_or_expr_param(
                     input,
-                    &mut param.lit,
                     &mut param.expr,
                     "initial_language_from_url_param_to_localstorage",
                 )?;
@@ -724,7 +721,6 @@ impl Parse for I18nLoader {
                 );
                 parse_litbool_or_expr_param(
                     input,
-                    &mut param.lit,
                     &mut param.expr,
                     "initial_language_from_url_param_to_cookie",
                 )?;
@@ -750,7 +746,6 @@ impl Parse for I18nLoader {
                 );
                 parse_litbool_or_expr_param(
                     input,
-                    &mut param.lit,
                     &mut param.expr,
                     "set_language_to_url_param",
                 )?;
@@ -779,7 +774,6 @@ impl Parse for I18nLoader {
                 );
                 parse_litbool_or_expr_param(
                     input,
-                    &mut param.lit,
                     &mut param.expr,
                     "initial_language_from_localstorage",
                 )?;
@@ -795,7 +789,6 @@ impl Parse for I18nLoader {
                 );
                 parse_litbool_or_expr_param(
                     input,
-                    &mut param.lit,
                     &mut param.expr,
                     "initial_language_from_localstorage_to_cookie",
                 )?;
@@ -823,7 +816,6 @@ impl Parse for I18nLoader {
                 );
                 parse_litbool_or_expr_param(
                     input,
-                    &mut param.lit,
                     &mut param.expr,
                     "set_language_to_localstorage",
                 )?;
@@ -839,7 +831,6 @@ impl Parse for I18nLoader {
                 );
                 parse_litbool_or_expr_param(
                     input,
-                    &mut param.lit,
                     &mut param.expr,
                     "initial_language_from_navigator",
                 )?;
@@ -855,7 +846,6 @@ impl Parse for I18nLoader {
                 );
                 parse_litbool_or_expr_param(
                     input,
-                    &mut param.lit,
                     &mut param.expr,
                     "initial_language_from_navigator_to_localstorage",
                 )?;
@@ -871,7 +861,6 @@ impl Parse for I18nLoader {
                 );
                 parse_litbool_or_expr_param(
                     input,
-                    &mut param.lit,
                     &mut param.expr,
                     "initial_language_from_navigator_to_cookie",
                 )?;
@@ -897,7 +886,6 @@ impl Parse for I18nLoader {
                 );
                 parse_litbool_or_expr_param(
                     input,
-                    &mut param.lit,
                     &mut param.expr,
                     "initial_language_from_accept_language_header",
                 )?;
@@ -913,7 +901,6 @@ impl Parse for I18nLoader {
                 );
                 parse_litbool_or_expr_param(
                     input,
-                    &mut param.lit,
                     &mut param.expr,
                     "set_language_from_navigator",
                 )?;
@@ -955,7 +942,6 @@ impl Parse for I18nLoader {
                 );
                 parse_litbool_or_expr_param(
                     input,
-                    &mut param.lit,
                     &mut param.expr,
                     "initial_language_from_cookie",
                 )?;
@@ -971,7 +957,6 @@ impl Parse for I18nLoader {
                 );
                 parse_litbool_or_expr_param(
                     input,
-                    &mut param.lit,
                     &mut param.expr,
                     "initial_language_from_cookie_to_localstorage",
                 )?;
@@ -996,7 +981,6 @@ impl Parse for I18nLoader {
                 );
                 parse_litbool_or_expr_param(
                     input,
-                    &mut param.lit,
                     &mut param.expr,
                     "set_language_to_cookie",
                 )?;
@@ -1021,7 +1005,6 @@ impl Parse for I18nLoader {
                 );
                 parse_litbool_or_expr_param(
                     input,
-                    &mut param.lit,
                     &mut param.expr,
                     "initial_language_from_server_function_to_cookie",
                 )?;
@@ -1039,7 +1022,6 @@ impl Parse for I18nLoader {
                 );
                 parse_litbool_or_expr_param(
                     input,
-                    &mut param.lit,
                     &mut param.expr,
                     "initial_language_from_server_function_to_localstorage",
                 )?;
@@ -1085,7 +1067,6 @@ impl Parse for I18nLoader {
                 );
                 parse_litbool_or_expr_param(
                     input,
-                    &mut param.lit,
                     &mut param.expr,
                     "initial_language_from_url_path",
                 )?;
@@ -1101,7 +1082,6 @@ impl Parse for I18nLoader {
                 );
                 parse_litbool_or_expr_param(
                     input,
-                    &mut param.lit,
                     &mut param.expr,
                     "initial_language_from_url_path_to_cookie",
                 )?;
@@ -1117,7 +1097,6 @@ impl Parse for I18nLoader {
                 );
                 parse_litbool_or_expr_param(
                     input,
-                    &mut param.lit,
                     &mut param.expr,
                     "initial_language_from_url_path_to_localstorage",
                 )?;
@@ -1144,7 +1123,6 @@ impl Parse for I18nLoader {
                     );
                     parse_litbool_or_expr_param(
                         input,
-                        &mut param.lit,
                         &mut param.expr,
                         "initial_language_from_system",
                     )?;
@@ -1175,7 +1153,6 @@ impl Parse for I18nLoader {
                     );
                     parse_litbool_or_expr_param(
                         input,
-                        &mut param.lit,
                         &mut param.expr,
                         "initial_language_from_data_file",
                     )?;
@@ -1206,7 +1183,6 @@ impl Parse for I18nLoader {
                     );
                     parse_litbool_or_expr_param(
                         input,
-                        &mut param.lit,
                         &mut param.expr,
                         "initial_language_from_system_to_data_file",
                     )?;
@@ -1237,7 +1213,6 @@ impl Parse for I18nLoader {
                     );
                     parse_litbool_or_expr_param(
                         input,
-                        &mut param.lit,
                         &mut param.expr,
                         "set_language_to_data_file",
                     )?;
