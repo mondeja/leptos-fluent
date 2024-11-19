@@ -291,12 +291,15 @@ use fluent_templates::{
     fluent_bundle::FluentValue, loader::Loader, once_cell::sync::Lazy,
     LanguageIdentifier, StaticLoader,
 };
+#[cfg(feature = "nightly")]
+use leptos::prelude::Get;
 use leptos::{
     attr::AttributeValue,
     prelude::{
         guards::ReadGuard, use_context, Read, RwSignal, Set, Signal, With,
     },
 };
+
 pub use leptos_fluent_macros::leptos_fluent;
 
 /// Direction of the text
