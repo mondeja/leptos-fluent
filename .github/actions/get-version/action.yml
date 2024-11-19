@@ -1,0 +1,14 @@
+name: Get project version
+description: Get the version for the current project defined in the `leptos-fluent/Cargo.toml` file
+outputs:
+  channel:
+    description: Version of the project
+    value: ${{ steps.get-version.outputs.version }}
+runs:
+  using: composite
+  steps:
+    - id: get-version
+      shell: sh
+      run: |
+        echo "version=$(grep -oP --color=never '^version = "\K[^"]+' leptos-fluent/Cargo.toml)" \
+          >> $GITHUB_OUTPUT
