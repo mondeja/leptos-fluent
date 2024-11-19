@@ -1582,7 +1582,7 @@ dependencies = [
  "directories",
  "fluent-templates",
  "leptos",
- "leptos-fluent-macros",
+ "leptos-fluent-macros 0.2.0 (git+https://github.com/mondeja/leptos-fluent.git?branch=leptos-v0.7)",
  "leptos_meta",
  "tracing",
  "web-sys",
@@ -1646,6 +1646,29 @@ dependencies = [
  "syn",
  "tracing",
  "trybuild",
+ "walkdir",
+]
+
+[[package]]
+name = "leptos-fluent-macros"
+version = "0.2.0"
+source = "git+https://github.com/mondeja/leptos-fluent.git?branch=leptos-v0.7#97e0fbfccf89060d031d03b02dc1f6b9861354af"
+dependencies = [
+ "cfg-expr",
+ "current_platform",
+ "fluent-syntax",
+ "fluent-templates",
+ "globwalk",
+ "json5",
+ "pathdiff",
+ "proc-macro-warning",
+ "proc-macro2",
+ "quote",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "syn",
+ "tracing",
  "walkdir",
 ]
 

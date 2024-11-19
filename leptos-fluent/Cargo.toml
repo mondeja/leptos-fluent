@@ -11,7 +11,7 @@ homepage.workspace = true
 keywords.workspace = true
 
 [dependencies]
-leptos-fluent-macros = { path = "../leptos-fluent-macros" }
+leptos-fluent-macros = { git = "https://github.com/mondeja/leptos-fluent.git", branch = "leptos-v0.7" }
 fluent-templates = { version = ">=0.9", default-features = false, features = [
   "macros",
   "walkdir"
