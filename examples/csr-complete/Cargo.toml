@@ -9,8 +9,7 @@ name = "leptos_fluent_csr_complete_example"
 path = "src/lib.rs"
 
 [dependencies]
-leptos = { version = "0.7.0-gamma2", features = ["csr"] }
-leptos_meta = "0.7.0-gamma2"
+leptos = { version = "0.7.0-rc1", features = ["csr"] }
 leptos-fluent = { path = "../../leptos-fluent" }
 fluent-templates = { version = "0.11", default-features = false, features = [
   "macros",
@@ -22,6 +21,3 @@ console_error_panic_hook = "0"
 name = "main"
 path = "src/main.rs"
 doc = false
-
-[package.metadata.cargo-machete]
-ignored = ["leptos_meta"]

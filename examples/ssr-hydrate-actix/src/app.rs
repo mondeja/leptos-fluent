@@ -1,7 +1,7 @@
 use fluent_templates::static_loader;
 use leptos::{prelude::*, task::spawn};
 use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, tr, Language};
-use leptos_meta::*;
+use leptos_meta::{provide_meta_context, Title};
 use leptos_router::{
     components::{FlatRoutes, Route, Router},
     StaticSegment,

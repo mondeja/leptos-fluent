@@ -865,7 +865,6 @@ leptos_fluent! {
 [`<html dir="...">` attribute]: https://developer.mozilla.org/docs/Web/HTML/Global_attributes/dir
 [local storage]: https://developer.mozilla.org/docs/Web/API/Window/localStorage
 [`navigator.languages`]: https://developer.mozilla.org/docs/Web/API/Navigator/languages
-[`leptos::create_effect`]: https://docs.rs/leptos/latest/leptos/fn.create_effect.html
 [cookie attributes]: https://developer.mozilla.org/docs/Web/API/Document/cookie#write_a_new_cookie
 [`Accept-Language`]: https://developer.mozilla.org/docs/Web/HTTP/Headers/Accept-Language
 [glob]: https://docs.rs/globwalk/latest/globwalk/fn.glob.html
