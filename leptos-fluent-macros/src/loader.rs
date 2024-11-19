@@ -322,7 +322,7 @@ macro_rules! struct_field_init_shorthand_not_supported {
     };
 }
 
-#[derive(Default, Debug)]
+#[derive(Default)]
 pub(crate) struct LitBoolExpr {
     pub expr: Option<syn::Expr>,
     pub exprpath: Option<proc_macro2::TokenStream>,
