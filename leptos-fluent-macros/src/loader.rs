@@ -334,7 +334,7 @@ impl LitBoolExpr {
     }
 }
 
-#[derive(Default, Debug)]
+#[derive(Default)]
 pub(crate) struct LitStrExpr {
     pub lit: Option<syn::LitStr>,
     pub expr: Option<syn::Expr>,
@@ -346,7 +346,7 @@ impl LitStrExpr {
     }
 }
 
-#[derive(Default, Debug)]
+#[derive(Default)]
 pub(crate) struct Identifier {
     pub ident: Option<syn::Ident>,
     pub exprpath: Option<proc_macro2::TokenStream>,
@@ -358,7 +358,7 @@ impl Identifier {
     }
 }
 
-#[derive(Default, Debug)]
+#[derive(Default)]
 pub(crate) struct LitBool {
     pub lit: Option<syn::LitBool>,
     pub exprpath: Option<proc_macro2::TokenStream>,
@@ -370,7 +370,7 @@ impl LitBool {
     }
 }
 
-#[derive(Default, Debug)]
+#[derive(Default)]
 pub(crate) struct Expr {
     pub expr: Option<syn::Expr>,
     pub exprpath: Option<proc_macro2::TokenStream>,
