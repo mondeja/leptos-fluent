@@ -8,7 +8,7 @@ documentation.workspace = true
 repository.workspace = true
 readme = "README.md"
 homepage.workspace = true
-keywords.workspace = true
+keywords = ["leptos-fluent", "i18n", "localization", "wasm"]
 
 [lib]
 proc-macro = true
