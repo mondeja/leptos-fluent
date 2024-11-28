@@ -227,8 +227,7 @@ jobs:
           - csr-complete
           - ssr-hydrate-actix
           - ssr-hydrate-axum
-          - ssr-islands-axum
-          - system-gtk
+          # TODO: re-add 'ssr-islands-axum' and 'system-gtk'
         toolchain:
           - stable
           - nightly

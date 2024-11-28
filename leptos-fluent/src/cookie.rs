@@ -6,7 +6,7 @@ pub fn get(name: &str) -> Option<String> {
         tracing::trace!("Getting cookie \"{name}\" from browser");
 
         use crate::web_sys::wasm_bindgen::JsCast;
-        let mut cookies = leptos::document()
+        let mut cookies = leptos::prelude::document()
             .dyn_into::<web_sys::HtmlDocument>()
             .unwrap()
             .cookie()
@@ -44,7 +44,7 @@ pub fn get(name: &str) -> Option<String> {
 #[cfg(not(feature = "ssr"))]
 fn set_cookie(new_value: &str) {
     use crate::web_sys::wasm_bindgen::JsCast;
-    _ = leptos::document()
+    _ = leptos::prelude::document()
         .dyn_into::<web_sys::HtmlDocument>()
         .unwrap()
         .set_cookie(new_value);

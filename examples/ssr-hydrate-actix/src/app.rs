@@ -1,8 +1,11 @@
 use fluent_templates::static_loader;
-use leptos::*;
+use leptos::{prelude::*, task::spawn};
 use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, tr, Language};
-use leptos_meta::*;
-use leptos_router::*;
+use leptos_meta::{provide_meta_context, Title};
+use leptos_router::{
+    components::{FlatRoutes, Route, Router},
+    StaticSegment,
+};
 
 static_loader! {
     static TRANSLATIONS = {
@@ -12,9 +15,9 @@ static_loader! {
 }
 
 #[component]
-pub fn App() -> impl IntoView {
-    provide_meta_context();
+fn I18n(children: Children) -> impl IntoView {
     leptos_fluent! {
+        children: children(),
         translations: [TRANSLATIONS],
         locales: "./locales",
         #[cfg(debug_assertions)] check_translations: "./src/**/*.rs",
@@ -49,28 +52,31 @@ pub fn App() -> impl IntoView {
         initial_language_from_url_path_to_cookie: true,
         initial_language_from_url_path_to_localstorage: true,
         initial_language_from_url_path_to_server_function: set_language_server_function,
-    };
+    }
+}
+
+#[component]
+pub fn App() -> impl IntoView {
+    provide_meta_context();
 
     view! {
-        <Title text=move || tr!("welcome-to-leptos") />
+        <I18n>
+            <Title text=move || tr!("welcome-to-leptos") />
 
-        // content for this welcome page
-        <Router>
-            <main>
-                <Routes>
-                    <Route path="" view=HomePage />
-                    <Route path="/en" view=HomePage />
-                    <Route path="/es" view=HomePage />
-                    <Route path="/*any" view=NotFound />
-                </Routes>
-            </main>
-        </Router>
+            <Router>
+                <main>
+                    <FlatRoutes fallback=|| "Page not found.">
+                        <Route path=StaticSegment("") view=Home />
+                    </FlatRoutes>
+                </main>
+            </Router>
+        </I18n>
     }
 }
 
 /// Renders the home page of your application.
 #[component]
-fn HomePage() -> impl IntoView {
+fn Home() -> impl IntoView {
     let i18n = expect_i18n();
 
     view! {
@@ -100,7 +106,7 @@ fn render_language(lang: &'static Language) -> impl IntoView {
                 checked=lang.is_active()
                 on:click=move |_| {
                     lang.activate();
-                    spawn_local(async {
+                    spawn(async {
                         _ = show_hello_world(
                                 tr!("hello-world"),
                                 tr!("language", { "lang" => lang.name.to_string() }),

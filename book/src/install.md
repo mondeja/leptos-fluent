@@ -10,7 +10,7 @@ For client side rendering apps install **leptos-fluent** and [`fluent-templates`
 
 ```toml
 [dependencies]
-leptos-fluent = "0.1"
+leptos-fluent = "0.2"
 fluent-templates = "0.11"
 ```
 
@@ -19,7 +19,7 @@ fluent-templates = "0.11"
 
 ```toml
 [dependencies]
-leptos-fluent = { version = "0.1", default-features = false }
+leptos-fluent = "0.2"
 fluent-templates = { version = "0.11", default-features = false, features = [
   "macros",
   "walkdir"
@@ -44,7 +44,7 @@ respective features set.
 
 ```toml
 [dependencies]
-leptos-fluent = "0.1"
+leptos-fluent = "0.2"
 fluent-templates = "0.11"
 
 [features]
@@ -69,7 +69,7 @@ and enable the `system` feature:
 
 ```toml
 [dependencies]
-leptos-fluent = { version = "0.1", features = ["system"] }
+leptos-fluent = { version = "0.2", features = ["system"] }
 fluent-templates = "0.11"
 ```
 
@@ -98,7 +98,7 @@ feature:
 
 ```toml
 [dependencies]
-leptos-fluent = { version = "0.1", features = ["nightly"] }
+leptos-fluent = { version = "0.2", features = ["nightly"] }
 fluent-templates = "0.11"
 ```
 
@@ -113,7 +113,7 @@ enabled:
 ```toml
 [dependencies]
 fluent-templates = "0.11"
-leptos-fluent = { version = "0.1", features = ["json5"], default-features = false }
+leptos-fluent = { version = "0.2", features = ["json5"], default-features = false }
 ```
 
 <!-- markdownlint-enable MD013 -->
@@ -147,7 +147,7 @@ To enable [`tracing`] support, add the `tracing` feature to **leptos-fluent**:
 
 ```toml
 [dependencies]
-leptos-fluent = { version = "0.1", features = ["tracing"] }
+leptos-fluent = { version = "0.2", features = ["tracing"] }
 fluent-templates = "0.11"
 ```
 
