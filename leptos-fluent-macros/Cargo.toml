@@ -41,7 +41,7 @@ proc-macro-warning = "1"
 
 [dev-dependencies]
 trybuild = "1"
-leptos = "0.7.0-rc1"
+leptos = "0.7.0-rc3"
 leptos-fluent = { path = "../leptos-fluent" }
 
 [features]

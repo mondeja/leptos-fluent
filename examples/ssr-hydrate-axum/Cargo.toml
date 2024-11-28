@@ -11,10 +11,10 @@ crate-type = ["cdylib", "rlib"]
 axum = { version = "0.7", optional = true }
 console_error_panic_hook = "0.1"
 tokio = { version = "1", features = ["rt-multi-thread"], optional = true }
-leptos = "0.7.0-rc1"
-leptos_meta = "0.7.0-rc1"
-leptos_axum = { version = "0.7.0-rc1", optional = true }
-leptos_router = "0.7.0-rc1"
+leptos = "0.7.0-rc3"
+leptos_meta = "0.7.0-rc3"
+leptos_axum = { version = "0.7.0-rc3", optional = true }
+leptos_router = "0.7.0-rc3"
 leptos-fluent = { path = "../../leptos-fluent", features = [
   "yaml"
 ], default-features = false }

@@ -16,8 +16,8 @@ fluent-templates = { version = ">=0.9", default-features = false, features = [
   "macros",
   "walkdir"
 ] }
-leptos = "0.7.0-gamma"
-leptos_meta = "0.7.0-gamma"
+leptos = "0.7.0-rc3"
+leptos_meta = "0.7.0-rc3"
 web-sys = { version = ">=0.1", features = [
   "HtmlDocument",
   "Navigator",
