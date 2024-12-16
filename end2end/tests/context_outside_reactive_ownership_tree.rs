@@ -1,8 +1,8 @@
 /// See:
 /// - https://github.com/leptos-rs/leptos/issues/2852
 /// - https://github.com/mondeja/leptos-fluent/issues/231
-use leptos::*;
-use leptos_fluent::{expect_i18n, leptos_fluent};
+use leptos::{control_flow::Show, prelude::*};
+use leptos_fluent::{leptos_fluent, use_i18n};
 use leptos_fluent_csr_minimal_example::TRANSLATIONS;
 use tests_helpers::{input_by_id, mount, unmount};
 use wasm_bindgen_test::*;
@@ -29,11 +29,12 @@ fn Child() -> impl IntoView {
         <div
             id="fails"
             on:click=|ev| {
-                expect_i18n();
-                ev.target()
-                    .unwrap()
-                    .unchecked_into::<web_sys::HtmlElement>()
-                    .set_inner_text("CLICKED!");
+                if use_i18n().is_some() {
+                    ev.target()
+                        .unwrap()
+                        .unchecked_into::<web_sys::HtmlElement>()
+                        .set_inner_text("CLICKED!");
+                }
             }
         >
 
@@ -55,7 +56,7 @@ fn Child() -> impl IntoView {
 }
 
 #[wasm_bindgen_test]
-async fn context_outise_reactive_ownership_tree() {
+async fn context_outside_reactive_ownership_tree() {
     let fails_div = move || input_by_id("fails");
     let success_div = move || input_by_id("success");
 

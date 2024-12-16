@@ -1,12 +1,76 @@
 # CHANGELOG
 
-## [Unreleased] - 0.2.0
+## 2024-12-17 - [0.2.0]
 
 ### Breaking changes
 
-- The feature `json` is not enabled by default anymore. Now leptos-fluent
-  does not includes features by default, so you don't need to use
-  `default-features = false` in your `Cargo.toml` file.
+#### Require Leptos v0.7
+
+Support for Leptos v0.6 has been dropped. Now leptos-fluent requires
+Leptos v0.7.
+
+#### Declarative API
+
+Previously, the `leptos_fluent!` macro was providing the I18n context
+using `provide_context`, so the app was configured as:
+
+```rust
+#[component]
+fn App() -> impl IntoView {
+    leptos_fluent! {
+        // ...
+    }
+
+    view! {
+        // ...
+    }
+}
+```
+
+Now a `children` option has been added to the macro and need to be used
+to declare a I18n component:
+
+```rust
+#[component]
+fn I18n(children: Children) -> impl IntoView {
+    leptos_fluent! {
+        children: children(),
+        // ...
+    }
+}
+
+#[component]
+fn App() -> impl IntoView {
+    view! {
+        <I18n>
+            // ...
+        </I18n>
+    }
+}
+```
+
+By this way `leptos_fluent!` does not return the I18n context anymore.
+
+#### No more double curly braces
+
+Support for deprecated double curly braces syntax for the `leptos_fluent!`
+macro has been removed. Use single curly braces instead:
+
+```rust
+leptos_fluent! {
+    // ...
+}
+```
+
+#### No more default features
+
+The feature `json` is not enabled by default anymore. Now leptos-fluent
+does not includes features by default, so you don't need to use
+`default-features = false` in your `Cargo.toml` file.
+
+#### `SsrHtmlTag` component removed
+
+The deprecated `SsrHtmlTag` component has been removed.
 
 ## 2024-11-15 - [0.1.26]
 
@@ -552,7 +616,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
-[Unreleased]: https://github.com/mondeja/leptos-fluent/compare/v0.1.26...master
+[0.2.0]: https://github.com/mondeja/leptos-fluent/compare/v0.1.26...v0.2.0
 [0.1.26]: https://github.com/mondeja/leptos-fluent/compare/v0.1.25...v0.1.26
 [0.1.25]: https://github.com/mondeja/leptos-fluent/compare/v0.1.24...v0.1.25
 [0.1.24]: https://github.com/mondeja/leptos-fluent/compare/v0.1.23...v0.1.24

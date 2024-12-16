@@ -5,7 +5,7 @@ pub fn get(key: &str) -> Option<String> {
 
     #[cfg(not(feature = "ssr"))]
     {
-        let result = leptos::window()
+        let result = leptos::prelude::window()
             .local_storage()
             .unwrap()
             .unwrap()
@@ -40,7 +40,7 @@ pub fn get(key: &str) -> Option<String> {
 pub fn set(key: &str, value: &str) {
     #[cfg(not(feature = "ssr"))]
     {
-        _ = ::leptos::window()
+        _ = ::leptos::prelude::window()
             .local_storage()
             .unwrap()
             .unwrap()
@@ -65,7 +65,7 @@ pub fn set(key: &str, value: &str) {
 pub fn delete(key: &str) {
     #[cfg(not(feature = "ssr"))]
     {
-        _ = ::leptos::window()
+        _ = ::leptos::prelude::window()
             .local_storage()
             .unwrap()
             .unwrap()

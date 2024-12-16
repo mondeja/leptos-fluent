@@ -1,4 +1,4 @@
-use leptos::*;
+use leptos::prelude::*;
 use leptos_fluent::{cookie, leptos_fluent, url};
 use leptos_fluent_csr_minimal_example::{LanguageSelector, TRANSLATIONS};
 use tests_helpers::{element_text, input_by_id, mount, unmount};

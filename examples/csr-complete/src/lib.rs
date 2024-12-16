@@ -1,5 +1,5 @@
 use fluent_templates::static_loader;
-use leptos::*;
+use leptos::prelude::*;
 use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, Language};
 
 static_loader! {
@@ -10,8 +10,9 @@ static_loader! {
 }
 
 #[component]
-pub fn App() -> impl IntoView {
+fn I18n(children: Children) -> impl IntoView {
     leptos_fluent! {
+        children: children(),
         translations: [TRANSLATIONS],
         languages: "./locales/languages.json",
         locales: "./locales",
@@ -36,21 +37,26 @@ pub fn App() -> impl IntoView {
         initial_language_from_navigator_to_cookie: true,
         initial_language_from_navigator_to_localstorage: true,
         set_language_from_navigator: true,
-    };
+    }
+}
 
-    LanguageSelector
+#[component]
+pub fn App() -> impl IntoView {
+    view! {
+        <I18n>
+            <LanguageSelector />
+        </I18n>
+    }
 }
 
 #[component]
 fn LanguageSelector() -> impl IntoView {
-    let i18n = expect_i18n();
-
     view! {
         <p>{move_tr!("select-a-language")}</p>
         <fieldset>
 
             {move || {
-                i18n.languages.iter().map(|lang| render_language(lang)).collect::<Vec<_>>()
+                expect_i18n().languages.iter().map(|lang| render_language(lang)).collect::<Vec<_>>()
             }}
 
         </fieldset>
@@ -58,13 +64,17 @@ fn LanguageSelector() -> impl IntoView {
         <ul>
             <li>
                 <p>
-                    {move_tr!("html-tag-lang-is", { "lang" => i18n.language.get().id.to_string() })}
+                    {move_tr!(
+                        "html-tag-lang-is", { "lang" => expect_i18n().language.read().id.to_string() }
+                    )}
                 </p>
                 <p>{move_tr!("add-es-en-url-param")}</p>
             </li>
             <li>
                 <p>
-                    {move_tr!("html-tag-dir-is", { "dir" => i18n.language.get().dir.to_string() })}
+                    {move_tr!(
+                        "html-tag-dir-is", { "dir" => expect_i18n().language.read().dir.to_string() }
+                    )}
                 </p>
             </li>
         </ul>
@@ -74,6 +84,7 @@ fn LanguageSelector() -> impl IntoView {
 fn render_language(lang: &'static Language) -> impl IntoView {
     // Passed as atrribute, `Language` is converted to their code,
     // so `<input id=lang` becomes `<input id=lang.id.to_string()`
+    let i18n = expect_i18n();
     view! {
         <div>
             <input
@@ -81,7 +92,7 @@ fn render_language(lang: &'static Language) -> impl IntoView {
                 name="language"
                 value=lang
                 checked=lang.is_active()
-                on:click=move |_| lang.activate()
+                on:click=move |_| i18n.language.set(lang)
                 type="radio"
             />
             <label for=lang>{lang.name}</label>

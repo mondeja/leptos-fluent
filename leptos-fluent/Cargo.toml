@@ -2,7 +2,7 @@
 name = "leptos-fluent"
 description = "Fluent framework for internationalization of Leptos applications"
 edition.workspace = true
-version = "0.1.26"
+version = "0.2.0"
 license = "MIT"
 documentation.workspace = true
 repository.workspace = true
@@ -16,8 +16,8 @@ fluent-templates = { version = ">=0.9", default-features = false, features = [
   "macros",
   "walkdir"
 ] }
-leptos = "0.6"
-leptos_meta = { version = "0.6", optional = true }
+leptos = "0.7"
+leptos_meta = "0.7"
 web-sys = { version = ">=0.1", features = [
   "HtmlDocument",
   "Navigator",
@@ -39,7 +39,7 @@ system = [
 nightly = ["leptos-fluent-macros/nightly"]
 tracing = ["leptos-fluent-macros/tracing", "dep:tracing"]
 hydrate = ["leptos-fluent-macros/hydrate"]
-ssr = ["leptos-fluent-macros/ssr", "dep:leptos_meta"]
+ssr = ["leptos-fluent-macros/ssr"]
 actix = ["leptos-fluent-macros/actix"]
 axum = ["leptos-fluent-macros/axum"]
 json = ["leptos-fluent-macros/json"]

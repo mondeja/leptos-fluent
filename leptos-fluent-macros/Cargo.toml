@@ -2,7 +2,7 @@
 name = "leptos-fluent-macros"
 description = "Macros for leptos-fluent"
 edition.workspace = true
-version = "0.1.26"
+version = "0.2.0"
 license = "MIT"
 documentation.workspace = true
 repository.workspace = true
@@ -40,7 +40,7 @@ tracing = { version = "0.1", optional = true }
 
 [dev-dependencies]
 trybuild = "1"
-leptos = "0.6"
+leptos = "0.7"
 leptos-fluent = { path = "../leptos-fluent" }
 
 [features]

@@ -1,3 +1,4 @@
+use leptos::prelude::*;
 use leptos_fluent::localstorage;
 use leptos_fluent_csr_complete_example::App;
 use tests_helpers::{element_text, html, input_by_id, mount, sleep, unmount};
@@ -15,12 +16,15 @@ async fn csr_complete_example() {
 
     // translations working
     en().click();
+    sleep(30).await;
     assert_eq!(element_text("p"), "Select a language:");
     es().click();
+    sleep(30).await;
     assert!(es().checked());
     assert!(!en().checked());
     assert_eq!(element_text("p"), "Selecciona un idioma:");
     en().click();
+    sleep(30).await;
     assert!(en().checked());
     assert_eq!(element_text("p"), "Select a language:");
     assert!(!es().checked());
@@ -46,8 +50,10 @@ async fn csr_complete_example() {
     localstorage::delete("language");
     assert_eq!(localstorage::get("language"), None);
     es().click();
+    sleep(30).await;
     assert_eq!(localstorage::get("language"), Some("es".to_string()));
     en().click();
+    sleep(30).await;
     assert_eq!(localstorage::get("language"), Some("en".to_string()));
     localstorage::delete("language");
 

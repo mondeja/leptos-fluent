@@ -35,7 +35,10 @@ use quote::quote;
 #[cfg(feature = "debug")]
 #[inline(always)]
 pub(crate) fn debug(msg: &str) {
-    println!("[leptos-fluent/debug] {}", msg);
+    #[allow(clippy::print_stdout)]
+    {
+        println!("[leptos-fluent/debug] {msg}");
+    };
 }
 
 /// Create the i18n context for internationalization.
@@ -46,7 +49,7 @@ pub(crate) fn debug(msg: &str) {
 ///
 /// ```rust,ignore
 /// use fluent_templates::static_loader;
-/// use leptos::*;
+/// use leptos::prelude::*;
 /// use leptos_fluent::leptos_fluent;
 ///
 /// static_loader! {
@@ -57,8 +60,9 @@ pub(crate) fn debug(msg: &str) {
 /// }
 ///
 /// #[component]
-/// pub fn App() -> impl IntoView {
+/// pub fn I18n(children: Children) -> impl IntoView {
 ///     leptos_fluent! {
+///         children: children(),
 ///         translations: [TRANSLATIONS],
 ///         languages: "./locales/languages.json",
 ///         sync_html_tag_lang: true,
@@ -78,10 +82,15 @@ pub(crate) fn debug(msg: &str) {
 ///         cookie_attrs: "SameSite=Strict; Secure; path=/; max-age=2592000",
 ///         initial_language_from_cookie: true,
 ///         set_language_to_cookie: true,
-///     };
+///     }
+/// }
 ///
+/// #[component]
+/// fn App() -> impl IntoView {
 ///     view! {
-///         ...
+///         <I18n>
+///             <LanguageSelector/>
+///         </I18n>
 ///     }
 /// }
 /// ```
@@ -95,6 +104,7 @@ pub fn leptos_fluent(
 ) -> proc_macro::TokenStream {
     let I18nLoader {
         fluent_file_paths,
+        children,
         translations,
         languages,
         languages_path,
@@ -298,7 +308,7 @@ pub fn leptos_fluent(
 
                 // TODO: optimize checking if empty at compile time when literal
                 let effect_quote = quote! {
-                    ::leptos::create_effect(move |_| {
+                    ::leptos::prelude::Effect::new(move |_| {
                         if #set_language_to_data_file_quote.is_empty() {
                             return;
                         }
@@ -450,7 +460,7 @@ pub fn leptos_fluent(
             .map(|param| {
                 let ident = &param.ident;
                 let effect_quote = quote! {
-                    spawn_local(async move {
+                    ::leptos::task::spawn(async move {
                         let lang_result = #ident().await;
                         if let Ok(maybe_lang) = lang_result {
                             if let Some(l) = maybe_lang {
@@ -459,7 +469,6 @@ pub fn leptos_fluent(
                                     #set_to_cookie_quote
                                     #set_to_localstorage_quote
                                 }
-
                             }
                         }
                     });
@@ -487,8 +496,8 @@ pub fn leptos_fluent(
         set_language_to_server_function.iter().map(|param| {
             let ident = &param.ident;
             let effect_quote = quote! {
-                ::leptos::create_effect(move |_| {
-                    spawn_local(async {
+                ::leptos::prelude::Effect::new(move |_| {
+                    ::leptos::task::spawn(async {
                         _ = #ident(#get_language_quote.id.to_string()).await;
                     });
                 });
@@ -508,7 +517,7 @@ pub fn leptos_fluent(
             match param.ident {
                 Some(ref ident) => {
                     let quote = quote! {
-                        spawn_local(async move {
+                        ::leptos::task::spawn(async move {
                             _ = #ident(l.id.to_string()).await;
                         });
                     };
@@ -595,7 +604,7 @@ pub fn leptos_fluent(
 
                 #[cfg(all(feature = "ssr", feature = "actix"))]
                 let effect_quote = quote! {
-                    if let Some(req) = ::leptos::use_context::<::actix_web::HttpRequest>() {
+                    if let Some(req) = ::leptos::prelude::use_context::<::actix_web::HttpRequest>() {
                         lang = ::leptos_fluent::l(#ident(&req.path()), &LANGUAGES);
                         if let Some(l) = lang {
                             #initial_language_from_url_path_to_server_function_quote
@@ -605,7 +614,7 @@ pub fn leptos_fluent(
 
                 #[cfg(all(feature = "ssr", feature = "axum"))]
                 let effect_quote = quote! {
-                    if let Some(req) = ::leptos::use_context::<::axum::http::request::Parts>() {
+                    if let Some(req) = ::leptos::prelude::use_context::<::axum::http::request::Parts>() {
                         lang = ::leptos_fluent::l(#ident(&req.uri.path()), &LANGUAGES);
                         if let Some(l) = lang {
                             #initial_language_from_url_path_to_server_function_quote
@@ -636,190 +645,73 @@ pub fn leptos_fluent(
     };
 
     let sync_html_tag_quote: proc_macro2::TokenStream = {
-        // TODO: optimize code size
         // TODO: handle other attributes in Leptos v0.7
-        //       (in Leptos v0.6 attribute keys are static)
+        // See https://github.com/leptos-rs/leptos/issues/2856
 
-        // Calling `provide_meta_context()` to not show a warning
-        #[cfg(feature = "ssr")]
-        let previous_html_tag_attrs_quote = quote! {{
-            ::leptos_fluent::leptos_meta::provide_meta_context();
-            let html_tag_as_string = ::leptos_fluent::leptos_meta::use_head().html.as_string().unwrap_or("".to_string());
-            let mut class: Option<::leptos::TextProp> = None;
-            let mut lang: Option<::leptos::TextProp> = None;
-            let mut dir: Option<::leptos::TextProp> = None;
-            for attr in html_tag_as_string.split(' ') {
-                let mut parts = attr.split('=');
-                let key = parts.next().unwrap_or("");
-                let value = parts.next().unwrap_or("");
-                if key == "class" {
-                    class = Some(value.trim_matches('"').to_string().into());
-                } else if key == "lang" {
-                    lang = Some(value.trim_matches('"').to_string().into());
-                } else if key == "dir" {
-                    dir = Some(value.trim_matches('"').to_string().into());
-                }
-            }
-            (class, lang, dir)
-        }};
-
-        let sync_html_tag_lang_effect_quote = {
-            #[cfg(feature = "ssr")]
-            {
-                let sync_html_tag_dir_bool_quote: proc_macro2::TokenStream = {
-                    let quote = sync_html_tag_dir
-                        .iter()
-                        .map(|param| match param.expr {
-                            Some(ref expr) => {
-                                let q = quote! { #expr };
-                                match param.exprpath {
-                                    Some(ref path) => quote!(#path{#q}),
-                                    None => q,
-                                }
-                            }
-                            None => quote! { false },
-                        })
-                        .collect::<proc_macro2::TokenStream>();
-
-                    match quote.is_empty() {
-                        true => quote! { false },
-                        false => quote! { #quote },
-                    }
-                };
-
-                quote! {
-                    let l = #get_language_quote;
-                    let (class, _, dir) = #previous_html_tag_attrs_quote;
-                    ::leptos_fluent::leptos_meta::Html(
-                        ::leptos_fluent::leptos_meta::HtmlProps {
-                            lang: Some(l.id.to_string().into()),
-                            dir: if #sync_html_tag_dir_bool_quote {
-                                Some(l.dir.as_str().into())
-                            } else {
-                                dir
-                            },
-                            class,
-                            attributes: Vec::new(),
-                        }
-                    );
-                }
-            }
-
-            #[cfg(not(feature = "ssr"))]
-            quote! {
-                ::leptos::create_effect(move |_| {
-                    use leptos_fluent::web_sys::wasm_bindgen::JsCast;
-                    _ = ::leptos::document()
-                        .document_element()
-                        .unwrap()
-                        .unchecked_into::<::leptos_fluent::web_sys::HtmlElement>()
-                        .set_attribute(
-                            "lang",
-                            &#get_language_quote.id.to_string()
-                        );
-                });
-            }
-        };
-
-        let sync_html_tag_dir_effect_quote = {
-            #[cfg(feature = "ssr")]
-            {
-                let sync_html_tag_lang_bool_quote: proc_macro2::TokenStream = {
-                    let quote = sync_html_tag_lang
-                        .iter()
-                        .map(|param| match param.expr {
-                            Some(ref expr) => {
-                                let q = quote! { #expr };
-                                match param.exprpath {
-                                    Some(ref path) => quote!(#path{#q}),
-                                    None => q,
-                                }
-                            }
-                            None => quote! { false },
-                        })
-                        .collect::<proc_macro2::TokenStream>();
-
-                    match quote.is_empty() {
-                        true => quote! { false },
-                        false => quote! { #quote },
-                    }
-                };
-
-                quote! {
-                    let l = #get_language_quote;
-                    let (class, lang, _) = #previous_html_tag_attrs_quote;
-                    ::leptos_fluent::leptos_meta::Html(
-                        ::leptos_fluent::leptos_meta::HtmlProps {
-                            lang: if #sync_html_tag_lang_bool_quote {
-                                Some(l.id.to_string().into())
-                            } else {
-                                lang
-                            },
-                            dir: Some(l.dir.as_str().into()),
-                            class,
-                            attributes: Vec::new(),
-                        }
-                    );
-                }
-            }
-
-            #[cfg(not(feature = "ssr"))]
-            quote! {
-                ::leptos::create_effect(move |_| {
-                    use leptos_fluent::web_sys::wasm_bindgen::JsCast;
-                    _ = ::leptos::document()
-                        .document_element()
-                        .unwrap()
-                        .unchecked_into::<::leptos_fluent::web_sys::HtmlElement>()
-                        .set_attribute(
-                            "dir",
-                            &#get_language_quote.dir.as_str()
-                        );
-                });
-            }
-        };
-
-        let sync_html_tag_lang_quote: proc_macro2::TokenStream =
-            sync_html_tag_lang
+        let sync_html_tag_lang_bool_quote: proc_macro2::TokenStream = {
+            let quote = sync_html_tag_lang
                 .iter()
                 .map(|param| match param.expr {
                     Some(ref expr) => {
-                        let q = quote! {
-                            if #expr {
-                                #sync_html_tag_lang_effect_quote
-                            }
-                        };
+                        let q = quote! { #expr };
                         match param.exprpath {
                             Some(ref path) => quote!(#path{#q}),
                             None => q,
                         }
                     }
-                    None => quote!(),
+                    None => quote! { false },
                 })
-                .collect();
+                .collect::<proc_macro2::TokenStream>();
 
-        let sync_html_tag_dir_quote: proc_macro2::TokenStream =
-            sync_html_tag_dir
+            match quote.is_empty() {
+                true => quote! { false },
+                false => quote! { #quote },
+            }
+        };
+
+        let sync_html_tag_dir_bool_quote: proc_macro2::TokenStream = {
+            let quote = sync_html_tag_dir
                 .iter()
                 .map(|param| match param.expr {
                     Some(ref expr) => {
-                        let q = quote! {
-                            if #expr {
-                                #sync_html_tag_dir_effect_quote
-                            }
-                        };
+                        let q = quote! { #expr };
                         match param.exprpath {
                             Some(ref path) => quote!(#path{#q}),
                             None => q,
                         }
                     }
-                    None => quote!(),
+                    None => quote! { false },
                 })
-                .collect();
+                .collect::<proc_macro2::TokenStream>();
 
-        quote! {
-            #sync_html_tag_lang_quote
-            #sync_html_tag_dir_quote
+            match quote.is_empty() {
+                true => quote! { false },
+                false => quote! { #quote },
+            }
+        };
+
+        let attr_lang_quote = match sync_html_tag_lang_bool_quote.to_string()
+            == "false"
+        {
+            true => quote! {},
+            false => quote! { attr:lang=|| #get_language_quote.id.to_string() },
+        };
+        let attr_dir_quote = match sync_html_tag_dir_bool_quote.to_string()
+            == "false"
+        {
+            true => quote! {},
+            false => quote! { attr:dir=|| #get_language_quote.dir.as_str() },
+        };
+
+        match attr_lang_quote.is_empty() && attr_dir_quote.is_empty() {
+            true => quote! {},
+            false => quote! {{
+                use ::leptos_fluent::leptos_meta::{provide_meta_context, Html};
+                provide_meta_context();
+                view! {
+                    <Html #attr_lang_quote #attr_dir_quote/>
+                }
+            }},
         }
     };
 
@@ -833,7 +725,7 @@ pub fn leptos_fluent(
 
     let sync_language_with_localstorage_quote: proc_macro2::TokenStream = {
         let effect_quote = quote! {
-            ::leptos::create_effect(move |_| {
+            ::leptos::prelude::Effect::new(move |_| {
                 ::leptos_fluent::localstorage::set(
                     #localstorage_key_quote,
                     &#get_language_quote.id.to_string()
@@ -863,7 +755,7 @@ pub fn leptos_fluent(
     let initial_language_from_url_param_quote: proc_macro2::TokenStream = {
         #[cfg(feature = "hydrate")]
         let hydrate_rerender_quote = quote! {
-            ::leptos::create_effect(move |prev| {
+            ::leptos::prelude::Effect::new(move |prev: Option<()>| {
                 if prev.is_none() {
                     l.activate();
                 }
@@ -942,7 +834,7 @@ pub fn leptos_fluent(
                 .map(|param| match param.ident {
                     Some(ref ident) => {
                         let quote = quote! {
-                            spawn_local(async move {
+                            ::leptos::task::spawn(async move {
                                 _ = #ident(l.id.to_string()).await;
                             });
                         };
@@ -991,7 +883,7 @@ pub fn leptos_fluent(
 
         #[cfg(all(feature = "ssr", feature = "actix"))]
         let parse_language_quote = quote! {
-            if let Some(req) = ::leptos::use_context::<actix_web::HttpRequest>() {
+            if let Some(req) = ::leptos::prelude::use_context::<actix_web::HttpRequest>() {
                 let uri_query = req.uri().query().unwrap_or("");
                 #lang_parser_quote
             }
@@ -999,7 +891,7 @@ pub fn leptos_fluent(
 
         #[cfg(all(feature = "ssr", feature = "axum"))]
         let parse_language_quote = quote! {
-            if let Some(req) = ::leptos::use_context::<::axum::http::request::Parts>() {
+            if let Some(req) = ::leptos::prelude::use_context::<::axum::http::request::Parts>() {
                 let uri_query = req.uri.query().unwrap_or("");
                 #lang_parser_quote
             }
@@ -1068,7 +960,7 @@ pub fn leptos_fluent(
                 match param.ident {
                     Some(ref ident) => {
                         let quote = quote! {
-                            spawn_local(async move {
+                            ::leptos::task::spawn(async move {
                                 _ = #ident(l.id.to_string()).await;
                             });
                         };
@@ -1120,7 +1012,7 @@ pub fn leptos_fluent(
 
     let sync_language_with_url_param_quote: proc_macro2::TokenStream = {
         let effect_quote = quote! {
-            ::leptos::create_effect(move |_| {
+            ::leptos::prelude::Effect::new(move |_| {
                 ::leptos_fluent::url::param::set(
                     #url_param_quote,
                     &#get_language_quote.id.to_string()
@@ -1207,7 +1099,7 @@ pub fn leptos_fluent(
                 match param.ident {
                     Some(ref ident) => {
                         let quote = quote! {
-                            spawn_local(async move {
+                            ::leptos::task::spawn(async move {
                                 _ = #ident(l.id.to_string()).await;
                             });
                         };
@@ -1221,7 +1113,7 @@ pub fn leptos_fluent(
             }).collect();
 
         let window_navigator_languages_quote = quote! {
-            let languages = ::leptos::window().navigator().languages().to_vec();
+            let languages = ::leptos::prelude::window().navigator().languages().to_vec();
             for raw_language in languages {
                 let language = raw_language.as_string();
                 if language.is_none() {
@@ -1270,8 +1162,8 @@ pub fn leptos_fluent(
             let effect_quote = quote! {
                 use ::leptos_fluent::web_sys::wasm_bindgen::JsCast;
                 let closure: Box<dyn FnMut(_)> = Box::new(
-                    move |_: web_sys::Window| {
-                        let languages = ::leptos::window().navigator().languages().to_vec();
+                    move |_: ::leptos_fluent::web_sys::Window| {
+                        let languages = ::leptos::prelude::window().navigator().languages().to_vec();
                         for raw_language in languages {
                             let language = raw_language.as_string();
                             if language.is_none() {
@@ -1289,7 +1181,7 @@ pub fn leptos_fluent(
                 let cb = ::leptos_fluent::web_sys::wasm_bindgen::closure::Closure::wrap(
                     closure
                 );
-                ::leptos::window().add_event_listener_with_callback(
+                ::leptos::prelude::window().add_event_listener_with_callback(
                     "languagechange",
                     cb.as_ref().unchecked_ref()
                 ).expect("Failed to add event listener for window languagechange");
@@ -1327,7 +1219,7 @@ pub fn leptos_fluent(
     #[cfg(all(feature = "actix", feature = "ssr"))]
     let initial_language_from_accept_language_header_quote: proc_macro2::TokenStream = {
         let effect_quote = quote! {
-            if let Some(req) = ::leptos::use_context::<::actix_web::HttpRequest>() {
+            if let Some(req) = ::leptos::prelude::use_context::<::actix_web::HttpRequest>() {
                 let maybe_header = req
                     .headers()
                     .get(::actix_web::http::header::ACCEPT_LANGUAGE)
@@ -1367,7 +1259,7 @@ pub fn leptos_fluent(
     #[cfg(all(feature = "axum", feature = "ssr"))]
     let initial_language_from_accept_language_header_quote: proc_macro2::TokenStream = {
         let effect_quote = quote! {
-            if let Some(req) = ::leptos::use_context::<::axum::http::request::Parts>() {
+            if let Some(req) = ::leptos::prelude::use_context::<::axum::http::request::Parts>() {
                 let maybe_header = req
                     .headers
                     .get(::axum::http::header::ACCEPT_LANGUAGE)
@@ -1419,7 +1311,7 @@ pub fn leptos_fluent(
             match param.ident {
                 Some(ref ident) => {
                     let quote = quote! {
-                        spawn_local(async move {
+                        ::leptos::task::spawn(async move {
                             _ = #ident(l.id.to_string()).await;
                         });
                     };
@@ -1492,7 +1384,7 @@ pub fn leptos_fluent(
     #[cfg(not(feature = "ssr"))]
     let sync_language_with_cookie_quote: proc_macro2::TokenStream = {
         let effect_quote = quote! {
-            ::leptos::create_effect(move |_| {
+            ::leptos::prelude::Effect::new(move |_| {
                 ::leptos_fluent::cookie::set(
                     #cookie_name_quote,
                     &#get_language_quote.id.to_string(),
@@ -1532,7 +1424,7 @@ pub fn leptos_fluent(
     #[cfg(all(feature = "ssr", feature = "actix"))]
     let initial_language_from_cookie_quote: proc_macro2::TokenStream = {
         let effect_quote = quote! {
-            if let Some(req) = ::leptos::use_context::<::actix_web::HttpRequest>() {
+            if let Some(req) = ::leptos::prelude::use_context::<::actix_web::HttpRequest>() {
                 let maybe_cookie = req
                     .cookie(#cookie_name_quote)
                     .and_then(|cookie| Some(cookie.value().to_string()));
@@ -1573,7 +1465,7 @@ pub fn leptos_fluent(
     #[cfg(all(feature = "ssr", feature = "axum"))]
     let initial_language_from_cookie_quote: proc_macro2::TokenStream = {
         let effect_quote = quote! {
-            if let Some(req) = ::leptos::use_context::<::axum::http::request::Parts>() {
+            if let Some(req) = ::leptos::prelude::use_context::<::axum::http::request::Parts>() {
                 let maybe_cookie = req
                     .headers
                     .get(::axum::http::header::COOKIE)
@@ -1959,7 +1851,7 @@ pub fn leptos_fluent(
                             provide_meta_context: true,
                             #system_quote
                         };
-                        ::leptos::provide_context::<::leptos_fluent::LeptosFluentMeta>(meta);
+                        ::leptos::context::provide_context::<::leptos_fluent::LeptosFluentMeta>(meta);
                     };
 
                     match param.exprpath {
@@ -1973,7 +1865,6 @@ pub fn leptos_fluent(
     };
 
     let other_quotes = quote! {
-        #sync_html_tag_quote
         #sync_language_with_server_function_quote
         #sync_language_with_localstorage_quote
         #sync_language_with_url_param_quote
@@ -1984,41 +1875,65 @@ pub fn leptos_fluent(
         #leptos_fluent_provide_meta_context_quote
     };
 
-    let debug_quote = quote! {
-        const LANGUAGES: [&::leptos_fluent::Language; #n_languages] =
-            #languages_quote;
-
-        let mut lang: Option<&'static ::leptos_fluent::Language> = None;
-        #initial_language_quote;
-
-        let initial_lang = if let Some(l) = lang {
-            l
-        } else {
-            LANGUAGES[0]
-        };
-
-        let translations = ::std::rc::Rc::new(#translations_quote);
-        let mut i18n = ::leptos_fluent::I18n {
-            language: ::leptos::create_rw_signal(initial_lang),
-            languages: &LANGUAGES,
-            translations: ::leptos::Signal::derive(move || ::std::rc::Rc::clone(&translations)),
-        };
-        ::leptos::provide_context::<::leptos_fluent::I18n>(i18n);
-    };
-
-    #[cfg(feature = "tracing")]
-    tracing::trace!("{}", debug_quote);
-
-    let quote = quote! {
+    let init_quote = quote! {
         {
-            #debug_quote
-            #other_quotes
+
+
+            let mut lang: Option<&'static ::leptos_fluent::Language> = None;
+            #initial_language_quote;
+
+            let initial_lang = if let Some(l) = lang {
+                l
+            } else {
+                LANGUAGES[0]
+            };
+
+            let i18n = ::leptos_fluent::I18n {
+                language: ::leptos::prelude::RwSignal::new(initial_lang),
+                languages: &LANGUAGES,
+                translations: ::leptos::prelude::Signal::derive(move || #translations_quote),
+            };
+            ::leptos::context::provide_context::<::leptos_fluent::I18n>(i18n);
             i18n
         }
     };
 
+    let children_quote: proc_macro2::TokenStream = children
+        .iter()
+        .map(|param| {
+            let expr = param.expr.as_ref().unwrap();
+            match param.exprpath {
+                Some(ref path) => quote!(#path{#expr}),
+                None => quote!(#expr),
+            }
+        })
+        .collect();
+
+    let quote = quote! {
+        let i18n = {
+            const LANGUAGES: [&::leptos_fluent::Language; #n_languages] =
+                #languages_quote;
+            let i18n = #init_quote;
+            #other_quotes
+            i18n
+        };
+        {
+            use ::leptos::context::Provider;
+            ::leptos::view! {
+                <Provider value={i18n}>
+                    #sync_html_tag_quote
+                    {#children_quote}
+                </Provider>
+            }
+        }
+
+    };
+
     #[cfg(feature = "debug")]
     debug(&format!("\n{}", &quote.to_string()));
+
+    #[cfg(feature = "tracing")]
+    tracing::trace!("{}", &quote.to_string());
 
     proc_macro::TokenStream::from(quote)
 }

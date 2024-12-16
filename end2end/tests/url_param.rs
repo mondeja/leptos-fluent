@@ -1,4 +1,4 @@
-use leptos::*;
+use leptos::prelude::*;
 use leptos_fluent::{leptos_fluent, url};
 use leptos_fluent_csr_minimal_example::{LanguageSelector, TRANSLATIONS};
 use tests_helpers::{element_text, input_by_id, mount, sleep, unmount};
@@ -28,17 +28,17 @@ async fn test_url_param() {
 
     // set_language_to_url_param
     mount!(App);
-    assert_eq!(leptos::window().location().search().unwrap(), "");
+    assert_eq!(leptos::prelude::window().location().search().unwrap(), "");
     es().click();
     sleep(30).await;
     assert_eq!(
-        leptos::window().location().search().unwrap(),
+        leptos::prelude::window().location().search().unwrap(),
         format!("?{URL_PARAM}=es")
     );
     en().click();
     sleep(30).await;
     assert_eq!(
-        leptos::window().location().search().unwrap(),
+        leptos::prelude::window().location().search().unwrap(),
         format!("?{URL_PARAM}=en")
     );
     unmount!();
