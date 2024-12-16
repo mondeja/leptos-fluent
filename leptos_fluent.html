@@ -365,12 +365,6 @@ leptos_fluent! {
 <h3 id="languages"><a class="header" href="#languages"><code>languages</code></a></h3>
 <p>Path to a file containing the list of languages supported by the application.
 Must be relative to the <em>Cargo.toml</em> file.</p>
-<pre><code class="language-rust">leptos_fluent! {
-    locales: "./locales",
-    languages: "./locales/languages.json",
-    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    translations: [TRANSLATIONS],
-}</code></pre>
 <div id="admonition-tip" class="admonition admonish-tip" role="note" aria-labelledby="admonition-tip-title">
 <div class="admonition-title">
 <div id="admonition-tip-title">
@@ -379,43 +373,16 @@ Must be relative to the <em>Cargo.toml</em> file.</p>
 <a class="admonition-anchor-link" href="#admonition-tip"></a>
 </div>
 <div>
-<p>See <a href="https://mondeja.github.io/leptos-fluent/languages.html"><strong>4. Languages</strong></a></p>
+<p>In order to use this parameter a languages file feature must be enabled.
+See <a href="https://mondeja.github.io/leptos-fluent/languages.html"><strong>4. Languages</strong></a></p>
 </div>
 </div>
-<p>The languages file should contain an array of arrays where each inner array
-contains a language identifier and a language name, respectively, at least.</p>
-<p>The language identifier should be a valid language tag, such as <code>en-US</code>, <code>en</code>,
-<code>es-ES</code>, etc. By default, the languages file should be a JSON with a <code>.json</code>
-extension because the <code>json</code> feature is enabled. For example:</p>
-<pre><code class="language-json">[
-  ["en-US", "English (United States)"],
-  ["es-ES", "Español (España)"]
-]
-</code></pre>
-<p>Set <code>default-features = false</code> and enable the <code>yaml</code> or the <code>json5</code> feature
-to use a YAML or JSON5 files. For example:</p>
-<pre><code class="language-yaml"># locales/languages.yaml
-- - en-US
-  - English (United States)
-- - es-ES
-  - Español (España)
-</code></pre>
-<pre><code class="language-json5">// locales/languages.json5
-[
-  ["en-US", "English (United States)"],
-  ["es-ES", "Español (España)"],
-]
-</code></pre>
-<p>Define a third element in the inner array with the direction of the language,
-to use it in the <a href="https://developer.mozilla.org/docs/Web/HTML/Global_attributes/dir"><code>&lt;html dir="..."&gt;</code> attribute</a> (see <a href="#csr---sync_html_tag_dir"><code>sync_html_tag_dir</code></a>).
-For example:</p>
-<pre><code class="language-json">[
-  ["en-US", "English (United States)", "ltr"],
-  ["es-ES", "Español (España)", "auto"],
-  ["ar", "العربية", "rtl"],
-  ["it", "Italiano"]
-]
-</code></pre>
+<pre><code class="language-rust">leptos_fluent! {
+    locales: "./locales",
+    languages: "./locales/languages.json",
+    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    translations: [TRANSLATIONS],
+}</code></pre>
 <h3 id="check_translations"><a class="header" href="#check_translations"><code>check_translations</code></a></h3>
 <p>Check the translations at compile time. It is useful to ensure that all
 translations are correct and that there are no missing translations.</p>

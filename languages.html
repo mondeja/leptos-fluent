@@ -217,6 +217,19 @@ be relative to the <em>Cargo.toml</em> file.</p>
   ["es-ES", "Spanish (Spain)", "auto"]
 ]
 </code></pre>
+<h3 id="languages-file-format"><a class="header" href="#languages-file-format">Languages file format</a></h3>
+<p>In order to use a languages file, you must enable the feature for the file
+format you want to use in the <em>Cargo.toml</em> file:</p>
+<pre><code class="language-toml">[dependencies]
+leptos-fluent = { version = "*", features = ["json5"] }
+</code></pre>
+<p>Available features for languages file formats are:</p>
+<ul>
+<li><code>json</code>: JSON</li>
+<li><code>yaml</code>: YAML</li>
+<li><code>json5</code>: JSON5</li>
+</ul>
+<h3 id="languages-file-layout"><a class="header" href="#languages-file-layout">Languages file layout</a></h3>
 <p>The languages file must expose an array of arrays with the structure:</p>
 <pre><code class="language-json5">[
   // Code, Name,            "ltr"/"rtl"/"auto" (optional)
@@ -237,9 +250,9 @@ will be the same as in the file regardless of the alphabetical order
 of the names.</p>
 </div>
 </div>
-<p>The first in the languages file will used as the initial of the user when any
-other initialization value is discovered. Use the same as the one configured
-as <code>fallback_language</code> in <code>static_loader!</code>.</p>
+<p>The first one in the languages file will used as the initial of the user when
+no other initialization language is discovered. Use the same as the one
+configured as <code>fallback_language</code> in <code>static_loader!</code>.</p>
 <pre><code class="language-rust">static_loader! {
     static TRANSLATIONS = {
         locales: "./locales",
@@ -260,19 +273,6 @@ pub fn App() -&gt; impl IntoView {
   ["es-ES", "Español (España)"],
 ]
 </code></pre>
-<h3 id="file-format"><a class="header" href="#file-format">File format</a></h3>
-<p>By default, the <code>json</code> feature is enabled, which only allows to set the
-languages file in JSON format. To use other formats, disable the feature
-and enable another.</p>
-<pre><code class="language-toml">[dependencies]
-leptos-fluent = { version = "*", default-features = false, features = ["json5"] }
-</code></pre>
-<p>Available features for languages file formats are:</p>
-<ul>
-<li><code>json</code>: JSON (default)</li>
-<li><code>yaml</code>: YAML</li>
-<li><code>json5</code>: JSON5</li>
-</ul>
 
                     </main>
 
