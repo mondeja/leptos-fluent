@@ -332,7 +332,7 @@
   global attribute of the `<html>` tag with the current language direction.
 - Multiple translations can be passed to the `leptos_fluent!` macro.
 
-## Versioning
+### Versioning
 
 **leptos-fluent** will include breaking changes in minor versions during
 the v0.x.0 series until v1.0.0 version is reached. Is safe to pin the
