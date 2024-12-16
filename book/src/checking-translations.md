@@ -9,17 +9,17 @@ The pattern must be relative to the location of the _Cargo.toml_ file.
 For single crate projects, it would be something like:
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     check_translations: "./src/**/*.rs",
-}}
+}
 ```
 
 For workspace projects, it could be something like:
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     check_translations: "../{app,components}/src/**/*.rs",
-}}
+}
 ```
 
 ## Translations error messages

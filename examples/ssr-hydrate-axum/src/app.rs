@@ -18,7 +18,7 @@ pub static COMPOUND: &[&Lazy<StaticLoader>] = &[&TRANSLATIONS, &TRANSLATIONS];
 
 #[component]
 pub fn App() -> impl IntoView {
-    leptos_fluent! {{
+    leptos_fluent! {
         translations: [TRANSLATIONS, TRANSLATIONS] + COMPOUND,
         locales: "./locales",
         check_translations: "./src/**/*.rs",
@@ -41,20 +41,20 @@ pub fn App() -> impl IntoView {
         initial_language_from_navigator: true,
         initial_language_from_navigator_to_localstorage: true,
         initial_language_from_accept_language_header: true,
-    }};
+    };
 
     view! {
-        <Title text=move || tr!("welcome-to-leptos")/>
+        <Title text=move || tr!("welcome-to-leptos") />
 
         // content for this welcome page
         <Router fallback=|| {
             let mut outside_errors = Errors::default();
             outside_errors.insert_with_default_key(AppError::NotFound);
-            view! { <ErrorTemplate outside_errors/> }.into_view()
+            view! { <ErrorTemplate outside_errors /> }.into_view()
         }>
             <main>
                 <Routes>
-                    <Route path="" view=HomePage/>
+                    <Route path="" view=HomePage />
                 </Routes>
             </main>
         </Router>

@@ -26,7 +26,7 @@ repos:
       - id: markdownlint-cli2
         exclude: ^LICENSE\.md$
   - repo: https://github.com/mondeja/rust-pc-hooks
-    rev: v1.1.0
+    rev: v1.2.0
     hooks:
       - id: leptosfmt
   - repo: https://github.com/doublify/pre-commit-rust
@@ -36,9 +36,9 @@ repos:
       - id: clippy
         alias: clippy-no-features
         name: clippy-no-features
-        args:
-          [
+        args: [
             --exclude=leptos-fluent-ssr-hydrate-axum-example,
+            --exclude=leptos-fluent-ssr-islands-axum-example, # TODO: excluded by Leptos bug
             --workspace,
             --,
             -D,
@@ -87,6 +87,7 @@ repos:
           [
             "--features=ssr,actix",
             --exclude=leptos-fluent-ssr-hydrate-axum-example,
+            --exclude=leptos-fluent-ssr-islands-axum-example,
             --exclude=leptos-fluent-csr-complete-example,
             --exclude=leptos-fluent-csr-minimal-example,
             --workspace,
@@ -115,6 +116,7 @@ repos:
             --exclude=leptos-fluent-ssr-hydrate-actix-example,
             --exclude=leptos-fluent-csr-complete-example,
             --exclude=leptos-fluent-csr-minimal-example,
+            --exclude=leptos-fluent-ssr-islands-axum-example,
             --workspace,
             --,
             -D,
@@ -133,8 +135,11 @@ repos:
             deprecated,
           ]
   - repo: https://github.com/mondeja/rust-pc-hooks
-    rev: v1.1.0
+    rev: v1.3.0
     hooks:
+      - id: cargo-machete
+        args:
+          - --skip-target-dir
       - id: cargo-readme
         alias: cargo-readme-workspace
         name: cargo-readme-workspace
@@ -155,12 +160,4 @@ repos:
         args:
           - --project-root=leptos-fluent-macros
           - --output=README.md
-  - repo: https://github.com/tcort/markdown-link-check
-    rev: v3.12.2
-    hooks:
-      - id: markdown-link-check
-        name: markdown-link-check
-        files: ^README\.md$
-        args:
-          - --config
-          - .markdown-link-check.json
+      - id: lychee

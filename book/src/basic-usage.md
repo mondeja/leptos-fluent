@@ -46,10 +46,10 @@ static_loader! {
 
 #[component]
 pub fn App() -> impl IntoView {
-    leptos_fluent! {{
+    leptos_fluent! {
         translations: [TRANSLATIONS],
         locales: "./locales",
-    }};
+    };
 
     view! { <LanguageSelector/> }
 }
@@ -116,7 +116,7 @@ path = "src/lib.rs"
 [dependencies]
 leptos = { version = "0.6.12", features = ["csr"] }
 leptos-fluent = "0.1"
-fluent-templates = "0.10"
+fluent-templates = "0.11"
 console_error_panic_hook = "0.1"
 
 # Using cargo-leptos
@@ -248,6 +248,8 @@ To check if a language is the active one, use [`is_active`] method of a
 
 ```rust
 lang.is_active()
+
+lang == expect_i18n().language.get()
 ```
 
 [`tr!`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.tr.html

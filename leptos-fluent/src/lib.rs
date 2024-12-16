@@ -20,7 +20,7 @@
 //! ```toml
 //! [dependencies]
 //! leptos-fluent = "0.1"
-//! fluent-templates = "0.10"
+//! fluent-templates = "0.11"
 //!
 //! [features]
 //! hydrate = [
@@ -87,7 +87,7 @@
 //! fn App() -> impl IntoView {
 //!     // See all options in the reference at
 //!     // https://mondeja.github.io/leptos-fluent/leptos_fluent.html
-//!     leptos_fluent! {{
+//!     leptos_fluent! {
 //!         // Path to the locales directory, relative to Cargo.toml.
 //!         locales: "./locales",
 //!         // Static translations struct provided by fluent-templates.
@@ -101,7 +101,7 @@
 //!
 //!         // Client side options
 //!         // -------------------
-//!         // Synchronize `<html lang="...">` attribute with the
+//!         // Synchronize `<html lang="...">` attribute with
 //!         // current active language.
 //!         sync_html_tag_lang: true,
 //!         // Synchronize `<html dir="...">` attribute with `"ltr"`,
@@ -109,11 +109,9 @@
 //!         sync_html_tag_dir: true,
 //!         // Update language on URL parameter when changes.
 //!         set_language_to_url_param: true,
-//!         // Set initial language of the user from
-//!         // URL in local storage.
+//!         // Set initial language of user from URL in local storage.
 //!         initial_language_from_url_param_to_localstorage: true,
-//!         // Set initial language of the user from
-//!         // URL in a cookie.
+//!         // Set initial language of user from URL in a cookie.
 //!         initial_language_from_url_param_to_cookie: true,
 //!         // Key used to get and set the current language of the
 //!         // user on local storage. By default is `"lang"`.
@@ -129,14 +127,12 @@
 //!         // Get initial language from `navigator.languages`
 //!         // if not found in local storage.
 //!         initial_language_from_navigator: true,
-//!         // Set initial language of the user from
-//!         // the navigator to local storage.
+//!         // Set initial language of user from navigator to local storage.
 //!         initial_language_from_navigator_to_localstorage: true,
-//!         // Set initial language of the user from
-//!         // the navigator to a cookie.
+//!         // Set initial language of user from navigator to a cookie.
 //!         initial_language_from_navigator_to_cookie: true,
 //!         // Attributes to set for language cookie.
-//!         // By default is `""`.
+//!         // By default `""`.
 //!         cookie_attrs: "Secure; Path=/; Max-Age=600",
 //!         // Update language on cookie when the language changes.
 //!         set_language_to_cookie: true,
@@ -152,12 +148,12 @@
 //!         // Server and client side options
 //!         // ------------------------------
 //!         // Name of the cookie to get and set the current active
-//!         // language. By default, it is `"lf-lang"`.
+//!         // language. By default `"lf-lang"`.
 //!         cookie_name: "lang",
 //!         // Set initial language from cookie.
 //!         initial_language_from_cookie: true,
 //!         // URL parameter to use setting the language in the URL.
-//!         // By default is `"lang"`.
+//!         // By default `"lang"`.
 //!         url_param: "lang",
 //!         // Set initial language of the user from an URL parameter.
 //!         initial_language_from_url_param: true,
@@ -172,11 +168,11 @@
 //!         // Get initial language from a data file.
 //!         initial_language_from_data_file: true,
 //!         // Key to use to name the data file. Should be unique per
-//!         // application. By default is `"leptos-fluent"`.
+//!         // application. By default `"leptos-fluent"`.
 //!         data_file_key: "my-app",
 //!         // Set the language selected to a data file.
 //!         set_language_to_data_file: true,
-//!     }};
+//!     };
 //!
 //!     view! {
 //!         <TranslatableComponent />
@@ -424,7 +420,7 @@ impl IntoAttribute for &&'static Language {
 /// Used to provide the current language, the available languages and all
 /// the translations. It is capable of doing what is needed to translate
 /// and manage translations in a whole application.
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct I18n {
     /// Signal that holds the current language.
     pub language: RwSignal<&'static Language>,
@@ -443,10 +439,12 @@ impl I18n {
     /// raise an error message.
     ///
     /// ```rust,ignore
-    /// let i18n = leptos_fluent! {{
+    /// use leptos_fluent::leptos_fluent;
+    ///
+    /// let i18n = leptos_fluent! {
     ///     // ...
     ///     provide_meta_context: true,
-    /// }};
+    /// };
     ///
     /// leptos::logging::log!("Macro parameters: {:?}", i18n.meta().unwrap());
     /// ```
@@ -463,17 +461,6 @@ impl I18n {
             )
             .to_string(),
         )
-    }
-}
-
-impl core::fmt::Debug for I18n {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        let language = self.language;
-        with!(|language| f
-            .debug_struct("I18n")
-            .field("language", language)
-            .field("languages", &self.languages)
-            .finish())
     }
 }
 
@@ -545,6 +532,18 @@ pub fn use_i18n() -> Option<I18n> {
     use_context::<I18n>()
 }
 
+const EXPECT_I18N_ERROR_MESSAGE: &str = concat!(
+    "I18n context is missing, use the `leptos_fluent!` macro to provide it.\n\n",
+    "If you're sure that the context has been provided probably the invocation",
+    " resides outside of the reactive ownership tree, thus the context is not",
+    " reachable. Use instead:\n",
+    "  - `tr!(i18n, \"text-id\")` instead of `tr!(\"text-id\")`.\n",
+    "  - `move_tr!(i18n, \"text-id\")` instead of `move_tr!(\"text-id\")`.\n",
+    "  - `i18n.language.set(lang)` instead of `lang.activate()`.\n",
+    "  - `lang == i18n.language.get()` instead of `lang.is_active()`.\n",
+    "  - Copy `i18n` context instead of getting it `expect_i18n()`.",
+);
+
 /// Expect the current context for localization.
 #[cfg_attr(feature = "tracing", tracing::instrument(level = "trace"))]
 #[inline(always)]
@@ -552,9 +551,7 @@ pub fn expect_i18n() -> I18n {
     if let Some(i18n) = use_i18n() {
         i18n
     } else {
-        let error_message = concat!(
-            "I18n context is missing, use the leptos_fluent! macro to provide it."
-        );
+        let error_message = EXPECT_I18N_ERROR_MESSAGE;
         #[cfg(feature = "tracing")]
         tracing::error!(error_message);
         panic!("{}", error_message)
@@ -568,9 +565,7 @@ pub fn i18n() -> I18n {
     if let Some(i18n) = use_i18n() {
         i18n
     } else {
-        let error_message = concat!(
-            "I18n context is missing, use the leptos_fluent! macro to provide it."
-        );
+        let error_message = EXPECT_I18N_ERROR_MESSAGE;
         #[cfg(feature = "tracing")]
         tracing::error!(error_message);
         panic!("{}", error_message)
@@ -579,12 +574,12 @@ pub fn i18n() -> I18n {
 
 #[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
 #[doc(hidden)]
-pub fn tr_impl(text_id: &str) -> String {
+pub fn tr_impl(i18n: I18n, text_id: &str) -> String {
     let I18n {
         language,
         translations,
         ..
-    } = expect_i18n();
+    } = i18n;
     let found = with!(|translations, language| {
         translations
             .iter()
@@ -618,6 +613,7 @@ pub fn tr_impl(text_id: &str) -> String {
 #[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
 #[doc(hidden)]
 pub fn tr_with_args_impl(
+    i18n: I18n,
     text_id: &str,
     args: &std::collections::HashMap<String, FluentValue>,
 ) -> String {
@@ -625,7 +621,7 @@ pub fn tr_with_args_impl(
         language,
         translations,
         ..
-    } = expect_i18n();
+    } = i18n;
     let found = with!(|translations, language| {
         translations
             .iter()
@@ -667,19 +663,29 @@ pub fn tr_with_args_impl(
 /// ```
 #[macro_export]
 macro_rules! tr {
-    ($text_id:literal$(,)?) => {::leptos_fluent::tr_impl($text_id)};
+    ($text_id:literal$(,)?) => {$crate::tr_impl($crate::expect_i18n(), $text_id)};
     ($text_id:literal, {$($key:literal => $value:expr),*$(,)?}$(,)?) => {{
-        ::leptos_fluent::tr_with_args_impl($text_id, &{
+        $crate::tr_with_args_impl($crate::expect_i18n(), $text_id, &{
             let mut map = ::std::collections::HashMap::new();
             $(
                 map.insert($key.to_string(), $value.into());
             )*
             map
         })
-    }}
+    }};
+    ($i18n:expr, $text_id:literal$(,)?) => {$crate::tr_impl($i18n, $text_id)};
+    ($i18n:expr, $text_id:literal, {$($key:literal => $value:expr),*$(,)?}$(,)?) => {{
+        $crate::tr_with_args_impl($i18n, $text_id, &{
+            let mut map = ::std::collections::HashMap::new();
+            $(
+                map.insert($key.to_string(), $value.into());
+            )*
+            map
+        })
+    }};
 }
 
-/// [`leptos::Signal`] that translates a text identifier to the current language.
+/// [Leptos's `Signal`] that translates a text identifier to the current language.
 ///
 /// ```rust,ignore
 /// move_tr!("hello-world")
@@ -699,7 +705,7 @@ macro_rules! tr {
 /// Signal::derive(move || tr!("hello-world", { "name" => name, "age" => 30 }));
 /// ```
 ///
-/// [`leptos::Signal`]: https://docs.rs/leptos/latest/leptos/struct.Signal.html
+/// [Leptos's `Signal`]: https://docs.rs/reactive_graph/0.1.0/reactive_graph/wrappers/read/struct.Signal.html
 #[macro_export]
 macro_rules! move_tr {
     ($text_id:literal$(,)?) => {
@@ -707,6 +713,16 @@ macro_rules! move_tr {
     };
     ($text_id:literal, {$($key:literal => $value:expr),*$(,)?}$(,)?) => {
         ::leptos::Signal::derive(move || $crate::tr!($text_id, {
+            $(
+                $key => $value,
+            )*
+        }))
+    };
+    ($i18n:expr, $text_id:literal$(,)?) => {
+        ::leptos::Signal::derive(move || $crate::tr!($i18n, $text_id))
+    };
+    ($i18n:expr, $text_id:literal, {$($key:literal => $value:expr),*$(,)?}$(,)?) => {
+        ::leptos::Signal::derive(move || $crate::tr!($i18n, $text_id, {
             $(
                 $key => $value,
             )*
