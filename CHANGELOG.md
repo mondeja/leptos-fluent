@@ -1,12 +1,76 @@
 # CHANGELOG
 
-## Unreleased - 0.2.0
+## [Unreleased] - 0.2.0
 
 ### Breaking changes
 
 - The feature `json` is not enabled by default anymore. Now leptos-fluent
   does not includes features by default, so you don't need to use
   `default-features = false` in your `Cargo.toml` file.
+
+## 2024-11-15 - [0.1.26]
+
+### Enhancements
+
+- Let rustc infer literal expressions booleans in `leptos_fluent!` macro
+  parameters, which optimizes compilation times.
+
+## 2024-10-26 - [0.1.25]
+
+### Bug fixes
+
+- Fix unhygienic use of `leptos::window` in `leptos_fluent!` macro expansion.
+
+## 2024-10-11 - [0.1.24]
+
+### Enhancements
+
+- Add `translations` field to `I18n`'s `Debug` implementation.
+- Allow to pass empty translations array to `leptos_fluent!` with
+  `translations: []`.
+
+## 2024-09-25 - [0.1.23]
+
+### Enhancements
+
+- Allow single braces syntax for `leptos_fluent!` macro. The current
+  syntax `leptos_fluent! {{ ... }}` is still supported but now triggers
+  a deprecation warning. It will not be supported from `v0.2`.
+  Use `leptos_fluent! { ... }` instead.
+
+## 2024-09-24 - [0.1.22]
+
+### Bug fixes
+
+- Fix translations checker not detecting translation macros inside macro
+  calls (regression from v0.1.21).
+
+## 2024-08-27 - [0.1.21]
+
+### Bug fixes
+
+- Fix translation macros not extracted from some locations when a variable
+  binding is not used in translations checker.
+
+## 2024-08-26 - [0.1.20]
+
+### Bug fixes
+
+- Fix variables in Fluent selectors not being extracted as placeables when
+  checking translations.
+
+## 2024-08-19 - [0.1.19]
+
+### Bug fixes
+
+- Allow to pass `i18n` as first argument to `tr!` and `move_tr!` macros.
+  This is an alternative to panicking when using the macros in event handlers.
+
+## 2024-08-18 - [0.1.18]
+
+### Bug fixes
+
+- Relax `fluent-templates` dependency.
 
 ## 2024-08-17 - [0.1.17]
 
@@ -73,13 +137,13 @@
   `leptos_fluent!` macro:
 
   ```rust
-  leptos_fluent! {{
+  leptos_fluent! {
       // ...
       #[cfg(debug_assertions)]
       set_language_to_url_param: true,
       #[cfg(not(debug_assertions))]
       set_language_to_url_param: false,
-  }}
+  }
   ```
 
 ## 2024-08-03 - [0.1.10]
@@ -92,11 +156,11 @@
   For example, only use a languages file when compiling on Unix systems:
 
   ```rust
-  leptos_fluent! {{
+  leptos_fluent! {
       // ...
       #[cfg(target_family = "unix")]
       languages: "./locales/languages.json",
-  }}
+  }
   ```
 
 ## 2024-08-02 - [0.1.9]
@@ -167,13 +231,13 @@
 - Accept [configuration conditional checks] directly in most macro parameters:
 
   ```rust
-  leptos_fluent! {{
+  leptos_fluent! {
       // ...
       #[cfg(debug_assertions)]
       initial_language_from_url_param: true,
       #[cfg(debug_assertions)]
       set_language_to_url_param: true,
-  }}
+  }
   ```
 
 [configuration conditional checks]: https://doc.rust-lang.org/rust-by-example/attribute/cfg.html
@@ -488,6 +552,16 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[Unreleased]: https://github.com/mondeja/leptos-fluent/compare/v0.1.26...master
+[0.1.26]: https://github.com/mondeja/leptos-fluent/compare/v0.1.25...v0.1.26
+[0.1.25]: https://github.com/mondeja/leptos-fluent/compare/v0.1.24...v0.1.25
+[0.1.24]: https://github.com/mondeja/leptos-fluent/compare/v0.1.23...v0.1.24
+[0.1.23]: https://github.com/mondeja/leptos-fluent/compare/v0.1.22...v0.1.23
+[0.1.22]: https://github.com/mondeja/leptos-fluent/compare/v0.1.21...v0.1.22
+[0.1.21]: https://github.com/mondeja/leptos-fluent/compare/v0.1.20...v0.1.21
+[0.1.20]: https://github.com/mondeja/leptos-fluent/compare/v0.1.19...v0.1.20
+[0.1.19]: https://github.com/mondeja/leptos-fluent/compare/v0.1.18...v0.1.19
+[0.1.18]: https://github.com/mondeja/leptos-fluent/compare/v0.1.17...v0.1.18
 [0.1.17]: https://github.com/mondeja/leptos-fluent/compare/v0.1.16...v0.1.17
 [0.1.16]: https://github.com/mondeja/leptos-fluent/compare/v0.1.15...v0.1.16
 [0.1.15]: https://github.com/mondeja/leptos-fluent/compare/v0.1.14...v0.1.15

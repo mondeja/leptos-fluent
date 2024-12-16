@@ -11,7 +11,7 @@ static_loader! {
 
 #[component]
 pub fn App() -> impl IntoView {
-    leptos_fluent! {{
+    leptos_fluent! {
         translations: [TRANSLATIONS],
         locales: "../../../../examples/csr-minimal/locales",
         // A comment
@@ -24,7 +24,7 @@ pub fn App() -> impl IntoView {
         sync_html_tag_dir: true,
         #[cfg(not(debug_assertions))]
         sync_html_tag_dir: false,
-    }};
+    };
 
     view! { <p>Foo</p> }
 }

@@ -43,7 +43,7 @@ fn main() {
     // Connect to "activate" signal of `app`
     app.connect_activate(build_ui);
 
-    let i18n = leptos_fluent! {{
+    let i18n = leptos_fluent! {
         translations: [TRANSLATIONS],
         locales: "./locales",
         check_translations: "./src/**/*.rs",
@@ -53,7 +53,7 @@ fn main() {
         set_language_to_data_file: true,
         data_file_key: "leptos-fluent-gtk-example",
         provide_meta_context: true,
-    }};
+    };
 
     tracing::info!("Macro parameters: {:?}", i18n.meta().unwrap());
 

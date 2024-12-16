@@ -31,6 +31,7 @@ use languages::build_languages_quote;
 pub(crate) use languages::ParsedLanguage;
 use loader::{I18nLoader, Identifier, LitBoolExpr};
 use quote::quote;
+use std::str::FromStr;
 
 #[cfg(feature = "debug")]
 #[inline(always)]
@@ -58,7 +59,7 @@ pub(crate) fn debug(msg: &str) {
 ///
 /// #[component]
 /// pub fn App() -> impl IntoView {
-///     leptos_fluent! {{
+///     leptos_fluent! {
 ///         translations: [TRANSLATIONS],
 ///         languages: "./locales/languages.json",
 ///         sync_html_tag_lang: true,
@@ -78,7 +79,7 @@ pub(crate) fn debug(msg: &str) {
 ///         cookie_attrs: "SameSite=Strict; Secure; path=/; max-age=2592000",
 ///         initial_language_from_cookie: true,
 ///         set_language_to_cookie: true,
-///     }};
+///     };
 ///
 ///     view! {
 ///         ...
@@ -93,6 +94,28 @@ pub(crate) fn debug(msg: &str) {
 pub fn leptos_fluent(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
+    // optional double braces (must be removed in v0.2)
+    let input_as_str = input.to_string();
+    let loader_input;
+    let double_braced_warning;
+    if input_as_str.starts_with('{') && input_as_str.ends_with('}') {
+        loader_input = proc_macro::TokenStream::from(
+            proc_macro2::TokenStream::from_str(
+                &input_as_str[1..input_as_str.len() - 1],
+            )
+            .unwrap(),
+        );
+        let warning = proc_macro_warning::FormattedWarning::new_deprecated(
+            "leptos_fluent",
+            "The double braced syntax `leptos_fluent! {{ ... }}` is deprecated and will be removed in v0.2. Use `leptos_fluent! { ... }` instead.",
+            proc_macro2::Span::call_site(),
+        );
+        double_braced_warning = quote!(#warning);
+    } else {
+        loader_input = input;
+        double_braced_warning = quote!();
+    }
+
     let I18nLoader {
         fluent_file_paths,
         translations,
@@ -147,7 +170,7 @@ pub fn leptos_fluent(
         initial_language_from_data_file,
         #[cfg(feature = "system")]
         data_file_key,
-    } = syn::parse_macro_input!(input as I18nLoader);
+    } = syn::parse_macro_input!(loader_input as I18nLoader);
 
     let n_languages = languages.len();
     let languages_quote = build_languages_quote(&languages);
@@ -225,37 +248,25 @@ pub fn leptos_fluent(
             };
 
             initial_language_from_system_to_data_file.iter().map(|param| {
-                let quote = match param.lit {
-                    Some(ref lit) => match lit.value {
-                        true => quote! {
-                           if lang.is_none() && !#data_file_key_quote.is_empty() {
-                               #effect_quote
-                           }
-                        },
-                        false => quote!(),
-                    },
-                    None => match param.expr {
-                        Some(ref expr) => quote! {
+                match param.expr {
+                    Some(ref expr) => {
+                        let q = quote! {
                             if lang.is_none() && #expr && !#data_file_key_quote.is_empty() {
                                 #effect_quote
                             }
-                        },
-                        None => quote!(),
+                        };
+                        match param.exprpath {
+                            Some(ref path) => quote!(#path{#q}),
+                            None => q,
+                        }
                     },
-                };
-
-                match quote.is_empty() {
-                    true => quote!(),
-                    false => match param.exprpath {
-                        Some(ref path) => quote!(#path{#quote}),
-                        None => quote,
-                    }
+                    None => quote!(),
                 }
             }).collect()
         };
 
         let effect_quote = quote! {
-            if let Ok(l) = ::leptos_fluent::current_locale() {
+            if let Ok(l) = ::leptos_fluent::current_locale::current_locale() {
                 lang = ::leptos_fluent::l(&l, &LANGUAGES);
                 if let Some(l) = lang {
                     #initial_language_from_system_to_data_file_quote
@@ -265,33 +276,19 @@ pub fn leptos_fluent(
 
         initial_language_from_system
             .iter()
-            .map(|param| {
-                let quote = match param.lit {
-                    Some(ref lit) => match lit.value {
-                        true => quote! {
-                            if lang.is_none() {
-                                #effect_quote
-                            }
-                        },
-                        false => quote!(),
-                    },
-                    None => match param.expr {
-                        Some(ref expr) => quote! {
-                            if #expr && lang.is_none() {
-                                #effect_quote
-                            }
-                        },
-                        None => quote!(),
-                    },
-                };
-
-                match quote.is_empty() {
-                    true => quote!(),
-                    false => match param.exprpath {
-                        Some(ref path) => quote!(#path{#quote}),
-                        None => quote,
-                    },
+            .map(|param| match param.expr {
+                Some(ref expr) => {
+                    let q = quote! {
+                        if #expr && lang.is_none() {
+                            #effect_quote
+                        }
+                    };
+                    match param.exprpath {
+                        Some(ref path) => quote!(#path{#q}),
+                        None => q,
+                    }
                 }
+                None => quote!(),
             })
             .collect()
     };
@@ -311,21 +308,15 @@ pub fn leptos_fluent(
         set_language_to_data_file
             .iter()
             .map(|param| {
-                let set_language_to_data_file_quote = match param.lit {
-                    Some(ref lit) => match lit.value {
-                        true => quote! { #data_file_key_quote },
-                        false => quote! { "" },
+                let set_language_to_data_file_quote = match param.expr {
+                    Some(ref expr) => quote! {
+                        if #expr {
+                            #data_file_key_quote
+                        } else {
+                            ""
+                        }
                     },
-                    None => match param.expr {
-                        Some(ref expr) => quote! {
-                            if #expr {
-                                #data_file_key_quote
-                            } else {
-                                ""
-                            }
-                        },
-                        None => quote! { "" },
-                    },
+                    None => quote! { "" },
                 };
 
                 // TODO: optimize checking if empty at compile time when literal
@@ -341,27 +332,19 @@ pub fn leptos_fluent(
                     });
                 };
 
-                let quote = match param.lit {
-                    Some(ref lit) => match lit.value {
-                        true => effect_quote,
-                        false => quote!(),
-                    },
-                    None => match param.expr {
-                        Some(ref expr) => quote! {
+                match param.expr {
+                    Some(ref expr) => {
+                        let q = quote! {
                             if #expr {
                                 #effect_quote
                             }
-                        },
-                        None => quote!(),
-                    },
-                };
-
-                match quote.is_empty() {
-                    true => quote!(),
-                    false => match param.exprpath {
-                        Some(ref path) => quote!(#path{#quote}),
-                        None => quote,
-                    },
+                        };
+                        match param.exprpath {
+                            Some(ref path) => quote!(#path{#q}),
+                            None => q,
+                        }
+                    }
+                    None => quote!(),
                 }
             })
             .collect();
@@ -374,21 +357,15 @@ pub fn leptos_fluent(
         initial_language_from_data_file
             .iter()
             .map(|param| {
-                let initial_language_from_data_file_quote = match param.lit {
-                    Some(ref lit) => match lit.value() {
-                        true => quote! { #data_file_key_quote },
-                        false => quote! { "" },
+                let initial_language_from_data_file_quote = match param.expr {
+                    Some(ref expr) => quote! {
+                        if #expr {
+                            #data_file_key_quote
+                        } else {
+                            ""
+                        }
                     },
-                    None => match param.expr {
-                        Some(ref expr) => quote! {
-                            if #expr {
-                                #data_file_key_quote
-                            } else {
-                                ""
-                            }
-                        },
-                        None => quote! { "" },
-                    },
+                    None => quote! { "" },
                 };
 
                 let effect_quote = quote! {
@@ -402,31 +379,19 @@ pub fn leptos_fluent(
                     }
                 };
 
-                let quote = match param.lit {
-                    Some(ref lit) => match lit.value() {
-                        true => quote! {
-                            if lang.is_none() {
-                                #effect_quote
-                            }
-                        },
-                        false => quote!(),
-                    },
-                    None => match param.expr {
-                        Some(ref expr) => quote! {
+                match param.expr {
+                    Some(ref expr) => {
+                        let q = quote! {
                             if #expr && lang.is_none() {
                                 #effect_quote
                             }
-                        },
-                        None => quote!(),
-                    },
-                };
-
-                match quote.is_empty() {
-                    true => quote!(),
-                    false => match param.exprpath {
-                        Some(ref path) => quote!(#path{#quote}),
-                        None => quote,
-                    },
+                        };
+                        match param.exprpath {
+                            Some(ref path) => quote!(#path{#q}),
+                            None => q,
+                        }
+                    }
+                    None => quote!(),
                 }
             })
             .collect();
@@ -451,29 +416,19 @@ pub fn leptos_fluent(
 
             initial_language_from_server_function_to_cookie
                 .iter()
-                .map(|param| {
-                    let quote = match param.lit {
-                        Some(ref lit) => match lit.value {
-                            true => effect_quote.clone(),
-                            false => quote!(),
-                        },
-                        None => match param.expr {
-                            Some(ref expr) => quote! {
-                                if #expr {
-                                    #effect_quote
-                                }
-                            },
-                            None => quote!(),
-                        },
-                    };
-
-                    match quote.is_empty() {
-                        true => quote!(),
-                        false => match param.exprpath {
-                            Some(ref path) => quote!(#path{#quote}),
-                            None => quote,
-                        },
+                .map(|param| match param.expr {
+                    Some(ref expr) => {
+                        let q = quote! {
+                            if #expr {
+                                #effect_quote
+                            }
+                        };
+                        match param.exprpath {
+                            Some(ref path) => quote!(#path{#q}),
+                            None => q,
+                        }
                     }
+                    None => quote!(),
                 })
                 .collect()
         };
@@ -489,29 +444,19 @@ pub fn leptos_fluent(
 
             initial_language_from_server_function_to_localstorage
                 .iter()
-                .map(|param| {
-                    let quote = match param.lit {
-                        Some(ref lit) => match lit.value {
-                            true => effect_quote.clone(),
-                            false => quote!(),
-                        },
-                        None => match param.expr {
-                            Some(ref expr) => quote! {
-                                if #expr {
-                                    #effect_quote
-                                }
-                            },
-                            None => quote!(),
-                        },
-                    };
-
-                    match quote.is_empty() {
-                        true => quote!(),
-                        false => match param.exprpath {
-                            Some(ref path) => quote!(#path{#quote}),
-                            None => quote,
-                        },
+                .map(|param| match param.expr {
+                    Some(ref expr) => {
+                        let q = quote! {
+                            if #expr {
+                                #effect_quote
+                            }
+                        };
+                        match param.exprpath {
+                            Some(ref path) => quote!(#path{#q}),
+                            None => q,
+                        }
                     }
+                    None => quote!(),
                 })
                 .collect()
         };
@@ -618,27 +563,19 @@ pub fn leptos_fluent(
                                 );
                             };
 
-                            let quote = match param.lit {
-                                Some(ref lit) => match lit.value {
-                                    true => effect_quote,
-                                    false => quote!(),
-                                },
-                                None => match param.expr {
-                                    Some(ref expr) => quote! {
+                            match param.expr {
+                                Some(ref expr) => {
+                                    let q = quote! {
                                         if #expr {
                                             #effect_quote
                                         }
-                                    },
-                                    None => quote!(),
+                                    };
+                                    match param.exprpath {
+                                        Some(ref path) => quote!(#path{#q}),
+                                        None => q,
+                                    }
                                 },
-                            };
-
-                            match quote.is_empty() {
-                                true => quote!(),
-                                false => match param.exprpath {
-                                    Some(ref path) => quote!(#path{#quote}),
-                                    None => quote,
-                                },
+                                None => quote!(),
                             }
                         }).collect();
 
@@ -651,27 +588,19 @@ pub fn leptos_fluent(
                                 );
                             };
 
-                            let quote = match param.lit {
-                                Some(ref lit) => match lit.value {
-                                    true => effect_quote,
-                                    false => quote!(),
-                                },
-                                None => match param.expr {
-                                    Some(ref expr) => quote! {
+                            match param.expr {
+                                Some(ref expr) => {
+                                    let q = quote! {
                                         if #expr {
                                             #effect_quote
                                         }
-                                    },
-                                    None => quote!(),
+                                    };
+                                    match param.exprpath {
+                                        Some(ref path) => quote!(#path{#q}),
+                                        None => q,
+                                    }
                                 },
-                            };
-
-                            match quote.is_empty() {
-                                true => quote!(),
-                                false => match param.exprpath {
-                                    Some(ref path) => quote!(#path{#quote}),
-                                    None => quote,
-                                },
+                                None => quote!(),
                             }
                         }).collect();
 
@@ -737,8 +666,8 @@ pub fn leptos_fluent(
         // Calling `provide_meta_context()` to not show a warning
         #[cfg(feature = "ssr")]
         let previous_html_tag_attrs_quote = quote! {{
-            ::leptos_meta::provide_meta_context();
-            let html_tag_as_string = ::leptos_meta::use_head().html.as_string().unwrap_or("".to_string());
+            ::leptos_fluent::leptos_meta::provide_meta_context();
+            let html_tag_as_string = ::leptos_fluent::leptos_meta::use_head().html.as_string().unwrap_or("".to_string());
             let mut class: Option<::leptos::TextProp> = None;
             let mut lang: Option<::leptos::TextProp> = None;
             let mut dir: Option<::leptos::TextProp> = None;
@@ -763,22 +692,15 @@ pub fn leptos_fluent(
                 let sync_html_tag_dir_bool_quote: proc_macro2::TokenStream = {
                     let quote = sync_html_tag_dir
                         .iter()
-                        .map(|param| {
-                            let quote = match param.lit {
-                                Some(ref lit) => quote! { #lit },
-                                None => match param.expr {
-                                    Some(ref expr) => quote! { #expr },
-                                    None => quote! { false },
-                                },
-                            };
-
-                            match quote.is_empty() {
-                                true => quote! { false },
-                                false => match param.exprpath {
-                                    Some(ref path) => quote!(#path{#quote}),
-                                    None => quote,
-                                },
+                        .map(|param| match param.expr {
+                            Some(ref expr) => {
+                                let q = quote! { #expr };
+                                match param.exprpath {
+                                    Some(ref path) => quote!(#path{#q}),
+                                    None => q,
+                                }
                             }
+                            None => quote! { false },
                         })
                         .collect::<proc_macro2::TokenStream>();
 
@@ -791,8 +713,8 @@ pub fn leptos_fluent(
                 quote! {
                     let l = #get_language_quote;
                     let (class, _, dir) = #previous_html_tag_attrs_quote;
-                    ::leptos_meta::Html(
-                        ::leptos_meta::HtmlProps {
+                    ::leptos_fluent::leptos_meta::Html(
+                        ::leptos_fluent::leptos_meta::HtmlProps {
                             lang: Some(l.id.to_string().into()),
                             dir: if #sync_html_tag_dir_bool_quote {
                                 Some(l.dir.as_str().into())
@@ -828,22 +750,15 @@ pub fn leptos_fluent(
                 let sync_html_tag_lang_bool_quote: proc_macro2::TokenStream = {
                     let quote = sync_html_tag_lang
                         .iter()
-                        .map(|param| {
-                            let quote = match param.lit {
-                                Some(ref lit) => quote! { #lit },
-                                None => match param.expr {
-                                    Some(ref expr) => quote! { #expr },
-                                    None => quote! { false },
-                                },
-                            };
-
-                            match quote.is_empty() {
-                                true => quote! { false },
-                                false => match param.exprpath {
-                                    Some(ref path) => quote!(#path{#quote}),
-                                    None => quote,
-                                },
+                        .map(|param| match param.expr {
+                            Some(ref expr) => {
+                                let q = quote! { #expr };
+                                match param.exprpath {
+                                    Some(ref path) => quote!(#path{#q}),
+                                    None => q,
+                                }
                             }
+                            None => quote! { false },
                         })
                         .collect::<proc_macro2::TokenStream>();
 
@@ -856,8 +771,8 @@ pub fn leptos_fluent(
                 quote! {
                     let l = #get_language_quote;
                     let (class, lang, _) = #previous_html_tag_attrs_quote;
-                    ::leptos_meta::Html(
-                        ::leptos_meta::HtmlProps {
+                    ::leptos_fluent::leptos_meta::Html(
+                        ::leptos_fluent::leptos_meta::HtmlProps {
                             lang: if #sync_html_tag_lang_bool_quote {
                                 Some(l.id.to_string().into())
                             } else {
@@ -890,58 +805,38 @@ pub fn leptos_fluent(
         let sync_html_tag_lang_quote: proc_macro2::TokenStream =
             sync_html_tag_lang
                 .iter()
-                .map(|param| {
-                    let quote = match param.lit {
-                        Some(ref lit) => match lit.value {
-                            true => sync_html_tag_lang_effect_quote.clone(),
-                            false => quote!(),
-                        },
-                        None => match param.expr {
-                            Some(ref expr) => quote! {
-                                if #expr {
-                                    #sync_html_tag_lang_effect_quote
-                                }
-                            },
-                            None => quote!(),
-                        },
-                    };
-
-                    match quote.is_empty() {
-                        true => quote!(),
-                        false => match param.exprpath {
-                            Some(ref path) => quote!(#path{#quote}),
-                            None => quote,
-                        },
+                .map(|param| match param.expr {
+                    Some(ref expr) => {
+                        let q = quote! {
+                            if #expr {
+                                #sync_html_tag_lang_effect_quote
+                            }
+                        };
+                        match param.exprpath {
+                            Some(ref path) => quote!(#path{#q}),
+                            None => q,
+                        }
                     }
+                    None => quote!(),
                 })
                 .collect();
 
         let sync_html_tag_dir_quote: proc_macro2::TokenStream =
             sync_html_tag_dir
                 .iter()
-                .map(|param| {
-                    let quote = match param.lit {
-                        Some(ref lit) => match lit.value {
-                            true => sync_html_tag_dir_effect_quote.clone(),
-                            false => quote!(),
-                        },
-                        None => match param.expr {
-                            Some(ref expr) => quote! {
-                                if #expr {
-                                    #sync_html_tag_dir_effect_quote
-                                }
-                            },
-                            None => quote!(),
-                        },
-                    };
-
-                    match quote.is_empty() {
-                        true => quote!(),
-                        false => match param.exprpath {
-                            Some(ref path) => quote!(#path{#quote}),
-                            None => quote,
-                        },
+                .map(|param| match param.expr {
+                    Some(ref expr) => {
+                        let q = quote! {
+                            if #expr {
+                                #sync_html_tag_dir_effect_quote
+                            }
+                        };
+                        match param.exprpath {
+                            Some(ref path) => quote!(#path{#q}),
+                            None => q,
+                        }
                     }
+                    None => quote!(),
                 })
                 .collect();
 
@@ -971,29 +866,19 @@ pub fn leptos_fluent(
 
         set_language_to_localstorage
             .iter()
-            .map(|param| {
-                let quote = match param.lit {
-                    Some(ref lit) => match lit.value {
-                        true => effect_quote.clone(),
-                        false => quote!(),
-                    },
-                    None => match param.expr {
-                        Some(ref expr) => quote! {
-                            if #expr {
-                                #effect_quote
-                            }
-                        },
-                        None => quote!(),
-                    },
-                };
-
-                match quote.is_empty() {
-                    true => quote!(),
-                    false => match param.exprpath {
-                        Some(ref path) => quote!(#path{#quote}),
-                        None => quote,
-                    },
+            .map(|param| match param.expr {
+                Some(ref expr) => {
+                    let q = quote! {
+                        if #expr {
+                            #effect_quote
+                        }
+                    };
+                    match param.exprpath {
+                        Some(ref path) => quote!(#path{#q}),
+                        None => q,
+                    }
                 }
+                None => quote!(),
             })
             .collect()
     };
@@ -1022,29 +907,19 @@ pub fn leptos_fluent(
 
             initial_language_from_url_param_to_localstorage
                 .iter()
-                .map(|param| {
-                    let quote = match param.lit {
-                        Some(ref lit) => match lit.value {
-                            true => effect_quote.clone(),
-                            false => quote!(),
-                        },
-                        None => match param.expr {
-                            Some(ref expr) => quote! {
-                                if #expr {
-                                    #effect_quote
-                                }
-                            },
-                            None => quote!(),
-                        },
-                    };
-
-                    match quote.is_empty() {
-                        true => quote!(),
-                        false => match param.exprpath {
-                            Some(ref path) => quote!(#path{#quote}),
-                            None => quote,
-                        },
+                .map(|param| match param.expr {
+                    Some(ref expr) => {
+                        let q = quote! {
+                            if #expr {
+                                #effect_quote
+                            }
+                        };
+                        match param.exprpath {
+                            Some(ref path) => quote!(#path{#q}),
+                            None => q,
+                        }
                     }
+                    None => quote!(),
                 })
                 .collect()
         };
@@ -1061,29 +936,19 @@ pub fn leptos_fluent(
 
             initial_language_from_url_param_to_cookie
                 .iter()
-                .map(|param| {
-                    let quote = match param.lit {
-                        Some(ref lit) => match lit.value {
-                            true => effect_quote.clone(),
-                            false => quote!(),
-                        },
-                        None => match param.expr {
-                            Some(ref expr) => quote! {
-                                if #expr {
-                                    #effect_quote
-                                }
-                            },
-                            None => quote!(),
-                        },
-                    };
-
-                    match quote.is_empty() {
-                        true => quote!(),
-                        false => match param.exprpath {
-                            Some(ref path) => quote!(#path{#quote}),
-                            None => quote,
-                        },
+                .map(|param| match param.expr {
+                    Some(ref expr) => {
+                        let q = quote! {
+                            if #expr {
+                                #effect_quote
+                            }
+                        };
+                        match param.exprpath {
+                            Some(ref path) => quote!(#path{#q}),
+                            None => q,
+                        }
                     }
+                    None => quote!(),
                 })
                 .collect()
         };
@@ -1173,34 +1038,22 @@ pub fn leptos_fluent(
 
         initial_language_from_url_param
             .iter()
-            .map(|param| {
-                let quote = match param.lit {
-                    Some(ref lit) => match lit.value {
-                        true => parse_language_quote.clone(),
-                        false => quote!(),
-                    },
-                    None => match param.expr {
-                        Some(ref expr) => {
-                            match parse_language_quote.is_empty() {
-                                true => quote!(),
-                                false => quote! {
-                                    if #expr {
-                                        #parse_language_quote
-                                    }
-                                },
-                            }
-                        }
-                        None => quote!(),
-                    },
-                };
-
-                match quote.is_empty() {
+            .map(|param| match param.expr {
+                Some(ref expr) => match parse_language_quote.is_empty() {
                     true => quote!(),
-                    false => match param.exprpath {
-                        Some(ref path) => quote!(#path{#quote}),
-                        None => quote,
-                    },
-                }
+                    false => {
+                        let q = quote! {
+                            if #expr {
+                                #parse_language_quote
+                            }
+                        };
+                        match param.exprpath {
+                            Some(ref path) => quote!(#path{#q}),
+                            None => q,
+                        }
+                    }
+                },
+                None => quote!(),
             })
             .collect()
     };
@@ -1217,28 +1070,19 @@ pub fn leptos_fluent(
 
         let initial_language_from_localstorage_to_cookie_quote: proc_macro2::TokenStream =
             initial_language_from_localstorage_to_cookie.iter().map(|param| {
-                let quote = match param.lit {
-                    Some(ref lit) => match lit.value {
-                        true => set_cookie_quote.clone(),
-                        false => quote!(),
-                    },
-                    None => match param.expr
-                    {
-                        Some(ref expr) => quote! {
+                match param.expr {
+                    Some(ref expr) => {
+                        let q = quote! {
                             if #expr {
                                 #set_cookie_quote
                             }
-                        },
-                        None => quote!(),
+                        };
+                        match param.exprpath {
+                            Some(ref path) => quote!(#path{#q}),
+                            None => q,
+                        }
                     },
-                };
-
-                match quote.is_empty() {
-                    true => quote!(),
-                    false => match param.exprpath {
-                        Some(ref path) => quote!(#path{#quote}),
-                        None => quote,
-                    }
+                    None => quote!(),
                 }
             }).collect();
 
@@ -1273,33 +1117,19 @@ pub fn leptos_fluent(
 
         initial_language_from_localstorage
             .iter()
-            .map(|param| {
-                let quote = match param.lit {
-                    Some(ref lit) => match lit.value {
-                        true => quote! {
-                            if lang.is_none() {
-                                #localstorage_get_quote
-                            }
-                        },
-                        false => quote!(),
-                    },
-                    None => match param.expr {
-                        Some(ref expr) => quote! {
-                            if #expr && lang.is_none() {
-                                #localstorage_get_quote
-                            }
-                        },
-                        None => quote!(),
-                    },
-                };
-
-                match quote.is_empty() {
-                    true => quote!(),
-                    false => match param.exprpath {
-                        Some(ref path) => quote!(#path{#quote}),
-                        None => quote,
-                    },
+            .map(|param| match param.expr {
+                Some(ref expr) => {
+                    let q = quote! {
+                        if #expr && lang.is_none() {
+                            #localstorage_get_quote
+                        }
+                    };
+                    match param.exprpath {
+                        Some(ref path) => quote!(#path{#q}),
+                        None => q,
+                    }
                 }
+                None => quote!(),
             })
             .collect()
     };
@@ -1323,29 +1153,19 @@ pub fn leptos_fluent(
 
         set_language_to_url_param
             .iter()
-            .map(|param| {
-                let quote = match param.lit {
-                    Some(ref lit) => match lit.value {
-                        true => effect_quote.clone(),
-                        false => quote!(),
-                    },
-                    None => match param.expr {
-                        Some(ref expr) => quote! {
-                            if #expr {
-                                #effect_quote
-                            }
-                        },
-                        None => quote!(),
-                    },
-                };
-
-                match quote.is_empty() {
-                    true => quote!(),
-                    false => match param.exprpath {
-                        Some(ref path) => quote!(#path{#quote}),
-                        None => quote,
-                    },
+            .map(|param| match param.expr {
+                Some(ref expr) => {
+                    let q = quote! {
+                        if #expr {
+                            #effect_quote
+                        }
+                    };
+                    match param.exprpath {
+                        Some(ref path) => quote!(#path{#q}),
+                        None => q,
+                    }
                 }
+                None => quote!(),
             })
             .collect()
     };
@@ -1361,29 +1181,19 @@ pub fn leptos_fluent(
             };
 
             initial_language_from_navigator_to_localstorage.iter().map(|param| {
-                let quote = match param.lit {
-                    Some(ref lit) => match lit.value {
-                        true => effect_quote.clone(),
-                        false => quote!(),
-                    },
-                    None => {
-                        match param.expr {
-                            Some(ref expr) => quote! {
-                                if #expr {
-                                    #effect_quote
-                                }
-                            },
-                            None => quote!(),
+                match param.expr {
+                    Some(ref expr) => {
+                        let q = quote! {
+                            if #expr {
+                                #effect_quote
+                            }
+                        };
+                        match param.exprpath {
+                            Some(ref path) => quote!(#path{#q}),
+                            None => q,
                         }
-                    }
-                };
-
-                match quote.is_empty() {
-                    true => quote!(),
-                    false => match param.exprpath {
-                        Some(ref path) => quote!(#path{#quote}),
-                        None => quote,
                     },
+                    None => quote!(),
                 }
             }).collect()
         };
@@ -1398,29 +1208,19 @@ pub fn leptos_fluent(
             };
 
             initial_language_from_navigator_to_cookie.iter().map(|param| {
-                let quote = match param.lit {
-                    Some(ref lit) => match lit.value {
-                        true => effect_quote.clone(),
-                        false => quote!(),
-                    },
-                    None => {
-                        match param.expr {
-                            Some(ref expr) => quote! {
-                                if #expr {
-                                    #effect_quote
-                                }
-                            },
-                            None => quote!(),
+                match param.expr {
+                    Some(ref expr) => {
+                        let q = quote! {
+                            if #expr {
+                                #effect_quote
+                            }
+                        };
+                        match param.exprpath {
+                            Some(ref path) => quote!(#path{#q}),
+                            None => q,
                         }
-                    }
-                };
-
-                match quote.is_empty() {
-                    true => quote!(),
-                    false => match param.exprpath {
-                        Some(ref path) => quote!(#path{#quote}),
-                        None => quote,
                     },
+                    None => quote!(),
                 }
             }).collect()
         };
@@ -1444,7 +1244,7 @@ pub fn leptos_fluent(
             }).collect();
 
         let window_navigator_languages_quote = quote! {
-            let languages = window().navigator().languages().to_vec();
+            let languages = ::leptos::window().navigator().languages().to_vec();
             for raw_language in languages {
                 let language = raw_language.as_string();
                 if language.is_none() {
@@ -1462,33 +1262,19 @@ pub fn leptos_fluent(
 
         initial_language_from_navigator
             .iter()
-            .map(|param| {
-                let quote = match param.lit {
-                    Some(ref lit) => match lit.value {
-                        true => quote! {
-                            if lang.is_none() {
-                                #window_navigator_languages_quote
-                            }
-                        },
-                        false => quote!(),
-                    },
-                    None => match param.expr {
-                        Some(ref expr) => quote! {
-                            if #expr && lang.is_none() {
-                                #window_navigator_languages_quote
-                            }
-                        },
-                        None => quote!(),
-                    },
-                };
-
-                match quote.is_empty() {
-                    true => quote!(),
-                    false => match param.exprpath {
-                        Some(ref path) => quote!(#path{#quote}),
-                        None => quote,
-                    },
+            .map(|param| match param.expr {
+                Some(ref expr) => {
+                    let q = quote! {
+                        if #expr && lang.is_none() {
+                            #window_navigator_languages_quote
+                        }
+                    };
+                    match param.exprpath {
+                        Some(ref path) => quote!(#path{#q}),
+                        None => q,
+                    }
                 }
+                None => quote!(),
             })
             .collect()
     };
@@ -1508,7 +1294,7 @@ pub fn leptos_fluent(
                 use ::leptos_fluent::web_sys::wasm_bindgen::JsCast;
                 let closure: Box<dyn FnMut(_)> = Box::new(
                     move |_: web_sys::Window| {
-                        let languages = window().navigator().languages().to_vec();
+                        let languages = ::leptos::window().navigator().languages().to_vec();
                         for raw_language in languages {
                             let language = raw_language.as_string();
                             if language.is_none() {
@@ -1535,29 +1321,19 @@ pub fn leptos_fluent(
 
             set_language_from_navigator
                 .iter()
-                .map(|param| {
-                    let quote = match param.lit {
-                        Some(ref lit) => match lit.value {
-                            true => effect_quote.clone(),
-                            false => quote!(),
-                        },
-                        None => match param.expr {
-                            Some(ref expr) => quote! {
-                                if #expr {
-                                    #effect_quote
-                                }
-                            },
-                            None => quote!(),
-                        },
-                    };
-
-                    match quote.is_empty() {
-                        true => quote!(),
-                        false => match param.exprpath {
-                            Some(ref path) => quote!(#path{#quote}),
-                            None => quote,
-                        },
+                .map(|param| match param.expr {
+                    Some(ref expr) => {
+                        let q = quote! {
+                            if #expr {
+                                #effect_quote
+                            }
+                        };
+                        match param.exprpath {
+                            Some(ref path) => quote!(#path{#q}),
+                            None => q,
+                        }
                     }
+                    None => quote!(),
                 })
                 .collect()
         }
@@ -1593,31 +1369,19 @@ pub fn leptos_fluent(
         };
 
         initial_language_from_accept_language_header.iter().map(|param| {
-            let quote = match param.lit {
-                Some(ref lit) => match lit.value {
-                    true => quote! {
-                        if lang.is_none() {
-                            #effect_quote
-                        }
-                    },
-                    false => quote!(),
-                },
-                None => match param.expr {
-                    Some(ref expr) => quote! {
+            match param.expr {
+                Some(ref expr) => {
+                    let q = quote! {
                         if #expr && lang.is_none() {
                             #effect_quote
                         }
-                    },
-                    None => quote!(),
+                    };
+                    match param.exprpath {
+                        Some(ref path) => quote!(#path{#q}),
+                        None => q,
+                    }
                 },
-            };
-
-            match quote.is_empty() {
-                true => quote!(),
-                false => match param.exprpath {
-                    Some(ref path) => quote!(#path{#quote}),
-                    None => quote,
-                },
+                None => quote!(),
             }
         }).collect()
     };
@@ -1645,31 +1409,19 @@ pub fn leptos_fluent(
         };
 
         initial_language_from_accept_language_header.iter().map(|param| {
-            let quote = match param.lit {
-                Some(ref lit) => match lit.value {
-                    true => quote! {
-                        if lang.is_none() {
-                            #effect_quote
-                        }
-                    },
-                    false => quote!(),
-                },
-                None => match param.expr {
-                    Some(ref expr) => quote! {
+            match param.expr {
+                Some(ref expr) => {
+                    let q = quote! {
                         if #expr && lang.is_none() {
                             #effect_quote
                         }
-                    },
-                    None => quote!(),
+                    };
+                    match param.exprpath {
+                        Some(ref path) => quote!(#path{#q}),
+                        None => q,
+                    }
                 },
-            };
-
-            match quote.is_empty() {
-                true => quote!(),
-                false => match param.exprpath {
-                    Some(ref path) => quote!(#path{#quote}),
-                    None => quote,
-                },
+                None => quote!(),
             }
         }).collect()
     };
@@ -1714,27 +1466,19 @@ pub fn leptos_fluent(
             };
 
             initial_language_from_cookie_to_localstorage.iter().map(|param| {
-                let quote = match param.lit {
-                    Some(ref lit) => match lit.value {
-                        true => effect_quote.clone(),
-                        false => quote!(),
-                    },
-                    None => match param.expr {
-                        Some(ref expr) => quote! {
+                match param.expr {
+                    Some(ref expr) => {
+                        let q = quote! {
                             if #expr {
                                 #effect_quote
                             }
-                        },
-                        None => quote!(),
+                        };
+                        match param.exprpath {
+                            Some(ref path) => quote!(#path{#q}),
+                            None => q,
+                        }
                     },
-                };
-
-                match quote.is_empty() {
-                    true => quote!(),
-                    false => match param.exprpath {
-                        Some(ref path) => quote!(#path{#quote}),
-                        None => quote,
-                    },
+                    None => quote!(),
                 }
             }).collect()
         };
@@ -1751,33 +1495,19 @@ pub fn leptos_fluent(
 
         initial_language_from_cookie
             .iter()
-            .map(|param| {
-                let quote = match param.lit {
-                    Some(ref lit) => match lit.value {
-                        true => quote! {
-                            if lang.is_none() {
-                                #parse_client_cookie_quote
-                            }
-                        },
-                        false => quote!(),
-                    },
-                    None => match param.expr {
-                        Some(ref expr) => quote! {
-                            if #expr && lang.is_none() {
-                                #parse_client_cookie_quote
-                            }
-                        },
-                        None => quote!(),
-                    },
-                };
-
-                match quote.is_empty() {
-                    true => quote!(),
-                    false => match param.exprpath {
-                        Some(ref path) => quote!(#path{#quote}),
-                        None => quote,
-                    },
+            .map(|param| match param.expr {
+                Some(ref expr) => {
+                    let q = quote! {
+                        if #expr && lang.is_none() {
+                            #parse_client_cookie_quote
+                        }
+                    };
+                    match param.exprpath {
+                        Some(ref path) => quote!(#path{#q}),
+                        None => q,
+                    }
                 }
+                None => quote!(),
             })
             .collect()
     };
@@ -1796,29 +1526,19 @@ pub fn leptos_fluent(
 
         set_language_to_cookie
             .iter()
-            .map(|param| {
-                let quote = match param.lit {
-                    Some(ref lit) => match lit.value {
-                        true => effect_quote.clone(),
-                        false => quote!(),
-                    },
-                    None => match param.expr {
-                        Some(ref expr) => quote! {
-                            if #expr {
-                                #effect_quote
-                            }
-                        },
-                        None => quote!(),
-                    },
-                };
-
-                match quote.is_empty() {
-                    true => quote!(),
-                    false => match param.exprpath {
-                        Some(ref path) => quote!(#path{#quote}),
-                        None => quote,
-                    },
+            .map(|param| match param.expr {
+                Some(ref expr) => {
+                    let q = quote! {
+                        if #expr {
+                            #effect_quote
+                        }
+                    };
+                    match param.exprpath {
+                        Some(ref path) => quote!(#path{#q}),
+                        None => q,
+                    }
                 }
+                None => quote!(),
             })
             .collect()
     };
@@ -1851,33 +1571,19 @@ pub fn leptos_fluent(
 
         initial_language_from_cookie
             .iter()
-            .map(|param| {
-                let quote = match param.lit {
-                    Some(ref lit) => match lit.value {
-                        true => quote! {
-                            if lang.is_none() {
-                                #effect_quote
-                            }
-                        },
-                        false => quote!(),
-                    },
-                    None => match param.expr {
-                        Some(ref expr) => quote! {
-                            if #expr && lang.is_none() {
-                                #effect_quote
-                            }
-                        },
-                        None => quote!(),
-                    },
-                };
-
-                match quote.is_empty() {
-                    true => quote!(),
-                    false => match param.exprpath {
-                        Some(ref path) => quote!(#path{#quote}),
-                        None => quote,
-                    },
+            .map(|param| match param.expr {
+                Some(ref expr) => {
+                    let q = quote! {
+                        if #expr && lang.is_none() {
+                            #effect_quote
+                        }
+                    };
+                    match param.exprpath {
+                        Some(ref path) => quote!(#path{#q}),
+                        None => q,
+                    }
                 }
+                None => quote!(),
             })
             .collect()
     };
@@ -1911,33 +1617,19 @@ pub fn leptos_fluent(
 
         initial_language_from_cookie
             .iter()
-            .map(|param| {
-                let quote = match param.lit {
-                    Some(ref lit) => match lit.value {
-                        true => quote! {
-                            if lang.is_none() {
-                                #effect_quote
-                            }
-                        },
-                        false => quote!(),
-                    },
-                    None => match param.expr {
-                        Some(ref expr) => quote! {
-                            if #expr && lang.is_none() {
-                                #effect_quote
-                            }
-                        },
-                        None => quote!(),
-                    },
-                };
-
-                match quote.is_empty() {
-                    true => quote!(),
-                    false => match param.exprpath {
-                        Some(ref path) => quote!(#path{#quote}),
-                        None => quote,
-                    },
+            .map(|param| match param.expr {
+                Some(ref expr) => {
+                    let q = quote! {
+                        if #expr && lang.is_none() {
+                            #effect_quote
+                        }
+                    };
+                    match param.exprpath {
+                        Some(ref path) => quote!(#path{#q}),
+                        None => q,
+                    }
                 }
+                None => quote!(),
             })
             .collect()
     };
@@ -1987,31 +1679,44 @@ pub fn leptos_fluent(
     let translations_quote = {
         let loader::Translations { simple, compound } = translations;
 
-        quote! {
-            {
-                let mut all_loaders = Vec::new();
-                all_loaders.extend([#(& #simple),*]);
-                #(
-                    all_loaders.extend(#compound.iter());
-                );*
+        let simple_loaders_quote = quote!([#(& #simple),*]);
+        let extend_simple_loaders_quote =
+            match simple_loaders_quote.to_string() == "[]" {
+                true => quote!(),
+                false => quote! {
+                    for loader in #simple_loaders_quote {
+                        all_loaders.push(loader);
+                    }
+                },
+            };
+        let extend_compound_loaders_quote = quote!(#(
+            all_loaders.extend(#compound);
+        );*);
 
-                all_loaders
-            }
+        match extend_simple_loaders_quote.is_empty()
+            && extend_compound_loaders_quote.is_empty()
+        {
+            true => quote!(Vec::new()),
+            false => quote! {
+                {
+                    let mut all_loaders = Vec::new();
+                    #extend_simple_loaders_quote
+                    #extend_compound_loaders_quote
+
+                    all_loaders
+                }
+            },
         }
     };
 
     let leptos_fluent_provide_meta_context_quote: proc_macro2::TokenStream = {
-        let bool_param = |boolean: &Option<syn::LitBool>,
-                          expr: &Option<syn::Expr>|
-         -> proc_macro2::TokenStream {
-            match boolean {
-                Some(ref lit) => quote! { #lit },
-                None => match expr {
+        let bool_param =
+            |expr: &Option<syn::Expr>| -> proc_macro2::TokenStream {
+                match expr {
                     Some(ref expr) => quote! { #expr },
                     None => quote! { false },
-                },
-            }
-        };
+                }
+            };
 
         let lit_bool_exprs =
             |params: &[LitBoolExpr]| -> proc_macro2::TokenStream {
@@ -2022,7 +1727,7 @@ pub fn leptos_fluent(
                 params
                     .iter()
                     .map(|param| {
-                        let quote = bool_param(&param.lit, &param.expr);
+                        let quote = bool_param(&param.expr);
                         match quote.is_empty() {
                             true => quote!(),
                             false => match param.exprpath {
@@ -2328,6 +2033,7 @@ pub fn leptos_fluent(
     tracing::trace!("{}", debug_quote);
 
     let quote = quote! {
+        #double_braced_warning
         {
             #debug_quote
             #other_quotes

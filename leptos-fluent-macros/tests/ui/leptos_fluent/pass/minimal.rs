@@ -11,12 +11,12 @@ static_loader! {
 
 #[component]
 pub fn App() -> impl IntoView {
-    leptos_fluent! {{
+    leptos_fluent! {
         translations: [TRANSLATIONS],
         locales: "../../../../examples/csr-minimal/locales",
-    }};
+    };
 
-    view! { <p>Foo</p> }
+    view! { <p></p> }
 }
 
 fn main() {}

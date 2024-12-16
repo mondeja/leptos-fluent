@@ -11,7 +11,7 @@ static_loader! {
 
 #[component]
 pub fn App() -> impl IntoView {
-    leptos_fluent! {{
+    leptos_fluent! {
         translations: [TRANSLATIONS],
         languages: "./locales/languages.json",
         locales: "./locales",
@@ -36,13 +36,13 @@ pub fn App() -> impl IntoView {
         initial_language_from_navigator_to_cookie: true,
         initial_language_from_navigator_to_localstorage: true,
         set_language_from_navigator: true,
-    }};
+    };
 
-    view! { <ChildComponent/> }
+    LanguageSelector
 }
 
 #[component]
-fn ChildComponent() -> impl IntoView {
+fn LanguageSelector() -> impl IntoView {
     let i18n = expect_i18n();
 
     view! {

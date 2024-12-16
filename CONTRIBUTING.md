@@ -21,7 +21,7 @@ cargo install wasm-pack
 You need to install a browser and run:
 
 ```sh
-cd tests
+cd end2end
 wasm-pack test --{browser} --headless
 ```
 

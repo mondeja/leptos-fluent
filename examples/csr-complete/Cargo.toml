@@ -11,12 +11,11 @@ path = "src/lib.rs"
 [dependencies]
 leptos = { version = "0.6", features = ["csr"] }
 leptos-fluent = { path = "../../leptos-fluent", features = ["json"] }
-fluent-templates = { version = "0.10", default-features = false, features = [
+fluent-templates = { version = "0.11", default-features = false, features = [
   "macros",
   "walkdir"
 ] }
 console_error_panic_hook = "0"
-web-sys = "0"
 
 [[bin]]
 name = "main"

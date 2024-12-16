@@ -52,10 +52,10 @@ in the [`leptos_fluent!`] macro pointing to a languages file. This file must
 be relative to the _Cargo.toml_ file.
 
 ```rust
-leptos_fluent! {{
+leptos_fluent! {
     languages: "./locales/languages.json",
     // ...
-}}
+}
 ```
 
 ```json
@@ -113,10 +113,10 @@ static_loader! {
 
 #[component]
 pub fn App() -> impl IntoView {
-    leptos_fluent! {{
+    leptos_fluent! {
         translations: [TRANSLATIONS],
         languages: "./locales/languages.json5",
-    }};
+    };
 }
 ```
 
