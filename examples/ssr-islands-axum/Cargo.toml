@@ -23,8 +23,7 @@ wasm-bindgen = "=0.2.99"
 thiserror = "1"
 http = "1"
 serde = "1"
-
-leptos-fluent = { path = "../../leptos-fluent" }
+leptos-fluent = { path = "../../leptos-fluent", features = ["json"] }
 fluent-templates = { version = "0.11", default-features = false, features = [
   "macros",
   "walkdir",

@@ -15,7 +15,7 @@ pub fn App() -> impl IntoView {
         translations: [TRANSLATIONS],
         locales: "../../../../examples/csr-minimal/locales",
         #[cfg(all(not(target_os = "windows"), not(target_os = "macos")))]
-        languages: "../../../../examples/csr-complete/locales/languages.json",
+        cookie_name: "foo"
     };
 
     view! { <p>Foo</p> }
