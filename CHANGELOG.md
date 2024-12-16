@@ -4,6 +4,11 @@
 
 ### Breaking changes
 
+#### Require Leptos v0.7
+
+Support for Leptos v0.6 has been dropped. Now leptos-fluent requires
+Leptos v0.7.
+
 #### Declarative API
 
 Previously, the `leptos_fluent!` macro was providing the I18n context
