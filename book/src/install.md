@@ -70,10 +70,6 @@ leptos-fluent = { version = "0.2", features = ["system"] }
 fluent-templates = "0.11"
 ```
 
-```admonish example
-See the [GTK example](https://github.com/mondeja/leptos-fluent/tree/master/examples/system-gtk).
-```
-
 ## Features
 
 - **Server Side Rendering**: `ssr`
@@ -146,10 +142,6 @@ To enable [`tracing`] support, add the `tracing` feature to **leptos-fluent**:
 [dependencies]
 leptos-fluent = { version = "0.2", features = ["tracing"] }
 fluent-templates = "0.11"
-```
-
-```admonish example
-See the [GTK example](https://github.com/mondeja/leptos-fluent/tree/master/examples/system-gtk).
 ```
 
 [`fluent-templates`]: https://github.com/XAMPPRocky/fluent-templates

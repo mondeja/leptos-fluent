@@ -18,20 +18,6 @@ whichs provides utilities for parsing the Fluent syntax.
 
 [`LanguageIdentifier`]: https://docs.rs/unic-langid/latest/unic_langid/struct.LanguageIdentifier.html
 
-### How to get the [i18n context] at initialization?
-
-```rust
-use leptos_fluent::leptos_fluent;
-
-let i18n = leptos_fluent! {
-    // ...
-};
-
-leptos::logging::log!("i18n context: {i18n:#?}");
-```
-
-[i18n context]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html
-
 ### Custom [cookie attributes] are invalid
 
 Use an expression to set the cookie attributes and will not be validated.
@@ -62,9 +48,7 @@ which is what `tr!` and `move_tr!` do internally. Instead, we can pass the conte
 as first parameter to the macros:
 
 ```rust
-let i18n = leptos_fluent! {
-    // ...
-};
+let i18n = expect_i18n();
 
 let translated_signal = move_tr!(i18n, "my-translation");
 ```
@@ -91,9 +75,6 @@ pub fn App() -> impl IntoView {
 
 #[component]
 pub fn Child() -> impl IntoView {
-    leptos_fluent! {
-        // ...
-    };
     view! {
         <div on:click=|_| {
             tr!("my-translation");
@@ -120,110 +101,12 @@ pub fn App() -> impl IntoView {
 
 #[component]
 pub fn Child() -> impl IntoView {
-    let i18n = leptos_fluent! {
-        // ...
-    };
+    let i18n = expect_i18n();
     view! {
         <div on:click=|_| {
             tr!(i18n, "my-translation");
         }>"CLICK ME!"</div>
     }
-}
-```
-
-#### Confused about what context is used?
-
-Take into account that the reactive ownership graph is not the same as the component
-tree in Leptos. For example, the next code:
-
-```rust
-#[component]
-fn Foo() -> impl IntoView {
-    provide_context::<usize>(0);
-
-    view! {
-        <h1>"Foo"</h1>
-        {
-            let value = expect_context::<usize>();
-            view! {
-                <p>"Context value before Bar: "{value}</p>
-            }
-        }
-        <Bar/>
-        {
-            let value = expect_context::<usize>();
-            view! {
-                <p>"Context value after Bar -> Baz: "{value}</p>
-            }
-        }
-    }
-}
-
-#[component]
-fn Bar() -> impl IntoView {
-    provide_context::<usize>(1);
-    view! {
-        <h1>"Bar"</h1>
-        {
-            let value = expect_context::<usize>();
-            view! {
-                <p>"Context value before Baz: "{value}</p>
-            }
-        }
-        <Baz/>
-    }
-}
-
-#[component]
-fn Baz() -> impl IntoView {
-    provide_context::<usize>(2);
-    view! {
-        <h1>"Baz"</h1>
-    }
-}
-```
-
-Renders:
-
-```html
-<h1>Foo</h1>
-<p>Context value before Bar: 0</p>
-<h1>Bar</h1>
-<p>Context value before Baz: 1</p>
-<h1>Baz</h1>
-<p>Context value after Bar -&gt; Baz: 2</p>
-```
-
-Because `Baz` is a sibling of `Foo` children in the reactive graph. But maybe
-you think that is just a children of `Bar` in the component tree and that is
-outside the scope of `Foo` children. That doesn't matter for Leptos.
-
-In those cases where you're using two or more contexts, pass the context as the
-first argument to the `tr!` and `move_tr!` macros to avoid confusion.
-
-```rust
-#[component]
-fn Foo() -> impl IntoView {
-    let i18n = leptos_fluent! {
-        translations: [TRANSLATION_WITH_ONLY_FOO],
-        // ...
-    };
-    <p>{move_tr!("my-translation-from-foo")}</p>
-    <Bar/>
-    // The next message will not be translated because after `<Bar>`
-    // now the i18n context accessed by `move_tr!` is the one from `Bar`
-    <p>{move_tr!("my-translation-from-foo")}</p>
-    // instead, use:
-    <p>{move_tr!(i18n, "my-translation-from-foo")}</p>
-}
-
-#[component]
-fn Bar() -> impl IntoView {
-    let i18n = leptos_fluent! {
-        translations: [TRANSLATION_WITH_ONLY_BAR],
-        // ...
-    };
-    <p>{move_tr!("my-translation-from-bar")}</p>
 }
 ```
 
@@ -311,12 +194,13 @@ Use `provide_meta_context` at the macro initialization and get them
 with the method `I18n::meta`:
 
 ```rust
-let i18n = leptos_fluent! {
+leptos_fluent! {
     // ...
     provide_meta_context: true,
 };
 
-println!("Macro parameters: {:?}", i18n.meta().unwrap());
+// ... later
+println!("Macro parameters: {:?}", expect_i18n().meta().unwrap());
 ```
 
 ### [Configuration conditional checks]
