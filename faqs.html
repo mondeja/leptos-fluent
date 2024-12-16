@@ -390,7 +390,7 @@ fn render_language(lang: &amp;'static Language) -&gt; impl IntoView { ... }</cod
 <p>The translations reside on the client side, so the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html"><code>I18n</code></a> can not be
 accessed as context on server actions. Pass the translations as values
 if the bandwidth is not a problem or use your own statics on server side.</p>
-<pre><code class="language-rust">use leptos::*;
+<pre><code class="language-rust">use leptos::prelude::*;
 use leptos_fluent::{tr, Language};
 
 /// Server action showing client-side translated message on console

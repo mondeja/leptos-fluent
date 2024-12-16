@@ -170,17 +170,18 @@
 <li><a href="#language-files">Language files</a></li>
 <li><a href="#tracking-locales-files-with-cargo-leptos">Tracking locales files with <code>cargo leptos</code></a></li>
 <li><a href="#tracing">Tracing</a></li>
+<li><a href="#compatibility">Compatibility</a></li>
 </ul>
 <h2 id="csr"><a class="header" href="#csr">CSR</a></h2>
 <p>For client side rendering apps install <strong>leptos-fluent</strong> and <a href="https://github.com/XAMPPRocky/fluent-templates"><code>fluent-templates</code></a>:</p>
 <pre><code class="language-toml">[dependencies]
-leptos-fluent = "0.1"
+leptos-fluent = "0.2"
 fluent-templates = "0.11"
 </code></pre>
 <details>
 <summary>Minimal (recommended)</summary>
 <pre><code class="language-toml">[dependencies]
-leptos-fluent = { version = "0.1", default-features = false }
+leptos-fluent = "0.2"
 fluent-templates = { version = "0.11", default-features = false, features = [
   "macros",
   "walkdir"
@@ -196,7 +197,7 @@ and <code>fluent-templates</code>.</p>
 and activate the <code>hydrate</code>, <code>ssr</code> and <code>actix</code>/<code>axum</code> features in their
 respective features set.</p>
 <pre><code class="language-toml">[dependencies]
-leptos-fluent = "0.1"
+leptos-fluent = "0.2"
 fluent-templates = "0.11"
 
 [features]
@@ -217,7 +218,7 @@ watch-additional-files = ["locales"]
 applications. You need to install <code>leptos-fluent</code>, <a href="https://github.com/XAMPPRocky/fluent-templates"><code>fluent-templates</code></a>
 and enable the <code>system</code> feature:</p>
 <pre><code class="language-toml">[dependencies]
-leptos-fluent = { version = "0.1", features = ["system"] }
+leptos-fluent = { version = "0.2", features = ["system"] }
 fluent-templates = "0.11"
 </code></pre>
 <div id="admonition-example" class="admonition admonish-example" role="note" aria-labelledby="admonition-example-title">
@@ -249,7 +250,7 @@ fluent-templates = "0.11"
 <p><strong>leptos-fluent</strong> builds nightly functionalities by enabling the <code>nightly</code>
 feature:</p>
 <pre><code class="language-toml">[dependencies]
-leptos-fluent = { version = "0.1", features = ["nightly"] }
+leptos-fluent = { version = "0.2", features = ["nightly"] }
 fluent-templates = "0.11"
 </code></pre>
 <h2 id="language-files"><a class="header" href="#language-files">Language files</a></h2>
@@ -259,7 +260,7 @@ enabled:</p>
 <!-- markdownlint-disable MD013 -->
 <pre><code class="language-toml">[dependencies]
 fluent-templates = "0.11"
-leptos-fluent = { version = "0.1", features = ["json5"], default-features = false }
+leptos-fluent = { version = "0.2", features = ["json5"], default-features = false }
 </code></pre>
 <!-- markdownlint-enable MD013 -->
 <div id="admonition-tip" class="admonition admonish-tip" role="note" aria-labelledby="admonition-tip-title">
@@ -288,7 +289,7 @@ watch-additional-files = ["examples/csr/locales"]
 <h2 id="tracing"><a class="header" href="#tracing">Tracing</a></h2>
 <p>To enable <a href="https://docs.rs/tracing/latest/tracing"><code>tracing</code></a> support, add the <code>tracing</code> feature to <strong>leptos-fluent</strong>:</p>
 <pre><code class="language-toml">[dependencies]
-leptos-fluent = { version = "0.1", features = ["tracing"] }
+leptos-fluent = { version = "0.2", features = ["tracing"] }
 fluent-templates = "0.11"
 </code></pre>
 <div id="admonition-example-1" class="admonition admonish-example" role="note" aria-labelledby="admonition-example-1-title">
@@ -302,7 +303,12 @@ fluent-templates = "0.11"
 <p>See the <a href="https://github.com/mondeja/leptos-fluent/tree/master/examples/system-gtk">GTK example</a>.</p>
 </div>
 </div>
-
+<h2 id="compatibility"><a class="header" href="#compatibility">Compatibility</a></h2>
+<div class="table-wrapper"><table><thead><tr><th><strong>leptos-fluent</strong></th><th><strong>leptos</strong></th></tr></thead><tbody>
+<tr><td>0.2</td><td>0.7</td></tr>
+<tr><td>0.1</td><td>0.6</td></tr>
+</tbody></table>
+</div>
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
