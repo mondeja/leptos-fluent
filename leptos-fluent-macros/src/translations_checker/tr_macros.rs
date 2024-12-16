@@ -173,10 +173,10 @@ fn value_from_literal(literal: &proc_macro2::Literal) -> String {
     }
 }
 
-impl<'ast> TranslationsMacrosVisitor {
+impl TranslationsMacrosVisitor {
     fn visit_maybe_macro_tokens_stream(
         &mut self,
-        tokens: &'ast proc_macro2::TokenStream,
+        tokens: &proc_macro2::TokenStream,
     ) {
         // Inside a macro group like `view!`
         for token in tokens.clone() {
