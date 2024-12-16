@@ -4,7 +4,7 @@ use fluent_templates::static_loader;
 use fluent_templates::StaticLoader;
 use leptos::*;
 use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, tr};
-use leptos_meta::*;
+use leptos_meta::Title;
 use leptos_router::*;
 
 static_loader! {

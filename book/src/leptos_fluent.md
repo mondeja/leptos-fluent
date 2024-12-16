@@ -270,7 +270,7 @@ Must be a [glob] relative to the _Cargo.toml_ file.
 ### <span style="opacity:.5">CSR </span> | `sync_html_tag_lang`
 
 Synchronize the global [`<html lang="...">` attribute] with current language
-using [`leptos::create_effect`]. Can be a literal boolean or an expression
+using [`Effect::new`]. Can be a literal boolean or an expression
 that will be evaluated at runtime.
 
 ```rust
@@ -283,7 +283,7 @@ leptos_fluent! {
 ### <span style="opacity:.5">CSR </span> | `sync_html_tag_dir`
 
 Synchronize the global [`<html dir="...">` attribute] with current language
-using [`leptos::create_effect`].
+using [`Effect::new`].
 
 Can be a literal boolean or an expression that will be evaluated at runtime.
 
@@ -865,7 +865,7 @@ leptos_fluent! {
 [`<html dir="...">` attribute]: https://developer.mozilla.org/docs/Web/HTML/Global_attributes/dir
 [local storage]: https://developer.mozilla.org/docs/Web/API/Window/localStorage
 [`navigator.languages`]: https://developer.mozilla.org/docs/Web/API/Navigator/languages
-[`leptos::create_effect`]: https://docs.rs/leptos/latest/leptos/fn.create_effect.html
+[`Effect::new`]: https://docs.rs/leptos/latest/leptos/prelude/struct.Effect.html
 [cookie attributes]: https://developer.mozilla.org/docs/Web/API/Document/cookie#write_a_new_cookie
 [`Accept-Language`]: https://developer.mozilla.org/docs/Web/HTTP/Headers/Accept-Language
 [glob]: https://docs.rs/globwalk/latest/globwalk/fn.glob.html
