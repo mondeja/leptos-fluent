@@ -442,7 +442,7 @@ translations are correct and that there are no missing translations.</p>
 </ul>
 <h3 id="csr---sync_html_tag_lang"><a class="header" href="#csr---sync_html_tag_lang"><span style="opacity:.5">CSR </span> | <code>sync_html_tag_lang</code></a></h3>
 <p>Synchronize the global <a href="https://developer.mozilla.org/docs/Web/HTML/Global_attributes/lang"><code>&lt;html lang="..."&gt;</code> attribute</a> with current language
-using <a href="https://docs.rs/leptos/latest/leptos/fn.create_effect.html"><code>leptos::create_effect</code></a>. Can be a literal boolean or an expression
+using <a href="https://docs.rs/leptos/latest/leptos/prelude/struct.Effect.html"><code>Effect::new</code></a>. Can be a literal boolean or an expression
 that will be evaluated at runtime.</p>
 <pre><code class="language-rust">leptos_fluent! {
     // ...
@@ -450,7 +450,7 @@ that will be evaluated at runtime.</p>
 }</code></pre>
 <h3 id="csr---sync_html_tag_dir"><a class="header" href="#csr---sync_html_tag_dir"><span style="opacity:.5">CSR </span> | <code>sync_html_tag_dir</code></a></h3>
 <p>Synchronize the global <a href="https://developer.mozilla.org/docs/Web/HTML/Global_attributes/dir"><code>&lt;html dir="..."&gt;</code> attribute</a> with current language
-using <a href="https://docs.rs/leptos/latest/leptos/fn.create_effect.html"><code>leptos::create_effect</code></a>.</p>
+using <a href="https://docs.rs/leptos/latest/leptos/prelude/struct.Effect.html"><code>Effect::new</code></a>.</p>
 <p>Can be a literal boolean or an expression that will be evaluated at runtime.</p>
 <pre><code class="language-rust">leptos_fluent! {
     // ...

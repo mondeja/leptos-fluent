@@ -355,7 +355,7 @@ fn Bar() -&gt; impl IntoView {
     };
     &lt;p&gt;{move_tr!("my-translation-from-bar")}&lt;/p&gt;
 }</code></pre>
-<h3 id="why-examples-dont-use-for-component"><a class="header" href="#why-examples-dont-use-for-component">Why examples don't use <a href="https://docs.rs/leptos/latest/leptos/fn.For.html"><code>&lt;For/&gt;</code></a> component?</a></h3>
+<h3 id="why-examples-dont-use-for-component"><a class="header" href="#why-examples-dont-use-for-component">Why examples don't use <a href="https://docs.rs/leptos/latest/leptos/control_flow/fn.For.html"><code>&lt;For/&gt;</code></a> component?</a></h3>
 <div id="admonition-bug" class="admonition admonish-bug" role="note" aria-labelledby="admonition-bug-title">
 <div class="admonition-title">
 <div id="admonition-bug-title">
@@ -364,12 +364,12 @@ fn Bar() -&gt; impl IntoView {
 <a class="admonition-anchor-link" href="#admonition-bug"></a>
 </div>
 <div>
-<p>There are some cases in which the <a href="https://docs.rs/leptos/latest/leptos/fn.For.html"><code>&lt;For/&gt;</code></a> component is not reproducible between
+<p>There are some cases in which the <a href="https://docs.rs/leptos/latest/leptos/control_flow/fn.For.html"><code>&lt;For/&gt;</code></a> component is not reproducible between
 SSR and hydrate modes leading to different renders, so decided to use a
 simple vector to not bring confusion to main examples.</p>
 </div>
 </div>
-<p>In any case, the <a href="https://docs.rs/leptos/latest/leptos/fn.For.html"><code>&lt;For/&gt;</code></a> component is safe on CSR contexts and
+<p>In any case, the <a href="https://docs.rs/leptos/latest/leptos/control_flow/fn.For.html"><code>&lt;For/&gt;</code></a> component is safe on CSR contexts and
 <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html"><code>leptos_fluent::Language</code></a> implement <code>Hash</code> and <code>Eq</code> traits to be
 able to be passed directly to <code>key</code>s properties trigerring reactivity
 depending on the current active language.</p>

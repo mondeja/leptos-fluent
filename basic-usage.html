@@ -310,7 +310,7 @@ app is not responding to changes in signal values in the way you expect.
 
 move || tr!("language-selected-is", { "lang" =&gt; i18n.language.get().name })</code></pre>
 <p>The main difference is that <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.move_tr.html"><code>move_tr!</code></a> encapsulates the movement in a
-<a href="https://docs.rs/leptos/latest/leptos/struct.Signal.html"><code>leptos::Signal</code></a>, strictly would be rewritten as:</p>
+<a href="https://docs.rs/reactive_graph/0.1.0/reactive_graph/wrappers/read/struct.Signal.html"><code>leptos::Signal</code></a>, strictly would be rewritten as:</p>
 <pre><code class="language-rust">leptos::Signal::derive(move || tr!("select-a-language"))</code></pre>
 <h2 id="retrieving-the-i18n-context"><a class="header" href="#retrieving-the-i18n-context">Retrieving the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html"><code>I18n</code></a> context</a></h2>
 <p>Use the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.expect_i18n.html"><code>expect_i18n</code></a> function to get the current i18n context:</p>

@@ -484,7 +484,7 @@ app is not responding to changes in signal values in the way you expect.
 
 move || tr!("language-selected-is", { "lang" =&gt; i18n.language.get().name })</code></pre>
 <p>The main difference is that <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.move_tr.html"><code>move_tr!</code></a> encapsulates the movement in a
-<a href="https://docs.rs/leptos/latest/leptos/struct.Signal.html"><code>leptos::Signal</code></a>, strictly would be rewritten as:</p>
+<a href="https://docs.rs/reactive_graph/0.1.0/reactive_graph/wrappers/read/struct.Signal.html"><code>leptos::Signal</code></a>, strictly would be rewritten as:</p>
 <pre><code class="language-rust">leptos::Signal::derive(move || tr!("select-a-language"))</code></pre>
 <h2 id="retrieving-the-i18n-context"><a class="header" href="#retrieving-the-i18n-context">Retrieving the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html"><code>I18n</code></a> context</a></h2>
 <p>Use the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.expect_i18n.html"><code>expect_i18n</code></a> function to get the current i18n context:</p>
@@ -1060,7 +1060,7 @@ fn Bar() -&gt; impl IntoView {
     };
     &lt;p&gt;{move_tr!("my-translation-from-bar")}&lt;/p&gt;
 }</code></pre>
-<h3 id="why-examples-dont-use-for-component"><a class="header" href="#why-examples-dont-use-for-component">Why examples don't use <a href="https://docs.rs/leptos/latest/leptos/fn.For.html"><code>&lt;For/&gt;</code></a> component?</a></h3>
+<h3 id="why-examples-dont-use-for-component"><a class="header" href="#why-examples-dont-use-for-component">Why examples don't use <a href="https://docs.rs/leptos/latest/leptos/control_flow/fn.For.html"><code>&lt;For/&gt;</code></a> component?</a></h3>
 <div id="admonition-bug" class="admonition admonish-bug" role="note" aria-labelledby="admonition-bug-title">
 <div class="admonition-title">
 <div id="admonition-bug-title">
@@ -1069,12 +1069,12 @@ fn Bar() -&gt; impl IntoView {
 <a class="admonition-anchor-link" href="faqs.html#admonition-bug"></a>
 </div>
 <div>
-<p>There are some cases in which the <a href="https://docs.rs/leptos/latest/leptos/fn.For.html"><code>&lt;For/&gt;</code></a> component is not reproducible between
+<p>There are some cases in which the <a href="https://docs.rs/leptos/latest/leptos/control_flow/fn.For.html"><code>&lt;For/&gt;</code></a> component is not reproducible between
 SSR and hydrate modes leading to different renders, so decided to use a
 simple vector to not bring confusion to main examples.</p>
 </div>
 </div>
-<p>In any case, the <a href="https://docs.rs/leptos/latest/leptos/fn.For.html"><code>&lt;For/&gt;</code></a> component is safe on CSR contexts and
+<p>In any case, the <a href="https://docs.rs/leptos/latest/leptos/control_flow/fn.For.html"><code>&lt;For/&gt;</code></a> component is safe on CSR contexts and
 <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html"><code>leptos_fluent::Language</code></a> implement <code>Hash</code> and <code>Eq</code> traits to be
 able to be passed directly to <code>key</code>s properties trigerring reactivity
 depending on the current active language.</p>
@@ -1435,7 +1435,7 @@ translations are correct and that there are no missing translations.</p>
 </ul>
 <h3 id="csr---sync_html_tag_lang"><a class="header" href="#csr---sync_html_tag_lang"><span style="opacity:.5">CSR </span> | <code>sync_html_tag_lang</code></a></h3>
 <p>Synchronize the global <a href="https://developer.mozilla.org/docs/Web/HTML/Global_attributes/lang"><code>&lt;html lang="..."&gt;</code> attribute</a> with current language
-using <a href="https://docs.rs/leptos/latest/leptos/fn.create_effect.html"><code>leptos::create_effect</code></a>. Can be a literal boolean or an expression
+using <a href="https://docs.rs/leptos/latest/leptos/prelude/struct.Effect.html"><code>Effect::new</code></a>. Can be a literal boolean or an expression
 that will be evaluated at runtime.</p>
 <pre><code class="language-rust">leptos_fluent! {
     // ...
@@ -1443,7 +1443,7 @@ that will be evaluated at runtime.</p>
 }</code></pre>
 <h3 id="csr---sync_html_tag_dir"><a class="header" href="#csr---sync_html_tag_dir"><span style="opacity:.5">CSR </span> | <code>sync_html_tag_dir</code></a></h3>
 <p>Synchronize the global <a href="https://developer.mozilla.org/docs/Web/HTML/Global_attributes/dir"><code>&lt;html dir="..."&gt;</code> attribute</a> with current language
-using <a href="https://docs.rs/leptos/latest/leptos/fn.create_effect.html"><code>leptos::create_effect</code></a>.</p>
+using <a href="https://docs.rs/leptos/latest/leptos/prelude/struct.Effect.html"><code>Effect::new</code></a>.</p>
 <p>Can be a literal boolean or an expression that will be evaluated at runtime.</p>
 <pre><code class="language-rust">leptos_fluent! {
     // ...
