@@ -4,7 +4,7 @@ use fluent_templates::static_loader;
 use fluent_templates::StaticLoader;
 use leptos::*;
 use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, tr};
-use leptos_meta::*;
+use leptos_meta::Title;
 use leptos_router::*;
 
 static_loader! {
@@ -44,17 +44,17 @@ pub fn App() -> impl IntoView {
     };
 
     view! {
-        <Title text=move || tr!("welcome-to-leptos")/>
+        <Title text=move || tr!("welcome-to-leptos") />
 
         // content for this welcome page
         <Router fallback=|| {
             let mut outside_errors = Errors::default();
             outside_errors.insert_with_default_key(AppError::NotFound);
-            view! { <ErrorTemplate outside_errors/> }.into_view()
+            view! { <ErrorTemplate outside_errors /> }.into_view()
         }>
             <main>
                 <Routes>
-                    <Route path="" view=HomePage/>
+                    <Route path="" view=HomePage />
                 </Routes>
             </main>
         </Router>

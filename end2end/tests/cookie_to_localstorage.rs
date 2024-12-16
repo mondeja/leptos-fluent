@@ -20,7 +20,7 @@ pub fn App() -> impl IntoView {
         localstorage_key: LOCALSTORAGE_KEY,
     };
 
-    view! { <LanguageSelector/> }
+    view! { <LanguageSelector /> }
 }
 
 #[wasm_bindgen_test]

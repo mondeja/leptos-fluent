@@ -20,7 +20,7 @@
 //! ```toml
 //! [dependencies]
 //! leptos-fluent = "0.1"
-//! fluent-templates = "0.10"
+//! fluent-templates = "0.11"
 //!
 //! [features]
 //! hydrate = [
@@ -101,7 +101,7 @@
 //!
 //!         // Client side options
 //!         // -------------------
-//!         // Synchronize `<html lang="...">` attribute with the
+//!         // Synchronize `<html lang="...">` attribute with
 //!         // current active language.
 //!         sync_html_tag_lang: true,
 //!         // Synchronize `<html dir="...">` attribute with `"ltr"`,
@@ -109,11 +109,9 @@
 //!         sync_html_tag_dir: true,
 //!         // Update language on URL parameter when changes.
 //!         set_language_to_url_param: true,
-//!         // Set initial language of the user from
-//!         // URL in local storage.
+//!         // Set initial language of user from URL in local storage.
 //!         initial_language_from_url_param_to_localstorage: true,
-//!         // Set initial language of the user from
-//!         // URL in a cookie.
+//!         // Set initial language of user from URL in a cookie.
 //!         initial_language_from_url_param_to_cookie: true,
 //!         // Key used to get and set the current language of the
 //!         // user on local storage. By default is `"lang"`.
@@ -129,14 +127,12 @@
 //!         // Get initial language from `navigator.languages`
 //!         // if not found in local storage.
 //!         initial_language_from_navigator: true,
-//!         // Set initial language of the user from
-//!         // the navigator to local storage.
+//!         // Set initial language of user from navigator to local storage.
 //!         initial_language_from_navigator_to_localstorage: true,
-//!         // Set initial language of the user from
-//!         // the navigator to a cookie.
+//!         // Set initial language of user from navigator to a cookie.
 //!         initial_language_from_navigator_to_cookie: true,
 //!         // Attributes to set for language cookie.
-//!         // By default is `""`.
+//!         // By default `""`.
 //!         cookie_attrs: "Secure; Path=/; Max-Age=600",
 //!         // Update language on cookie when the language changes.
 //!         set_language_to_cookie: true,
@@ -152,12 +148,12 @@
 //!         // Server and client side options
 //!         // ------------------------------
 //!         // Name of the cookie to get and set the current active
-//!         // language. By default, it is `"lf-lang"`.
+//!         // language. By default `"lf-lang"`.
 //!         cookie_name: "lang",
 //!         // Set initial language from cookie.
 //!         initial_language_from_cookie: true,
 //!         // URL parameter to use setting the language in the URL.
-//!         // By default is `"lang"`.
+//!         // By default `"lang"`.
 //!         url_param: "lang",
 //!         // Set initial language of the user from an URL parameter.
 //!         initial_language_from_url_param: true,
@@ -172,7 +168,7 @@
 //!         // Get initial language from a data file.
 //!         initial_language_from_data_file: true,
 //!         // Key to use to name the data file. Should be unique per
-//!         // application. By default is `"leptos-fluent"`.
+//!         // application. By default `"leptos-fluent"`.
 //!         data_file_key: "my-app",
 //!         // Set the language selected to a data file.
 //!         set_language_to_data_file: true,
@@ -241,7 +237,7 @@
 //! - **Axum integration**: `axum`
 //! - **Nightly toolchain**: `nightly`
 //! - **Desktop applications**: `system`
-//! - **JSON languages file**: `json` (enabled by default)
+//! - **JSON languages file**: `json`
 //! - **YAML languages file**: `yaml`
 //! - **JSON5 languages file**: `json5`
 //! - **Tracing support**: `tracing`
@@ -273,10 +269,14 @@ pub mod localstorage;
 #[doc(hidden)]
 pub mod url;
 
-#[cfg(feature = "system")]
-pub use current_locale::current_locale;
 #[doc(hidden)]
-pub use web_sys;
+#[cfg(feature = "system")]
+pub extern crate current_locale;
+#[cfg(feature = "ssr")]
+#[doc(hidden)]
+pub extern crate leptos_meta;
+#[doc(hidden)]
+pub extern crate web_sys;
 
 use core::hash::{Hash, Hasher};
 use core::str::FromStr;
@@ -285,14 +285,10 @@ use fluent_templates::{
     LanguageIdentifier, StaticLoader,
 };
 use leptos::{
-    component, use_context, with, Attribute, IntoAttribute, IntoView, Oco,
-    RwSignal, Signal, SignalGet, SignalSet,
+    use_context, with, Attribute, IntoAttribute, Oco, RwSignal, Signal,
+    SignalGet, SignalSet,
 };
-#[cfg(feature = "ssr")]
-use leptos::{view, SignalGetUntracked};
 pub use leptos_fluent_macros::leptos_fluent;
-#[cfg(feature = "ssr")]
-use leptos_meta::Html;
 use std::rc::Rc;
 
 /// Direction of the text
@@ -424,7 +420,7 @@ impl IntoAttribute for &&'static Language {
 /// Used to provide the current language, the available languages and all
 /// the translations. It is capable of doing what is needed to translate
 /// and manage translations in a whole application.
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct I18n {
     /// Signal that holds the current language.
     pub language: RwSignal<&'static Language>,
@@ -443,6 +439,8 @@ impl I18n {
     /// raise an error message.
     ///
     /// ```rust,ignore
+    /// use leptos_fluent::leptos_fluent;
+    ///
     /// let i18n = leptos_fluent! {
     ///     // ...
     ///     provide_meta_context: true,
@@ -463,17 +461,6 @@ impl I18n {
             )
             .to_string(),
         )
-    }
-}
-
-impl core::fmt::Debug for I18n {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        let language = self.language;
-        with!(|language| f
-            .debug_struct("I18n")
-            .field("language", language)
-            .field("languages", &self.languages)
-            .finish())
     }
 }
 
@@ -698,7 +685,7 @@ macro_rules! tr {
     }};
 }
 
-/// [`leptos::Signal`] that translates a text identifier to the current language.
+/// [Leptos's `Signal`] that translates a text identifier to the current language.
 ///
 /// ```rust,ignore
 /// move_tr!("hello-world")
@@ -718,7 +705,7 @@ macro_rules! tr {
 /// Signal::derive(move || tr!("hello-world", { "name" => name, "age" => 30 }));
 /// ```
 ///
-/// [`leptos::Signal`]: https://docs.rs/leptos/latest/leptos/struct.Signal.html
+/// [Leptos's `Signal`]: https://docs.rs/reactive_graph/0.1.0/reactive_graph/wrappers/read/struct.Signal.html
 #[macro_export]
 macro_rules! move_tr {
     ($text_id:literal$(,)?) => {
@@ -825,57 +812,6 @@ pub fn l(
 ) -> Option<&'static Language> {
     language_from_str_between_languages(code, languages)
 }
-
-/// Reactive HTML tag to set attributes on SSR
-///
-/// Currently there is not a way to set the `dir` and `lang` attributes
-/// of `<html>` tags on SSR. This components updates it on SSR. Must be
-/// rendered in a view.
-///
-/// ```rust,ignore
-/// use leptos_fluent::SsrHtmlTag;
-///
-/// view! {
-///     <SsrHtmlTag/>
-/// }
-/// ```
-#[deprecated(
-    since = "0.1.14",
-    note = "The component SsrHtmlTag is not needed anymore and will be removed in v0.2. \
-          The `sync_html_tag_lang` and `sync_html_tag_dir` parameters of the `leptos_fluent!` \
-          macro are enough to set the `lang` and `dir` attributes of the `<html>` tag on SSR."
-)]
-#[component(transparent)]
-#[cfg(feature = "ssr")]
-#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace"))]
-pub fn SsrHtmlTag() -> impl IntoView {
-    let lang = expect_i18n().language.get_untracked();
-    view! { <Html lang=lang.id.to_string() dir=lang.dir.as_str()/> }
-}
-
-/// Reactive HTML tag to set attributes on SSR
-///
-/// Currently there is not a way to set the `dir` and `lang` attributes
-/// of `<html>` tags on SSR. This components updates it on SSR. Must be
-/// rendered in a view.
-///
-/// ```rust,ignore
-/// use leptos_fluent::SsrHtmlTag;
-///
-/// view! {
-///     <SsrHtmlTag/>
-/// }
-/// ```
-#[deprecated(
-    since = "0.1.14",
-    note = "The component `SsrHtmlTag` is not needed anymore and will be removed in v0.2. \
-          The `sync_html_tag_lang` and `sync_html_tag_dir` parameters of the `leptos_fluent!` \
-          macro are enough to set the `lang` and `dir` attributes of the `<html>` tag on SSR."
-)]
-#[component(transparent)]
-#[cfg(not(feature = "ssr"))]
-#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace"))]
-pub fn SsrHtmlTag() -> impl IntoView {}
 
 /// Parameters passed to `leptos_fluent!` macro at creation of `i18n` context
 #[derive(Clone, Debug)]

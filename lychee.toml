@@ -1,0 +1,2 @@
+exclude = ['^https://github\.com/mondeja/leptos-fluent/compare']
+exclude_path = ["lychee.toml"]

@@ -1,5 +1,34 @@
 # CHANGELOG
 
+## [Unreleased] - 0.2.0
+
+### Breaking changes
+
+- The feature `json` is not enabled by default anymore. Now leptos-fluent
+  does not includes features by default, so you don't need to use
+  `default-features = false` in your `Cargo.toml` file.
+
+## 2024-11-15 - [0.1.26]
+
+### Enhancements
+
+- Let rustc infer literal expressions booleans in `leptos_fluent!` macro
+  parameters, which optimizes compilation times.
+
+## 2024-10-26 - [0.1.25]
+
+### Bug fixes
+
+- Fix unhygienic use of `leptos::window` in `leptos_fluent!` macro expansion.
+
+## 2024-10-11 - [0.1.24]
+
+### Enhancements
+
+- Add `translations` field to `I18n`'s `Debug` implementation.
+- Allow to pass empty translations array to `leptos_fluent!` with
+  `translations: []`.
+
 ## 2024-09-25 - [0.1.23]
 
 ### Enhancements
@@ -303,7 +332,7 @@
   global attribute of the `<html>` tag with the current language direction.
 - Multiple translations can be passed to the `leptos_fluent!` macro.
 
-## Versioning
+### Versioning
 
 **leptos-fluent** will include breaking changes in minor versions during
 the v0.x.0 series until v1.0.0 version is reached. Is safe to pin the
@@ -523,6 +552,10 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[Unreleased]: https://github.com/mondeja/leptos-fluent/compare/v0.1.26...master
+[0.1.26]: https://github.com/mondeja/leptos-fluent/compare/v0.1.25...v0.1.26
+[0.1.25]: https://github.com/mondeja/leptos-fluent/compare/v0.1.24...v0.1.25
+[0.1.24]: https://github.com/mondeja/leptos-fluent/compare/v0.1.23...v0.1.24
 [0.1.23]: https://github.com/mondeja/leptos-fluent/compare/v0.1.22...v0.1.23
 [0.1.22]: https://github.com/mondeja/leptos-fluent/compare/v0.1.21...v0.1.22
 [0.1.21]: https://github.com/mondeja/leptos-fluent/compare/v0.1.20...v0.1.21

@@ -11,7 +11,7 @@ For client side rendering apps install **leptos-fluent** and [`fluent-templates`
 ```toml
 [dependencies]
 leptos-fluent = "0.1"
-fluent-templates = "0.10"
+fluent-templates = "0.11"
 ```
 
 <details>
@@ -20,19 +20,16 @@ fluent-templates = "0.10"
 ```toml
 [dependencies]
 leptos-fluent = { version = "0.1", default-features = false }
-fluent-templates = { version = "0.10", default-features = false, features = [
+fluent-templates = { version = "0.11", default-features = false, features = [
   "macros",
   "walkdir"
 ] }
 ```
 
-- Using `default-features = false` for `leptos-fluent` the `json`
-  default feature will not be enabled, so the `languages` parameter
-  of [`leptos_fluent!`] macro will not be available.
-- Using `default-features = false` and `features = ["macros", "walkdir"]`
-  for `fluent-templates` ensures that the dependency tree is the minimal
-  possible because more dependencies are shared between `leptos-fluent`
-  and `fluent-templates`.
+Using `default-features = false` and `features = ["macros", "walkdir"]`
+for `fluent-templates` ensures that the dependency tree is the minimal
+possible because more dependencies are shared between `leptos-fluent`
+and `fluent-templates`.
 
 </details>
 
@@ -45,7 +42,7 @@ respective features set.
 ```toml
 [dependencies]
 leptos-fluent = "0.1"
-fluent-templates = "0.10"
+fluent-templates = "0.11"
 
 [features]
 hydrate = [
@@ -70,7 +67,7 @@ and enable the `system` feature:
 ```toml
 [dependencies]
 leptos-fluent = { version = "0.1", features = ["system"] }
-fluent-templates = "0.10"
+fluent-templates = "0.11"
 ```
 
 ```admonish example
@@ -85,7 +82,7 @@ See the [GTK example](https://github.com/mondeja/leptos-fluent/tree/master/examp
 - **Axum integration**: `axum`
 - **Nightly toolchain**: `nightly`
 - **Desktop applications**: `system`
-- **JSON languages file**: `json` (enabled by default)
+- **JSON languages file**: `json`
 - **YAML languages file**: `yaml`
 - **JSON5 languages file**: `json5`
 - **Tracing support**: `tracing`
@@ -99,7 +96,7 @@ feature:
 ```toml
 [dependencies]
 leptos-fluent = { version = "0.1", features = ["nightly"] }
-fluent-templates = "0.10"
+fluent-templates = "0.11"
 ```
 
 ## Language files
@@ -112,7 +109,7 @@ enabled:
 
 ```toml
 [dependencies]
-fluent-templates = "0.10"
+fluent-templates = "0.11"
 leptos-fluent = { version = "0.1", features = ["json5"], default-features = false }
 ```
 
@@ -148,7 +145,7 @@ To enable [`tracing`] support, add the `tracing` feature to **leptos-fluent**:
 ```toml
 [dependencies]
 leptos-fluent = { version = "0.1", features = ["tracing"] }
-fluent-templates = "0.10"
+fluent-templates = "0.11"
 ```
 
 ```admonish example
@@ -156,6 +153,5 @@ See the [GTK example](https://github.com/mondeja/leptos-fluent/tree/master/examp
 ```
 
 [`fluent-templates`]: https://github.com/XAMPPRocky/fluent-templates
-[`leptos_fluent!`]: https://mondeja.github.io/leptos-fluent/leptos_fluent.html
 [`cargo leptos`]: https://github.com/leptos-rs/cargo-leptos
 [`tracing`]: https://docs.rs/tracing/latest/tracing

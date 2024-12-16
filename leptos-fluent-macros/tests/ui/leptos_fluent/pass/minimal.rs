@@ -16,7 +16,7 @@ pub fn App() -> impl IntoView {
         locales: "../../../../examples/csr-minimal/locales",
     };
 
-    view! { <p>Foo</p> }
+    view! { <p></p> }
 }
 
 fn main() {}

@@ -22,7 +22,7 @@ Add the following to your `Cargo.toml` file:
 ```toml
 [dependencies]
 leptos-fluent = "0.1"
-fluent-templates = "0.10"
+fluent-templates = "0.11"
 
 [features]
 hydrate = [
@@ -103,7 +103,7 @@ fn App() -> impl IntoView {
 
         // Client side options
         // -------------------
-        // Synchronize `<html lang="...">` attribute with the
+        // Synchronize `<html lang="...">` attribute with
         // current active language.
         sync_html_tag_lang: true,
         // Synchronize `<html dir="...">` attribute with `"ltr"`,
@@ -111,11 +111,9 @@ fn App() -> impl IntoView {
         sync_html_tag_dir: true,
         // Update language on URL parameter when changes.
         set_language_to_url_param: true,
-        // Set initial language of the user from
-        // URL in local storage.
+        // Set initial language of user from URL in local storage.
         initial_language_from_url_param_to_localstorage: true,
-        // Set initial language of the user from
-        // URL in a cookie.
+        // Set initial language of user from URL in a cookie.
         initial_language_from_url_param_to_cookie: true,
         // Key used to get and set the current language of the
         // user on local storage. By default is `"lang"`.
@@ -131,14 +129,12 @@ fn App() -> impl IntoView {
         // Get initial language from `navigator.languages`
         // if not found in local storage.
         initial_language_from_navigator: true,
-        // Set initial language of the user from
-        // the navigator to local storage.
+        // Set initial language of user from navigator to local storage.
         initial_language_from_navigator_to_localstorage: true,
-        // Set initial language of the user from
-        // the navigator to a cookie.
+        // Set initial language of user from navigator to a cookie.
         initial_language_from_navigator_to_cookie: true,
         // Attributes to set for language cookie.
-        // By default is `""`.
+        // By default `""`.
         cookie_attrs: "Secure; Path=/; Max-Age=600",
         // Update language on cookie when the language changes.
         set_language_to_cookie: true,
@@ -154,12 +150,12 @@ fn App() -> impl IntoView {
         // Server and client side options
         // ------------------------------
         // Name of the cookie to get and set the current active
-        // language. By default, it is `"lf-lang"`.
+        // language. By default `"lf-lang"`.
         cookie_name: "lang",
         // Set initial language from cookie.
         initial_language_from_cookie: true,
         // URL parameter to use setting the language in the URL.
-        // By default is `"lang"`.
+        // By default `"lang"`.
         url_param: "lang",
         // Set initial language of the user from an URL parameter.
         initial_language_from_url_param: true,
@@ -174,7 +170,7 @@ fn App() -> impl IntoView {
         // Get initial language from a data file.
         initial_language_from_data_file: true,
         // Key to use to name the data file. Should be unique per
-        // application. By default is `"leptos-fluent"`.
+        // application. By default `"leptos-fluent"`.
         data_file_key: "my-app",
         // Set the language selected to a data file.
         set_language_to_data_file: true,
@@ -243,7 +239,7 @@ fn LanguageSelector() -> impl IntoView {
 - **Axum integration**: `axum`
 - **Nightly toolchain**: `nightly`
 - **Desktop applications**: `system`
-- **JSON languages file**: `json` (enabled by default)
+- **JSON languages file**: `json`
 - **YAML languages file**: `yaml`
 - **JSON5 languages file**: `json5`
 - **Tracing support**: `tracing`

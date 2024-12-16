@@ -2,13 +2,13 @@
 name = "leptos-fluent-macros"
 description = "Macros for leptos-fluent"
 edition.workspace = true
-version = "0.1.22"
+version = "0.1.26"
 license = "MIT"
 documentation.workspace = true
 repository.workspace = true
 readme = "README.md"
 homepage.workspace = true
-keywords.workspace = true
+keywords = ["leptos-fluent", "i18n", "localization", "wasm"]
 
 [lib]
 proc-macro = true
