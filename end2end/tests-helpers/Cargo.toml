@@ -5,8 +5,8 @@ version = "0.1.0"
 publish = false
 
 [dependencies]
-leptos = "0.7.0-rc3"
-leptos_meta = "0.7.0-rc3"
+leptos = "0.7"
+leptos_meta = "0.7"
 web-sys = { version = "0.3", features = ["Navigator", "Storage"] }
 js-sys = "0.3"
 wasm-bindgen = "0.2"

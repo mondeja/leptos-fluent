@@ -114,7 +114,7 @@ name = "minimal_example"
 path = "src/lib.rs"
 
 [dependencies]
-leptos = { version = "0.6.12", features = ["csr"] }
+leptos = { version = "0.7", features = ["csr"] }
 leptos-fluent = "0.2"
 fluent-templates = "0.11"
 console_error_panic_hook = "0.1"
@@ -261,10 +261,7 @@ lang == expect_i18n().language.get()
 [`languages`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.languages
 [`translations`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.translations
 [fluent-templates]: https://docs.rs/fluent-templates/latest/fluent_templates
-
-<!-- TODO: update `leptos::Signal` when leptos v0.7 is released -->
-
-[`leptos::Signal`]: https://docs.rs/leptos/0.7.0-gamma3/leptos/prelude/struct.Signal.html
+[`leptos::Signal`]: https://docs.rs/reactive_graph/0.1.0/reactive_graph/wrappers/read/struct.Signal.html
 [`expect_i18n`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.expect_i18n.html
 [`i18n`-f]: https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.i18n.html
 [`use_i18n`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.use_i18n.html

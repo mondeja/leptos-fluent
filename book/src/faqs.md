@@ -332,6 +332,6 @@ leptos_fluent! {
 ```
 
 [configuration conditional checks]: https://doc.rust-lang.org/rust-by-example/attribute/cfg.html
-[`<For/>`]: https://docs.rs/leptos/latest/leptos/fn.For.html
+[`<For/>`]: https://docs.rs/leptos/latest/leptos/control_flow/fn.For.html
 [`leptos_fluent::Language`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html
 [`I18n`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html

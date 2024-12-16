@@ -345,10 +345,11 @@ jobs:
       - uses: actions/checkout@v4
       - name: Setup Rust
         uses: hecrj/setup-rust-action@v2
+      - name: Get project version
+        id: version
+        uses: ./.github/actions/get-version
       - name: Update version
-        run: |
-          version=$(grep -oP --color=never '^version = "\K[^"]+' leptos-fluent/Cargo.toml)
-          sed -i "s/^leptos-fluent-macros = .*/leptos-fluent-macros = \"$version\"/" leptos-fluent/Cargo.toml
+        run: sed -i "s/^leptos-fluent-macros = .*/leptos-fluent-macros = \"${{ steps.version.outputs.version }}\"/" leptos-fluent/Cargo.toml
       - name: Publish
         run: |
           cargo login ${{ secrets.CRATES_TOKEN }}
@@ -399,6 +400,9 @@ jobs:
         uses: cargo-bins/cargo-binstall@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get project version
+        id: version
+        uses: ./.github/actions/get-version
       - name: Install mdbook
         run: cargo binstall -y mdbook mdbook-admonish mdbook-toc
         env:
@@ -408,8 +412,17 @@ jobs:
           cd book
           mdbook-admonish install .
           mdbook build
+          # create versioned copy
+          cd ..
+          cp -r book/dist book/v${{ steps.version.outputs.version }}
       - name: Deploy book
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./book/dist
+      - name: Deploy book v${{ steps.version.outputs.version }}
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./book/v${{ steps.version.outputs.version }}
+          destination_dir: v${{ steps.version.outputs.version }}

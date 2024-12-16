@@ -1,5 +1,5 @@
 use fluent_templates::static_loader;
-use leptos::prelude::*;
+use leptos::*;
 use leptos_fluent_macros::leptos_fluent;
 
 static_loader! {
@@ -11,12 +11,11 @@ static_loader! {
 
 #[component]
 pub fn App() -> impl IntoView {
-    leptos_fluent! {
+    leptos_fluent! {{
         translations: [TRANSLATIONS],
         locales: "../../../../examples/csr-minimal/locales",
-        #[cfg(all(not(target_os = "windows"), not(target_os = "macos")))]
-        cookie_name: "foo"
-    };
+        url_param: ,
+    }};
 
     view! { <p>Foo</p> }
 }

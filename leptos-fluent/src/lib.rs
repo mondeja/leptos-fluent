@@ -245,7 +245,7 @@
 //! - **Axum integration**: `axum`
 //! - **Nightly toolchain**: `nightly`
 //! - **Desktop applications**: `system`
-//! - **JSON languages file**: `json` (enabled by default)
+//! - **JSON languages file**: `json`
 //! - **YAML languages file**: `yaml`
 //! - **JSON5 languages file**: `json5`
 //! - **Tracing support**: `tracing`
@@ -277,12 +277,14 @@ pub mod localstorage;
 #[doc(hidden)]
 pub mod url;
 
+#[doc(hidden)]
 #[cfg(feature = "system")]
-pub use current_locale::current_locale;
+pub extern crate current_locale;
 #[doc(hidden)]
 pub extern crate leptos_meta;
 #[doc(hidden)]
 pub extern crate web_sys;
+pub use leptos_fluent_macros::leptos_fluent;
 
 use core::hash::{Hash, Hasher};
 use core::ops::Deref;
@@ -299,8 +301,6 @@ use leptos::{
         guards::ReadGuard, use_context, Read, RwSignal, Set, Signal, With,
     },
 };
-
-pub use leptos_fluent_macros::leptos_fluent;
 
 /// Direction of the text
 #[derive(Debug)]
@@ -757,7 +757,7 @@ macro_rules! tr {
     }};
 }
 
-/// [`Signal`] that translates a text identifier to the current language.
+/// [Leptos's `Signal`] that translates a text identifier to the current language.
 ///
 /// ```rust,ignore
 /// move_tr!("hello-world")
@@ -777,7 +777,7 @@ macro_rules! tr {
 /// Signal::derive(move || tr!("hello-world", { "name" => name, "age" => 30 }));
 /// ```
 ///
-/// [`Signal`]: https://docs.rs/leptos/latest/leptos/struct.Signal.html
+/// [Leptos's `Signal`]: https://docs.rs/reactive_graph/0.1.0/reactive_graph/wrappers/read/struct.Signal.html
 #[macro_export]
 macro_rules! move_tr {
     ($text_id:literal$(,)?) => {
