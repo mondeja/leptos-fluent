@@ -155,3 +155,10 @@ See the [GTK example](https://github.com/mondeja/leptos-fluent/tree/master/examp
 [`fluent-templates`]: https://github.com/XAMPPRocky/fluent-templates
 [`cargo leptos`]: https://github.com/leptos-rs/cargo-leptos
 [`tracing`]: https://docs.rs/tracing/latest/tracing
+
+## Compatibility
+
+| **leptos-fluent** | **leptos** |
+| ----------------- | ---------- |
+| 0.2               | 0.7        |
+| 0.1               | 0.6        |
