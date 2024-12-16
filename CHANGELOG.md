@@ -1,21 +1,13 @@
 # CHANGELOG
 
-## [Unreleased] - 0.2.0
-
-### Breaking changes
-
-- The feature `json` is not enabled by default anymore. Now leptos-fluent
-  does not includes features by default, so you don't need to use
-  `default-features = false` in your `Cargo.toml` file.
-
-## ? - [0.2.0]
+## 2024-12-17 - [0.2.0]
 
 ### Breaking changes
 
 #### Declarative API
 
 Previously, the `leptos_fluent!` macro was providing the I18n context
-using `provide_context`, so the app would be configured as:
+using `provide_context`, so the app was configured as:
 
 ```rust
 #[component]
@@ -64,6 +56,16 @@ leptos_fluent! {
     // ...
 }
 ```
+
+#### No more default features
+
+The feature `json` is not enabled by default anymore. Now leptos-fluent
+does not includes features by default, so you don't need to use
+`default-features = false` in your `Cargo.toml` file.
+
+#### `SsrHtmlTag` component removed
+
+The deprecated `SsrHtmlTag` component has been removed.
 
 ## 2024-11-15 - [0.1.26]
 
@@ -609,7 +611,6 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
-[Unreleased]: https://github.com/mondeja/leptos-fluent/compare/v0.2.0...master
 [0.2.0]: https://github.com/mondeja/leptos-fluent/compare/v0.1.26...v0.2.0
 [0.1.26]: https://github.com/mondeja/leptos-fluent/compare/v0.1.25...v0.1.26
 [0.1.25]: https://github.com/mondeja/leptos-fluent/compare/v0.1.24...v0.1.25
