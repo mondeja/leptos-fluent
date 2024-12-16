@@ -207,13 +207,21 @@ static_loader! {
 }
 
 #[component]
-pub fn App() -&gt; impl IntoView {
+pub fn I18n(children: Children) -&gt; impl IntoView {
     leptos_fluent! {
+        children: children(),
         translations: [TRANSLATIONS],
         locales: "./locales",
-    };
+    }
+}
 
-    view! { &lt;LanguageSelector/&gt; }
+#[component]
+pub fn App() -&gt; impl IntoView {
+    view! {
+        &lt;I18n&gt;
+            &lt;LanguageSelector/&gt;
+        &lt;/I18n&gt;
+    }
 }
 
 #[component]
@@ -240,6 +248,7 @@ fn LanguageSelector() -&gt; impl IntoView {
 fn render_language(lang: &amp;'static Language) -&gt; impl IntoView {
     // Passed as atrribute, `Language` is converted to their code,
     // so `&lt;input id=lang` becomes `&lt;input id=lang.id.to_string()`
+    let i18n = expect_i18n();
     view! {
         &lt;div&gt;
             &lt;label for=lang&gt;{lang.name}&lt;/label&gt;
@@ -248,7 +257,7 @@ fn render_language(lang: &amp;'static Language) -&gt; impl IntoView {
                 value=lang
                 name="language"
                 checked=lang.is_active()
-                on:click=move |_| lang.activate()
+                on:click=move |_| i18n.language.set(lang)
                 type="radio"
             /&gt;
         &lt;/div&gt;

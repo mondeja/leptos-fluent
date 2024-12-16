@@ -163,13 +163,11 @@
 <h1 id="faqs"><a class="header" href="#faqs">FAQs</a></h1>
 <ul>
 <li><a href="#how-to-get-languageidentifier">How to get <code>LanguageIdentifier</code>?</a></li>
-<li><a href="#how-to-get-the-i18n-context-at-initialization">How to get the i18n context at initialization?</a></li>
 <li><a href="#custom-cookie-attributes-are-invalid">Custom cookie attributes are invalid</a></li>
 <li><a href="#how-to-get-the-fallback-language">How to get the fallback language</a></li>
 <li><a href="#tr-and-move_tr-outside-reactive-graph"><code>tr!</code> and <code>move_tr!</code> outside reactive graph</a>
 <ul>
 <li><a href="#on-events-panics">On events, panics</a></li>
-<li><a href="#confused-about-what-context-is-used">Confused about what context is used?</a></li>
 </ul>
 </li>
 <li><a href="#why-examples-dont-use-for-component">Why examples don't use <code>&lt;For/&gt;</code> component?</a></li>
@@ -192,14 +190,6 @@
 whichs provides utilities for parsing the Fluent syntax.</p>
 </div>
 </div>
-<h3 id="how-to-get-the-i18n-context-at-initialization"><a class="header" href="#how-to-get-the-i18n-context-at-initialization">How to get the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html">i18n context</a> at initialization?</a></h3>
-<pre><code class="language-rust">use leptos_fluent::leptos_fluent;
-
-let i18n = leptos_fluent! {
-    // ...
-};
-
-leptos::logging::log!("i18n context: {i18n:#?}");</code></pre>
 <h3 id="custom-cookie-attributes-are-invalid"><a class="header" href="#custom-cookie-attributes-are-invalid">Custom <a href="https://developer.mozilla.org/docs/Web/API/Document/cookie#write_a_new_cookie">cookie attributes</a> are invalid</a></h3>
 <p>Use an expression to set the cookie attributes and will not be validated.</p>
 <pre><code class="language-rust">let attrs = "SameSite=Strict; MyCustomAttr=MyCustomValue;";
@@ -215,9 +205,7 @@ leptos_fluent! {
 we can't obtain the context of <code>I18n</code> using <code>expect_context::&lt;leptos_fluent::I18n&gt;()</code>,
 which is what <code>tr!</code> and <code>move_tr!</code> do internally. Instead, we can pass the context
 as first parameter to the macros:</p>
-<pre><code class="language-rust">let i18n = leptos_fluent! {
-    // ...
-};
+<pre><code class="language-rust">let i18n = expect_i18n();
 
 let translated_signal = move_tr!(i18n, "my-translation");</code></pre>
 <p>And some shortcuts cannot be used. Rewrite all the code that calls <code>expect_context</code>
@@ -239,9 +227,6 @@ pub fn App() -&gt; impl IntoView {
 
 #[component]
 pub fn Child() -&gt; impl IntoView {
-    leptos_fluent! {
-        // ...
-    };
     view! {
         &lt;div on:click=|_| {
             tr!("my-translation");
@@ -263,97 +248,12 @@ pub fn App() -&gt; impl IntoView {
 
 #[component]
 pub fn Child() -&gt; impl IntoView {
-    let i18n = leptos_fluent! {
-        // ...
-    };
+    let i18n = expect_i18n();
     view! {
         &lt;div on:click=|_| {
             tr!(i18n, "my-translation");
         }&gt;"CLICK ME!"&lt;/div&gt;
     }
-}</code></pre>
-<h4 id="confused-about-what-context-is-used"><a class="header" href="#confused-about-what-context-is-used">Confused about what context is used?</a></h4>
-<p>Take into account that the reactive ownership graph is not the same as the component
-tree in Leptos. For example, the next code:</p>
-<pre><code class="language-rust">#[component]
-fn Foo() -&gt; impl IntoView {
-    provide_context::&lt;usize&gt;(0);
-
-    view! {
-        &lt;h1&gt;"Foo"&lt;/h1&gt;
-        {
-            let value = expect_context::&lt;usize&gt;();
-            view! {
-                &lt;p&gt;"Context value before Bar: "{value}&lt;/p&gt;
-            }
-        }
-        &lt;Bar/&gt;
-        {
-            let value = expect_context::&lt;usize&gt;();
-            view! {
-                &lt;p&gt;"Context value after Bar -&gt; Baz: "{value}&lt;/p&gt;
-            }
-        }
-    }
-}
-
-#[component]
-fn Bar() -&gt; impl IntoView {
-    provide_context::&lt;usize&gt;(1);
-    view! {
-        &lt;h1&gt;"Bar"&lt;/h1&gt;
-        {
-            let value = expect_context::&lt;usize&gt;();
-            view! {
-                &lt;p&gt;"Context value before Baz: "{value}&lt;/p&gt;
-            }
-        }
-        &lt;Baz/&gt;
-    }
-}
-
-#[component]
-fn Baz() -&gt; impl IntoView {
-    provide_context::&lt;usize&gt;(2);
-    view! {
-        &lt;h1&gt;"Baz"&lt;/h1&gt;
-    }
-}</code></pre>
-<p>Renders:</p>
-<pre><code class="language-html">&lt;h1&gt;Foo&lt;/h1&gt;
-&lt;p&gt;Context value before Bar: 0&lt;/p&gt;
-&lt;h1&gt;Bar&lt;/h1&gt;
-&lt;p&gt;Context value before Baz: 1&lt;/p&gt;
-&lt;h1&gt;Baz&lt;/h1&gt;
-&lt;p&gt;Context value after Bar -&amp;gt; Baz: 2&lt;/p&gt;
-</code></pre>
-<p>Because <code>Baz</code> is a sibling of <code>Foo</code> children in the reactive graph. But maybe
-you think that is just a children of <code>Bar</code> in the component tree and that is
-outside the scope of <code>Foo</code> children. That doesn't matter for Leptos.</p>
-<p>In those cases where you're using two or more contexts, pass the context as the
-first argument to the <code>tr!</code> and <code>move_tr!</code> macros to avoid confusion.</p>
-<pre><code class="language-rust">#[component]
-fn Foo() -&gt; impl IntoView {
-    let i18n = leptos_fluent! {
-        translations: [TRANSLATION_WITH_ONLY_FOO],
-        // ...
-    };
-    &lt;p&gt;{move_tr!("my-translation-from-foo")}&lt;/p&gt;
-    &lt;Bar/&gt;
-    // The next message will not be translated because after `&lt;Bar&gt;`
-    // now the i18n context accessed by `move_tr!` is the one from `Bar`
-    &lt;p&gt;{move_tr!("my-translation-from-foo")}&lt;/p&gt;
-    // instead, use:
-    &lt;p&gt;{move_tr!(i18n, "my-translation-from-foo")}&lt;/p&gt;
-}
-
-#[component]
-fn Bar() -&gt; impl IntoView {
-    let i18n = leptos_fluent! {
-        translations: [TRANSLATION_WITH_ONLY_BAR],
-        // ...
-    };
-    &lt;p&gt;{move_tr!("my-translation-from-bar")}&lt;/p&gt;
 }</code></pre>
 <h3 id="why-examples-dont-use-for-component"><a class="header" href="#why-examples-dont-use-for-component">Why examples don't use <a href="https://docs.rs/leptos/latest/leptos/control_flow/fn.For.html"><code>&lt;For/&gt;</code></a> component?</a></h3>
 <div id="admonition-bug" class="admonition admonish-bug" role="note" aria-labelledby="admonition-bug-title">
@@ -433,12 +333,13 @@ fn render_language(lang: &amp;'static Language) -&gt; impl IntoView {
 <h3 id="how-to-get-values-of-leptos_fluent-macro-at-runtime"><a class="header" href="#how-to-get-values-of-leptos_fluent-macro-at-runtime">How to get values of <code>leptos_fluent!</code> macro at runtime?</a></h3>
 <p>Use <code>provide_meta_context</code> at the macro initialization and get them
 with the method <code>I18n::meta</code>:</p>
-<pre><code class="language-rust">let i18n = leptos_fluent! {
+<pre><code class="language-rust">leptos_fluent! {
     // ...
     provide_meta_context: true,
 };
 
-println!("Macro parameters: {:?}", i18n.meta().unwrap());</code></pre>
+// ... later
+println!("Macro parameters: {:?}", expect_i18n().meta().unwrap());</code></pre>
 <h3 id="configuration-conditional-checks"><a class="header" href="#configuration-conditional-checks"><a href="https://doc.rust-lang.org/rust-by-example/attribute/cfg.html">Configuration conditional checks</a></a></h3>
 <pre><code class="language-rust">leptos_fluent! {
     // ...
