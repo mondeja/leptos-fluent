@@ -301,6 +301,7 @@ use leptos::{
         guards::ReadGuard, use_context, Read, RwSignal, Set, Signal, With,
     },
 };
+use std::borrow::Cow;
 
 /// Direction of the text
 #[derive(Debug)]
@@ -685,7 +686,7 @@ pub fn tr_impl(i18n: I18n, text_id: &str) -> String {
 pub fn tr_with_args_impl(
     i18n: I18n,
     text_id: &str,
-    args: &std::collections::HashMap<String, FluentValue>,
+    args: &std::collections::HashMap<Cow<'static, str>, FluentValue>,
 ) -> String {
     let I18n {
         language,
@@ -740,7 +741,7 @@ macro_rules! tr {
         $crate::tr_with_args_impl($crate::expect_i18n(), $text_id, &{
             let mut map = ::std::collections::HashMap::new();
             $(
-                map.insert($key.to_string(), $value.into());
+                map.insert($key.into(), $value.into());
             )*
             map
         })

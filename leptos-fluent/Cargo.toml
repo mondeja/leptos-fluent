@@ -12,9 +12,9 @@ keywords.workspace = true
 
 [dependencies]
 leptos-fluent-macros = { path = "../leptos-fluent-macros" }
-fluent-templates = { version = ">=0.9", default-features = false, features = [
+fluent-templates = { version = ">=0.12", default-features = false, features = [
   "macros",
-  "walkdir"
+  "walkdir",
 ] }
 leptos = "0.7"
 leptos_meta = "0.7"
@@ -34,7 +34,7 @@ default = []
 system = [
   "dep:current_locale",
   "dep:directories",
-  "leptos-fluent-macros/system"
+  "leptos-fluent-macros/system",
 ]
 nightly = ["leptos-fluent-macros/nightly"]
 tracing = ["leptos-fluent-macros/tracing", "dep:tracing"]

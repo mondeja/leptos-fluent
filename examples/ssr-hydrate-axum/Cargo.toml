@@ -16,11 +16,11 @@ leptos_meta = "0.7"
 leptos_axum = { version = "0.7", optional = true }
 leptos_router = "0.7"
 leptos-fluent = { path = "../../leptos-fluent", features = [
-  "yaml"
+  "yaml",
 ], default-features = false }
-fluent-templates = { version = "0.11", default-features = false, features = [
+fluent-templates = { version = "0.12", default-features = false, features = [
   "macros",
-  "walkdir"
+  "walkdir",
 ] }
 wasm-bindgen = "=0.2.99"
 
