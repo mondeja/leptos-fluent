@@ -16,9 +16,9 @@ leptos_meta = "0.7"
 leptos_actix = { version = "0.7", optional = true }
 leptos_router = "0.7"
 leptos-fluent = { path = "../../leptos-fluent" }
-fluent-templates = { version = "0.11", default-features = false, features = [
+fluent-templates = { version = "0.12", default-features = false, features = [
   "macros",
-  "walkdir"
+  "walkdir",
 ] }
 wasm-bindgen = "=0.2.99"
 
@@ -35,7 +35,7 @@ ssr = [
   "leptos_meta/ssr",
   "leptos_router/ssr",
   "leptos-fluent/ssr",
-  "leptos-fluent/actix"
+  "leptos-fluent/actix",
 ]
 
 [package.metadata.leptos]

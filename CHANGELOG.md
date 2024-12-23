@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2024-12-23 - [0.2.1]
+
+- Fixes compatibility with fluent-templates v0.12 (requires fluent-templates
+  v0.12.0 or higher).
+
 ## 2024-12-17 - [0.2.0]
 
 ### Breaking changes
@@ -613,6 +618,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.2.1]: https://github.com/mondeja/leptos-fluent/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/mondeja/leptos-fluent/compare/v0.1.26...v0.2.0
 [0.1.26]: https://github.com/mondeja/leptos-fluent/compare/v0.1.25...v0.1.26
 [0.1.25]: https://github.com/mondeja/leptos-fluent/compare/v0.1.24...v0.1.25
