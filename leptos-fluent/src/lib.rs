@@ -20,7 +20,7 @@
 //! ```toml
 //! [dependencies]
 //! leptos-fluent = "0.2"
-//! fluent-templates = "0.11"
+//! fluent-templates = "0.12"
 //!
 //! [features]
 //! hydrate = [
