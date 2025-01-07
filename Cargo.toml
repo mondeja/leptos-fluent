@@ -8,6 +8,7 @@ members = [
   "examples/csr-minimal",
   "examples/ssr-hydrate-actix",
   "examples/ssr-hydrate-axum",
+  "examples/ssr-islands-axum",
 ]
 resolver = "2"
 
