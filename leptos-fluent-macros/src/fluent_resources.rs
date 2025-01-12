@@ -48,7 +48,7 @@ fn read_from_dir(
         .into_iter()
         .filter_map(|e| e.ok())
         .filter(|e| e.file_type().is_file())
-        .filter(|e| e.path().extension().is_none_or(|e| e == "ftl"))
+        .filter(|e| e.path().extension() == Some("ftl"))
         .for_each(|e| {
             let p = e.path().to_owned().as_path().to_str().unwrap().to_string();
             match std::fs::read_to_string(&p) {
