@@ -476,11 +476,11 @@ macro_rules! impl_into_attr_for_language {
     };
 }
 
-impl<'a> AttributeValue for &'a Language {
+impl AttributeValue for &Language {
     impl_into_attr_for_language!();
 }
 
-impl<'a> AttributeValue for &&'a Language {
+impl AttributeValue for &&Language {
     impl_into_attr_for_language!();
 }
 
