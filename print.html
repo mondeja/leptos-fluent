@@ -202,13 +202,13 @@ development environment and contribute to the project.</p>
 <p>For client side rendering apps install <strong>leptos-fluent</strong> and <a href="https://github.com/XAMPPRocky/fluent-templates"><code>fluent-templates</code></a>:</p>
 <pre><code class="language-toml">[dependencies]
 leptos-fluent = "0.2"
-fluent-templates = "0.12"
+fluent-templates = "0.13"
 </code></pre>
 <details>
 <summary>Minimal (recommended)</summary>
 <pre><code class="language-toml">[dependencies]
 leptos-fluent = "0.2"
-fluent-templates = { version = "0.12", default-features = false, features = [
+fluent-templates = { version = "0.13", default-features = false, features = [
   "macros",
   "walkdir"
 ] }
@@ -224,7 +224,7 @@ and activate the <code>hydrate</code>, <code>ssr</code> and <code>actix</code>/<
 respective features set.</p>
 <pre><code class="language-toml">[dependencies]
 leptos-fluent = "0.2"
-fluent-templates = "0.12"
+fluent-templates = "0.13"
 
 [features]
 hydrate = [
@@ -245,7 +245,7 @@ applications. You need to install <code>leptos-fluent</code>, <a href="https://g
 and enable the <code>system</code> feature:</p>
 <pre><code class="language-toml">[dependencies]
 leptos-fluent = { version = "0.2", features = ["system"] }
-fluent-templates = "0.12"
+fluent-templates = "0.13"
 </code></pre>
 <h2 id="features"><a class="header" href="#features">Features</a></h2>
 <ul>
@@ -266,7 +266,7 @@ fluent-templates = "0.12"
 feature:</p>
 <pre><code class="language-toml">[dependencies]
 leptos-fluent = { version = "0.2", features = ["nightly"] }
-fluent-templates = "0.12"
+fluent-templates = "0.13"
 </code></pre>
 <h2 id="language-files"><a class="header" href="#language-files">Language files</a></h2>
 <p>By default, <strong>leptos-fluent</strong> supports JSON languages files. To use other
@@ -274,7 +274,7 @@ formats to load custom languages, the <code>json5</code> or <code>yaml</code> fe
 enabled:</p>
 <!-- markdownlint-disable MD013 -->
 <pre><code class="language-toml">[dependencies]
-fluent-templates = "0.12"
+fluent-templates = "0.13"
 leptos-fluent = { version = "0.2", features = ["json5"], default-features = false }
 </code></pre>
 <!-- markdownlint-enable MD013 -->
@@ -305,7 +305,7 @@ watch-additional-files = ["examples/csr/locales"]
 <p>To enable <a href="https://docs.rs/tracing/latest/tracing"><code>tracing</code></a> support, add the <code>tracing</code> feature to <strong>leptos-fluent</strong>:</p>
 <pre><code class="language-toml">[dependencies]
 leptos-fluent = { version = "0.2", features = ["tracing"] }
-fluent-templates = "0.12"
+fluent-templates = "0.13"
 </code></pre>
 <h2 id="compatibility"><a class="header" href="#compatibility">Compatibility</a></h2>
 <div class="table-wrapper"><table><thead><tr><th><strong>leptos-fluent</strong></th><th><strong>leptos</strong></th></tr></thead><tbody>
@@ -434,7 +434,7 @@ path = "src/lib.rs"
 [dependencies]
 leptos = { version = "0.7", features = ["csr"] }
 leptos-fluent = "0.2"
-fluent-templates = "0.12"
+fluent-templates = "0.13"
 console_error_panic_hook = "0.1"
 
 # Using cargo-leptos
@@ -1217,7 +1217,7 @@ leptos_fluent! {
     // ^^^^^^^^^^^^^^^^^^^^^^^^^
 }</code></pre>
 <p>Must be the same identifier used in the <a href="https://docs.rs/fluent-templates/latest/fluent_templates/macro.static_loader.html"><code>fluent_templates::static_loader!</code></a>
-macro, which returns an <a href="https://docs.rs/once_cell/latest/once_cell/sync/struct.Lazy.html"><code>once_cell:sync::Lazy</code></a> variable.</p>
+macro, which returns an <a href="https://doc.rust-lang.org/std/sync/struct.LazyLock.html"><code>std::sync::LazyLock</code></a> variable.</p>
 <h3 id="locales"><a class="header" href="#locales"><code>locales</code></a></h3>
 <p>Set the path to the locales directory which contain the Fluent
 files for the translations. Must be relative to the <em>Cargo.toml</em> file, the same
