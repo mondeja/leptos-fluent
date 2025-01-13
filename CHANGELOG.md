@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2025-01-13 - [0.2.2]
+
+- Use `std::sync::LazyLock` instead of `once_cell::sync::Lazy`.
+  Fixes compatibility with fluent-templates v0.13 (requires fluent-templates
+  v0.13.0 or higher).
+
 ## 2024-12-23 - [0.2.1]
 
 - Fixes compatibility with fluent-templates v0.12 (requires fluent-templates
@@ -618,6 +624,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.2.2]: https://github.com/mondeja/leptos-fluent/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/mondeja/leptos-fluent/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/mondeja/leptos-fluent/compare/v0.1.26...v0.2.0
 [0.1.26]: https://github.com/mondeja/leptos-fluent/compare/v0.1.25...v0.1.26
