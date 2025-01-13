@@ -136,7 +136,7 @@ leptos_fluent! {
 ```
 
 Must be the same identifier used in the [`fluent_templates::static_loader!`]
-macro, which returns an [`std:sync::LazyLock`] variable.
+macro, which returns an [`std::sync::LazyLock`] variable.
 
 ### `locales`
 
@@ -827,3 +827,4 @@ leptos_fluent! {
 [URL path]: https://developer.mozilla.org/docs/Web/API/URL/pathname
 [cookie]: https://developer.mozilla.org/docs/Web/HTTP/Cookies
 [Server function]: https://book.leptos.dev/server/25_server_functions.html
+[`std::sync::LazyLock`]: https://doc.rust-lang.org/std/sync/struct.LazyLock.html

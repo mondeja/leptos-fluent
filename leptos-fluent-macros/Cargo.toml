@@ -58,41 +58,15 @@ debug = []
 
 [package.metadata.cargo-all-features]
 skip_feature_sets = [
-  [
-    "csr",
-    "ssr",
-  ],
-  [
-    "csr",
-    "hydrate",
-  ],
-  [
-    "ssr",
-    "hydrate",
-  ],
-  [
-    "actix",
-    "axum",
-  ],
-  [
-    "actix",
-    "csr",
-  ],
-  [
-    "actix",
-    "hydrate",
-  ],
-  [
-    "axum",
-    "csr",
-  ],
-  [
-    "axum",
-    "hydrate",
-  ],
-  [
-    "ssr",
-  ],
+  ["csr", "ssr"],
+  ["csr", "hydrate"],
+  ["ssr", "hydrate"],
+  ["actix", "axum"],
+  ["actix", "csr"],
+  ["actix", "hydrate"],
+  ["axum", "csr"],
+  ["axum", "hydrate"],
+  ["ssr"],
 ]
 always_include_features = ["json"]
 denylist = ["yaml", "json5", "nightly", "tracing"]
