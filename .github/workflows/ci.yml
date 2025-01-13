@@ -271,7 +271,7 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: ${{ runner.os }}-cargo-${{ matrix.example }}-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/Cargo.lock') }}-${{ matrix.toolchain }}
+          key: ${{ runner.os }}-cargo-${{ matrix.example }}-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/Cargo.lock') }}-${{ matrix.toolchain }}-a
       - name: Get build features
         id: build-features
         run: |
