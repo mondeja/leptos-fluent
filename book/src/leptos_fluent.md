@@ -136,7 +136,7 @@ leptos_fluent! {
 ```
 
 Must be the same identifier used in the [`fluent_templates::static_loader!`]
-macro, which returns an [`once_cell:sync::Lazy`] variable.
+macro, which returns an [`std::sync::LazyLock`] variable.
 
 ### `locales`
 
@@ -815,7 +815,6 @@ leptos_fluent! {
 ```
 
 [`fluent_templates::static_loader!`]: https://docs.rs/fluent-templates/latest/fluent_templates/macro.static_loader.html
-[`once_cell:sync::Lazy`]: https://docs.rs/once_cell/latest/once_cell/sync/struct.Lazy.html
 [`<html lang="...">` attribute]: https://developer.mozilla.org/docs/Web/HTML/Global_attributes/lang
 [`<html dir="...">` attribute]: https://developer.mozilla.org/docs/Web/HTML/Global_attributes/dir
 [local storage]: https://developer.mozilla.org/docs/Web/API/Window/localStorage
@@ -828,3 +827,4 @@ leptos_fluent! {
 [URL path]: https://developer.mozilla.org/docs/Web/API/URL/pathname
 [cookie]: https://developer.mozilla.org/docs/Web/HTTP/Cookies
 [Server function]: https://book.leptos.dev/server/25_server_functions.html
+[`std::sync::LazyLock`]: https://doc.rust-lang.org/std/sync/struct.LazyLock.html

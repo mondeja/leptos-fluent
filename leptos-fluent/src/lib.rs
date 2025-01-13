@@ -20,7 +20,7 @@
 //! ```toml
 //! [dependencies]
 //! leptos-fluent = "0.2"
-//! fluent-templates = "0.12"
+//! fluent-templates = "0.13"
 //!
 //! [features]
 //! hydrate = [
@@ -290,8 +290,8 @@ use core::hash::{Hash, Hasher};
 use core::ops::Deref;
 use core::str::FromStr;
 use fluent_templates::{
-    fluent_bundle::FluentValue, loader::Loader, once_cell::sync::Lazy,
-    LanguageIdentifier, StaticLoader,
+    fluent_bundle::FluentValue, loader::Loader, LanguageIdentifier,
+    StaticLoader,
 };
 #[cfg(feature = "nightly")]
 use leptos::prelude::Get;
@@ -302,6 +302,7 @@ use leptos::{
     },
 };
 use std::borrow::Cow;
+use std::sync::LazyLock;
 
 /// Direction of the text
 #[derive(Debug)]
@@ -496,7 +497,7 @@ pub struct I18n {
     /// Available languages for the application.
     pub languages: &'static [&'static Language],
     /// Signal with a vector of fluent-templates static loaders.
-    pub translations: Signal<Vec<&'static Lazy<StaticLoader>>>,
+    pub translations: Signal<Vec<&'static LazyLock<StaticLoader>>>,
 }
 
 impl I18n {
