@@ -1,4 +1,3 @@
-use fluent_templates::once_cell::sync::Lazy;
 use fluent_templates::{static_loader, StaticLoader};
 use leptos::prelude::*;
 use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, tr};
@@ -7,6 +6,7 @@ use leptos_router::{
     components::{Route, Router, Routes},
     StaticSegment,
 };
+use std::sync::LazyLock;
 
 pub fn shell(options: LeptosOptions) -> impl IntoView {
     view! {
@@ -33,7 +33,8 @@ static_loader! {
     };
 }
 
-pub static COMPOUND: &[&Lazy<StaticLoader>] = &[&TRANSLATIONS, &TRANSLATIONS];
+pub static COMPOUND: &[&LazyLock<StaticLoader>] =
+    &[&TRANSLATIONS, &TRANSLATIONS];
 
 #[component]
 fn I18n(children: Children) -> impl IntoView {
