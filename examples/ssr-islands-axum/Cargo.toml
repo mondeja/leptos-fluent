@@ -21,9 +21,8 @@ wasm-bindgen = "=0.2.99"
 thiserror = "1"
 http = "1"
 serde = "1"
-
 leptos-fluent = { path = "../../leptos-fluent", features= ["json"] }
-fluent-templates = { version = "0.12", default-features = false, features = [
+fluent-templates = { version = "0.13", default-features = false, features = [
   "macros",
   "walkdir",
 ] }

@@ -227,7 +227,8 @@ jobs:
           - csr-complete
           - ssr-hydrate-actix
           - ssr-hydrate-axum
-          # TODO: re-add 'ssr-islands-axum' and 'system-gtk'
+          - ssr-islands-axum
+          # TODO: re-add 'system-gtk'
         toolchain:
           - stable
           - nightly
@@ -261,7 +262,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install cargo-leptos
         if: startsWith(matrix.example, 'ssr')
-        run: cargo binstall -y cargo-leptos@0.2.22
+        run: cargo binstall -y cargo-leptos@0.2.24
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Cache dependencies
