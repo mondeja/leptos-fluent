@@ -239,7 +239,7 @@ mod header {
                                     value=lang
                                     checked=lang.is_active()
                                     on:click=move |_| {
-                                        lang.activate();
+                                        i18n.language.set(lang);
                                         // window()
                                         //     .location()
                                         //     .reload()
