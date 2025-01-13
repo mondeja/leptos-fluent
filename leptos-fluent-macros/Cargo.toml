@@ -20,9 +20,9 @@ quote = "1"
 syn = { version = "2", features = ["visit", "full"] }
 walkdir = ">=2"
 globwalk = "0.9"
-fluent-templates = { version = ">=0.9", default-features = false, features = [
+fluent-templates = { version = ">=0.13", default-features = false, features = [
   "macros",
-  "walkdir"
+  "walkdir",
 ] }
 fluent-syntax = "0.11"
 pathdiff = "0.2"
@@ -31,7 +31,7 @@ pathdiff = "0.2"
 cfg-expr = ">=0.10,<0.16"
 current_platform = ">=0.2"
 serde = { version = "1", default-features = false, features = [
-  "derive"
+  "derive",
 ], optional = true }
 serde_json = { version = "1", optional = true }
 serde_yaml = { version = "0.9", optional = true }
@@ -58,15 +58,41 @@ debug = []
 
 [package.metadata.cargo-all-features]
 skip_feature_sets = [
-  ["csr", "ssr"],
-  ["csr", "hydrate"],
-  ["ssr", "hydrate"],
-  ["actix", "axum"],
-  ["actix", "csr"],
-  ["actix", "hydrate"],
-  ["axum", "csr"],
-  ["axum", "hydrate"],
-  ["ssr"],
+  [
+    "csr",
+    "ssr",
+  ],
+  [
+    "csr",
+    "hydrate",
+  ],
+  [
+    "ssr",
+    "hydrate",
+  ],
+  [
+    "actix",
+    "axum",
+  ],
+  [
+    "actix",
+    "csr",
+  ],
+  [
+    "actix",
+    "hydrate",
+  ],
+  [
+    "axum",
+    "csr",
+  ],
+  [
+    "axum",
+    "hydrate",
+  ],
+  [
+    "ssr",
+  ],
 ]
 always_include_features = ["json"]
 denylist = ["yaml", "json5", "nightly", "tracing"]
