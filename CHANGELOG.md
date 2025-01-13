@@ -2,13 +2,13 @@
 
 ## 2025-01-13 - [0.2.2]
 
-- Fixes compatibility with fluent-templates v0.13 (requires fluent-templates
+- Use `std::sync::LazyLock` instead of `once_cell::sync::Lazy`.
+  Fixes compatibility with fluent-templates v0.13 (requires fluent-templates
   v0.13.0 or higher).
 
 ## 2024-12-23 - [0.2.1]
 
-- Use `std::sync::LazyLock` instead of `once_cell::sync::Lazy`.
-  Fixes compatibility with fluent-templates v0.12 (requires fluent-templates
+- Fixes compatibility with fluent-templates v0.12 (requires fluent-templates
   v0.12.0 or higher).
 
 ## 2024-12-17 - [0.2.0]
