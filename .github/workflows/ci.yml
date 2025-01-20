@@ -211,17 +211,7 @@ jobs:
           max_attempts: 3
           retry_wait_seconds: 1
           warning_on_retry: false
-          command: |
-            cd end2end
-            wasm-pack test --headless --${{ matrix.browser }}
-            for dir in */; do
-              if [ "$dir" = "tests-helpers/" ] || [ "$dir" = "tests/" ]
-                continue;
-              fi
-              cd $dir
-              wasm-pack test --headless --${{ matrix.browser }}
-              cd ..
-            done
+          command: bash end2end/run.sh ${{ matrix.browser }}
 
   build-examples:
     needs: check-toolchain-is-stable

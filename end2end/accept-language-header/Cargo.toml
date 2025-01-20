@@ -17,4 +17,4 @@ wasm-bindgen-test = "0.3"
 leptos = "0.7"
 
 [package.metadata.cargo-machete]
-ignored = ["fluent-templates", "leptos_meta"]
+ignored = ["fluent-templates", "wasm-bindgen"]
