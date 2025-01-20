@@ -6,6 +6,6 @@
     "args": []
   },
   "goog:chromeOptions": {
-    "args": ["--accept-lang", "ES"]
+    "args": ["--accept-lang=ES"]
   }
 }
