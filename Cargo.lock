@@ -1624,6 +1624,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "leptos-fluent-end2end-set-language-to-cookie-tests"
+version = "0.1.0"
+dependencies = [
+ "fluent-templates",
+ "leptos",
+ "leptos-fluent",
+ "leptos-fluent-csr-minimal-example",
+ "tests-helpers",
+ "wasm-bindgen",
+ "wasm-bindgen-test",
+]
+
+[[package]]
 name = "leptos-fluent-end2end-tests"
 version = "0.1.0"
 dependencies = [

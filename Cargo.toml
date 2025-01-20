@@ -9,6 +9,7 @@ members = [
   "end2end",
   "end2end/tests-helpers",
   "end2end/initial-language-from-navigator",
+  "end2end/set-language-to-cookie",
 ]
 resolver = "2"
 
