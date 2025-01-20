@@ -1624,7 +1624,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "leptos-fluent-end2end-set-language-from-navigator-tests"
+name = "leptos-fluent-end2end-set-language-to-cookie-tests"
 version = "0.1.0"
 dependencies = [
  "fluent-templates",
@@ -1637,7 +1637,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "leptos-fluent-end2end-set-language-to-cookie-tests"
+name = "leptos-fluent-end2end-set-language-to-localstorage-tests"
 version = "0.1.0"
 dependencies = [
  "fluent-templates",
