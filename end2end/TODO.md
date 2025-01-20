@@ -21,3 +21,4 @@
 - `initial_language_from_url_path_to_localstorage`
 - `initial_language_from_url_path_to_cookie`
 - `initial_language_from_url_path_to_server_function`
+- `set_language_from_navigator`
