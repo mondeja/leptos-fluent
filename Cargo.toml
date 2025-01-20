@@ -2,12 +2,15 @@
 members = [
   "leptos-fluent",
   "leptos-fluent-macros",
-  "end2end",
-  "end2end/tests-helpers",
   "examples/csr-complete",
   "examples/csr-minimal",
   "examples/ssr-hydrate-actix",
   "examples/ssr-hydrate-axum",
+  "end2end",
+  "end2end/tests-helpers",
+  "end2end/initial-language-from-navigator",
+  "end2end/set-language-to-cookie",
+  "end2end/set-language-to-localstorage",
 ]
 resolver = "2"
 
