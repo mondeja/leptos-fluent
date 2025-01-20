@@ -1,0 +1,14 @@
+{
+  "moz:firefoxOptions": {
+    "prefs": {
+      "intl.accept_languages": "ES"
+    },
+    "args": []
+  },
+  "goog:chromeOptions": {
+    "args": [
+      "--accept-lang",
+      "ES"
+    ]
+  }
+}
