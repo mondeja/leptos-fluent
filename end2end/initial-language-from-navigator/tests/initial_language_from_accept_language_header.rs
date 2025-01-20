@@ -11,7 +11,7 @@ pub fn App() -> impl IntoView {
     leptos_fluent! {
         translations: [TRANSLATIONS],
         locales: "../../examples/csr-minimal/locales",
-        initial_language_from_accept_language_header: true,
+        initial_language_from_navigator: true,
     };
 
     view! { <LanguageSelector /> }

@@ -1,5 +1,5 @@
 [package]
-name = "leptos-fluent-end2end-accept-language-header-tests"
+name = "leptos-fluent-end2end-initial-language-from-navigator-tests"
 edition = "2021"
 version = "0.1.0"
 publish = false

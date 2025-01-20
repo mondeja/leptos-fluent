@@ -1611,7 +1611,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "leptos-fluent-end2end-accept-language-header-tests"
+name = "leptos-fluent-end2end-initial-language-from-navigator-tests"
 version = "0.1.0"
 dependencies = [
  "fluent-templates",

@@ -8,7 +8,7 @@ members = [
   "examples/ssr-hydrate-axum",
   "end2end",
   "end2end/tests-helpers",
-  "end2end/accept-language-header",
+  "end2end/initial-language-from-navigator",
 ]
 resolver = "2"
 
