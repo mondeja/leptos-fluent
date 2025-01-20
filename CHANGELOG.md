@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## ? - 0.2.3
+
+- Add MSRVs to `Cargo.toml`s.
+
 ## 2025-01-13 - [0.2.2]
 
 - Use `std::sync::LazyLock` instead of `once_cell::sync::Lazy`.
