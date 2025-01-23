@@ -1,6 +1,13 @@
 # CHANGELOG
 
-## ? - 0.2.3
+## 2025-01-23 - [0.2.3]
+
+### Bug fixes
+
+- Fixed type in hashmap key propagating arguments to `fluent-templates`
+  with `tr!(i18n, id, args)` and `move_tr!(i18n, id, args)` macros.
+
+### Enhancements
 
 - Add MSRVs to `Cargo.toml`s.
 
@@ -628,6 +635,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.2.3]: https://github.com/mondeja/leptos-fluent/compare/v0.2.2...v0.2.3
 [0.2.2]: https://github.com/mondeja/leptos-fluent/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/mondeja/leptos-fluent/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/mondeja/leptos-fluent/compare/v0.1.26...v0.2.0
