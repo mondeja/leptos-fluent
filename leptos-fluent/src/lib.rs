@@ -752,7 +752,7 @@ macro_rules! tr {
         $crate::tr_with_args_impl($i18n, $text_id, &{
             let mut map = ::std::collections::HashMap::new();
             $(
-                map.insert($key.to_string(), $value.into());
+                map.insert($key.into(), $value.into());
             )*
             map
         })
