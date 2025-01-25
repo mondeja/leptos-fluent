@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## ? - [0.2.4]
+## Unrealeased - [0.2.4]
 
 ### Enhancements
 
