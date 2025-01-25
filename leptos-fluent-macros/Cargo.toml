@@ -2,7 +2,7 @@
 name = "leptos-fluent-macros"
 description = "Macros for leptos-fluent"
 edition.workspace = true
-version = "0.2.3"
+version = "0.2.4"
 rust-version = "1.78.0"
 license = "MIT"
 documentation.workspace = true
