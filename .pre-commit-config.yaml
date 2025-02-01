@@ -134,9 +134,6 @@ repos:
   - repo: https://github.com/mondeja/rust-pc-hooks
     rev: v1.3.0
     hooks:
-      - id: cargo-machete
-        args:
-          - --skip-target-dir
       - id: cargo-readme
         alias: cargo-readme-workspace
         name: cargo-readme-workspace
@@ -157,4 +154,3 @@ repos:
         args:
           - --project-root=leptos-fluent-macros
           - --output=README.md
-      - id: lychee

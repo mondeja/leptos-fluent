@@ -33,10 +33,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        process:
-          - lint
-          - check-all-features
-          - build-all-features
+        job: [lint, check-all-features, build-all-features]
     steps:
       - uses: actions/checkout@v4
       - name: Get toolchain
@@ -69,7 +66,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libgtk-4-dev
       - name: Lint
-        if: matrix.process == 'lint'
+        if: matrix.job == 'lint'
         uses: nick-fields/retry@v3
         with:
           timeout_minutes: 25
@@ -78,17 +75,52 @@ jobs:
           warning_on_retry: false
           command: pre-commit run --all-files --show-diff-on-failure
       - name: Check all features
-        if: matrix.process == 'check-all-features'
+        if: matrix.job == 'check-all-features'
         run: |
           pre-commit run --all-files --verbose \
             --config end2end/.pre-commit-config.yaml \
             cargo-check-all-features
       - name: Build all features
-        if: matrix.process == 'build-all-features'
+        if: matrix.job == 'build-all-features'
         run: |
           pre-commit run --all-files --verbose \
             --config end2end/.pre-commit-config.yaml \
             cargo-build-all-features
+
+  lychee:
+    name: Check URLs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Restore lychee cache
+        uses: actions/cache@v4
+        with:
+          path: .lycheecache
+          key: cache-lychee-${{ github.sha }}
+          restore-keys: cache-lychee-
+      - name: Run Lychee
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: "--cache --max-cache-age 1d ."
+
+  cargo-machete:
+    name: Check for outdated dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get toolchain
+        id: toolchain
+        uses: ./.github/actions/get-toolchain
+      - name: Setup Rust
+        uses: hecrj/setup-rust-action@v2
+        with:
+          rust-version: ${{ steps.toolchain.outputs.channel }}
+          profile: minimal
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-machete
+      - name: Run cargo-machete
+        run: cargo machete --skip-target-dir
 
   build-book:
     name: Build book
@@ -140,14 +172,10 @@ jobs:
           rust-version: ${{ steps.toolchain.outputs.channel }}
           profile: minimal
           targets: wasm32-unknown-unknown
-      - name: Install cargo binstall
-        uses: cargo-bins/cargo-binstall@main
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install wasm-pack
-        run: cargo binstall -y wasm-pack
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: taiki-e/install-action@v2
+        with:
+          tool: wasm-pack
       - name: Cache dependencies
         uses: actions/cache@v4
         with:
@@ -188,14 +216,10 @@ jobs:
           rust-version: ${{ steps.toolchain.outputs.channel }}
           profile: minimal
           targets: wasm32-unknown-unknown
-      - name: Install cargo binstall
-        uses: cargo-bins/cargo-binstall@main
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install wasm-pack
-        run: cargo binstall -y wasm-pack
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: taiki-e/install-action@v2
+        with:
+          tool: wasm-pack
       - name: Cache dependencies
         uses: actions/cache@v4
         with:
