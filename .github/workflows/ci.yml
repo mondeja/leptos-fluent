@@ -105,6 +105,7 @@ jobs:
 
   cargo-machete:
     name: Check for outdated dependencies
+    needs: check-toolchain-is-stable
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -272,13 +273,14 @@ jobs:
           rust-version: ${{ steps.toolchain.outputs.channel }}
           profile: minimal
           targets: wasm32-unknown-unknown
-      - name: Install cargo binstall
-        uses: cargo-bins/cargo-binstall@main
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install trunk
         if: startsWith(matrix.example, 'csr')
-        run: cargo binstall -y trunk
+        uses: taiki-e/install-action@v2
+        with:
+          tool: trunk
+      - name: Install cargo binstall
+        if: startsWith(matrix.example, 'ssr')
+        uses: cargo-bins/cargo-binstall@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install cargo-leptos
