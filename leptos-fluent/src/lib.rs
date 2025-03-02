@@ -642,9 +642,25 @@ pub fn i18n() -> I18n {
     }
 }
 
+/// Get the translation of a text identifier to the current language.
+///
+/// ```rust,ignore
+/// use leptos_fluent::{tr_impl as tr, expect_i18n};
+///
+/// let text_id = "hello-world";
+/// tr(expect_i18n(), text_id);
+/// ```
+///
+/// Calls to this function will not be checked by the `check_translations` option
+/// in the `leptos_fluent!` macro. To avoid the warning for a specific identifier
+/// or to use dynamic variables for translation data, use this function directly.
 #[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
-#[doc(hidden)]
-pub fn tr_impl(i18n: I18n, text_id: &str) -> String {
+pub fn tr_impl(
+    // Current i18n context. Use `leptos_fluent::expect_i18n()` to get it.
+    i18n: I18n,
+    // Identifier of the text to translate.
+    text_id: &str,
+) -> String {
     let I18n {
         language,
         translations,
@@ -682,11 +698,28 @@ pub fn tr_impl(i18n: I18n, text_id: &str) -> String {
     found.unwrap_or(format!("Unknown localization {text_id}"))
 }
 
+/// Get the translation of a text identifier to the current language with arguments.
+///
+/// ```rust,ignore
+/// use std::collections::HashMap;
+/// use leptos_fluent::{tr_with_args_impl as tr, expect_i18n};
+///
+/// let i18n = expect_i18n();
+/// let mut args = HashMap::new();
+/// args.insert("name".into(), "John".into());
+/// tr(i18n, "hello-args", &args);
+/// ```
+///
+/// Calls to this function will not be checked by the `check_translations` option
+/// in the `leptos_fluent!` macro. To avoid the warning for a specific identifier
+/// or to use dynamic variables for translation data, use this function directly.
 #[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
-#[doc(hidden)]
 pub fn tr_with_args_impl(
+    // Current i18n context. Use `leptos_fluent::expect_i18n()` to get it.
     i18n: I18n,
+    // Identifier of the text to translate.
     text_id: &str,
+    // Arguments to pass to the translation.
     args: &std::collections::HashMap<Cow<'static, str>, FluentValue>,
 ) -> String {
     let I18n {
@@ -729,12 +762,29 @@ pub fn tr_with_args_impl(
 /// Translate a text identifier to the current language.
 ///
 /// ```rust,ignore
+/// use leptos_fluent::tr;
+///
 /// tr!("hello-world")
 /// tr!("hello-world", { "name" => "John" });
 ///
 /// let name = "John";
 /// tr!("hello-world", { "name" => name, "age" => 30 });
 /// ```
+///
+/// Needs to be placed inside a reactive context to update the translation
+/// on the fly when the language changes.
+///
+/// ```rust,ignore
+/// use leptos_fluent::tr;
+///
+/// let text_signal = move || tr!("hello-world");
+/// ```
+///
+/// When using `check_translations` option in the `leptos_fluent!` macro,
+/// the usage of `tr!` will raise a warning if the translation data does not
+/// match against the translations files. To avoid the warning for a specific
+/// identifier or to use dynamic variables for translation data, use `tr_impl`
+/// or `tr_with_args_impl` functions directly.
 #[macro_export]
 macro_rules! tr {
     ($text_id:literal$(,)?) => {$crate::tr_impl($crate::expect_i18n(), $text_id)};
@@ -778,6 +828,12 @@ macro_rules! tr {
 /// let name = "John";
 /// Signal::derive(move || tr!("hello-world", { "name" => name, "age" => 30 }));
 /// ```
+///
+/// When using `check_translations` option in the `leptos_fluent!` macro,
+/// the usage of `move_tr!` will raise a warning if the translation data does not
+/// match against the translations files. To avoid the warning for a specific
+/// identifier or to use dynamic variables for translation data, use `tr_impl`
+/// or `tr_with_args_impl` functions directly.
 ///
 /// [Leptos's `Signal`]: https://docs.rs/reactive_graph/0.1.0/reactive_graph/wrappers/read/struct.Signal.html
 #[macro_export]

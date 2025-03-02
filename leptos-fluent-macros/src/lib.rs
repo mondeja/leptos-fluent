@@ -3,9 +3,7 @@
 #![cfg_attr(feature = "nightly", feature(track_path))]
 #![cfg_attr(feature = "nightly", feature(absolute_path))]
 
-//! Macros for the leptos-fluent crate.
-//!
-//! See [leptos-fluent] for more information.
+//! Macros for [leptos-fluent].
 //!
 //! [leptos-fluent]: https://crates.io/crates/leptos-fluent
 
@@ -96,7 +94,7 @@ pub(crate) fn debug(msg: &str) {
 /// ```
 ///
 /// See the reference with all the parameters explained in detail at
-/// https://mondeja.github.io/leptos-fluent/leptos_fluent.html
+/// <https://mondeja.github.io/leptos-fluent/leptos_fluent.html>
 #[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
 #[proc_macro]
 pub fn leptos_fluent(
