@@ -4,7 +4,7 @@
 
 ### Bug fixes
 
-- Fix strange error messages of translations checker when trying to pass a
+- Fix strange error messages from translations checker when trying to pass a
   Rust literal that is not a string to `tr!` and `move_tr!` macros.
 - Fix empty placeables detected by translations checker when passing invalid
   argument types to `tr!` and `move_tr!` macros.
