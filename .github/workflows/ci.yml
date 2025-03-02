@@ -285,7 +285,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install cargo-leptos
         if: startsWith(matrix.example, 'ssr')
-        run: cargo binstall -y cargo-leptos@0.2.22
+        run: cargo binstall -y cargo-leptos
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Cache dependencies
