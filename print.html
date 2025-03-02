@@ -904,17 +904,22 @@ of <code>leptos_fluent!</code> macro.</p>
 let text_id = "my-translation";
 tr!(text_id);</code></pre>
 <p>Instead, use <code>tr_impl</code> and <code>tr_with_args_impl</code> functions:</p>
-<pre><code class="language-rust">use leptos_fluent::tr_impl as tr;
+<pre><code class="language-rust">use leptos_fluent::{expect_i18n, tr_impl as tr};
 
 let text_id = "my-translation";
-tr(text_id);</code></pre>
+tr(expect_i18n(), text_id);</code></pre>
 <pre><code class="language-rust">use std::collections::HashMap;
-use leptos_fluent::{tr_with_args_impl as tr_with_args};
+use leptos_fluent::{expect_i18n, tr_with_args_impl as tr_with_args};
 
 let text_id = "hello-args";
 let mut args = HashMap::new();
 args.insert("name", "World");
-tr_with_args(text_id, args);</code></pre>
+tr_with_args(expect_i18n(), text_id, args);</code></pre>
+<p>Note that <code>tr_impl</code> and <code>tr_with_args_impl</code> functions are not reactive,
+so you need to enclose their calls in a reactive context like a function to
+update the view on the fly when the language changes, and that the translations
+checker will not be able to check passed translation data at compile time,
+even if they're defined as literals.</p>
 <h3 id="tr-and-move_tr-outside-reactive-graph"><a class="header" href="#tr-and-move_tr-outside-reactive-graph"><code>tr!</code> and <code>move_tr!</code> outside reactive graph</a></h3>
 <p>Outside the reactive ownership tree, mainly known as the <em>reactive graph</em>,
 we can't obtain the context of <code>I18n</code> using <code>expect_context::&lt;leptos_fluent::I18n&gt;()</code>,
