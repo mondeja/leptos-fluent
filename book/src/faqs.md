@@ -57,21 +57,27 @@ tr!(text_id);
 Instead, use `tr_impl` and `tr_with_args_impl` functions:
 
 ```rust
-use leptos_fluent::tr_impl as tr;
+use leptos_fluent::{expect_i18n, tr_impl as tr};
 
 let text_id = "my-translation";
-tr(text_id);
+tr(expect_i18n(), text_id);
 ```
 
 ```rust
 use std::collections::HashMap;
-use leptos_fluent::{tr_with_args_impl as tr_with_args};
+use leptos_fluent::{expect_i18n, tr_with_args_impl as tr_with_args};
 
 let text_id = "hello-args";
 let mut args = HashMap::new();
 args.insert("name", "World");
-tr_with_args(text_id, args);
+tr_with_args(expect_i18n(), text_id, args);
 ```
+
+Note that `tr_impl` and `tr_with_args_impl` functions are not reactive,
+so you need to enclose their calls in a reactive context like a function to
+update the view on the fly when the language changes, and that the translations
+checker will not be able to check passed translation data at compile time,
+even if they're defined as literals.
 
 ### `tr!` and `move_tr!` outside reactive graph
 
