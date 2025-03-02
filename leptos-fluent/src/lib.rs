@@ -655,12 +655,7 @@ pub fn i18n() -> I18n {
 /// in the `leptos_fluent!` macro. To avoid the warning for a specific identifier
 /// or to use dynamic variables for translation data, use this function directly.
 #[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
-pub fn tr_impl(
-    // Current i18n context. Use `leptos_fluent::expect_i18n()` to get it.
-    i18n: I18n,
-    // Identifier of the text to translate.
-    text_id: &str,
-) -> String {
+pub fn tr_impl(i18n: I18n, text_id: &str) -> String {
     let I18n {
         language,
         translations,
@@ -715,11 +710,8 @@ pub fn tr_impl(
 /// or to use dynamic variables for translation data, use this function directly.
 #[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
 pub fn tr_with_args_impl(
-    // Current i18n context. Use `leptos_fluent::expect_i18n()` to get it.
     i18n: I18n,
-    // Identifier of the text to translate.
     text_id: &str,
-    // Arguments to pass to the translation.
     args: &std::collections::HashMap<Cow<'static, str>, FluentValue>,
 ) -> String {
     let I18n {
