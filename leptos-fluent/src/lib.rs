@@ -416,7 +416,7 @@ impl FromStr for Language {
     }
 }
 
-macro_rules! impl_into_attr_for_language {
+macro_rules! impl_attr_value_for_language {
     () => {
         type State = <String as AttributeValue>::State;
         type AsyncOutput = String;
@@ -478,11 +478,11 @@ macro_rules! impl_into_attr_for_language {
 }
 
 impl AttributeValue for &Language {
-    impl_into_attr_for_language!();
+    impl_attr_value_for_language!();
 }
 
 impl AttributeValue for &&Language {
-    impl_into_attr_for_language!();
+    impl_attr_value_for_language!();
 }
 
 /// Internationalization context.
@@ -509,28 +509,26 @@ impl I18n {
     /// raise an error message.
     ///
     /// ```rust,ignore
-    /// use leptos_fluent::leptos_fluent;
+    /// use leptos_fluent::{leptos_fluent, expect_i18n};
     ///
-    /// let i18n = leptos_fluent! {
+    /// leptos_fluent! {
     ///     // ...
     ///     provide_meta_context: true,
     /// };
     ///
-    /// leptos::logging::log!("Macro parameters: {:?}", i18n.meta().unwrap());
+    /// // ... later in the code
+    /// leptos::logging::log!("Macro parameters: {:?}", expect_i18n().meta().unwrap());
     /// ```
     #[cfg_attr(
         feature = "tracing",
         tracing::instrument(level = "trace", err(Debug))
     )]
-    pub fn meta(&self) -> Result<LeptosFluentMeta, String> {
-        leptos::prelude::use_context::<LeptosFluentMeta>().ok_or(
-            concat!(
-                "You need to call `leptos_fluent!` with the parameter",
-                " 'provide_meta_context' enabled to provide the meta context",
-                " for the macro."
-            )
-            .to_string(),
-        )
+    pub fn meta(&self) -> Result<LeptosFluentMeta, &'static str> {
+        leptos::prelude::use_context::<LeptosFluentMeta>().ok_or(concat!(
+            "You need to call `leptos_fluent!` with the parameter",
+            " 'provide_meta_context' enabled to provide the meta context",
+            " for the macro."
+        ))
     }
 }
 
@@ -621,10 +619,9 @@ pub fn expect_i18n() -> I18n {
     if let Some(i18n) = use_i18n() {
         i18n
     } else {
-        let error_message = EXPECT_I18N_ERROR_MESSAGE;
         #[cfg(feature = "tracing")]
-        tracing::error!(error_message);
-        panic!("{}", error_message)
+        tracing::error!(EXPECT_I18N_ERROR_MESSAGE);
+        panic!("{}", EXPECT_I18N_ERROR_MESSAGE)
     }
 }
 
@@ -635,10 +632,9 @@ pub fn i18n() -> I18n {
     if let Some(i18n) = use_i18n() {
         i18n
     } else {
-        let error_message = EXPECT_I18N_ERROR_MESSAGE;
         #[cfg(feature = "tracing")]
-        tracing::error!(error_message);
-        panic!("{}", error_message)
+        tracing::error!(EXPECT_I18N_ERROR_MESSAGE);
+        panic!("{}", EXPECT_I18N_ERROR_MESSAGE)
     }
 }
 
@@ -993,15 +989,16 @@ pub struct LeptosFluentMeta {
 
 #[cfg(test)]
 mod test {
+    static THIS_FILE_CONTENT: &str = include_str!("./lib.rs");
+
     fn major_and_minor_version(version: &str) -> String {
         version.split('.').take(2).collect::<Vec<_>>().join(".")
     }
 
     #[test]
-    fn test_readme_leptos_fluent_version_is_updated() {
-        let this_file = include_str!("./lib.rs");
+    fn readme_leptos_fluent_version_is_updated() {
         let mut version = None;
-        for line in this_file.lines() {
+        for line in THIS_FILE_CONTENT.lines() {
             if line.starts_with("//! leptos-fluent = ") {
                 version = Some(
                     line.split("leptos-fluent = \"")
@@ -1027,5 +1024,80 @@ mod test {
                 " 'Installation' section is not updated."
             ),
         );
+    }
+
+    // Check that `LeptosFluentMeta`'s fields are in sync with the `leptos_fluent!` macro
+    #[test]
+    fn leptos_fluent_meta_is_updated() {
+        let fields_to_ignore = ["children", "translations"];
+
+        // Get fields from `LeptosFluentMeta` struct
+        let mut struct_fields = Vec::from(fields_to_ignore);
+        let mut inside_struct_ = false;
+        for line in THIS_FILE_CONTENT.lines() {
+            if line == "pub struct LeptosFluentMeta {" {
+                inside_struct_ = true;
+                continue;
+            }
+            if inside_struct_ {
+                if line == "}" {
+                    break;
+                }
+                if line.starts_with("    pub ") {
+                    let field = line
+                        .split("pub ")
+                        .nth(1)
+                        .unwrap()
+                        .split(":")
+                        .next()
+                        .unwrap()
+                        .trim();
+                    struct_fields.push(field);
+                }
+            }
+        }
+
+        // Get fields from `leptos_fluent_macros` loader.rs conditional
+        let leptos_fluent_macros_loader_content =
+            include_str!("../../leptos-fluent-macros/src/loader.rs");
+
+        let mut loader_fields = Vec::new();
+        let mut index = 0;
+        let lines = leptos_fluent_macros_loader_content
+            .lines()
+            .collect::<Vec<_>>();
+        while index < lines.len() {
+            let line = lines[index];
+            if line.contains("if k == \"") {
+                let field = line.split('"').nth(1).unwrap();
+                loader_fields.push(field);
+            } else if line.contains("else if k") {
+                let line = lines[index + 1];
+                let field = line.split('"').nth(1).unwrap();
+                loader_fields.push(field);
+                index += 1;
+            }
+            index += 1;
+        }
+
+        // Check that fields are in sync
+        for field in &loader_fields {
+            assert!(
+                struct_fields.contains(&field),
+                concat!(
+                    "Field \"{}\" from `leptos-fluent-macros/src/loader.rs`",
+                    " conditional is missing in `LeptosFluentMeta` struct"
+                ),
+                field
+            );
+        }
+        for field in struct_fields {
+            assert!(
+                loader_fields.contains(&field),
+                concat!("Field \"{}\" from `LeptosFluentMeta` struct",
+                        " is missing in `leptos-fluent-macros/src/loader.rs` conditional"),
+                field
+            );
+        }
     }
 }

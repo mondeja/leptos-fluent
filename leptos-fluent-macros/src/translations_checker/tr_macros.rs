@@ -61,7 +61,12 @@ fn tr_macros_from_file_path(
                     workspace_path,
                 );
                 visitor.visit_file(&ast);
-                Ok(visitor.tr_macros)
+                if visitor.errors.is_empty() {
+                    Ok(visitor.tr_macros)
+                } else {
+                    let error = visitor.errors.join("\n");
+                    Err(format!("Error parsing file {file_path}\n{error}"))
+                }
             }
             Err(error) => {
                 Err(format!("Error parsing file {file_path}\n{error}"))
@@ -103,6 +108,8 @@ impl PartialEq for TranslationMacro {
 
 pub(crate) struct TranslationsMacrosVisitor {
     pub(crate) tr_macros: Vec<TranslationMacro>,
+    pub(crate) errors: Vec<String>,
+
     current_tr_macro: Option<String>,
     current_tr_macro_punct: Option<char>,
     current_message_name: Option<String>,
@@ -131,6 +138,7 @@ impl TranslationsMacrosVisitor {
             current_tr_macro_punct: None,
             current_message_name: None,
             current_placeables: Vec::new(),
+            errors: Vec::new(),
             #[cfg(not(test))]
             file_path: std::rc::Rc::new(rel_path),
             #[cfg(feature = "nightly")]
@@ -140,36 +148,45 @@ impl TranslationsMacrosVisitor {
 }
 
 /// Convert a literal to a string, removing the quotes and the string type characters
-fn value_from_literal(literal: &proc_macro2::Literal) -> String {
+fn value_from_literal(
+    literal: &proc_macro2::Literal,
+    location_macro_name: &str,
+) -> Result<String, String> {
     let literal_str = literal.to_string();
     if literal_str.starts_with("r#") {
-        literal_str
+        Ok(literal_str
             .strip_prefix("r#\"")
             .expect("Raw string literal that does not starts with 'r#\"'")
             .strip_suffix("\"#")
             .expect("Raw string literal that does not ends with '\"#'")
-            .to_string()
+            .into())
     } else if literal_str.starts_with("c\"") {
-        literal_str
+        Ok(literal_str
             .strip_prefix("c\"")
             .expect("C string literal that does not starts with 'c\"'")
             .strip_suffix('"')
             .expect("C string literal that does not ends with '\"'")
-            .to_string()
+            .into())
     } else if literal_str.starts_with("cr#") {
-        literal_str
+        Ok(literal_str
             .strip_prefix("cr#\"")
             .expect("C raw string literal that does not starts with 'cr#\"'")
             .strip_suffix("\"#")
             .expect("C raw string literal that does not ends with '\"#'")
-            .to_string()
-    } else {
-        literal_str
+            .into())
+    } else if literal_str.starts_with('"') {
+        Ok(literal_str
             .strip_prefix('"')
             .expect("Literal that does not starts with '\"'")
             .strip_suffix('"')
             .expect("Literal that does not ends with '\"'")
-            .to_string()
+            .into())
+    } else {
+        // TODO: Indicate the source file, line and column on nightly
+        // https://doc.rust-lang.org/beta/proc_macro/struct.Span.html#method.source_file
+        Err(format!(
+            "Literal `{literal_str}` at `{location_macro_name}!` macro must be a string literal"
+        ))
     }
 }
 
@@ -197,7 +214,7 @@ impl TranslationsMacrosVisitor {
                     self.current_tr_macro_punct = Some(punct.as_char());
                 }
             } else if let proc_macro2::TokenTree::Group(group) = token {
-                if let Some(ref tr_macro) = &self.current_tr_macro {
+                if self.current_tr_macro.is_some() {
                     if let Some(ref tr_macro_punct) =
                         &self.current_tr_macro_punct
                     {
@@ -225,8 +242,19 @@ impl TranslationsMacrosVisitor {
                         if let proc_macro2::TokenTree::Literal(literal) =
                             tr_token
                         {
-                            self.current_message_name =
-                                Some(value_from_literal(&literal));
+                            match value_from_literal(
+                                &literal,
+                                self.current_tr_macro.as_ref().unwrap(),
+                            ) {
+                                Ok(value) => {
+                                    self.current_message_name = Some(value);
+                                }
+                                Err(error) => {
+                                    if !self.errors.contains(&error) {
+                                        self.errors.push(error);
+                                    }
+                                }
+                            }
                         } else if let proc_macro2::TokenTree::Group(
                             placeables_group,
                         ) = tr_token
@@ -238,9 +266,34 @@ impl TranslationsMacrosVisitor {
                                 ) = arg_token
                                 {
                                     if after_comma_punct {
-                                        self.current_placeables.push(
-                                            value_from_literal(&arg_literal),
-                                        );
+                                        match value_from_literal(
+                                            &arg_literal,
+                                            self.current_tr_macro
+                                                .as_ref()
+                                                .unwrap(),
+                                        ) {
+                                            Ok(value) => {
+                                                self.current_placeables
+                                                    .push(value);
+                                            }
+                                            Err(error) => {
+                                                if !self.errors.contains(&error)
+                                                {
+                                                    self.errors.push(error);
+                                                }
+
+                                                // invalid placeable found, so
+                                                // skip the current macro
+                                                self.current_tr_macro = None;
+                                                self.current_tr_macro_punct =
+                                                    None;
+                                                self.current_message_name =
+                                                    None;
+                                                self.current_placeables =
+                                                    Vec::new();
+                                                break;
+                                            }
+                                        }
                                         after_comma_punct = false;
                                     }
                                 } else if let proc_macro2::TokenTree::Punct(
@@ -259,7 +312,11 @@ impl TranslationsMacrosVisitor {
                         &self.current_message_name
                     {
                         let new_tr_macro = TranslationMacro {
-                            name: tr_macro.to_owned(),
+                            name: self
+                                .current_tr_macro
+                                .as_ref()
+                                .unwrap()
+                                .to_owned(),
                             message_name: current_message_name.to_owned(),
                             placeables: self.current_placeables.to_owned(),
                             #[cfg(not(test))]
@@ -267,8 +324,6 @@ impl TranslationsMacrosVisitor {
                             #[cfg(feature = "nightly")]
                             start: self.current_tr_macro_start.unwrap(),
                         };
-                        // TODO: this is expensive because we're executing
-                        // it recursively for each group
                         if !self.tr_macros.contains(&new_tr_macro) {
                             self.tr_macros.push(new_tr_macro);
                         }
@@ -334,13 +389,13 @@ mod tests {
     use quote::quote;
     use syn::visit::Visit;
 
-    fn tr_macros_from_file_content(
+    fn visitor_from_file_content(
         file_content: &str,
-    ) -> Vec<TranslationMacro> {
+    ) -> TranslationsMacrosVisitor {
         let ast = syn::parse_file(file_content).unwrap();
         let mut visitor = TranslationsMacrosVisitor::new();
         visitor.visit_file(&ast);
-        visitor.tr_macros
+        visitor
     }
 
     macro_rules! tr_macro {
@@ -363,10 +418,10 @@ mod tests {
                 }
             }
         };
-        let tr_macros = tr_macros_from_file_content(&content.to_string());
+        let visitor = visitor_from_file_content(&content.to_string());
 
         assert_eq!(
-            tr_macros,
+            visitor.tr_macros,
             vec![
                 tr_macro!("move_tr", "select-a-language", Vec::new()),
                 tr_macro!(
@@ -376,6 +431,7 @@ mod tests {
                 ),
             ]
         );
+        assert_eq!(visitor.errors, Vec::<String>::new());
     }
 
     #[test]
@@ -392,10 +448,10 @@ mod tests {
                 };
             }
         };
-        let tr_macros = tr_macros_from_file_content(&content.to_string());
+        let visitor = visitor_from_file_content(&content.to_string());
 
         assert_eq!(
-            tr_macros,
+            visitor.tr_macros,
             vec![
                 tr_macro!("tr", "select-a-language", Vec::new()),
                 tr_macro!(
@@ -411,6 +467,7 @@ mod tests {
                 ),
             ]
         );
+        assert_eq!(visitor.errors, Vec::<String>::new());
     }
 
     #[test]
@@ -425,10 +482,10 @@ mod tests {
                 });
             }
         };
-        let tr_macros = tr_macros_from_file_content(&content.to_string());
+        let visitor = visitor_from_file_content(&content.to_string());
 
         assert_eq!(
-            tr_macros,
+            visitor.tr_macros,
             vec![
                 tr_macro!(
                     "tr",
@@ -438,6 +495,7 @@ mod tests {
                 tr_macro!("tr", "svg", Vec::new()),
             ]
         );
+        assert_eq!(visitor.errors, Vec::<String>::new());
     }
 
     #[test]
@@ -449,10 +507,10 @@ mod tests {
                 tr!("html-tag-lang-is", { "foo" => "value1", "bar" => "value2" });
             }
         };
-        let tr_macros = tr_macros_from_file_content(&content.to_string());
+        let visitor = visitor_from_file_content(&content.to_string());
 
         assert_eq!(
-            tr_macros,
+            visitor.tr_macros,
             vec![
                 tr_macro!("tr", "select-a-language", Vec::new()),
                 tr_macro!(
@@ -462,6 +520,7 @@ mod tests {
                 ),
             ]
         );
+        assert_eq!(visitor.errors, Vec::<String>::new());
     }
 
     #[test]
@@ -472,10 +531,10 @@ mod tests {
                 let b = tr!("html-tag-lang-is", { "foo" => "value1", "bar" => "value2" });
             }
         };
-        let tr_macros = tr_macros_from_file_content(&content.to_string());
+        let visitor = visitor_from_file_content(&content.to_string());
 
         assert_eq!(
-            tr_macros,
+            visitor.tr_macros,
             vec![
                 tr_macro!("tr", "select-a-language", Vec::new()),
                 tr_macro!(
@@ -485,6 +544,7 @@ mod tests {
                 ),
             ]
         );
+        assert_eq!(visitor.errors, Vec::<String>::new());
     }
 
     #[test]
@@ -504,15 +564,16 @@ mod tests {
                 }
             }
         };
-        let tr_macros = tr_macros_from_file_content(&content.to_string());
+        let visitor = visitor_from_file_content(&content.to_string());
 
         assert_eq!(
-            tr_macros,
+            visitor.tr_macros,
             vec![
                 tr_macro!("move_tr", "some-errors-happened", Vec::new()),
                 tr_macro!("move_tr", "an-error-happened", Vec::new()),
             ]
         );
+        assert_eq!(visitor.errors, Vec::<String>::new());
     }
 
     #[test]
@@ -536,15 +597,16 @@ mod tests {
             }
         };
 
-        let tr_macros = tr_macros_from_file_content(&content.to_string());
+        let visitor = visitor_from_file_content(&content.to_string());
 
         assert_eq!(
-            tr_macros,
+            visitor.tr_macros,
             vec![
                 tr_macro!("move_tr", "light-color-scheme", Vec::new()),
                 tr_macro!("move_tr", "dark-color-scheme", Vec::new())
             ]
         );
+        assert_eq!(visitor.errors, Vec::<String>::new());
     }
 
     #[test]
@@ -566,9 +628,34 @@ mod tests {
             }
         };
 
-        let tr_macros = tr_macros_from_file_content(&content.to_string());
+        let visitor = visitor_from_file_content(&content.to_string());
 
-        assert_eq!(tr_macros, Vec::new());
+        assert_eq!(visitor.tr_macros, Vec::new());
+        assert_eq!(visitor.errors, Vec::<String>::new());
+    }
+
+    #[test]
+    fn tr_non_string_literals_as_text_id() {
+        let content = quote! {
+            #[component]
+            fn Foo() -> impl IntoView {
+                view! {
+                    <p>{tr!(56)}</p>
+                    <p>{move_tr!("foo", {b'7' => "bar"})}</p>
+                }
+            }
+        };
+
+        let visitor = visitor_from_file_content(&content.to_string());
+
+        assert_eq!(visitor.tr_macros, Vec::new());
+        assert_eq!(
+            visitor.errors,
+            vec![
+                "Literal `56` at `tr!` macro must be a string literal",
+                "Literal `b'7'` at `move_tr!` macro must be a string literal",
+            ]
+        );
     }
 
     #[test]
@@ -581,10 +668,10 @@ mod tests {
                 }
             }
         };
-        let tr_macros = tr_macros_from_file_content(&content.to_string());
+        let visitor = visitor_from_file_content(&content.to_string());
 
         assert_eq!(
-            tr_macros,
+            visitor.tr_macros,
             vec![
                 tr_macro!("tr", "select-a-language", Vec::new()),
                 tr_macro!(
@@ -594,6 +681,7 @@ mod tests {
                 ),
             ]
         );
+        assert_eq!(visitor.errors, Vec::<String>::new());
     }
 
     #[test]
@@ -604,10 +692,10 @@ mod tests {
                 tr!(i18n, "html-tag-lang-is", { "foo" => "value1", "bar" => "value2" });
             }
         };
-        let tr_macros = tr_macros_from_file_content(&content.to_string());
+        let visitor = visitor_from_file_content(&content.to_string());
 
         assert_eq!(
-            tr_macros,
+            visitor.tr_macros,
             vec![
                 tr_macro!("tr", "select-a-language", Vec::new()),
                 tr_macro!(
@@ -617,6 +705,7 @@ mod tests {
                 ),
             ]
         );
+        assert_eq!(visitor.errors, Vec::<String>::new());
     }
 
     #[test]
@@ -635,10 +724,10 @@ mod tests {
             }
         };
 
-        let tr_macros = tr_macros_from_file_content(&content.to_string());
+        let visitor = visitor_from_file_content(&content.to_string());
 
         assert_eq!(
-            tr_macros,
+            visitor.tr_macros,
             vec![
                 tr_macro!("tr", "now", Vec::new()),
                 tr_macro!("move_tr", "after", Vec::new()),
@@ -646,6 +735,7 @@ mod tests {
                 tr_macro!("move_tr", "tomorrow", Vec::new()),
             ]
         );
+        assert_eq!(visitor.errors, Vec::<String>::new());
     }
 
     #[test]
@@ -665,10 +755,10 @@ mod tests {
                     move_tr!("download-filetype", {"filetype" => tr!("png")});
             }
         };
-        let tr_macros = tr_macros_from_file_content(&content.to_string());
+        let visitor = visitor_from_file_content(&content.to_string());
 
         assert_eq!(
-            tr_macros,
+            visitor.tr_macros,
             vec![
                 tr_macro!(
                     "move_tr",
@@ -682,5 +772,6 @@ mod tests {
                 tr_macro!("tr", "png", Vec::new()),
             ]
         );
+        assert_eq!(visitor.errors, Vec::<String>::new());
     }
 }

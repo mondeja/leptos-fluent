@@ -203,15 +203,16 @@ fn line_col_from_index_content(content: &str, index: usize) -> (usize, usize) {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::borrow::Cow;
 
-    fn cross_platform_path_repr(path: &str) -> String {
+    fn cross_platform_path_repr(path: &str) -> Cow<'_, str> {
         #[cfg(target_os = "windows")]
         {
-            path.replace('/', "\\")
+            path.replace('/', "\\").into()
         }
         #[cfg(not(target_os = "windows"))]
         {
-            path.to_string()
+            path.into()
         }
     }
 
@@ -331,7 +332,7 @@ mod tests {
                         " for locale \"en-US\":\n",
                         "  + Expected a message field for \"foo\" (at line 1, col 1)"
                     ),
-                    &cross_platform_path_repr("locales/en-US/foo.ftl"),
+                    cross_platform_path_repr("locales/en-US/foo.ftl"),
                 )
             ]
         );
@@ -373,7 +374,7 @@ mod tests {
                     " for locale \"en-US\":\n",
                     "  + Expected one of \"a-zA-Z\" (at line 2, col 18)"
                 ),
-                &cross_platform_path_repr("locales/en-US/foo.ftl"),
+                cross_platform_path_repr("locales/en-US/foo.ftl"),
             )]
         );
         assert_eq!(
