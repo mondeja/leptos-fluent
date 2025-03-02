@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## Unreleased - [0.2.5]
+
+### Bug fixes
+
+- Fix strange error messages from translations checker when trying to pass a
+  Rust literal that is not a string to `tr!` and `move_tr!` macros.
+- Fix empty placeables detected by translations checker when passing invalid
+  argument types to `tr!` and `move_tr!` macros.
+
 ## 2025-03-02 - [0.2.4]
 
 ### Enhancements
@@ -644,6 +653,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.2.5]: https://github.com/mondeja/leptos-fluent/compare/v0.2.4...master
 [0.2.4]: https://github.com/mondeja/leptos-fluent/compare/v0.2.3...v0.2.4
 [0.2.3]: https://github.com/mondeja/leptos-fluent/compare/v0.2.2...v0.2.3
 [0.2.2]: https://github.com/mondeja/leptos-fluent/compare/v0.2.1...v0.2.2
