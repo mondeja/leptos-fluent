@@ -199,13 +199,15 @@ pub async fn show_hello_world(
 }
 
 fn render_language(lang: &'static Language) -> impl IntoView {
+    let i18n = expect_i18n();
+
     // Call on click to server action with a client-side translated
     // "hello-world" message
     let on_click = move |_| {
-        lang.activate();
+        i18n.language.set(lang);
         spawn_local(async {
             _ = show_hello_world(
-                tr!("hello-world"),
+                tr!(i18n, "hello-world"),
                 lang.name.to_string(),
             ).await;
         });

@@ -33,17 +33,27 @@ let LANGUAGES = [
 ```
 
 - `en` is built with the name `"English"` because it's defined as an
-  [ISO 639-1 code], without a region code.
+  [ISO 639 language code], without a region code.
 - `es-ES` is built with the name `"Español (España)"` because it's defined
-  as an [ISO 639-1 code] and a region code.
+  as an [ISO 639 language code] and a [ISO 3166 region code].
 
 This enforces that an user will always be able to select their language in
 their own language, and not in the current language of the application.
 
-```admonish abstract title='Order'
-The order of the languages will be defined based on the alphabetical
-order of their names, not their codes.
-```
+## Inferred language names
+
+When not using a languages file, the language names are inferred from
+the language codes used for Fluent file names following the next rules:
+
+1. If only a language code is provided, use "Language name"
+   (see [full-list][list-1]).
+2. If a region code is provided but the language is not repeated,
+   use "Language name".
+3. If a region code is provided and the language is repeated,
+   use "Language name (region name)" (see [full list][list-2]).
+
+[list-1]: https://github.com/mondeja/leptos-fluent/blob/427712b05a5d42d765967e1edf01fd4d666e8c25/leptos-fluent-macros/src/languages.rs#L1860
+[list-2]: https://github.com/mondeja/leptos-fluent/blob/427712b05a5d42d765967e1edf01fd4d666e8c25/leptos-fluent-macros/src/languages.rs#L598
 
 ## The languages file
 
@@ -128,5 +138,6 @@ pub fn App() -> impl IntoView {
 ]
 ```
 
-[ISO 639-1 code]: https://en.wikipedia.org/wiki/ISO_639-1
+[ISO 639 language code]: https://en.wikipedia.org/wiki/ISO_639
+[ISO 3166 region code]: https://en.wikipedia.org/wiki/ISO_3166-1
 [`leptos_fluent!`]: https://mondeja.github.io/leptos-fluent/leptos_fluent.html
