@@ -165,6 +165,7 @@
 <li><a href="#how-to-get-languageidentifier">How to get <code>LanguageIdentifier</code>?</a></li>
 <li><a href="#custom-cookie-attributes-are-invalid">Custom cookie attributes are invalid</a></li>
 <li><a href="#how-to-get-the-fallback-language">How to get the fallback language</a></li>
+<li><a href="#dynamic-translations-keys">Dynamic translations keys</a></li>
 <li><a href="#tr-and-move_tr-outside-reactive-graph"><code>tr!</code> and <code>move_tr!</code> outside reactive graph</a>
 <ul>
 <li><a href="#on-events-panics">On events, panics</a></li>
@@ -200,6 +201,27 @@ leptos_fluent! {
 <h3 id="how-to-get-the-fallback-language"><a class="header" href="#how-to-get-the-fallback-language">How to get the fallback language</a></h3>
 <p>From fluent-templates <code>v0.10</code> onwards can be obtained from your translations.</p>
 <pre><code class="language-rust">let fallback_language = expect_i18n().translations.get()[0].fallback();</code></pre>
+<h3 id="dynamic-translations-keys"><a class="header" href="#dynamic-translations-keys">Dynamic translations keys</a></h3>
+<p>Dynamic translations keys can't be passed to <code>tr!</code> and <code>move_tr!</code> macros because
+variables will not be checkable at compile time by <code>check_translations</code> option
+of <code>leptos_fluent!</code> macro.</p>
+<pre><code class="language-rust">use leptos_fluent::tr;
+
+// not allowed
+let text_id = "my-translation";
+tr!(text_id);</code></pre>
+<p>Instead, use <code>tr_impl</code> and <code>tr_with_args_impl</code> functions:</p>
+<pre><code class="language-rust">use leptos_fluent::tr_impl as tr;
+
+let text_id = "my-translation";
+tr(text_id);</code></pre>
+<pre><code class="language-rust">use std::collections::HashMap;
+use leptos_fluent::{tr_with_args_impl as tr_with_args};
+
+let text_id = "hello-args";
+let mut args = HashMap::new();
+args.insert("name", "World");
+tr_with_args(text_id, args);</code></pre>
 <h3 id="tr-and-move_tr-outside-reactive-graph"><a class="header" href="#tr-and-move_tr-outside-reactive-graph"><code>tr!</code> and <code>move_tr!</code> outside reactive graph</a></h3>
 <p>Outside the reactive ownership tree, mainly known as the <em>reactive graph</em>,
 we can't obtain the context of <code>I18n</code> using <code>expect_context::&lt;leptos_fluent::I18n&gt;()</code>,
