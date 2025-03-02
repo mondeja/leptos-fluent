@@ -6,8 +6,6 @@ or `leptos-fluent-macros/README.tpl`
 and run `pre-commit run -a cargo-readme-leptos-fluent-macros`
 -->
 
-Macros for the leptos-fluent crate.
-
-See [leptos-fluent] for more information.
+Macros for [leptos-fluent].
 
 [leptos-fluent]: https://crates.io/crates/leptos-fluent

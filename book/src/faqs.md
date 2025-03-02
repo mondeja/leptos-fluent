@@ -40,6 +40,39 @@ From fluent-templates `v0.10` onwards can be obtained from your translations.
 let fallback_language = expect_i18n().translations.get()[0].fallback();
 ```
 
+### Dynamic translations keys
+
+Dynamic translations keys can't be passed to `tr!` and `move_tr!` macros because
+variables will not be checkable at compile time by `check_translations` option
+of `leptos_fluent!` macro.
+
+```rust
+use leptos_fluent::tr;
+
+// not allowed
+let text_id = "my-translation";
+tr!(text_id);
+```
+
+Instead, use `tr_impl` and `tr_with_args_impl` functions:
+
+```rust
+use leptos_fluent::tr_impl as tr;
+
+let text_id = "my-translation";
+tr(text_id);
+```
+
+```rust
+use std::collections::HashMap;
+use leptos_fluent::{tr_with_args_impl as tr_with_args};
+
+let text_id = "hello-args";
+let mut args = HashMap::new();
+args.insert("name", "World");
+tr_with_args(text_id, args);
+```
+
 ### `tr!` and `move_tr!` outside reactive graph
 
 Outside the reactive ownership tree, mainly known as the _reactive graph_,

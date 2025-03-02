@@ -6,6 +6,8 @@
 
 - Update Russian language name. From `Русский язык` ("Russian language") to
   `Русский` ("Russian").
+- Document `tr_impl` and `tr_impl_with_args` functions. Recommend their usage for
+  dynamic translations.
 
 ## 2025-01-23 - [0.2.3]
 
