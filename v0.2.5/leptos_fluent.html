@@ -1,0 +1,836 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>leptos_fluent! - leptos-fluent</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Internationalization framework for Leptos using Fluent.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="./mdbook-admonish.css">
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">leptos-fluent</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/mondeja/leptos-fluent/tree/master/book" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/mondeja/leptos-fluent/edit/master/book/src/leptos_fluent.md" title="Suggest an edit" aria-label="Suggest an edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <!-- markdownlint-disable MD033 MD038 -->
+<h1 id="leptos_fluent"><a class="header" href="#leptos_fluent"><code>leptos_fluent!</code></a></h1>
+<p>The <code>leptos_fluent!</code> macro is used to load the translations and set the current
+locale. It is used in the root component of the application.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    locales: "./locales",
+    translations: [TRANSLATIONS],
+};</code></pre>
+<ul>
+<li><a href="#common-configurations">Common configurations</a>
+<ul>
+<li><a href="#csr---local-storage-from-navigator">CSR  | Local storage from navigator</a></li>
+<li><a href="#csr--ssr---cookie-from-navigator-and-header">CSR + SSR  | Cookie from navigator and header</a></li>
+<li><a href="#system--data-files-on-desktop-applications">system | Data files on Desktop applications</a></li>
+</ul>
+</li>
+<li><a href="#processing-steps">Processing steps</a>
+<ul>
+<li><a href="#order">Order</a></li>
+<li><a href="#sources-and-targets">Sources and targets</a></li>
+<li><a href="#commented-example">Commented example</a></li>
+</ul>
+</li>
+<li><a href="#parameters">Parameters</a>
+<ul>
+<li><a href="#translations"><code>translations</code></a></li>
+<li><a href="#locales"><code>locales</code></a></li>
+<li><a href="#core_locales"><code>core_locales</code></a></li>
+<li><a href="#languages"><code>languages</code></a></li>
+<li><a href="#check_translations"><code>check_translations</code></a></li>
+<li><a href="#csr---sync_html_tag_lang">CSR  | <code>sync_html_tag_lang</code></a></li>
+<li><a href="#csr---sync_html_tag_dir">CSR  | <code>sync_html_tag_dir</code></a></li>
+<li><a href="#csr--ssr---url_param-lang">CSR + SSR  | <code>url_param: </code>"lang"</a></li>
+<li><a href="#csr--ssr---initial_language_from_url_param">CSR + SSR  | <code>initial_language_from_url_param</code></a></li>
+<li><a href="#csr---initial_language_from_url_param_to_localstorage">CSR  | <code>initial_language_from_url_param_to_localstorage</code></a></li>
+<li><a href="#csr---initial_language_from_url_param_to_cookie">CSR  | <code>initial_language_from_url_param_to_cookie</code></a></li>
+<li><a href="#csr---set_language_to_url_param">CSR  | <code>set_language_to_url_param</code></a></li>
+<li><a href="#csr--ssr---url_path">CSR + SSR  | <code>url_path</code></a></li>
+<li><a href="#csr--ssr---initial_language_from_url_path">CSR + SSR  | <code>initial_language_from_url_path</code></a></li>
+<li><a href="#csr---initial_language_from_url_path_to_cookie">CSR  | <code>initial_language_from_url_path_to_cookie</code></a></li>
+<li><a href="#csr---initial_language_from_url_path_to_localstorage">CSR  | <code>initial_language_from_url_path_to_localstorage</code></a></li>
+<li><a href="#csr---localstorage_key-lang">CSR  | <code>localstorage_key: </code>"lang"</a></li>
+<li><a href="#csr---initial_language_from_localstorage">CSR  | <code>initial_language_from_localstorage</code></a></li>
+<li><a href="#csr---initial_language_from_localstorage_to_cookie">CSR  | <code>initial_language_from_localstorage_to_cookie</code></a></li>
+<li><a href="#csr---set_language_to_localstorage">CSR  | <code>set_language_to_localstorage</code></a></li>
+<li><a href="#csr---initial_language_from_navigator">CSR  | <code>initial_language_from_navigator</code></a></li>
+<li><a href="#csr---initial_language_from_navigator_to_localstorage">CSR  | <code>initial_language_from_navigator_to_localstorage</code></a></li>
+<li><a href="#csr---initial_language_from_navigator_to_cookie">CSR  | <code>initial_language_from_navigator_to_cookie</code></a></li>
+<li><a href="#csr---set_language_from_navigator">CSR  | <code>set_language_from_navigator</code></a></li>
+<li><a href="#ssr---initial_language_from_accept_language_header">SSR  | <code>initial_language_from_accept_language_header</code></a></li>
+<li><a href="#csr--ssr---cookie_name-lf-lang">CSR + SSR  | <code>cookie_name: </code>"lf-lang"</a></li>
+<li><a href="#csr---cookie_attrs-">CSR  | <code>cookie_attrs: </code>""</a></li>
+<li><a href="#csr--ssr---initial_language_from_cookie">CSR + SSR  | <code>initial_language_from_cookie</code></a></li>
+<li><a href="#csr---initial_language_from_cookie_to_localstorage">CSR  | <code>initial_language_from_cookie_to_localstorage</code></a></li>
+<li><a href="#csr---set_language_to_cookie">CSR  | <code>set_language_to_cookie</code></a></li>
+<li><a href="#system--initial_language_from_system">system | <code>initial_language_from_system</code></a></li>
+<li><a href="#system--initial_language_from_data_file">system | <code>initial_language_from_data_file</code></a></li>
+<li><a href="#system--initial_language_from_system_to_data_file">system | <code>initial_language_from_system_to_data_file</code></a></li>
+<li><a href="#system--set_language_to_data_file">system | <code>set_language_to_data_file</code></a></li>
+<li><a href="#system--data_file_key-leptos-fluent">system | <code>data_file_key: </code>"leptos-fluent"</a></li>
+<li><a href="#provide_meta_context"><code>provide_meta_context</code></a></li>
+<li><a href="#initial_language_from_server_function"><code>initial_language_from_server_function</code></a></li>
+<li><a href="#set_language_to_server_function"><code>set_language_to_server_function</code></a></li>
+<li><a href="#initial_language_from_localstorage_to_server_function"><code>initial_language_from_localstorage_to_server_function</code></a></li>
+<li><a href="#initial_language_from_cookie_to_server_function"><code>initial_language_from_cookie_to_server_function</code></a></li>
+<li><a href="#initial_language_from_navigator_to_server_function"><code>initial_language_from_navigator_to_server_function</code></a></li>
+<li><a href="#initial_language_from_url_param_to_server_function"><code>initial_language_from_url_param_to_server_function</code></a></li>
+<li><a href="#initial_language_from_url_path_to_server_function"><code>initial_language_from_url_path_to_server_function</code></a></li>
+<li><a href="#initial_language_from_server_function_to_cookie"><code>initial_language_from_server_function_to_cookie</code></a></li>
+<li><a href="#initial_language_from_server_function_to_localstorage"><code>initial_language_from_server_function_to_localstorage</code></a></li>
+</ul>
+</li>
+</ul>
+<h2 id="common-configurations"><a class="header" href="#common-configurations">Common configurations</a></h2>
+<h3 id="csr---local-storage-from-navigator"><a class="header" href="#csr---local-storage-from-navigator"><span style="opacity:.5">CSR </span> | Local storage from navigator</a></h3>
+<pre><code class="language-rust">leptos_fluent! {
+    locales: "./locales",
+    translations: [TRANSLATIONS],
+
+    set_language_to_localstorage: true,
+    initial_language_from_localstorage: true,
+    initial_language_from_navigator: true,
+    initial_language_from_navigator_to_localstorage: true,
+    initial_language_from_url_param: true,
+    initial_language_from_url_param_to_localstorage: true,
+    localstorage_key: "lang",
+}</code></pre>
+<h3 id="csr--ssr---cookie-from-navigator-and-header"><a class="header" href="#csr--ssr---cookie-from-navigator-and-header"><span style="opacity:.5">CSR + SSR </span> | Cookie from navigator and header</a></h3>
+<pre><code class="language-rust">leptos_fluent! {
+    locales: "./locales",
+    translations: [TRANSLATIONS],
+
+    set_language_to_cookie: true,
+    initial_language_from_cookie: true,
+    initial_language_from_navigator: true,
+    initial_language_from_navigator_to_cookie: true,
+    initial_language_from_url_param: true,
+    initial_language_from_url_param_to_cookie: true,
+    initial_language_from_accept_language_header: true,
+    cookie_name: "lf-lang",
+}</code></pre>
+<!-- markdownlint-disable MD013 -->
+<h3 id="system--data-files-on-desktop-applications"><a class="header" href="#system--data-files-on-desktop-applications"><a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Data files on Desktop applications</a></h3>
+<!-- markdownlint-enable MD013 -->
+<pre><code class="language-rust">leptos_fluent! {
+    locales: "./locales",
+    translations: [TRANSLATIONS],
+
+    initial_language_from_system: true,
+    initial_language_from_system_to_data_file: true,
+    initial_language_from_data_file: true,
+    set_language_to_data_file: true,
+    data_file_key: "system-language-example",
+}</code></pre>
+<h2 id="processing-steps"><a class="header" href="#processing-steps">Processing steps</a></h2>
+<p>There is four kind of parameters for all the possible configurations and are
+executed in the next order:</p>
+<h3 id="order"><a class="header" href="#order">Order</a></h3>
+<ol>
+<li>Get the initial languaje from a source or target: <code>initial_language_from_*</code></li>
+<li>Obtain the initial language and set to a target: <code>initial_language_from_*_to_*</code></li>
+<li>Synchronize the current language with a target: <code>set_language_to_*</code></li>
+</ol>
+<ul>
+<li>The name of a source or a target: <code>cookie_name</code>, <code>localstorage_key</code>, <code>navigator</code>...</li>
+</ul>
+<h3 id="sources-and-targets"><a class="header" href="#sources-and-targets">Sources and targets</a></h3>
+<p>Sources are read-only and targets are read-write.</p>
+<ul>
+<li>Sources: <code>navigator</code>, <code>system</code>, <code>accept_language_header</code></li>
+<li>Targets: <code>cookie_name</code>, <code>localstorage_key</code>, <code>url_param</code>, <code>data_file</code>...</li>
+</ul>
+<h3 id="commented-example"><a class="header" href="#commented-example">Commented example</a></h3>
+<div id="admonition-example" class="admonition admonish-example" role="note" aria-labelledby="admonition-example-title">
+<div class="admonition-title">
+<div id="admonition-example-title">
+<p>Example</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-example"></a>
+</div>
+<div>
+<pre><code class="language-rust">leptos_fluent! {
+    // ..
+    // Get the initial language from the source operative system
+    initial_language_from_system: true,
+    // and set to the target file.
+    initial_language_from_system_to_data_file: true,
+    // If a target data file exists, get the initial language from it.
+    initial_language_from_data_file: true,
+    // When the language is updated, set it to the file.
+    set_language_to_data_file: true,
+    // Unique file name to set the language for this app:
+    data_file_key: "system-language-example",
+};</code></pre>
+</div>
+</div>
+<h2 id="parameters"><a class="header" href="#parameters">Parameters</a></h2>
+<h3 id="translations"><a class="header" href="#translations"><code>translations</code></a></h3>
+<p>Set the translations to be used in the application. It must be a reference
+to a static array of <a href="https://docs.rs/fluent-templates/latest/fluent_templates/macro.static_loader.html"><code>fluent_templates::static_loader!</code></a> instances.</p>
+<pre><code class="language-rust">use fluent_templates::static_loader;
+use leptos_fluent::leptos_fluent;
+
+static_loader! {
+    pub static TRANSLATIONS = {
+        locales: "./locales",
+        fallback_language: "en",
+    };
+}
+
+leptos_fluent! {
+    locales: "./locales",
+    translations: [TRANSLATIONS],
+    // ^^^^^^^^^^^^^^^^^^^^^^^^^
+}</code></pre>
+<p>Must be the same identifier used in the <a href="https://docs.rs/fluent-templates/latest/fluent_templates/macro.static_loader.html"><code>fluent_templates::static_loader!</code></a>
+macro, which returns an <a href="https://doc.rust-lang.org/std/sync/struct.LazyLock.html"><code>std::sync::LazyLock</code></a> variable.</p>
+<h3 id="locales"><a class="header" href="#locales"><code>locales</code></a></h3>
+<p>Set the path to the locales directory which contain the Fluent
+files for the translations. Must be relative to the <em>Cargo.toml</em> file, the same
+used in the <a href="https://docs.rs/fluent-templates/latest/fluent_templates/macro.static_loader.html"><code>fluent_templates::static_loader!</code></a> macro.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    locales: "./locales",
+    // ^^^^^^^^^^^^^^^^^
+    translations: [TRANSLATIONS],
+}</code></pre>
+<h3 id="core_locales"><a class="header" href="#core_locales"><code>core_locales</code></a></h3>
+<p>Common locale resources that are shared across all locales.
+Must be relative to the <em>Cargo.toml</em> file, the same
+used in the <a href="https://docs.rs/fluent-templates/latest/fluent_templates/macro.static_loader.html"><code>fluent_templates::static_loader!</code></a> macro:</p>
+<pre><code class="language-rust">static_loader! {
+    pub static TRANSLATIONS = {
+        locales: "./locales",
+        core_locales: "./locales/core",
+    };
+}
+
+leptos_fluent! {
+    locales: "./locales",
+    core_locales: "./locales/core",
+    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    translations: [TRANSLATIONS],
+}</code></pre>
+<h3 id="languages"><a class="header" href="#languages"><code>languages</code></a></h3>
+<p>Path to a file containing the list of languages supported by the application.
+Must be relative to the <em>Cargo.toml</em> file.</p>
+<div id="admonition-tip" class="admonition admonish-tip" role="note" aria-labelledby="admonition-tip-title">
+<div class="admonition-title">
+<div id="admonition-tip-title">
+<p>Tip</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-tip"></a>
+</div>
+<div>
+<p>In order to use this parameter a languages file feature must be enabled.
+See <a href="https://mondeja.github.io/leptos-fluent/languages.html"><strong>4. Languages</strong></a></p>
+</div>
+</div>
+<pre><code class="language-rust">leptos_fluent! {
+    locales: "./locales",
+    languages: "./locales/languages.json",
+    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    translations: [TRANSLATIONS],
+}</code></pre>
+<h3 id="check_translations"><a class="header" href="#check_translations"><code>check_translations</code></a></h3>
+<p>Check the translations at compile time. It is useful to ensure that all
+translations are correct and that there are no missing translations.</p>
+<p>Must be a <a href="https://docs.rs/globwalk/latest/globwalk/fn.glob.html">glob</a> relative to the <em>Cargo.toml</em> file.</p>
+<ul>
+<li>
+<p>For single crate projects:</p>
+<pre><code class="language-rust">leptos_fluent! {
+    locales: "./locales",
+    translations: [TRANSLATIONS],
+    check_translations: "./src/**/*.rs",
+    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+}</code></pre>
+</li>
+<li>
+<p>For workspace projects:</p>
+<pre><code class="language-rust">leptos_fluent! {
+    locales: "./locales",
+    translations: [TRANSLATIONS],
+    check_translations: "../{app,components}/src/**/*.rs",
+    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+}</code></pre>
+</li>
+</ul>
+<h3 id="csr---sync_html_tag_lang"><a class="header" href="#csr---sync_html_tag_lang"><span style="opacity:.5">CSR </span> | <code>sync_html_tag_lang</code></a></h3>
+<p>Synchronize the global <a href="https://developer.mozilla.org/docs/Web/HTML/Global_attributes/lang"><code>&lt;html lang="..."&gt;</code> attribute</a> with current language
+using <a href="https://docs.rs/leptos/latest/leptos/prelude/struct.Effect.html"><code>Effect::new</code></a>. Can be a literal boolean or an expression
+that will be evaluated at runtime.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    sync_html_tag_lang: true,
+}</code></pre>
+<h3 id="csr---sync_html_tag_dir"><a class="header" href="#csr---sync_html_tag_dir"><span style="opacity:.5">CSR </span> | <code>sync_html_tag_dir</code></a></h3>
+<p>Synchronize the global <a href="https://developer.mozilla.org/docs/Web/HTML/Global_attributes/dir"><code>&lt;html dir="..."&gt;</code> attribute</a> with current language
+using <a href="https://docs.rs/leptos/latest/leptos/prelude/struct.Effect.html"><code>Effect::new</code></a>.</p>
+<p>Can be a literal boolean or an expression that will be evaluated at runtime.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    sync_html_tag_dir: true,
+}</code></pre>
+<p>For custom languages from a languages file, specify a third element in
+the inner array with the direction of the language, which can be <code>"auto"</code>,
+<code>"ltr"</code>, or <code>"rtl"</code>. Discovered languages will be defined depending on the
+language.</p>
+<div id="admonition-example-1" class="admonition admonish-example" role="note" aria-labelledby="admonition-example-1-title">
+<div class="admonition-title">
+<div id="admonition-example-1-title">
+<p>Example</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-example-1"></a>
+</div>
+<div>
+<ul>
+<li>Arabic (<code>ar</code>): <code>"rtl"</code></li>
+<li>English (<code>en</code>): <code>"ltr"</code></li>
+<li>Japanese (<code>ja</code>): <code>"auto"</code></li>
+</ul>
+</div>
+</div>
+<!-- markdownlint-disable MD013 -->
+<h3 id="csr--ssr---url_param-lang"><a class="header" href="#csr--ssr---url_param-lang"><span style="opacity:.5">CSR + SSR </span> | <code>url_param: </code><span style="color: #b5bd68;font-size: 16px; opacity:.9;">"lang"</span></a></h3>
+<!-- markdownlint-enable MD013 -->
+<p>Name of <a href="https://developer.mozilla.org/docs/Web/API/URLSearchParams">URL parameter</a> used to manage the current language.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    url_param: "lang",
+}</code></pre>
+<h3 id="csr--ssr---initial_language_from_url_param"><a class="header" href="#csr--ssr---initial_language_from_url_param"><span style="opacity:.5">CSR + SSR </span> | <code>initial_language_from_url_param</code></a></h3>
+<p>Set initial language from <a href="https://developer.mozilla.org/docs/Web/API/URLSearchParams">URL parameter</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    initial_language_from_url_param: true,
+}</code></pre>
+<h3 id="csr---initial_language_from_url_param_to_localstorage"><a class="header" href="#csr---initial_language_from_url_param_to_localstorage"><span style="opacity:.5">CSR </span> | <code>initial_language_from_url_param_to_localstorage</code></a></h3>
+<p>Get initial language from <a href="https://developer.mozilla.org/docs/Web/API/URLSearchParams">URL parameter</a> and save it to <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    initial_language_from_url_param_to_localstorage: true,
+}</code></pre>
+<h3 id="csr---initial_language_from_url_param_to_cookie"><a class="header" href="#csr---initial_language_from_url_param_to_cookie"><span style="opacity:.5">CSR </span> | <code>initial_language_from_url_param_to_cookie</code></a></h3>
+<p>Get initial language from <a href="https://developer.mozilla.org/docs/Web/API/URLSearchParams">URL parameter</a> and save it to a <a href="https://developer.mozilla.org/docs/Web/HTTP/Cookies">cookie</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    initial_language_from_url_param_to_cookie: true,
+}</code></pre>
+<h3 id="csr---set_language_to_url_param"><a class="header" href="#csr---set_language_to_url_param"><span style="opacity:.5">CSR </span> | <code>set_language_to_url_param</code></a></h3>
+<p>Synchronize current language with <a href="https://developer.mozilla.org/docs/Web/API/URLSearchParams">URL parameter</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    set_language_to_url_param: true,
+}</code></pre>
+<h3 id="csr--ssr---url_path"><a class="header" href="#csr--ssr---url_path"><span style="opacity:.5">CSR + SSR </span> | <code>url_path</code></a></h3>
+<p>Language extractor from URL path. It must take the URI path as argument
+and return the possible language.</p>
+<pre><code class="language-rust">/// Get the language from the top directory in the URL path.
+fn get_language_from_url_path(path: &amp;str) -&gt; &amp;str {
+    if let Some(language) = path.split('/').nth(1) {
+        return language;
+    }
+    ""
+}
+
+leptos_fluent! {
+    // ...
+    url_path: get_language_from_url_path,
+}</code></pre>
+<h3 id="csr--ssr---initial_language_from_url_path"><a class="header" href="#csr--ssr---initial_language_from_url_path"><span style="opacity:.5">CSR + SSR </span> | <code>initial_language_from_url_path</code></a></h3>
+<p>Set initial language from <a href="https://developer.mozilla.org/docs/Web/API/URL/pathname">URL path</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    initial_language_from_url_path: true,
+}</code></pre>
+<h3 id="csr---initial_language_from_url_path_to_cookie"><a class="header" href="#csr---initial_language_from_url_path_to_cookie"><span style="opacity:.5">CSR </span> | <code>initial_language_from_url_path_to_cookie</code></a></h3>
+<p>Set initial language from <a href="https://developer.mozilla.org/docs/Web/API/URL/pathname">URL path</a> to a <a href="https://developer.mozilla.org/docs/Web/HTTP/Cookies">cookie</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    initial_language_from_url_path_to_cookie: true,
+}</code></pre>
+<h3 id="csr---initial_language_from_url_path_to_localstorage"><a class="header" href="#csr---initial_language_from_url_path_to_localstorage"><span style="opacity:.5">CSR </span> | <code>initial_language_from_url_path_to_localstorage</code></a></h3>
+<p>Set initial language from <a href="https://developer.mozilla.org/docs/Web/API/URL/pathname">URL path</a> to <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    initial_language_from_url_path_to_localstorage: true,
+}</code></pre>
+<!-- markdownlint-disable MD013 -->
+<h3 id="csr---localstorage_key-lang"><a class="header" href="#csr---localstorage_key-lang"><span style="opacity:.5">CSR </span> | <code>localstorage_key: </code><span style="color: #b5bd68;font-size: 16px; opacity:.9;">"lang"</span></a></h3>
+<!-- markdownlint-enable MD013 -->
+<p><a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">Local storage</a> key to manage the current language.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    localstorage_key: "lang",
+}</code></pre>
+<h3 id="csr---initial_language_from_localstorage"><a class="header" href="#csr---initial_language_from_localstorage"><span style="opacity:.5">CSR </span> | <code>initial_language_from_localstorage</code></a></h3>
+<p>Get initial language from <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    initial_language_from_localstorage: true,
+}</code></pre>
+<h3 id="csr---initial_language_from_localstorage_to_cookie"><a class="header" href="#csr---initial_language_from_localstorage_to_cookie"><span style="opacity:.5">CSR </span> | <code>initial_language_from_localstorage_to_cookie</code></a></h3>
+<p>Get initial language from <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a> and save it to a <a href="https://developer.mozilla.org/docs/Web/HTTP/Cookies">cookie</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    initial_language_from_localstorage_to_cookie: true,
+}</code></pre>
+<h3 id="csr---set_language_to_localstorage"><a class="header" href="#csr---set_language_to_localstorage"><span style="opacity:.5">CSR </span> | <code>set_language_to_localstorage</code></a></h3>
+<p>Set the current language to <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    set_language_to_localstorage: true,
+}</code></pre>
+<h3 id="csr---initial_language_from_navigator"><a class="header" href="#csr---initial_language_from_navigator"><span style="opacity:.5">CSR </span> | <code>initial_language_from_navigator</code></a></h3>
+<p>Get the initial language from <a href="https://developer.mozilla.org/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a>.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    initial_language_from_navigator: true,
+}</code></pre>
+<h3 id="csr---initial_language_from_navigator_to_localstorage"><a class="header" href="#csr---initial_language_from_navigator_to_localstorage"><span style="opacity:.5">CSR </span> | <code>initial_language_from_navigator_to_localstorage</code></a></h3>
+<p>Get the initial language from <a href="https://developer.mozilla.org/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a> and save it in the <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    initial_language_from_navigator_to_localstorage: true,
+}</code></pre>
+<h3 id="csr---initial_language_from_navigator_to_cookie"><a class="header" href="#csr---initial_language_from_navigator_to_cookie"><span style="opacity:.5">CSR </span> | <code>initial_language_from_navigator_to_cookie</code></a></h3>
+<p>Get the initial language from <a href="https://developer.mozilla.org/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a> and save it in a <a href="https://developer.mozilla.org/docs/Web/HTTP/Cookies">cookie</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    initial_language_from_navigator_to_cookie: true,
+}</code></pre>
+<h3 id="csr---set_language_from_navigator"><a class="header" href="#csr---set_language_from_navigator"><span style="opacity:.5">CSR </span> | <code>set_language_from_navigator</code></a></h3>
+<p>When the user changes the language in the browser settings, the language change
+will be reflected in the client.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    set_language_from_navigator: true,
+}</code></pre>
+<h3 id="ssr---initial_language_from_accept_language_header"><a class="header" href="#ssr---initial_language_from_accept_language_header"><span style="opacity:.5">SSR </span> | <code>initial_language_from_accept_language_header</code></a></h3>
+<p>Get the initial language from the <a href="https://developer.mozilla.org/docs/Web/HTTP/Headers/Accept-Language"><code>Accept-Language</code></a> header.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    initial_language_from_accept_language_header: true,
+}</code></pre>
+<!-- markdownlint-disable MD013 -->
+<h3 id="csr--ssr---cookie_name-lf-lang"><a class="header" href="#csr--ssr---cookie_name-lf-lang"><span style="opacity:.5">CSR + SSR </span> | <code>cookie_name: </code><span style="color: #b5bd68;font-size: 16px; opacity:.9;">"lf-lang"</span></a></h3>
+<!-- markdownlint-enable MD013 -->
+<p>Name of the <a href="https://developer.mozilla.org/docs/Web/HTTP/Cookies">cookie</a> that will be used to manage the current language. By default
+it is <code>"lf-lang"</code>.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    cookie_name: "lang",
+}</code></pre>
+<!-- markdownlint-disable MD013 -->
+<h3 id="csr---cookie_attrs-"><a class="header" href="#csr---cookie_attrs-"><span style="opacity:.5">CSR </span> | <code>cookie_attrs: </code><span style="color: #b5bd68;font-size: 16px; opacity:.9;">""</span></a></h3>
+<!-- markdownlint-enable MD013 -->
+<p><a href="https://developer.mozilla.org/docs/Web/API/Document/cookie#write_a_new_cookie">Cookie attributes</a> to set on the language <a href="https://developer.mozilla.org/docs/Web/HTTP/Cookies">cookie</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    cookie_attrs: "SameSite=Strict; Secure",
+}</code></pre>
+<p>If value is an expression the <a href="https://developer.mozilla.org/docs/Web/HTTP/Cookies">cookie</a> will not be validated at compile time:</p>
+<pre><code class="language-rust">let attrs = "SameSite=Strict; Secure; MyCustomCookie=value"
+leptos_fluent! {
+    // ...
+    cookie_attrs: attrs,
+}</code></pre>
+<h3 id="csr--ssr---initial_language_from_cookie"><a class="header" href="#csr--ssr---initial_language_from_cookie"><span style="opacity:.5">CSR + SSR </span> | <code>initial_language_from_cookie</code></a></h3>
+<p>Get the initial language from the cookie.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    initial_language_from_cookie: true,
+}</code></pre>
+<h3 id="csr---initial_language_from_cookie_to_localstorage"><a class="header" href="#csr---initial_language_from_cookie_to_localstorage"><span style="opacity:.5">CSR </span> | <code>initial_language_from_cookie_to_localstorage</code></a></h3>
+<p>Get the initial language from the cookie and save it in the <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    initial_language_from_cookie_to_localstorage: true,
+}</code></pre>
+<h3 id="csr---set_language_to_cookie"><a class="header" href="#csr---set_language_to_cookie"><span style="opacity:.5">CSR </span> | <code>set_language_to_cookie</code></a></h3>
+<p>Set the current language to the cookie.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    set_language_to_cookie: true,
+}</code></pre>
+<!-- markdownlint-disable MD013 -->
+<h3 id="system--initial_language_from_system"><a class="header" href="#system--initial_language_from_system"><a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | <code>initial_language_from_system</code></a></h3>
+<!-- markdownlint-enable MD013 -->
+<p>Get the initial language from the system.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    initial_language_from_system: true,
+}</code></pre>
+<!-- markdownlint-disable MD013 -->
+<h3 id="system--initial_language_from_data_file"><a class="header" href="#system--initial_language_from_data_file"><a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | <code>initial_language_from_data_file</code></a></h3>
+<!-- markdownlint-enable MD013 -->
+<p>Get the initial language from a data file.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    initial_language_from_data_file: true,
+}</code></pre>
+<!-- markdownlint-disable MD013 -->
+<h3 id="system--initial_language_from_system_to_data_file"><a class="header" href="#system--initial_language_from_system_to_data_file"><a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | <code>initial_language_from_system_to_data_file</code></a></h3>
+<!-- markdownlint-enable MD013 -->
+<p>Get the initial language from the system and save it in a data file.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    initial_language_from_system_to_data_file: true,
+}</code></pre>
+<!-- markdownlint-disable MD013 -->
+<h3 id="system--set_language_to_data_file"><a class="header" href="#system--set_language_to_data_file"><a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | <code>set_language_to_data_file</code></a></h3>
+<!-- markdownlint-enable MD013 -->
+<p>Set the current language to a data file.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    set_language_to_data_file: true,
+}</code></pre>
+<!-- markdownlint-disable MD013 -->
+<h3 id="system--data_file_key-leptos-fluent"><a class="header" href="#system--data_file_key-leptos-fluent"><a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | <code>data_file_key: </code><span style="color: #b5bd68;font-size: 16px; opacity:.9;">"leptos-fluent"</span></a></h3>
+<!-- markdownlint-enable MD013 -->
+<p>Key to manage the current language in the data file. It should be unique
+per application.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    data_file_key: "my-app",
+}</code></pre>
+<h3 id="provide_meta_context"><a class="header" href="#provide_meta_context"><code>provide_meta_context</code></a></h3>
+<p>Provide the macro meta information at runtime as a context.
+Get it using <code>I18n::meta</code>:</p>
+<pre><code class="language-rust">let i18n = leptos_fluent! {
+    // ...
+    provide_meta_context: true,
+};
+
+println!("Macro parameters: {:?}", i18n.meta().unwrap());</code></pre>
+<h3 id="initial_language_from_server_function"><a class="header" href="#initial_language_from_server_function"><code>initial_language_from_server_function</code></a></h3>
+<p>Get the initial language from a <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    initial_language_from_server_function: initial_language_server_function,
+}
+
+/// Server function to set the initial language
+#[server(InitialLanguage, "/api")]
+pub async fn initial_language_server_function(
+) -&gt; Result&lt;Option&lt;String&gt;, ServerFnError&gt; {
+    // .. replace with your own logic
+    Ok(Some("es".to_string()))
+}</code></pre>
+<p>This parameter type is not like the <code>initial_language_from_*</code> parameters, it
+takes an identifier to the <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a> that will be called to get the
+initial language.</p>
+<p>The function must return a <code>Result&lt;Option&lt;String&gt;, ServerFnError&gt;</code>.</p>
+<h3 id="set_language_to_server_function"><a class="header" href="#set_language_to_server_function"><code>set_language_to_server_function</code></a></h3>
+<p>Set the current language to a <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    set_language_to_server_function: set_language_server_function,
+}
+
+/// Server function to update the current language
+#[server(SetLanguage, "/api")]
+pub async fn set_language_server_function(
+    language: String,
+) -&gt; Result&lt;(), ServerFnError&gt; {
+    // .. replace with your own logic
+    Ok(())
+}</code></pre>
+<p>This parameter type is not like the <code>set_language_to_*</code> parameters, it
+takes an identifier to the <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a> that will be called to update
+the current language.</p>
+<p>The function must return a <code>Result&lt;(), ServerFnError&gt;</code>.</p>
+<h3 id="initial_language_from_localstorage_to_server_function"><a class="header" href="#initial_language_from_localstorage_to_server_function"><code>initial_language_from_localstorage_to_server_function</code></a></h3>
+<p>Get the initial language from <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a> and set it to a
+<a href="https://book.leptos.dev/server/25_server_functions.html">server function</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    initial_language_from_localstorage_to_server_function: set_language_server_function,
+}
+
+#[server(SetLanguage, "/api")]
+pub async fn set_language_server_function(
+    language: String,
+) -&gt; Result&lt;(), ServerFnError&gt; {
+    // .. replace with your own logic
+    Ok(())
+}</code></pre>
+<h3 id="initial_language_from_cookie_to_server_function"><a class="header" href="#initial_language_from_cookie_to_server_function"><code>initial_language_from_cookie_to_server_function</code></a></h3>
+<p>Get the initial language from a <a href="https://developer.mozilla.org/docs/Web/HTTP/Cookies">cookie</a> and set it to a
+<a href="https://book.leptos.dev/server/25_server_functions.html">server function</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    initial_language_from_cookie_to_server_function: set_language_server_function,
+}
+
+#[server(SetLanguage, "/api")]
+pub async fn set_language_server_function(
+    language: String,
+) -&gt; Result&lt;(), ServerFnError&gt; {
+    // .. replace with your own logic
+    Ok(())
+}</code></pre>
+<h3 id="initial_language_from_navigator_to_server_function"><a class="header" href="#initial_language_from_navigator_to_server_function"><code>initial_language_from_navigator_to_server_function</code></a></h3>
+<p>Get the initial language from <a href="https://developer.mozilla.org/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a> and set it to a
+<a href="https://book.leptos.dev/server/25_server_functions.html">server function</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    initial_language_from_navigator_to_server_function: set_language_server_function,
+}
+
+#[server(SetLanguage, "/api")]
+pub async fn set_language_server_function(
+    language: String,
+) -&gt; Result&lt;(), ServerFnError&gt; {
+    // .. replace with your own logic
+    Ok(())
+}</code></pre>
+<h3 id="initial_language_from_url_param_to_server_function"><a class="header" href="#initial_language_from_url_param_to_server_function"><code>initial_language_from_url_param_to_server_function</code></a></h3>
+<p>Get the initial language from a <a href="https://developer.mozilla.org/docs/Web/API/URLSearchParams">URL parameter</a> and set it to a
+<a href="https://book.leptos.dev/server/25_server_functions.html">server function</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    initial_language_from_url_param_to_server_function: set_language_server_function,
+}
+
+#[server(SetLanguage, "/api")]
+pub async fn set_language_server_function(
+    language: String,
+) -&gt; Result&lt;(), ServerFnError&gt; {
+    // .. replace with your own logic
+    Ok(())
+}</code></pre>
+<h3 id="initial_language_from_url_path_to_server_function"><a class="header" href="#initial_language_from_url_path_to_server_function"><code>initial_language_from_url_path_to_server_function</code></a></h3>
+<p>Get the initial language from a <a href="https://developer.mozilla.org/docs/Web/API/URL/pathname">URL path</a> and set it to a <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    initial_language_from_url_path_to_server_function: set_language_server_function,
+}
+
+#[server(SetLanguage, "/api")]
+pub async fn set_language_server_function(
+    language: String,
+) -&gt; Result&lt;(), ServerFnError&gt; {
+    // .. replace with your own logic
+    Ok(())
+}</code></pre>
+<h3 id="initial_language_from_server_function_to_cookie"><a class="header" href="#initial_language_from_server_function_to_cookie"><code>initial_language_from_server_function_to_cookie</code></a></h3>
+<p>Get the initial language from a <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a> and set it to a
+<a href="https://developer.mozilla.org/docs/Web/HTTP/Cookies">cookie</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    initial_language_from_server_function_to_cookie: true,
+}</code></pre>
+<h3 id="initial_language_from_server_function_to_localstorage"><a class="header" href="#initial_language_from_server_function_to_localstorage"><code>initial_language_from_server_function_to_localstorage</code></a></h3>
+<p>Get the initial language from a <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a> and set it to
+<a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    initial_language_from_server_function_to_localstorage: true,
+}</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="faqs.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="faqs.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+            </nav>
+
+        </div>
+
+
+
+        <script>
+            window.playground_line_numbers = true;
+        </script>
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+        <script src="ace.js"></script>
+        <script src="editor.js"></script>
+        <script src="mode-rust.js"></script>
+        <script src="theme-dawn.js"></script>
+        <script src="theme-tomorrow_night.js"></script>
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>
