@@ -705,24 +705,23 @@ compile time:</p>
 ]</code></pre>
 <ul>
 <li><code>en</code> is built with the name <code>"English"</code> because it's defined as an
-<a href="https://en.wikipedia.org/wiki/ISO_639-1">ISO 639-1 code</a>, without a region code.</li>
+<a href="https://en.wikipedia.org/wiki/ISO_639">ISO 639 language code</a>, without a region code.</li>
 <li><code>es-ES</code> is built with the name <code>"Español (España)"</code> because it's defined
-as an <a href="https://en.wikipedia.org/wiki/ISO_639-1">ISO 639-1 code</a> and a region code.</li>
+as an <a href="https://en.wikipedia.org/wiki/ISO_639">ISO 639 language code</a> and a <a href="https://en.wikipedia.org/wiki/ISO_3166-1">ISO 3166 region code</a>.</li>
 </ul>
 <p>This enforces that an user will always be able to select their language in
 their own language, and not in the current language of the application.</p>
-<div id="admonition-order" class="admonition admonish-abstract" role="note" aria-labelledby="admonition-order-title">
-<div class="admonition-title">
-<div id="admonition-order-title">
-<p>Order</p>
-</div>
-<a class="admonition-anchor-link" href="languages.html#admonition-order"></a>
-</div>
-<div>
-<p>The order of the languages will be defined based on the alphabetical
-order of their names, not their codes.</p>
-</div>
-</div>
+<h2 id="inferred-language-names"><a class="header" href="#inferred-language-names">Inferred language names</a></h2>
+<p>When not using a languages file, the language names are inferred from
+the language codes used for Fluent file names following the next rules:</p>
+<ol>
+<li>If only a language code is provided, use "Language name"
+(see <a href="https://github.com/mondeja/leptos-fluent/blob/427712b05a5d42d765967e1edf01fd4d666e8c25/leptos-fluent-macros/src/languages.rs#L1860">full-list</a>).</li>
+<li>If a region code is provided but the language is not repeated,
+use "Language name".</li>
+<li>If a region code is provided and the language is repeated,
+use "Language name (region name)" (see <a href="https://github.com/mondeja/leptos-fluent/blob/427712b05a5d42d765967e1edf01fd4d666e8c25/leptos-fluent-macros/src/languages.rs#L598">full list</a>).</li>
+</ol>
 <h2 id="the-languages-file"><a class="header" href="#the-languages-file">The languages file</a></h2>
 <p>The languages array can be fully customized by defining a <code>languages</code> parameter
 in the <a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a> macro pointing to a languages file. This file must
@@ -755,12 +754,12 @@ leptos-fluent = { version = "*", features = ["json5"] }
   ["code", "Language name", "Writing direction"],
 ]
 </code></pre>
-<div id="admonition-order-1" class="admonition admonish-abstract" role="note" aria-labelledby="admonition-order-1-title">
+<div id="admonition-order" class="admonition admonish-abstract" role="note" aria-labelledby="admonition-order-title">
 <div class="admonition-title">
-<div id="admonition-order-1-title">
+<div id="admonition-order-title">
 <p>Order</p>
 </div>
-<a class="admonition-anchor-link" href="languages.html#admonition-order-1"></a>
+<a class="admonition-anchor-link" href="languages.html#admonition-order"></a>
 </div>
 <div>
 <p>The order of the languages in
@@ -1024,13 +1023,15 @@ pub async fn show_hello_world(
 }
 
 fn render_language(lang: &amp;'static Language) -&gt; impl IntoView {
+    let i18n = expect_i18n();
+
     // Call on click to server action with a client-side translated
     // "hello-world" message
     let on_click = move |_| {
-        lang.activate();
+        i18n.language.set(lang);
         spawn_local(async {
             _ = show_hello_world(
-                tr!("hello-world"),
+                tr!(i18n, "hello-world"),
                 lang.name.to_string(),
             ).await;
         });
