@@ -1874,8 +1874,6 @@ pub fn leptos_fluent(
 
     let init_quote = quote! {
         {
-
-
             let mut lang: Option<&'static ::leptos_fluent::Language> = None;
             #initial_language_quote;
 
