@@ -6,13 +6,13 @@ publish = false
 
 [dependencies]
 tests-helpers = { path = "./tests-helpers" }
-leptos-fluent = { path = "../leptos-fluent" }
+leptos-fluent = { path = "../../leptos-fluent" }
 fluent-templates = { version = "0.13", default-features = false, features = [
   "macros",
   "walkdir",
 ] }
-leptos-fluent-csr-minimal-example = { path = "../examples/csr-minimal" }
-leptos-fluent-csr-complete-example = { path = "../examples/csr-complete" }
+leptos-fluent-csr-minimal-example = { path = "../../examples/csr-minimal" }
+leptos-fluent-csr-complete-example = { path = "../../examples/csr-complete" }
 web-sys = { version = "0.3", features = [
   "Location",
   "Storage",

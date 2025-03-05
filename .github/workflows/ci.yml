@@ -186,7 +186,7 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-unit-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/Cargo.lock') }}
       - name: Run unit tests
-        run: cargo test -p leptos-fluent -p leptos-fluent-macros
+        run: cargo test -p leptos-fluent -p leptos-fluent-macros -p tests
 
   end2end-tests:
     needs: check-toolchain-is-stable
@@ -236,7 +236,7 @@ jobs:
           max_attempts: 3
           retry_wait_seconds: 1
           warning_on_retry: false
-          command: bash end2end/run.sh ${{ matrix.browser }}
+          command: bash tests/end2end/run.sh ${{ matrix.browser }}
 
   build-examples:
     needs: check-toolchain-is-stable

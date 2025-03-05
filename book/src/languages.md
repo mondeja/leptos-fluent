@@ -82,7 +82,7 @@ format you want to use in the _Cargo.toml_ file:
 
 ```toml
 [dependencies]
-leptos-fluent = { version = "*", features = ["json5"] }
+leptos-fluent = { version = "0.2", features = ["json5"] }
 ```
 
 Available features for languages file formats are:

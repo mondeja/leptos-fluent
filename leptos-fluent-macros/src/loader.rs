@@ -29,7 +29,18 @@ fn parse_litstr_or_expr_param(
                 Ok(())
             }
             Err(_) => {
-                let input_str = input.to_string();
+                let found: std::borrow::Cow<'_, str> =
+                    match input.parse::<syn::Lit>() {
+                        Ok(lit) => lit.to_token_stream().to_string().into(),
+                        Err(_) => {
+                            if input.is_empty() {
+                                "(empty)".into()
+                            } else {
+                                input.to_string().into()
+                            }
+                        }
+                    };
+
                 Err(syn::Error::new(
                     input.span(),
                     format!(
@@ -39,10 +50,7 @@ fn parse_litstr_or_expr_param(
                             " Found {}",
                         ),
                         param_name,
-                        match input_str.is_empty() {
-                            true => "(empty)",
-                            false => &input_str,
-                        },
+                        &found,
                     ),
                 ))
             }

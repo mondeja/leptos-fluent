@@ -152,6 +152,31 @@ leptos_fluent! {
 }
 ```
 
+### `children`
+
+Set the children components of the root component. It is used to pass the
+children to the `I18n` component.
+
+```rust
+use leptos::prelude::*;
+
+#[component]
+fn I18n(children: Children) -> impl IntoView {
+    leptos_fluent! {
+        children: children(),
+        locales: "./locales",
+        // ...
+    }
+}
+
+#[component]
+fn App() -> impl IntoView {
+    I18n! {
+        // ... your components
+    }
+}
+```
+
 ### `core_locales`
 
 Common locale resources that are shared across all locales.

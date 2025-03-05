@@ -1950,48 +1950,4 @@ mod test {
         let t = trybuild::TestCases::new();
         t.compile_fail("tests/ui/leptos_fluent/fail/*.rs");
     }
-
-    #[test]
-    fn main_and_macros_package_versions_match() {
-        // cargo-readme does not allow to use `version.workspace = true`,
-        // see https://github.com/webern/cargo-readme/issues/81
-
-        let macros_cargo_toml = include_str!("../Cargo.toml");
-        let main_cargo_toml = include_str!("../../leptos-fluent/Cargo.toml");
-
-        let get_version = move |content: &str| -> Option<String> {
-            let mut version = None;
-            for line in content.lines() {
-                if line.starts_with("version = ") {
-                    version = Some(
-                        line.split("version = \"")
-                            .nth(1)
-                            .unwrap()
-                            .split('"')
-                            .next()
-                            .unwrap()
-                            .to_string(),
-                    );
-                    break;
-                }
-            }
-            version
-        };
-
-        let macros_version = get_version(macros_cargo_toml);
-        let main_version = get_version(main_cargo_toml);
-        assert!(
-            macros_version.is_some(),
-            "leptos-fluent-macros version not found in Cargo.toml"
-        );
-        assert!(
-            main_version.is_some(),
-            "leptos-fluent version not found in Cargo.toml"
-        );
-        assert_eq!(
-            macros_version.unwrap(),
-            main_version.unwrap(),
-            "leptos-fluent-macros and leptos-fluent versions do not match"
-        );
-    }
 }
