@@ -128,7 +128,7 @@ fn get_fluent_entries_from_resource(
                     entry.placeables.extend(entry_.placeables.clone());
                 } else {
                     errors.push(format!(
-                        "Message reference \"{}\" not found for entry \"{}\"",
+                        "Message reference \"{}\" of entry \"{}\" is not found",
                         id, entry.message_name
                     ));
                 }
@@ -699,7 +699,7 @@ bar = My {not-found} message reference
                 cross_platform_path_repr(concat!(
                     "Error parsing fluent resource in file",
                     " locales/en-US/foo.ftl for locale \"en-US\":",
-                    "\n  + Message reference \"not-found\" not found for entry \"bar\"",
+                    "\n  + Message reference \"not-found\" of entry \"bar\" is not found",
                 ).into())
             ]
         );
