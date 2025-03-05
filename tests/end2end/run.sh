@@ -4,7 +4,7 @@ EXITCODE=0
 BROWSER=$1
 
 set -x
-cd end2end
+cd tests/end2end
 wasm-pack test --headless --$BROWSER
 if [ $? -ne 0 ]; then
   EXITCODE=1

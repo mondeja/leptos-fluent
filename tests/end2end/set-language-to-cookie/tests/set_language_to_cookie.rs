@@ -12,7 +12,7 @@ const COOKIE: &str = "sltc";
 pub fn App() -> impl IntoView {
     leptos_fluent! {
         translations: [TRANSLATIONS],
-        locales: "../../examples/csr-minimal/locales",
+        locales: "../../../examples/csr-minimal/locales",
         initial_language_from_navigator: true,
         cookie_name: COOKIE,
         set_language_to_cookie: true,

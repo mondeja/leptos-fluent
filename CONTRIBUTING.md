@@ -9,41 +9,45 @@ pre-commit install
 
 ## Tests
 
-> [!NOTE]
-> End to end tests are located at _end2end/_
-
 ### End to end tests
+
+- End to end tests are located at _tests/end2end/_
 
 ```sh
 cargo install wasm-pack
 ```
 
-You need to install a browser and run:
+You need a browser installed. Run:
 
 ```sh
-cd end2end
+cd tests/end2end
 wasm-pack test --{browser} --headless
 ```
 
-Where `{browser}` is one of `firefox`, `chrome`, or `safari`. For example:
+where `{browser}` is one of `firefox`, `chrome`, or `safari`. For example:
 
 ```sh
-cd end2end
+cd tests/end2end
 wasm-pack test --firefox --headless
 ```
 
-If you want to run a test suite pass it in the `--test` flag.
+To run a test suite pass it in the `--test` flag.
 For example, to run the `csr_complete` test suite run:
 
 ```sh
-cd end2end
+cd tests/end2end
 wasm-pack test --firefox --headless --test csr_complete
 ```
 
+To run all tests with custom _webdriver.json_ files execute
+_tests/end2end/run.sh_.
+
 ### Unit tests
 
+Unit tests are located at _tests/src/_ and on each crate.
+
 ```sh
-cargo test -p leptos-fluent -p leptos-fluent-macros
+cargo test -p leptos-fluent -p leptos-fluent-macros -p leptos-fluent-tests
 ```
 
 ## Documentation
