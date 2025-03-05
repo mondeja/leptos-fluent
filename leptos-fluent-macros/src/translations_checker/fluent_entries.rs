@@ -696,11 +696,11 @@ bar = My {not-found} message reference
         assert_eq!(
             errors,
             vec![
-                concat!(
+                cross_platform_path_repr(concat!(
                     "Error parsing fluent resource in file",
                     " locales/en-US/foo.ftl for locale \"en-US\":",
                     "\n  + Message reference \"not-found\" not found for entry \"bar\"",
-                ).to_string()
+                ).into())
             ]
         );
 
