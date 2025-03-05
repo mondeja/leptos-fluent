@@ -1625,13 +1625,13 @@ pub fn leptos_fluent(
 
         let litstr_or_default = |lit: &Option<syn::LitStr>,
                                  expr: &Option<syn::Expr>,
-                                 default: &'static str|
+                                 default_: &'static str|
          -> proc_macro2::TokenStream {
             match lit {
                 Some(ref lit) => quote! { #lit },
                 None => match expr {
                     Some(ref expr) => quote! { #expr },
-                    None => quote! { #default },
+                    None => quote! { #default_ },
                 },
             }
         };
