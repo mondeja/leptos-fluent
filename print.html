@@ -739,7 +739,7 @@ be relative to the <em>Cargo.toml</em> file.</p>
 <p>In order to use a languages file, you must enable the feature for the file
 format you want to use in the <em>Cargo.toml</em> file:</p>
 <pre><code class="language-toml">[dependencies]
-leptos-fluent = { version = "*", features = ["json5"] }
+leptos-fluent = { version = "0.2", features = ["json5"] }
 </code></pre>
 <p>Available features for languages file formats are:</p>
 <ul>
@@ -1096,6 +1096,7 @@ locale. It is used in the root component of the application.</p>
 <ul>
 <li><a href="leptos_fluent.html#translations"><code>translations</code></a></li>
 <li><a href="leptos_fluent.html#locales"><code>locales</code></a></li>
+<li><a href="leptos_fluent.html#children"><code>children</code></a></li>
 <li><a href="leptos_fluent.html#core_locales"><code>core_locales</code></a></li>
 <li><a href="leptos_fluent.html#languages"><code>languages</code></a></li>
 <li><a href="leptos_fluent.html#check_translations"><code>check_translations</code></a></li>
@@ -1254,6 +1255,26 @@ used in the <a href="https://docs.rs/fluent-templates/latest/fluent_templates/ma
     locales: "./locales",
     // ^^^^^^^^^^^^^^^^^
     translations: [TRANSLATIONS],
+}</code></pre>
+<h3 id="children"><a class="header" href="#children"><code>children</code></a></h3>
+<p>Set the children components of the root component. It is used to pass the
+children to the <code>I18n</code> component.</p>
+<pre><code class="language-rust">use leptos::prelude::*;
+
+#[component]
+fn I18n(children: Children) -&gt; impl IntoView {
+    leptos_fluent! {
+        children: children(),
+        locales: "./locales",
+        // ...
+    }
+}
+
+#[component]
+fn App() -&gt; impl IntoView {
+    I18n! {
+        // ... your components
+    }
 }</code></pre>
 <h3 id="core_locales"><a class="header" href="#core_locales"><code>core_locales</code></a></h3>
 <p>Common locale resources that are shared across all locales.
