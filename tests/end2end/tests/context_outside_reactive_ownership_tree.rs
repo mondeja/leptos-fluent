@@ -23,7 +23,7 @@ fn Child() -> impl IntoView {
     use wasm_bindgen::JsCast;
     leptos_fluent! {
         translations: [TRANSLATIONS],
-        locales: "../examples/csr-minimal/locales",
+        locales: "../../examples/csr-minimal/locales",
     };
     view! {
         <div

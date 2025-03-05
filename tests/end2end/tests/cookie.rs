@@ -12,7 +12,7 @@ const COOKIE_NAME: &str = "my-weird-cookie-name";
 pub fn App() -> impl IntoView {
     leptos_fluent! {
         translations: [TRANSLATIONS],
-        locales: "../examples/csr-minimal/locales",
+        locales: "../../examples/csr-minimal/locales",
         initial_language_from_cookie: true,
         cookie_name: COOKIE_NAME,
         set_language_to_cookie: true,

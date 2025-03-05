@@ -13,7 +13,7 @@ const COOKIE: &str = "ilfn";
 pub fn App() -> impl IntoView {
     leptos_fluent! {
         translations: [TRANSLATIONS],
-        locales: "../../examples/csr-minimal/locales",
+        locales: "../../../examples/csr-minimal/locales",
         initial_language_from_navigator: true,
         initial_language_from_navigator_to_localstorage: true,
         initial_language_from_navigator_to_cookie: true,
