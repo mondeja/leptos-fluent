@@ -41,6 +41,8 @@ wasm-pack test --firefox --headless --test csr_complete
 
 ### Unit tests
 
+Unit tests are located at _tests/src/_ and on each crate.
+
 ```sh
 cargo test -p leptos-fluent -p leptos-fluent-macros -p tests
 ```
