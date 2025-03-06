@@ -104,7 +104,7 @@ jobs:
           args: "--cache --max-cache-age 1d ."
 
   cargo-machete:
-    name: Check for outdated dependencies
+    name: Check for unused dependencies
     needs: check-toolchain-is-stable
     runs-on: ubuntu-latest
     steps:
@@ -117,7 +117,8 @@ jobs:
         with:
           rust-version: ${{ steps.toolchain.outputs.channel }}
           profile: minimal
-      - uses: taiki-e/install-action@v2
+      - name: Install cargo-machete
+        uses: taiki-e/install-action@v2
         with:
           tool: cargo-machete
       - name: Run cargo-machete
