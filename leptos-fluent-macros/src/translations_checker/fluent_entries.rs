@@ -117,12 +117,12 @@ fn get_fluent_entries_from_resource(
     }
 
     let mut non_referenced_entries = Vec::with_capacity(entries.len());
-    let mut unresolved_entries = entries.clone();
+    let entries_clone = entries.clone();
 
-    while !unresolved_entries.is_empty() {
-        let mut resolved_entries = Vec::with_capacity(unresolved_entries.len());
+    while !entries.is_empty() {
+        let mut resolved_entries = Vec::with_capacity(entries.len());
 
-        for entry in &mut unresolved_entries {
+        for entry in &mut entries {
             let mut entry_resolved = true;
             let mut message_reference_found = false;
 
@@ -131,7 +131,7 @@ fn get_fluent_entries_from_resource(
                 if let Placeable::MessageReference(id) = placeable {
                     message_reference_found = true;
                     if let Some(entry_) =
-                        entries.iter().find(|e| e.message_name == *id)
+                        entries_clone.iter().find(|e| e.message_name == *id)
                     {
                         // If has a message reference, it is not resolved yet
                         let placeables = entry_.placeables.clone();
@@ -172,7 +172,7 @@ fn get_fluent_entries_from_resource(
         }
 
         for entry in resolved_entries {
-            unresolved_entries.retain(|e| e.message_name != entry.message_name);
+            entries.retain(|e| e.message_name != entry.message_name);
         }
     }
 
