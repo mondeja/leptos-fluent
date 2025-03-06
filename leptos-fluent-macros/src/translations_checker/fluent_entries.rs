@@ -49,6 +49,7 @@ fn get_fluent_entries_from_resource(
 ) -> (Vec<FluentEntry>, Vec<String>) {
     let mut entries = Vec::new();
     let mut errors = Vec::new();
+    let mut message_reference_found = false;
 
     for entry in resource.entries() {
         if let fluent_syntax::ast::Entry::Message(msg) = entry {
@@ -105,6 +106,7 @@ fn get_fluent_entries_from_resource(
                             placeables.push(Placeable::MessageReference(
                                 id.name.to_string(),
                             ));
+                            message_reference_found = true;
                         }
                     }
                 }
@@ -117,62 +119,77 @@ fn get_fluent_entries_from_resource(
     }
 
     let mut non_referenced_entries = Vec::with_capacity(entries.len());
-    let entries_clone = entries.clone();
+    if !message_reference_found {
+        // fast path
+        for entry in entries {
+            non_referenced_entries.push(FluentEntry {
+                message_name: entry.message_name,
+                placeables: entry
+                    .placeables
+                    .iter()
+                    .map(|p| p.to_string())
+                    .collect(),
+            });
+        }
+    } else {
+        // when a message reference is found
+        let entries_clone = entries.clone();
 
-    while !entries.is_empty() {
-        let mut resolved_entries = Vec::with_capacity(entries.len());
+        while !entries.is_empty() {
+            let mut resolved_entries = Vec::with_capacity(entries.len());
 
-        for entry in &mut entries {
-            let mut entry_resolved = true;
-            let mut message_reference_found = false;
+            for entry in &mut entries {
+                let mut entry_resolved = true;
+                let mut message_reference_found = false;
 
-            let mut new_placeables = Vec::new();
-            for placeable in entry.placeables.clone() {
-                if let Placeable::MessageReference(id) = placeable {
-                    message_reference_found = true;
-                    if let Some(entry_) =
-                        entries_clone.iter().find(|e| e.message_name == *id)
-                    {
-                        // If has a message reference, it is not resolved yet
-                        let placeables = entry_.placeables.clone();
-                        if placeables.iter().any(|p| {
-                            matches!(p, Placeable::MessageReference(_))
-                        }) {
-                            entry_resolved = false;
-                        }
-                        new_placeables.extend(placeables);
-                    } else {
-                        errors.push(format!(
+                let mut new_placeables = Vec::new();
+                for placeable in entry.placeables.clone() {
+                    if let Placeable::MessageReference(id) = placeable {
+                        message_reference_found = true;
+                        if let Some(entry_) =
+                            entries_clone.iter().find(|e| e.message_name == *id)
+                        {
+                            // If has a message reference, it is not resolved yet
+                            let placeables = entry_.placeables.clone();
+                            if placeables.iter().any(|p| {
+                                matches!(p, Placeable::MessageReference(_))
+                            }) {
+                                entry_resolved = false;
+                            }
+                            new_placeables.extend(placeables);
+                        } else {
+                            errors.push(format!(
                             "Message reference \"{}\" of entry \"{}\" is not found",
                             id, entry.message_name
                         ));
+                        }
+                    } else {
+                        new_placeables.push(placeable);
                     }
+                }
+
+                if !message_reference_found {
+                    entry_resolved = true;
                 } else {
-                    new_placeables.push(placeable);
+                    entry.placeables = new_placeables;
+                }
+
+                if entry_resolved {
+                    non_referenced_entries.push(FluentEntry {
+                        message_name: entry.message_name.clone(),
+                        placeables: entry
+                            .placeables
+                            .iter()
+                            .map(|p| p.to_string())
+                            .collect(),
+                    });
+                    resolved_entries.push(entry.clone());
                 }
             }
 
-            if !message_reference_found {
-                entry_resolved = true;
-            } else {
-                entry.placeables = new_placeables;
+            for entry in resolved_entries {
+                entries.retain(|e| e.message_name != entry.message_name);
             }
-
-            if entry_resolved {
-                non_referenced_entries.push(FluentEntry {
-                    message_name: entry.message_name.clone(),
-                    placeables: entry
-                        .placeables
-                        .iter()
-                        .map(|p| p.to_string())
-                        .collect(),
-                });
-                resolved_entries.push(entry.clone());
-            }
-        }
-
-        for entry in resolved_entries {
-            entries.retain(|e| e.message_name != entry.message_name);
         }
     }
 
