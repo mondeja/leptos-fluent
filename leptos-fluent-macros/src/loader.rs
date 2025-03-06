@@ -400,6 +400,7 @@ pub(crate) struct I18nLoader {
     pub locales_path: String,
     pub core_locales_path: Option<String>,
     pub check_translations: Option<String>,
+    pub fill_translations: Option<String>,
     pub provide_meta_context: Vec<LitBool>,
     pub sync_html_tag_lang: Vec<LitBoolExpr>,
     pub sync_html_tag_dir: Vec<LitBoolExpr>,
@@ -459,6 +460,7 @@ impl Parse for I18nLoader {
         let mut core_locales_path: Option<syn::LitStr> = None;
         let mut translations: Option<Translations> = None;
         let mut check_translations: Option<syn::LitStr> = None;
+        let mut fill_translations: Option<syn::LitStr> = None;
         let mut provide_meta_context: Vec<LitBool> = Vec::new();
         let mut sync_html_tag_lang: Vec<LitBoolExpr> = Vec::new();
         let mut sync_html_tag_dir: Vec<LitBoolExpr> = Vec::new();
@@ -680,6 +682,17 @@ impl Parse for I18nLoader {
                     exprpath,
                     k,
                     check_translations
+                );
+            } else if k == "fill_translations" {
+                struct_field_init_shorthand_not_supported!(
+                    struct_field_init_shorthand,
+                    k
+                );
+                fill_translations = Some(input.parse()?);
+                evaluate_compile_time_exprpath_set_none!(
+                    exprpath,
+                    k,
+                    fill_translations
                 );
             } else if k == "sync_html_tag_lang" {
                 let mut param = LitBoolExpr::new();
@@ -1455,40 +1468,113 @@ impl Parse for I18nLoader {
         }
 
         #[cfg(not(feature = "ssr"))]
-        if let Some(ref check_translations_globstr) = check_translations {
-            {
-                let (fluent_resources, ref fluent_file_paths) =
-                    fluent_resources_and_file_paths;
-                let (check_messages, errors) = crate::translations_checker::run(
-                    &check_translations_globstr.value(),
-                    &workspace_path,
-                    &fluent_resources,
-                    fluent_file_paths,
-                    &core_locales_path_str,
-                    &core_locales_content,
-                );
+        if check_translations.is_some() || fill_translations.is_some() {
+            let mut f_resources_and_file_paths =
+                fluent_resources_and_file_paths.clone();
 
-                let mut report = String::new();
-                if !check_messages.is_empty() {
-                    report.push_str(&format!(
-                        "Translations check failed:\n- {}",
-                        check_messages.join("\n- "),
-                    ));
+            if let Some(ref fill_translations_globstr) = fill_translations {
+                {
+                    let (ref fluent_resources, ref fluent_file_paths) =
+                        f_resources_and_file_paths;
+                    let (fill_messages, errors) =
+                        crate::translations_filler::run(
+                            &fill_translations_globstr.value(),
+                            &workspace_path,
+                            fluent_resources,
+                            fluent_file_paths,
+                            &core_locales_path_str,
+                            &core_locales_content,
+                        );
+
+                    let mut report = String::new();
+                    if !fill_messages.is_empty() {
+                        report.push_str(
+                            "Translations filled by leptos-fluent:\n",
+                        );
+                        for (file_path, message_names) in fill_messages {
+                            report.push_str(&format!("  {file_path}\n",));
+                            for message_name in message_names {
+                                report.push_str(&format!(
+                                    "    - {message_name}\n",
+                                ));
+                            }
+                        }
+                    }
+                    if !report.is_empty() {
+                        report.push('\n');
+                        eprintln!("{report}");
+
+                        // resources must be recreated because new fluent entries
+                        // have been added to them
+                        let (
+                            f_resources_and_file_paths_,
+                            resources_file_paths_errors,
+                        ) = build_fluent_resources_and_file_paths(
+                            &locales_path_str,
+                        );
+                        if !resources_file_paths_errors.is_empty() {
+                            return Err(syn::Error::new(
+                                locales_path.unwrap().span(),
+                                format!(
+                                    "Errors while reading fluent resources from {}:\n- {}",
+                                    locales_path_str,
+                                    resources_file_paths_errors.join("\n- "),
+                                ),
+                            ));
+                        }
+                        f_resources_and_file_paths =
+                            f_resources_and_file_paths_;
+                    }
+
                     if !errors.is_empty() {
-                        report.push_str("\n\n");
+                        let message = &format!(
+                            "Unrecoverable errors:\n- {}",
+                            errors.join("\n- "),
+                        );
+                        return Err(syn::Error::new(
+                            fill_translations_globstr.span(),
+                            message,
+                        ));
                     }
                 }
-                if !errors.is_empty() {
-                    report.push_str(&format!(
-                        "Unrecoverable errors:\n- {}",
-                        errors.join("\n- "),
-                    ));
-                }
-                if !report.is_empty() {
-                    return Err(syn::Error::new(
-                        check_translations_globstr.span(),
-                        report,
-                    ));
+            }
+
+            if let Some(ref check_translations_globstr) = check_translations {
+                {
+                    let (ref fluent_resources, ref fluent_file_paths) =
+                        f_resources_and_file_paths;
+                    let (check_messages, errors) =
+                        crate::translations_checker::run(
+                            &check_translations_globstr.value(),
+                            &workspace_path,
+                            fluent_resources,
+                            fluent_file_paths,
+                            &core_locales_path_str,
+                            &core_locales_content,
+                        );
+
+                    let mut report = String::new();
+                    if !check_messages.is_empty() {
+                        report.push_str(&format!(
+                            "Translations check failed:\n- {}",
+                            check_messages.join("\n- "),
+                        ));
+                        if !errors.is_empty() {
+                            report.push_str("\n\n");
+                        }
+                    }
+                    if !errors.is_empty() {
+                        report.push_str(&format!(
+                            "Unrecoverable errors:\n- {}",
+                            errors.join("\n- "),
+                        ));
+                    }
+                    if !report.is_empty() {
+                        return Err(syn::Error::new(
+                            check_translations_globstr.span(),
+                            report,
+                        ));
+                    }
                 }
             }
         }
@@ -1516,6 +1602,7 @@ impl Parse for I18nLoader {
             locales_path: locales_path.unwrap().value(),
             core_locales_path: core_locales_path_str,
             check_translations: check_translations.map(|x| x.value()),
+            fill_translations: fill_translations.map(|x| x.value()),
             provide_meta_context,
             sync_html_tag_lang,
             sync_html_tag_dir,

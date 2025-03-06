@@ -11,11 +11,17 @@ extern crate proc_macro;
 pub(crate) mod cookie;
 mod exprpath;
 mod files_tracker;
+#[cfg(not(feature = "ssr"))]
+pub(crate) mod fluent_entries;
 mod fluent_resources;
 mod languages;
 mod loader;
 #[cfg(not(feature = "ssr"))]
+pub(crate) mod tr_macros;
+#[cfg(not(feature = "ssr"))]
 mod translations_checker;
+#[cfg(not(feature = "ssr"))]
+mod translations_filler;
 
 pub(crate) use exprpath::evaluate_exprpath;
 use files_tracker::build_files_tracker_quote;
@@ -109,6 +115,7 @@ pub fn leptos_fluent(
         locales_path,
         core_locales_path,
         check_translations,
+        fill_translations,
         provide_meta_context,
         sync_html_tag_lang,
         sync_html_tag_dir,
@@ -1671,6 +1678,8 @@ pub fn leptos_fluent(
                         maybe_some_litstr_param(&raw_languages_path);
                     let check_translations_quote =
                         maybe_some_litstr_param(&check_translations);
+                    let fill_translations_quote =
+                        maybe_some_litstr_param(&fill_translations);
                     let sync_html_tag_lang_quote =
                         lit_bool_exprs(&sync_html_tag_lang);
                     let sync_html_tag_dir_quote =
@@ -1811,6 +1820,7 @@ pub fn leptos_fluent(
                             core_locales: #core_locales_quote,
                             languages: #languages_quote,
                             check_translations: #check_translations_quote,
+                            fill_translations: #fill_translations_quote,
                             sync_html_tag_lang: #sync_html_tag_lang_quote,
                             sync_html_tag_dir: #sync_html_tag_dir_quote,
                             url_param: #url_param_quote,

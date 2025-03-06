@@ -1,15 +1,11 @@
-mod fluent_entries;
-mod tr_macros;
-
+use crate::fluent_entries::{build_fluent_entries, FluentEntries};
+use crate::tr_macros::{gather_tr_macro_defs_from_rs_files, TranslationMacro};
 use crate::{FluentFilePaths, FluentResources};
-use fluent_entries::build_fluent_entries;
-use fluent_entries::FluentEntries;
 use std::path::Path;
-use tr_macros::{gather_tr_macro_defs_from_rs_files, TranslationMacro};
 
 #[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
 pub(crate) fn run(
-    check_translations_globstr: &str,
+    globstr: &str,
     workspace_path: &Path,
     fluent_resources: &FluentResources,
     fluent_file_paths: &FluentFilePaths,
@@ -19,7 +15,7 @@ pub(crate) fn run(
     let mut errors = Vec::new();
 
     let (tr_macros, tr_macros_errors) = gather_tr_macro_defs_from_rs_files(
-        &workspace_path.join(check_translations_globstr),
+        &workspace_path.join(globstr),
         #[cfg(not(test))]
         workspace_path,
     );
