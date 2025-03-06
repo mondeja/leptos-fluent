@@ -374,7 +374,7 @@ jobs:
         id: version
         uses: ./.github/actions/get-version
       - name: Update version
-        run: sed -i "s/^leptos-fluent-macros = .*/leptos-fluent-macros = \"${{ steps.version.outputs.version }}\"/" leptos-fluent/Cargo.toml
+        run: sed -i "s/^leptos-fluent-macros = .*/leptos-fluent-macros = \"=${{ steps.version.outputs.version }}\"/" leptos-fluent/Cargo.toml
       - name: Publish
         run: |
           cargo login ${{ secrets.CRATES_TOKEN }}
