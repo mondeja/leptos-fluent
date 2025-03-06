@@ -6,6 +6,17 @@
 
 - Add a new parameter `fill_translations` to `leptos_fluent!` macro to add
   messages found in `tr!` and `move_tr!` macros to Fluent translations files.
+- Add next new parameters to `leptos_fluent!` macro to use browser's session
+  storage:
+  - `sessionstorage_key` to set the key to store the current language.
+  - `initial_language_from_sessionstorage` to set the initial language from
+    session storage.
+  - `set_language_to_sessionstorage` to set the current language to session
+    storage.
+  - `initial_language_from_sessionstorage_to_cookie` to set the initial language
+    from session storage to a cookie.
+  - `initial_language_from_sessionstorage_to_server_function` to set the initial
+    language from session storage to a server function.
 
 ## 2025-03-06 - [0.2.5]
 

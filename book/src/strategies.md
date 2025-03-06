@@ -18,6 +18,7 @@ The initial language of the user can be set in different ways:
 | [Cookie]                        | ✅  | ✅  |   ❌    | `initial_language_from_cookie`                 |
 | [Server function]               | ✅  | ✅  |   ❌    | `initial_language_from_server_function`        |
 | Browser [local storage]         | ✅  | ❌  |   ❌    | `initial_language_from_localstorage`           |
+| Browser [session storage]       | ✅  | ❌  |   ❌    | `initial_language_from_sessionstorage`         |
 | Browser [`navigator.languages`] | ✅  | ❌  |   ❌    | `initial_language_from_navigator`              |
 | [`Accept-Language`] header      | ❌  | ✅  |   ❌    | `initial_language_from_accept_language_header` |
 | [System language]               | ❌  | ❌  |   ✅    | `initial_language_from_system`                 |
@@ -39,6 +40,7 @@ The order of precedence is:
   1. [URL path]
   1. [Cookie]
   1. Browser [local storage]
+  1. Browser [session storage]
   1. Browser [`navigator.languages`]
 - **Desktop** ([`system` feature][desktop-applications])
   1. Data file
@@ -50,12 +52,13 @@ When the user changes the language and `I18n::language.set` is called, the
 framework can perform a side effect to update the language in the client. The
 following strategies are available:
 
-| Strategy                | [`leptos_fluent!`]                |
-| :---------------------- | :-------------------------------- |
-| [URL parameter]         | `set_language_to_url_param`       |
-| [Cookie]                | `set_language_to_cookie`          |
-| Browser [local storage] | `set_language_to_localstorage`    |
-| [Server function]       | `set_language_to_server_function` |
+| Strategy                  | [`leptos_fluent!`]                |
+| :------------------------ | :-------------------------------- |
+| [URL parameter]           | `set_language_to_url_param`       |
+| [Cookie]                  | `set_language_to_cookie`          |
+| Browser [local storage]   | `set_language_to_localstorage`    |
+| Browser [session storage] | `set_language_to_sessionstorage`  |
+| [Server function]         | `set_language_to_server_function` |
 
 When the user changes the language in the browser settings, the framework can
 perform a side effect to reflect the language change in the client.
@@ -123,13 +126,14 @@ update the language in the client. The following side effects are available:
 
 The names of the settings can be configured using the following parameters:
 
-| Strategy                | [`leptos_fluent!`] | Default value |
-| :---------------------- | :----------------- | :-----------: |
-| [Cookie]                | `cookie_name`      |  `"lf-lang"`  |
-| [Cookie attributes]     | `cookie_attrs`     |     `""`      |
-| Browser [local storage] | `localstorage_key` |   `"lang"`    |
-| [URL parameter]         | `url_param`        |   `"lang"`    |
-| [URL path] extractor fn | `url_path`         |      ❌       |
+| Strategy                  | [`leptos_fluent!`]   | Default value |
+| :------------------------ | :------------------- | :-----------: |
+| [Cookie]                  | `cookie_name`        |  `"lf-lang"`  |
+| [Cookie attributes]       | `cookie_attrs`       |     `""`      |
+| Browser [local storage]   | `localstorage_key`   |   `"lang"`    |
+| Browser [session storage] | `sessionstorage_key` |   `"lang"`    |
+| [URL parameter]           | `url_param`          |   `"lang"`    |
+| [URL path] extractor fn   | `url_path`           |      ❌       |
 
 ### <a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Desktop applications
 
@@ -139,6 +143,7 @@ The names of the settings can be configured using the following parameters:
 
 [`leptos_fluent!`]: https://mondeja.github.io/leptos-fluent/leptos_fluent.html
 [local storage]: https://developer.mozilla.org/docs/Web/API/Window/localStorage
+[session storage]: https://developer.mozilla.org/docs/Web/API/Window/sessionStorage
 [`navigator.languages`]: https://developer.mozilla.org/docs/Web/API/Navigator/languages
 [`Accept-Language`]: https://developer.mozilla.org/docs/Web/HTTP/Headers/Accept-Language
 [Cookie]: https://developer.mozilla.org/docs/Web/API/Document/cookie
