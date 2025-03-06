@@ -13,10 +13,14 @@
     session storage.
   - `set_language_to_sessionstorage` to set the current language to session
     storage.
-  - `initial_language_from_sessionstorage_to_cookie` to set the initial language
-    from session storage to a cookie.
-  - `initial_language_from_sessionstorage_to_server_function` to set the initial
-    language from session storage to a server function.
+  - `initial_language_from_sessionstorage_to_cookie` to set the initial
+    language from session storage to a cookie.
+  - `initial_language_from_sessionstorage_to_localstorage` to set the initial
+    language from session storage to local storage.
+  - `initial_language_from_sessionstorage_to_server_function` to set the
+    initial language from session storage to a server function.
+  - `initial_language_from_localstorage_to_sessionstorage` to set the initial
+    language from local storage to session storage.
 
 ## 2025-03-06 - [0.2.5]
 

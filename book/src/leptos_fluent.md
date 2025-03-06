@@ -460,6 +460,17 @@ leptos_fluent! {
 }
 ```
 
+### <span style="opacity:.5">CSR </span> | `initial_language_from_localstorage_to_sessionstorage`
+
+Get initial language from [local storage] and save it to [session storage].
+
+```rust
+leptos_fluent! {
+    // ...
+    initial_language_from_localstorage_to_sessionstorage: true,
+}
+```
+
 ### <span style="opacity:.5">CSR </span> | `set_language_to_localstorage`
 
 Set the current language to [local storage].
@@ -510,7 +521,7 @@ leptos_fluent! {
 
 ### <span style="opacity:.5">CSR </span> | `initial_language_from_sessionstorage_to_localstorage`
 
-Get initial language from [session storage] and save it to a [local storage].
+Get initial language from [session storage] and save it to [local storage].
 
 ```rust
 leptos_fluent! {
@@ -543,7 +554,7 @@ leptos_fluent! {
 
 ### <span style="opacity:.5">CSR </span> | `initial_language_from_navigator_to_localstorage`
 
-Get the initial language from [`navigator.languages`] and save it in the [local storage].
+Get the initial language from [`navigator.languages`] and save it in [local storage].
 
 ```rust
 leptos_fluent! {
@@ -640,7 +651,7 @@ leptos_fluent! {
 
 ### <span style="opacity:.5">CSR </span> | `initial_language_from_cookie_to_localstorage`
 
-Get the initial language from the cookie and save it in the [local storage].
+Get the initial language from the cookie and save it in [local storage].
 
 ```rust
 leptos_fluent! {

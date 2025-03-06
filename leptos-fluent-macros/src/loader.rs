@@ -413,6 +413,7 @@ pub(crate) struct I18nLoader {
     pub localstorage_key: LitStrExpr,
     pub initial_language_from_localstorage: Vec<LitBoolExpr>,
     pub initial_language_from_localstorage_to_cookie: Vec<LitBoolExpr>,
+    pub initial_language_from_localstorage_to_sessionstorage: Vec<LitBoolExpr>,
     pub initial_language_from_localstorage_to_server_function: Vec<Identifier>,
     pub set_language_to_localstorage: Vec<LitBoolExpr>,
     pub sessionstorage_key: LitStrExpr,
@@ -487,6 +488,9 @@ impl Parse for I18nLoader {
             Vec::new();
         let mut initial_language_from_localstorage_to_cookie: Vec<LitBoolExpr> =
             Vec::new();
+        let mut initial_language_from_localstorage_to_sessionstorage: Vec<
+            LitBoolExpr,
+        > = Vec::new();
         let mut initial_language_from_localstorage_to_server_function: Vec<
             Identifier,
         > = Vec::new();
@@ -870,6 +874,24 @@ impl Parse for I18nLoader {
                     "initial_language_from_localstorage_to_cookie",
                 )?;
                 initial_language_from_localstorage_to_cookie.push(param);
+            } else if k
+                == "initial_language_from_localstorage_to_sessionstorage"
+            {
+                let mut param = LitBoolExpr::new();
+                clone_runtime_exprpath!(exprpath, param);
+                parse_struct_field_init_shorthand!(
+                    struct_field_init_shorthand,
+                    param,
+                    k,
+                    initial_language_from_localstorage_to_sessionstorage
+                );
+                parse_litbool_or_expr_param(
+                    input,
+                    &mut param.expr,
+                    "initial_language_from_localstorage_to_sessionstorage",
+                )?;
+                initial_language_from_localstorage_to_sessionstorage
+                    .push(param);
             } else if k
                 == "initial_language_from_localstorage_to_server_function"
             {
@@ -1723,6 +1745,7 @@ impl Parse for I18nLoader {
             localstorage_key,
             initial_language_from_localstorage,
             initial_language_from_localstorage_to_cookie,
+            initial_language_from_localstorage_to_sessionstorage,
             initial_language_from_localstorage_to_server_function,
             set_language_to_localstorage,
             sessionstorage_key,

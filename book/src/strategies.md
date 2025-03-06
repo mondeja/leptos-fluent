@@ -88,6 +88,7 @@ are available:
 | [URL path] to [local storage]                | `initial_language_from_url_path_to_localstorage`          |
 | [Cookie] to [local storage]                  | `initial_language_from_cookie_to_localstorage`            |
 | [Local storage] to [cookie]                  | `initial_language_from_localstorage_to_cookie`            |
+| [Local storage] to [session storage]         | `initial_language_from_localstorage_to_sessionstorage`    |
 | [Local storage] to [server function]         | `initial_language_from_localstorage_to_server_function`   |
 | [Session storage] to [cookie]                | `initial_language_from_sessionstorage_to_cookie`          |
 | [Session storage] to [local storage]         | `initial_language_from_sessionstorage_to_localstorage`    |
