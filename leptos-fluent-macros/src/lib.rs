@@ -139,6 +139,7 @@ pub fn leptos_fluent(
         set_language_to_sessionstorage,
         initial_language_from_navigator,
         initial_language_from_navigator_to_localstorage,
+        initial_language_from_navigator_to_sessionstorage,
         initial_language_from_navigator_to_cookie,
         initial_language_from_navigator_to_server_function,
         initial_language_from_accept_language_header,
@@ -1258,6 +1259,32 @@ pub fn leptos_fluent(
             }).collect()
         };
 
+        let initial_language_from_navigator_to_sessionstorage_quote: proc_macro2::TokenStream = {
+            let effect_quote = quote! {
+                ::leptos_fluent::sessionstorage::set(
+                    #sessionstorage_key_quote,
+                    &l.id.to_string()
+                );
+            };
+
+            initial_language_from_navigator_to_sessionstorage.iter().map(|param| {
+                match param.expr {
+                    Some(ref expr) => {
+                        let q = quote! {
+                            if #expr {
+                                #effect_quote
+                            }
+                        };
+                        match param.exprpath {
+                            Some(ref path) => quote!(#path{#q}),
+                            None => q,
+                        }
+                    },
+                    None => quote!(),
+                }
+            }).collect()
+        };
+
         let initial_language_from_navigator_to_cookie_quote: proc_macro2::TokenStream = {
             let effect_quote = quote! {
                 ::leptos_fluent::cookie::set(
@@ -1313,6 +1340,7 @@ pub fn leptos_fluent(
                 lang = ::leptos_fluent::l(&language.unwrap(), &LANGUAGES);
                 if let Some(l) = lang {
                     #initial_language_from_navigator_to_localstorage_quote
+                    #initial_language_from_navigator_to_sessionstorage_quote
                     #initial_language_from_navigator_to_cookie_quote
                     #initial_language_from_navigator_to_server_function_quote
                     break;
@@ -1936,6 +1964,10 @@ pub fn leptos_fluent(
                         lit_bool_exprs(
                             &initial_language_from_navigator_to_localstorage,
                         );
+                    let initial_language_from_navigator_to_sessionstorage_quote =
+                        lit_bool_exprs(
+                            &initial_language_from_navigator_to_sessionstorage,
+                        );
                     let initial_language_from_navigator_to_cookie_quote =
                         lit_bool_exprs(&initial_language_from_navigator_to_cookie);
                     let initial_language_from_navigator_to_server_function_quote =
@@ -2056,6 +2088,7 @@ pub fn leptos_fluent(
                             set_language_to_sessionstorage: #set_language_to_sessionstorage_quote,
                             initial_language_from_navigator: #initial_language_from_navigator_quote,
                             initial_language_from_navigator_to_localstorage: #initial_language_from_navigator_to_localstorage_quote,
+                            initial_language_from_navigator_to_sessionstorage: #initial_language_from_navigator_to_sessionstorage_quote,
                             initial_language_from_navigator_to_cookie: #initial_language_from_navigator_to_cookie_quote,
                             initial_language_from_navigator_to_server_function: #initial_language_from_navigator_to_server_function_quote,
                             set_language_from_navigator: #set_language_from_navigator_quote,

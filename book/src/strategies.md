@@ -95,6 +95,7 @@ are available:
 | [Session storage] to [server function]       | `initial_language_from_sessionstorage_to_server_function` |
 | [`navigator.languages`] to [cookie]          | `initial_language_from_navigator_to_cookie`               |
 | [`navigator.languages`] to [local storage]   | `initial_language_from_navigator_to_localstorage`         |
+| [`navigator.languages`] to [session storage] | `initial_language_from_navigator_to_sessionstorage`       |
 | [`navigator.languages`] to [server function] | `initial_language_from_navigator_to_server_function`      |
 | [Server function] to [local storage]         | `initial_language_from_server_function_to_localstorage`   |
 

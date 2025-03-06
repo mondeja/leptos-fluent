@@ -563,6 +563,17 @@ leptos_fluent! {
 }
 ```
 
+### <span style="opacity:.5">CSR </span> | `initial_language_from_navigator_to_sessionstorage`
+
+Get the initial language from [`navigator.languages`] and save it in [session storage].
+
+```rust
+leptos_fluent! {
+    // ...
+    initial_language_from_navigator_to_sessionstorage: true,
+}
+```
+
 ### <span style="opacity:.5">CSR </span> | `initial_language_from_navigator_to_cookie`
 
 Get the initial language from [`navigator.languages`] and save it in a [cookie].

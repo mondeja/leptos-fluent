@@ -21,6 +21,8 @@
     initial language from session storage to a server function.
   - `initial_language_from_localstorage_to_sessionstorage` to set the initial
     language from local storage to session storage.
+  - `initial_language_from_navigator_to_sessionstorage` to set the initial
+    language from the browser `navigator.languages` to session storage.
 
 ## 2025-03-06 - [0.2.5]
 
