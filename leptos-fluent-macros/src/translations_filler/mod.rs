@@ -89,7 +89,7 @@ pub(crate) fn run(
             .to_str()
             .unwrap()
             .to_string();
-        if !resource_str.ends_with('\n') {
+        if !resource_str.ends_with('\n') && !resource_str.is_empty() {
             resource_str.push('\n');
         }
         if let Some(missing_message_names) =
