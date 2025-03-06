@@ -1100,6 +1100,7 @@ locale. It is used in the root component of the application.</p>
 <li><a href="leptos_fluent.html#core_locales"><code>core_locales</code></a></li>
 <li><a href="leptos_fluent.html#languages"><code>languages</code></a></li>
 <li><a href="leptos_fluent.html#check_translations"><code>check_translations</code></a></li>
+<li><a href="leptos_fluent.html#fill_translations"><code>fill_translations</code></a></li>
 <li><a href="leptos_fluent.html#csr---sync_html_tag_lang">CSR  | <code>sync_html_tag_lang</code></a></li>
 <li><a href="leptos_fluent.html#csr---sync_html_tag_dir">CSR  | <code>sync_html_tag_dir</code></a></li>
 <li><a href="leptos_fluent.html#csr--ssr---url_param-lang">CSR + SSR  | <code>url_param: </code>"lang"</a></li>
@@ -1335,6 +1336,28 @@ translations are correct and that there are no missing translations.</p>
     translations: [TRANSLATIONS],
     check_translations: "../{app,components}/src/**/*.rs",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+}</code></pre>
+</li>
+</ul>
+<h3 id="fill_translations"><a class="header" href="#fill_translations"><code>fill_translations</code></a></h3>
+<p>Add new messages found in <code>tr!</code> and <code>move_tr!</code> macros to translations files.</p>
+<ul>
+<li>
+<p>For single crate projects:</p>
+<pre><code class="language-rust">leptos_fluent! {
+    locales: "./locales",
+    translations: [TRANSLATIONS],
+    fill_translations: "./src/**/*.rs",
+    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+}</code></pre>
+</li>
+<li>
+<p>For workspace projects:</p>
+<pre><code class="language-rust">leptos_fluent! {
+    locales: "./locales",
+    translations: [TRANSLATIONS],
+    fill_translations: "../{app,components}/src/**/*.rs",
+    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 }</code></pre>
 </li>
 </ul>
