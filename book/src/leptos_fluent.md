@@ -460,6 +460,17 @@ leptos_fluent! {
 }
 ```
 
+### <span style="opacity:.5">CSR </span> | `initial_language_from_localstorage_to_sessionstorage`
+
+Get initial language from [local storage] and save it to [session storage].
+
+```rust
+leptos_fluent! {
+    // ...
+    initial_language_from_localstorage_to_sessionstorage: true,
+}
+```
+
 ### <span style="opacity:.5">CSR </span> | `set_language_to_localstorage`
 
 Set the current language to [local storage].
@@ -468,6 +479,65 @@ Set the current language to [local storage].
 leptos_fluent! {
     // ...
     set_language_to_localstorage: true,
+}
+```
+
+<!-- markdownlint-disable MD013 -->
+
+### <span style="opacity:.5">CSR </span> | `sessionstorage_key: `<span style="color: #b5bd68;font-size: 16px; opacity:.9;">"lang"</span>
+
+<!-- markdownlint-enable MD013 -->
+
+[Session storage] key to manage the current language.
+
+```rust
+leptos_fluent! {
+    // ...
+    sessionstorage_key: "lang",
+}
+```
+
+### <span style="opacity:.5">CSR </span> | `initial_language_from_sessionstorage`
+
+Get initial language from [session storage].
+
+```rust
+leptos_fluent! {
+    // ...
+    initial_language_from_sessionstorage: true,
+}
+```
+
+### <span style="opacity:.5">CSR </span> | `initial_language_from_sessionstorage_to_cookie`
+
+Get initial language from [session storage] and save it to a [cookie].
+
+```rust
+leptos_fluent! {
+    // ...
+    initial_language_from_sessionstorage_to_cookie: true,
+}
+```
+
+### <span style="opacity:.5">CSR </span> | `initial_language_from_sessionstorage_to_localstorage`
+
+Get initial language from [session storage] and save it to [local storage].
+
+```rust
+leptos_fluent! {
+    // ...
+    initial_language_from_sessionstorage_to_localstorage: true,
+}
+```
+
+### <span style="opacity:.5">CSR </span> | `set_language_to_sessionstorage`
+
+Set the current language to [session storage].
+
+```rust
+leptos_fluent! {
+    // ...
+    set_language_to_sessionstorage: true,
 }
 ```
 
@@ -484,12 +554,23 @@ leptos_fluent! {
 
 ### <span style="opacity:.5">CSR </span> | `initial_language_from_navigator_to_localstorage`
 
-Get the initial language from [`navigator.languages`] and save it in the [local storage].
+Get the initial language from [`navigator.languages`] and save it in [local storage].
 
 ```rust
 leptos_fluent! {
     // ...
     initial_language_from_navigator_to_localstorage: true,
+}
+```
+
+### <span style="opacity:.5">CSR </span> | `initial_language_from_navigator_to_sessionstorage`
+
+Get the initial language from [`navigator.languages`] and save it in [session storage].
+
+```rust
+leptos_fluent! {
+    // ...
+    initial_language_from_navigator_to_sessionstorage: true,
 }
 ```
 
@@ -581,7 +662,7 @@ leptos_fluent! {
 
 ### <span style="opacity:.5">CSR </span> | `initial_language_from_cookie_to_localstorage`
 
-Get the initial language from the cookie and save it in the [local storage].
+Get the initial language from the cookie and save it in [local storage].
 
 ```rust
 leptos_fluent! {
@@ -762,6 +843,26 @@ pub async fn set_language_server_function(
 }
 ```
 
+### `initial_language_from_sessionstorage_to_server_function`
+
+Get the initial language from [session storage] and set it to a
+[server function].
+
+```rust
+leptos_fluent! {
+    // ...
+    initial_language_from_sessionstorage_to_server_function: set_language_server_function,
+}
+
+#[server(SetLanguage, "/api")]
+pub async fn set_language_server_function(
+    language: String,
+) -> Result<(), ServerFnError> {
+    // .. replace with your own logic
+    Ok(())
+}
+```
+
 ### `initial_language_from_cookie_to_server_function`
 
 Get the initial language from a [cookie] and set it to a
@@ -869,6 +970,7 @@ leptos_fluent! {
 [`<html lang="...">` attribute]: https://developer.mozilla.org/docs/Web/HTML/Global_attributes/lang
 [`<html dir="...">` attribute]: https://developer.mozilla.org/docs/Web/HTML/Global_attributes/dir
 [local storage]: https://developer.mozilla.org/docs/Web/API/Window/localStorage
+[session storage]: https://developer.mozilla.org/docs/Web/API/Window/sessionStorage
 [`navigator.languages`]: https://developer.mozilla.org/docs/Web/API/Navigator/languages
 [`Effect::new`]: https://docs.rs/leptos/latest/leptos/prelude/struct.Effect.html
 [cookie attributes]: https://developer.mozilla.org/docs/Web/API/Document/cookie#write_a_new_cookie

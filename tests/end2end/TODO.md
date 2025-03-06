@@ -14,6 +14,8 @@
 - `initial_language_from_localstorage_to_server_function`
 - `initial_language_from_cookie_to_server_function`
 - `initial_language_from_navigator_to_server_function`
+- `initial_language_from_navigator_to_localstorage`
+- `initial_language_from_navigator_to_sessionstorage`
 - `initial_language_from_url_param_to_server_function`
 - `initial_language_from_server_function_to_cookie`
 - `initial_language_from_server_function_to_localstorage`
@@ -22,3 +24,4 @@
 - `initial_language_from_url_path_to_cookie`
 - `initial_language_from_url_path_to_server_function`
 - `set_language_from_navigator`
+- `initial_language_from_sessionstorage_to_server_function`

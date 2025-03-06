@@ -62,7 +62,6 @@ pub fn App() -> impl IntoView {
     view! {
         <I18n>
             <Title text=move || tr!("welcome-to-leptos") />
-
             <Router>
                 <main>
                     <FlatRoutes fallback=|| "Page not found.">
@@ -85,7 +84,6 @@ fn Home() -> impl IntoView {
             {move || {
                 i18n.languages.iter().map(|lang| render_language(lang)).collect::<Vec<_>>()
             }}
-
         </fieldset>
     }
 }
@@ -115,7 +113,6 @@ fn render_language(lang: &'static Language) -> impl IntoView {
                     });
                 }
             />
-
             <label for=lang>{lang.name}</label>
         </div>
     }

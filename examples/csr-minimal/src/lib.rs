@@ -36,7 +36,6 @@ pub fn LanguageSelector() -> impl IntoView {
     view! {
         <p>{move_tr!("select-a-language")}</p>
         <fieldset>
-
             {move || {
                 i18n.languages
                     .iter()
@@ -57,7 +56,6 @@ pub fn LanguageSelector() -> impl IntoView {
                     })
                     .collect::<Vec<_>>()
             }}
-
         </fieldset>
     }
 }

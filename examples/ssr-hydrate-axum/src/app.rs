@@ -70,7 +70,6 @@ pub fn App() -> impl IntoView {
     view! {
         <I18n>
             <Title text=move || tr!("welcome-to-leptos") />
-
             <Router>
                 <main>
                     <Routes fallback=|| tr!("not-found").into_view()>
@@ -89,7 +88,6 @@ fn Home() -> impl IntoView {
     view! {
         <h1>{move_tr!("select-a-language")}</h1>
         <fieldset>
-
             {move || {
                 i18n.languages
                     .iter()
@@ -110,7 +108,6 @@ fn Home() -> impl IntoView {
                     })
                     .collect::<Vec<_>>()
             }}
-
         </fieldset>
     }
 }
