@@ -205,9 +205,16 @@ locale. It is used in the root component of the application.</p>
 <li><a href="#csr---localstorage_key-lang">CSR  | <code>localstorage_key: </code>"lang"</a></li>
 <li><a href="#csr---initial_language_from_localstorage">CSR  | <code>initial_language_from_localstorage</code></a></li>
 <li><a href="#csr---initial_language_from_localstorage_to_cookie">CSR  | <code>initial_language_from_localstorage_to_cookie</code></a></li>
+<li><a href="#csr---initial_language_from_localstorage_to_sessionstorage">CSR  | <code>initial_language_from_localstorage_to_sessionstorage</code></a></li>
 <li><a href="#csr---set_language_to_localstorage">CSR  | <code>set_language_to_localstorage</code></a></li>
+<li><a href="#csr---sessionstorage_key-lang">CSR  | <code>sessionstorage_key: </code>"lang"</a></li>
+<li><a href="#csr---initial_language_from_sessionstorage">CSR  | <code>initial_language_from_sessionstorage</code></a></li>
+<li><a href="#csr---initial_language_from_sessionstorage_to_cookie">CSR  | <code>initial_language_from_sessionstorage_to_cookie</code></a></li>
+<li><a href="#csr---initial_language_from_sessionstorage_to_localstorage">CSR  | <code>initial_language_from_sessionstorage_to_localstorage</code></a></li>
+<li><a href="#csr---set_language_to_sessionstorage">CSR  | <code>set_language_to_sessionstorage</code></a></li>
 <li><a href="#csr---initial_language_from_navigator">CSR  | <code>initial_language_from_navigator</code></a></li>
 <li><a href="#csr---initial_language_from_navigator_to_localstorage">CSR  | <code>initial_language_from_navigator_to_localstorage</code></a></li>
+<li><a href="#csr---initial_language_from_navigator_to_sessionstorage">CSR  | <code>initial_language_from_navigator_to_sessionstorage</code></a></li>
 <li><a href="#csr---initial_language_from_navigator_to_cookie">CSR  | <code>initial_language_from_navigator_to_cookie</code></a></li>
 <li><a href="#csr---set_language_from_navigator">CSR  | <code>set_language_from_navigator</code></a></li>
 <li><a href="#ssr---initial_language_from_accept_language_header">SSR  | <code>initial_language_from_accept_language_header</code></a></li>
@@ -225,6 +232,7 @@ locale. It is used in the root component of the application.</p>
 <li><a href="#initial_language_from_server_function"><code>initial_language_from_server_function</code></a></li>
 <li><a href="#set_language_to_server_function"><code>set_language_to_server_function</code></a></li>
 <li><a href="#initial_language_from_localstorage_to_server_function"><code>initial_language_from_localstorage_to_server_function</code></a></li>
+<li><a href="#initial_language_from_sessionstorage_to_server_function"><code>initial_language_from_sessionstorage_to_server_function</code></a></li>
 <li><a href="#initial_language_from_cookie_to_server_function"><code>initial_language_from_cookie_to_server_function</code></a></li>
 <li><a href="#initial_language_from_navigator_to_server_function"><code>initial_language_from_navigator_to_server_function</code></a></li>
 <li><a href="#initial_language_from_url_param_to_server_function"><code>initial_language_from_url_param_to_server_function</code></a></li>
@@ -571,11 +579,49 @@ leptos_fluent! {
     // ...
     initial_language_from_localstorage_to_cookie: true,
 }</code></pre>
+<h3 id="csr---initial_language_from_localstorage_to_sessionstorage"><a class="header" href="#csr---initial_language_from_localstorage_to_sessionstorage"><span style="opacity:.5">CSR </span> | <code>initial_language_from_localstorage_to_sessionstorage</code></a></h3>
+<p>Get initial language from <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a> and save it to <a href="https://developer.mozilla.org/docs/Web/API/Window/sessionStorage">session storage</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    initial_language_from_localstorage_to_sessionstorage: true,
+}</code></pre>
 <h3 id="csr---set_language_to_localstorage"><a class="header" href="#csr---set_language_to_localstorage"><span style="opacity:.5">CSR </span> | <code>set_language_to_localstorage</code></a></h3>
 <p>Set the current language to <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a>.</p>
 <pre><code class="language-rust">leptos_fluent! {
     // ...
     set_language_to_localstorage: true,
+}</code></pre>
+<!-- markdownlint-disable MD013 -->
+<h3 id="csr---sessionstorage_key-lang"><a class="header" href="#csr---sessionstorage_key-lang"><span style="opacity:.5">CSR </span> | <code>sessionstorage_key: </code><span style="color: #b5bd68;font-size: 16px; opacity:.9;">"lang"</span></a></h3>
+<!-- markdownlint-enable MD013 -->
+<p><a href="https://developer.mozilla.org/docs/Web/API/Window/sessionStorage">Session storage</a> key to manage the current language.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    sessionstorage_key: "lang",
+}</code></pre>
+<h3 id="csr---initial_language_from_sessionstorage"><a class="header" href="#csr---initial_language_from_sessionstorage"><span style="opacity:.5">CSR </span> | <code>initial_language_from_sessionstorage</code></a></h3>
+<p>Get initial language from <a href="https://developer.mozilla.org/docs/Web/API/Window/sessionStorage">session storage</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    initial_language_from_sessionstorage: true,
+}</code></pre>
+<h3 id="csr---initial_language_from_sessionstorage_to_cookie"><a class="header" href="#csr---initial_language_from_sessionstorage_to_cookie"><span style="opacity:.5">CSR </span> | <code>initial_language_from_sessionstorage_to_cookie</code></a></h3>
+<p>Get initial language from <a href="https://developer.mozilla.org/docs/Web/API/Window/sessionStorage">session storage</a> and save it to a <a href="https://developer.mozilla.org/docs/Web/HTTP/Cookies">cookie</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    initial_language_from_sessionstorage_to_cookie: true,
+}</code></pre>
+<h3 id="csr---initial_language_from_sessionstorage_to_localstorage"><a class="header" href="#csr---initial_language_from_sessionstorage_to_localstorage"><span style="opacity:.5">CSR </span> | <code>initial_language_from_sessionstorage_to_localstorage</code></a></h3>
+<p>Get initial language from <a href="https://developer.mozilla.org/docs/Web/API/Window/sessionStorage">session storage</a> and save it to <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    initial_language_from_sessionstorage_to_localstorage: true,
+}</code></pre>
+<h3 id="csr---set_language_to_sessionstorage"><a class="header" href="#csr---set_language_to_sessionstorage"><span style="opacity:.5">CSR </span> | <code>set_language_to_sessionstorage</code></a></h3>
+<p>Set the current language to <a href="https://developer.mozilla.org/docs/Web/API/Window/sessionStorage">session storage</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    set_language_to_sessionstorage: true,
 }</code></pre>
 <h3 id="csr---initial_language_from_navigator"><a class="header" href="#csr---initial_language_from_navigator"><span style="opacity:.5">CSR </span> | <code>initial_language_from_navigator</code></a></h3>
 <p>Get the initial language from <a href="https://developer.mozilla.org/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a>.</p>
@@ -584,10 +630,16 @@ leptos_fluent! {
     initial_language_from_navigator: true,
 }</code></pre>
 <h3 id="csr---initial_language_from_navigator_to_localstorage"><a class="header" href="#csr---initial_language_from_navigator_to_localstorage"><span style="opacity:.5">CSR </span> | <code>initial_language_from_navigator_to_localstorage</code></a></h3>
-<p>Get the initial language from <a href="https://developer.mozilla.org/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a> and save it in the <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a>.</p>
+<p>Get the initial language from <a href="https://developer.mozilla.org/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a> and save it in <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a>.</p>
 <pre><code class="language-rust">leptos_fluent! {
     // ...
     initial_language_from_navigator_to_localstorage: true,
+}</code></pre>
+<h3 id="csr---initial_language_from_navigator_to_sessionstorage"><a class="header" href="#csr---initial_language_from_navigator_to_sessionstorage"><span style="opacity:.5">CSR </span> | <code>initial_language_from_navigator_to_sessionstorage</code></a></h3>
+<p>Get the initial language from <a href="https://developer.mozilla.org/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a> and save it in <a href="https://developer.mozilla.org/docs/Web/API/Window/sessionStorage">session storage</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    initial_language_from_navigator_to_sessionstorage: true,
 }</code></pre>
 <h3 id="csr---initial_language_from_navigator_to_cookie"><a class="header" href="#csr---initial_language_from_navigator_to_cookie"><span style="opacity:.5">CSR </span> | <code>initial_language_from_navigator_to_cookie</code></a></h3>
 <p>Get the initial language from <a href="https://developer.mozilla.org/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a> and save it in a <a href="https://developer.mozilla.org/docs/Web/HTTP/Cookies">cookie</a>.</p>
@@ -638,7 +690,7 @@ leptos_fluent! {
     initial_language_from_cookie: true,
 }</code></pre>
 <h3 id="csr---initial_language_from_cookie_to_localstorage"><a class="header" href="#csr---initial_language_from_cookie_to_localstorage"><span style="opacity:.5">CSR </span> | <code>initial_language_from_cookie_to_localstorage</code></a></h3>
-<p>Get the initial language from the cookie and save it in the <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a>.</p>
+<p>Get the initial language from the cookie and save it in <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a>.</p>
 <pre><code class="language-rust">leptos_fluent! {
     // ...
     initial_language_from_cookie_to_localstorage: true,
@@ -742,6 +794,21 @@ the current language.</p>
 <pre><code class="language-rust">leptos_fluent! {
     // ...
     initial_language_from_localstorage_to_server_function: set_language_server_function,
+}
+
+#[server(SetLanguage, "/api")]
+pub async fn set_language_server_function(
+    language: String,
+) -&gt; Result&lt;(), ServerFnError&gt; {
+    // .. replace with your own logic
+    Ok(())
+}</code></pre>
+<h3 id="initial_language_from_sessionstorage_to_server_function"><a class="header" href="#initial_language_from_sessionstorage_to_server_function"><code>initial_language_from_sessionstorage_to_server_function</code></a></h3>
+<p>Get the initial language from <a href="https://developer.mozilla.org/docs/Web/API/Window/sessionStorage">session storage</a> and set it to a
+<a href="https://book.leptos.dev/server/25_server_functions.html">server function</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    initial_language_from_sessionstorage_to_server_function: set_language_server_function,
 }
 
 #[server(SetLanguage, "/api")]
