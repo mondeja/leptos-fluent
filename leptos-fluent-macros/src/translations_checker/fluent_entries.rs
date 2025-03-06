@@ -119,32 +119,63 @@ fn get_fluent_entries_from_resource(
     let entries_clone = entries.clone();
 
     let mut non_referenced_entries = Vec::with_capacity(entries.len());
-    for mut entry in entries {
-        for placeable in entry.placeables.clone() {
-            if let Placeable::MessageReference(id) = placeable {
-                if let Some(entry_) =
-                    entries_clone.iter().find(|e| e.message_name == *id)
-                {
-                    entry.placeables.extend(entry_.placeables.clone());
+    let mut unresolved_entries = entries.clone();
+
+    while !unresolved_entries.is_empty() {
+        let mut resolved_entries = Vec::with_capacity(unresolved_entries.len());
+
+        for entry in &mut unresolved_entries {
+            let mut entry_resolved = true;
+            let mut message_reference_found = false;
+
+            let mut new_placeables = Vec::new();
+            for placeable in entry.placeables.clone() {
+                if let Placeable::MessageReference(id) = placeable {
+                    message_reference_found = true;
+                    if let Some(entry_) =
+                        entries_clone.iter().find(|e| e.message_name == *id)
+                    {
+                        // If has a message reference, it is not resolved yet
+                        let placeables = entry_.placeables.clone();
+                        if placeables.iter().any(|p| {
+                            matches!(p, Placeable::MessageReference(_))
+                        }) {
+                            entry_resolved = false;
+                        }
+                        new_placeables.extend(placeables);
+                    } else {
+                        errors.push(format!(
+                            "Message reference \"{}\" of entry \"{}\" is not found",
+                            id, entry.message_name
+                        ));
+                    }
                 } else {
-                    errors.push(format!(
-                        "Message reference \"{}\" of entry \"{}\" is not found",
-                        id, entry.message_name
-                    ));
+                    new_placeables.push(placeable);
                 }
             }
+
+            if !message_reference_found {
+                entry_resolved = true;
+            } else {
+                entry.placeables = new_placeables;
+            }
+
+            if entry_resolved {
+                non_referenced_entries.push(FluentEntry {
+                    message_name: entry.message_name.clone(),
+                    placeables: entry
+                        .placeables
+                        .iter()
+                        .map(|p| p.to_string())
+                        .collect(),
+                });
+                resolved_entries.push(entry.clone());
+            }
         }
-        entry
-            .placeables
-            .retain(|p| !matches!(p, Placeable::MessageReference(_)));
-        non_referenced_entries.push(FluentEntry {
-            message_name: entry.message_name.clone(),
-            placeables: entry
-                .placeables
-                .iter()
-                .map(|p| p.to_string())
-                .collect(),
-        });
+
+        for entry in resolved_entries {
+            unresolved_entries.retain(|e| e.message_name != entry.message_name);
+        }
     }
 
     (non_referenced_entries, errors)
@@ -613,7 +644,7 @@ your-rank = { NUMBER($pos, type: "ordinal") ->
             vec![
                 r#"units-unit-conversion = {$unit_value} = {$base_unit_value}
 units-unit-conversion-continuation = {units-unit-conversion}, where
-units-unit-conversion-continuation-double = {units-unit-conversion}, where {units-unit-conversion}
+units-unit-conversion-continuation-recursive = {units-unit-conversion}, where {units-unit-conversion-continuation}
 "#
                 .to_string(),
             ],
@@ -655,7 +686,7 @@ units-unit-conversion-continuation-double = {units-unit-conversion}, where {unit
                     },
                     FluentEntry {
                         message_name:
-                            "units-unit-conversion-continuation-double"
+                            "units-unit-conversion-continuation-recursive"
                                 .to_string(),
                         placeables: vec![
                             "unit_value".to_string(),
