@@ -80,19 +80,22 @@ When a language is loaded from initialization, the framework can perform a side
 effect to persistently storage the language in the client. The following strategies
 are available:
 
-| Strategy                                     | [`leptos_fluent!`]                                      |
-| :------------------------------------------- | :------------------------------------------------------ |
-| [URL parameter] to [cookie]                  | `initial_language_from_url_param_to_cookie`             |
-| [URL parameter] to [local storage]           | `initial_language_from_url_param_to_localstorage`       |
-| [URL path] to [cookie]                       | `initial_language_from_url_path_to_cookie`              |
-| [URL path] to [local storage]                | `initial_language_from_url_path_to_localstorage`        |
-| [Cookie] to [local storage]                  | `initial_language_from_cookie_to_localstorage`          |
-| [Local storage] to [cookie]                  | `initial_language_from_localstorage_to_cookie`          |
-| [Local storage] to [server function]         | `initial_language_from_localstorage_to_server_function` |
-| [`navigator.languages`] to [cookie]          | `initial_language_from_navigator_to_cookie`             |
-| [`navigator.languages`] to [local storage]   | `initial_language_from_navigator_to_localstorage`       |
-| [`navigator.languages`] to [server function] | `initial_language_from_navigator_to_server_function`    |
-| [Server function] to [local storage]         | `initial_language_from_server_function_to_localstorage` |
+| Strategy                                     | [`leptos_fluent!`]                                        |
+| :------------------------------------------- | :-------------------------------------------------------- |
+| [URL parameter] to [cookie]                  | `initial_language_from_url_param_to_cookie`               |
+| [URL parameter] to [local storage]           | `initial_language_from_url_param_to_localstorage`         |
+| [URL path] to [cookie]                       | `initial_language_from_url_path_to_cookie`                |
+| [URL path] to [local storage]                | `initial_language_from_url_path_to_localstorage`          |
+| [Cookie] to [local storage]                  | `initial_language_from_cookie_to_localstorage`            |
+| [Local storage] to [cookie]                  | `initial_language_from_localstorage_to_cookie`            |
+| [Local storage] to [server function]         | `initial_language_from_localstorage_to_server_function`   |
+| [Session storage] to [cookie]                | `initial_language_from_sessionstorage_to_cookie`          |
+| [Session storage] to [local storage]         | `initial_language_from_sessionstorage_to_localstorage`    |
+| [Session storage] to [server function]       | `initial_language_from_sessionstorage_to_server_function` |
+| [`navigator.languages`] to [cookie]          | `initial_language_from_navigator_to_cookie`               |
+| [`navigator.languages`] to [local storage]   | `initial_language_from_navigator_to_localstorage`         |
+| [`navigator.languages`] to [server function] | `initial_language_from_navigator_to_server_function`      |
+| [Server function] to [local storage]         | `initial_language_from_server_function_to_localstorage`   |
 
 ### <span style="opacity:.5">CSR + SSR</span>
 

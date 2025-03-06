@@ -508,6 +508,17 @@ leptos_fluent! {
 }
 ```
 
+### <span style="opacity:.5">CSR </span> | `initial_language_from_sessionstorage_to_localstorage`
+
+Get initial language from [session storage] and save it to a [local storage].
+
+```rust
+leptos_fluent! {
+    // ...
+    initial_language_from_sessionstorage_to_localstorage: true,
+}
+```
+
 ### <span style="opacity:.5">CSR </span> | `set_language_to_sessionstorage`
 
 Set the current language to [session storage].

@@ -33,6 +33,11 @@ fn I18n(children: Children) -> impl IntoView {
         initial_language_from_localstorage: true,
         initial_language_from_localstorage_to_cookie: true,
         set_language_to_localstorage: true,
+        sessionstorage_key: "language",
+        initial_language_from_sessionstorage: true,
+        initial_language_from_sessionstorage_to_cookie: true,
+        initial_language_from_sessionstorage_to_localstorage: true,
+        set_language_to_sessionstorage: true,
         initial_language_from_navigator: true,
         initial_language_from_navigator_to_cookie: true,
         initial_language_from_navigator_to_localstorage: true,
@@ -54,11 +59,9 @@ fn LanguageSelector() -> impl IntoView {
     view! {
         <p>{move_tr!("select-a-language")}</p>
         <fieldset>
-
             {move || {
                 expect_i18n().languages.iter().map(|lang| render_language(lang)).collect::<Vec<_>>()
             }}
-
         </fieldset>
 
         <ul>

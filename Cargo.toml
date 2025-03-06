@@ -12,6 +12,7 @@ members = [
   "tests/end2end/initial-language-from-navigator",
   "tests/end2end/set-language-to-cookie",
   "tests/end2end/set-language-to-localstorage",
+  "tests/end2end/set-language-to-sessionstorage",
 ]
 resolver = "2"
 

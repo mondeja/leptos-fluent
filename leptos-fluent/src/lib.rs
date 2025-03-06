@@ -959,6 +959,7 @@ pub struct LeptosFluentMeta {
     pub sessionstorage_key: &'static str,
     pub initial_language_from_sessionstorage: bool,
     pub initial_language_from_sessionstorage_to_cookie: bool,
+    pub initial_language_from_sessionstorage_to_localstorage: bool,
     pub initial_language_from_sessionstorage_to_server_function: bool, // *
     pub set_language_to_sessionstorage: bool,
     pub initial_language_from_navigator: bool,
