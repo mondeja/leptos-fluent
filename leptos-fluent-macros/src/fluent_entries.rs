@@ -5,8 +5,7 @@ use fluent_syntax::ast::{
 use std::collections::HashMap;
 use std::rc::Rc;
 
-pub(in crate::translations_checker) type FluentEntries =
-    HashMap<Rc<String>, Vec<FluentEntry>>;
+pub(crate) type FluentEntries = HashMap<Rc<String>, Vec<FluentEntry>>;
 
 #[cfg_attr(any(debug_assertions, feature = "tracing"), derive(Debug))]
 #[derive(Clone, PartialEq)]
@@ -39,7 +38,7 @@ struct MaybeReferencedFluentEntry {
 
 #[cfg_attr(any(debug_assertions, feature = "tracing"), derive(Debug))]
 #[derive(Clone, PartialEq)]
-pub(in crate::translations_checker) struct FluentEntry {
+pub(crate) struct FluentEntry {
     pub(crate) message_name: String,
     pub(crate) placeables: Vec<String>,
 }

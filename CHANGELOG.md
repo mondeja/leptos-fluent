@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## Unreleased - [0.2.6]
+
+### New features
+
+- Add a new parameter `fill_translations` to `leptos_fluent!` macro to add
+  messages found in `tr!` and `move_tr!` macros to Fluent translations files.
+
 ## 2025-03-06 - [0.2.5]
 
 ### Bug fixes
@@ -654,6 +661,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.2.6]: https://github.com/mondeja/leptos-fluent/compare/v0.2.5...master
 [0.2.5]: https://github.com/mondeja/leptos-fluent/compare/v0.2.4...v0.2.5
 [0.2.4]: https://github.com/mondeja/leptos-fluent/compare/v0.2.3...v0.2.4
 [0.2.3]: https://github.com/mondeja/leptos-fluent/compare/v0.2.2...v0.2.3

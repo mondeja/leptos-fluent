@@ -939,6 +939,7 @@ pub struct LeptosFluentMeta {
     pub core_locales: Option<&'static str>,
     pub languages: Option<&'static str>,
     pub check_translations: Option<&'static str>,
+    pub fill_translations: Option<&'static str>,
     pub provide_meta_context: bool,
     pub sync_html_tag_lang: bool,
     pub sync_html_tag_dir: bool,

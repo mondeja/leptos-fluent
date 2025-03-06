@@ -3,11 +3,11 @@ use std::path::Path;
 use syn::visit::Visit;
 
 pub(crate) fn gather_tr_macro_defs_from_rs_files(
-    check_translations_globstr: &Path,
+    globstr: &Path,
     #[cfg(not(test))] workspace_path: &Path,
 ) -> (Vec<TranslationMacro>, Vec<String>) {
     let mut errors = Vec::new();
-    let glob_pattern = check_translations_globstr.to_string_lossy();
+    let glob_pattern = globstr.to_string_lossy();
 
     match globwalk::glob(&glob_pattern) {
         Ok(paths) => {

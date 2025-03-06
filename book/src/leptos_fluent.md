@@ -247,6 +247,32 @@ Must be a [glob] relative to the _Cargo.toml_ file.
   }
   ```
 
+### `fill_translations`
+
+Add new messages found in `tr!` and `move_tr!` macros to translations files.
+
+- For single crate projects:
+
+  ```rust
+  leptos_fluent! {
+      locales: "./locales",
+      translations: [TRANSLATIONS],
+      fill_translations: "./src/**/*.rs",
+      // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  }
+  ```
+
+- For workspace projects:
+
+  ```rust
+  leptos_fluent! {
+      locales: "./locales",
+      translations: [TRANSLATIONS],
+      fill_translations: "../{app,components}/src/**/*.rs",
+      // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  }
+  ```
+
 ### <span style="opacity:.5">CSR </span> | `sync_html_tag_lang`
 
 Synchronize the global [`<html lang="...">` attribute] with current language
