@@ -9,21 +9,12 @@ static_loader! {
     };
 }
 
-fn get_language_from_url_path(path: &str) -> &str {
-    if let Some(language) = path.split('/').nth(1) {
-        return language;
-    }
-    ""
-}
-
 #[component]
 pub fn I18n(children: Children) -> impl IntoView {
     leptos_fluent! {
         children: children(),
         translations: [TRANSLATIONS],
         locales: "./locales",
-        url_path: get_language_from_url_path,
-        initial_language_from_url_path: true,
     }
 }
 

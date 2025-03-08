@@ -18,15 +18,15 @@ pub(crate) fn gather_tr_macro_defs_from_rs_files(
                 match walker {
                     Ok(entry) => {
                         let path = entry.path();
-                        match tr_macros_from_file_path(
-                            &path.to_string_lossy(),
-                            #[cfg(not(test))]
-                            &workspace_path_str,
-                        ) {
-                            Ok(new_tr_macros) => {
-                                tr_macros.extend(new_tr_macros);
-                            }
-                            Err(message) => errors.push(message),
+                        let (new_tr_macros, error_message) =
+                            tr_macros_from_file_path(
+                                &path.to_string_lossy(),
+                                #[cfg(not(test))]
+                                &workspace_path_str,
+                            );
+                        tr_macros.extend(new_tr_macros);
+                        if !error_message.is_empty() {
+                            errors.push(error_message);
                         }
                     }
                     Err(error) => {
@@ -50,7 +50,7 @@ pub(crate) fn gather_tr_macro_defs_from_rs_files(
 fn tr_macros_from_file_path(
     file_path: &str,
     #[cfg(not(test))] workspace_path: &str,
-) -> Result<Vec<TranslationMacro>, String> {
+) -> (Vec<TranslationMacro>, String) {
     if let Ok(file_content) = std::fs::read_to_string(file_path) {
         match syn::parse_file(&file_content) {
             Ok(ast) => {
@@ -61,19 +61,21 @@ fn tr_macros_from_file_path(
                     workspace_path,
                 );
                 visitor.visit_file(&ast);
-                if visitor.errors.is_empty() {
-                    Ok(visitor.tr_macros)
-                } else {
-                    let error = visitor.errors.join("\n");
-                    Err(format!("Error parsing file {file_path}\n{error}"))
-                }
+                (visitor.tr_macros, {
+                    if visitor.errors.is_empty() {
+                        String::new()
+                    } else {
+                        let error = visitor.errors.join("\n");
+                        format!("Error parsing file {file_path}\n  {error}")
+                    }
+                })
             }
             Err(error) => {
-                Err(format!("Error parsing file {file_path}\n{error}"))
+                (vec![], format!("Error parsing file {file_path}\n  {error}"))
             }
         }
     } else {
-        Err(format!("Error reading file: {file_path}"))
+        (vec![], format!("Error reading file: {file_path}"))
     }
 }
 
