@@ -9,8 +9,8 @@
   `move_tr!` source of thruth per file. The forbidden expressions are:
   - `use tr;`
   - `use move_tr;`
-  - `use whatever::tr;`
-  - `use whatever::move_tr;`
+  - `use whatever::tr;` (except `leptos-fluent`)
+  - `use whatever::move_tr;` (except `leptos-fluent`)
   - `use leptos_fluent::tr as whatever;`
   - `use leptos_fluent::move_tr as whatever;`
   - `use leptos_fluent as whatever;`
