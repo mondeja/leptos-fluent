@@ -5,8 +5,8 @@
 ### Enhacements
 
 - Forbid a few expressions in files inside `check_translations` parameter glob.
-  These breaks translations checker requirement of having a single `tr!` or
-  `move_tr!` source of thruth per file. The forbidden expressions are:
+  These break translations checker's requirement of one `tr!` macros source of
+  thruth. The forbidden expressions are:
   - `use tr;`
   - `use move_tr;`
   - `use whatever::tr;` (except `leptos-fluent`)
