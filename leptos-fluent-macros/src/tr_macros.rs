@@ -3,30 +3,30 @@ use std::path::Path;
 use syn::visit::Visit;
 
 pub(crate) fn gather_tr_macro_defs_from_rs_files(
-    globstr: &Path,
-    #[cfg(not(test))] workspace_path: &Path,
+    globstr: impl AsRef<Path>,
+    #[cfg(not(test))] workspace_path: impl AsRef<Path>,
 ) -> (Vec<TranslationMacro>, Vec<String>) {
     let mut errors = Vec::new();
-    let glob_pattern = globstr.to_string_lossy();
+    let glob_pattern = globstr.as_ref().to_string_lossy();
 
     match globwalk::glob(&glob_pattern) {
         Ok(paths) => {
             let mut tr_macros = Vec::new();
             #[cfg(not(test))]
-            let workspace_path_str = workspace_path.to_string_lossy();
+            let workspace_path_str = workspace_path.as_ref().to_string_lossy();
             for walker in paths {
                 match walker {
                     Ok(entry) => {
                         let path = entry.path();
-                        match tr_macros_from_file_path(
-                            &path.to_string_lossy(),
-                            #[cfg(not(test))]
-                            &workspace_path_str,
-                        ) {
-                            Ok(new_tr_macros) => {
-                                tr_macros.extend(new_tr_macros);
-                            }
-                            Err(message) => errors.push(message),
+                        let (new_tr_macros, error_message) =
+                            tr_macros_from_file_path(
+                                &path.to_string_lossy(),
+                                #[cfg(not(test))]
+                                &workspace_path_str,
+                            );
+                        tr_macros.extend(new_tr_macros);
+                        if !error_message.is_empty() {
+                            errors.push(error_message);
                         }
                     }
                     Err(error) => {
@@ -50,7 +50,7 @@ pub(crate) fn gather_tr_macro_defs_from_rs_files(
 fn tr_macros_from_file_path(
     file_path: &str,
     #[cfg(not(test))] workspace_path: &str,
-) -> Result<Vec<TranslationMacro>, String> {
+) -> (Vec<TranslationMacro>, String) {
     if let Ok(file_content) = std::fs::read_to_string(file_path) {
         match syn::parse_file(&file_content) {
             Ok(ast) => {
@@ -61,19 +61,21 @@ fn tr_macros_from_file_path(
                     workspace_path,
                 );
                 visitor.visit_file(&ast);
-                if visitor.errors.is_empty() {
-                    Ok(visitor.tr_macros)
-                } else {
-                    let error = visitor.errors.join("\n");
-                    Err(format!("Error parsing file {file_path}\n{error}"))
-                }
+                (visitor.tr_macros, {
+                    if visitor.errors.is_empty() {
+                        String::new()
+                    } else {
+                        let error = visitor.errors.join("\n");
+                        format!("Error parsing file {file_path}\n  {error}")
+                    }
+                })
             }
             Err(error) => {
-                Err(format!("Error parsing file {file_path}\n{error}"))
+                (vec![], format!("Error parsing file {file_path}\n  {error}"))
             }
         }
     } else {
-        Err(format!("Error reading file: {file_path}"))
+        (vec![], format!("Error reading file: {file_path}"))
     }
 }
 
@@ -110,12 +112,16 @@ pub(crate) struct TranslationsMacrosVisitor {
     pub(crate) tr_macros: Vec<TranslationMacro>,
     pub(crate) errors: Vec<String>,
 
+    // State to gather translation macros
     current_tr_macro: Option<String>,
     current_tr_macro_punct: Option<char>,
     current_message_name: Option<String>,
     current_placeables: Vec<String>,
     #[cfg(feature = "nightly")]
     current_tr_macro_start: Option<proc_macro2::LineColumn>,
+
+    // State to check validity of `use` statements
+    current_use_path_is_leptos_fluent: bool,
 
     #[cfg(not(test))]
     file_path: std::rc::Rc<String>,
@@ -138,55 +144,13 @@ impl TranslationsMacrosVisitor {
             current_tr_macro_punct: None,
             current_message_name: None,
             current_placeables: Vec::new(),
+            current_use_path_is_leptos_fluent: false,
             errors: Vec::new(),
             #[cfg(not(test))]
             file_path: std::rc::Rc::new(rel_path),
             #[cfg(feature = "nightly")]
             current_tr_macro_start: None,
         }
-    }
-}
-
-/// Convert a literal to a string, removing the quotes and the string type characters
-fn value_from_literal(
-    literal: &proc_macro2::Literal,
-    location_macro_name: &str,
-) -> Result<String, String> {
-    let literal_str = literal.to_string();
-    if literal_str.starts_with("r#") {
-        Ok(literal_str
-            .strip_prefix("r#\"")
-            .expect("Raw string literal that does not starts with 'r#\"'")
-            .strip_suffix("\"#")
-            .expect("Raw string literal that does not ends with '\"#'")
-            .into())
-    } else if literal_str.starts_with("c\"") {
-        Ok(literal_str
-            .strip_prefix("c\"")
-            .expect("C string literal that does not starts with 'c\"'")
-            .strip_suffix('"')
-            .expect("C string literal that does not ends with '\"'")
-            .into())
-    } else if literal_str.starts_with("cr#") {
-        Ok(literal_str
-            .strip_prefix("cr#\"")
-            .expect("C raw string literal that does not starts with 'cr#\"'")
-            .strip_suffix("\"#")
-            .expect("C raw string literal that does not ends with '\"#'")
-            .into())
-    } else if literal_str.starts_with('"') {
-        Ok(literal_str
-            .strip_prefix('"')
-            .expect("Literal that does not starts with '\"'")
-            .strip_suffix('"')
-            .expect("Literal that does not ends with '\"'")
-            .into())
-    } else {
-        // TODO: Indicate the source file, line and column on nightly
-        // https://doc.rust-lang.org/beta/proc_macro/struct.Span.html#method.source_file
-        Err(format!(
-            "Literal `{literal_str}` at `{location_macro_name}!` macro must be a string literal"
-        ))
     }
 }
 
@@ -380,6 +344,94 @@ impl<'ast> Visit<'ast> for TranslationsMacrosVisitor {
         self.visit_maybe_macro_tokens_stream(&stream);
 
         syn::visit::visit_stmt(self, node);
+    }
+
+    fn visit_use_rename(&mut self, node: &'ast syn::UseRename) {
+        if self.current_use_path_is_leptos_fluent {
+            let ident = node.ident.to_string();
+            if ident == "tr" || ident == "move_tr" {
+                let rename_ident = node.rename.to_string();
+                self.errors.push(format!(
+                    "Importing `{ident}` as `{rename_ident}` is not allowed because breaks leptos-fluent's compile-time checking of translations."
+                ));
+            }
+        } else {
+            let ident = node.ident.to_string();
+            let rename_ident = node.rename.to_string();
+            if ident == "leptos_fluent" {
+                self.errors.push(format!(
+                    "Importing `leptos-fluent` as `{rename_ident}` is not allowed because breaks leptos-fluent's compile-time checking of translations."
+                ));
+            } else if rename_ident == "tr" || rename_ident == "move_tr" {
+                self.errors.push(format!(
+                    "Importing as `{rename_ident}` is not allowed because breaks leptos-fluent's compile-time checking of translations."
+                ));
+            }
+        }
+
+        syn::visit::visit_use_rename(self, node);
+    }
+
+    fn visit_use_path(&mut self, node: &'ast syn::UsePath) {
+        let ident = node.ident.to_string();
+        self.current_use_path_is_leptos_fluent = ident == "leptos_fluent";
+        syn::visit::visit_use_path(self, node);
+    }
+
+    fn visit_use_name(&mut self, node: &'ast syn::UseName) {
+        let ident = node.ident.to_string();
+        if !self.current_use_path_is_leptos_fluent
+            && (ident == "tr" || ident == "move_tr")
+        {
+            self.errors.push(format!(
+                "Importing `{ident}` is not allowed because breaks leptos-fluent's compile-time checking of translations."
+            ));
+        }
+
+        syn::visit::visit_use_name(self, node);
+    }
+}
+
+/// Convert a literal to a string, removing the quotes and the string type characters
+fn value_from_literal(
+    literal: &proc_macro2::Literal,
+    location_macro_name: &str,
+) -> Result<String, String> {
+    let literal_str = literal.to_string();
+    if literal_str.starts_with("r#") {
+        Ok(literal_str
+            .strip_prefix("r#\"")
+            .expect("Raw string literal that does not starts with 'r#\"'")
+            .strip_suffix("\"#")
+            .expect("Raw string literal that does not ends with '\"#'")
+            .into())
+    } else if literal_str.starts_with("c\"") {
+        Ok(literal_str
+            .strip_prefix("c\"")
+            .expect("C string literal that does not starts with 'c\"'")
+            .strip_suffix('"')
+            .expect("C string literal that does not ends with '\"'")
+            .into())
+    } else if literal_str.starts_with("cr#") {
+        Ok(literal_str
+            .strip_prefix("cr#\"")
+            .expect("C raw string literal that does not starts with 'cr#\"'")
+            .strip_suffix("\"#")
+            .expect("C raw string literal that does not ends with '\"#'")
+            .into())
+    } else if literal_str.starts_with('"') {
+        Ok(literal_str
+            .strip_prefix('"')
+            .expect("Literal that does not starts with '\"'")
+            .strip_suffix('"')
+            .expect("Literal that does not ends with '\"'")
+            .into())
+    } else {
+        // TODO: Indicate the source file, line and column on nightly
+        // https://doc.rust-lang.org/beta/proc_macro/struct.Span.html#method.source_file
+        Err(format!(
+            "Literal `{literal_str}` at `{location_macro_name}!` macro must be a string literal"
+        ))
     }
 }
 
@@ -773,5 +825,159 @@ mod tests {
             ]
         );
         assert_eq!(visitor.errors, Vec::<String>::new());
+    }
+
+    #[test]
+    fn use_rename_from_tr_macros() {
+        // Forbid importing `tr` and `move_tr` renaming with `use ... as`
+        let content = quote! {
+            use leptos_fluent::tr as tr_alias_1;
+            use leptos_fluent::move_tr as move_tr_alias_1;
+            use leptos_fluent::{tr as tr_alias_2, move_tr as move_tr_alias_2};
+
+            fn App() -> impl IntoView {
+                view! {
+                    <p>{move_tr!("select-a-language")}</p>
+                    <p>{move_tr!("html-tag-lang-is", { "foo" => "value1", "bar" => "value2" })}</p>
+                }
+            }
+        };
+        let visitor = visitor_from_file_content(&content.to_string());
+
+        assert_eq!(
+            visitor.tr_macros,
+            vec![
+                tr_macro!("move_tr", "select-a-language", Vec::new()),
+                tr_macro!(
+                    "move_tr",
+                    "html-tag-lang-is",
+                    vec!["foo".to_string(), "bar".to_string()]
+                ),
+            ]
+        );
+        assert_eq!(
+            visitor.errors,
+            vec![
+                concat!(
+                    "Importing `tr` as `tr_alias_1` is not allowed because breaks",
+                    " leptos-fluent's compile-time checking of translations.",
+                ),
+                concat!(
+                    "Importing `move_tr` as `move_tr_alias_1` is not allowed because",
+                    " breaks leptos-fluent's compile-time checking of translations.",
+                ),
+                concat!(
+                    "Importing `tr` as `tr_alias_2` is not allowed because breaks",
+                    " leptos-fluent's compile-time checking of translations.",
+                ),
+                concat!(
+                    "Importing `move_tr` as `move_tr_alias_2` is not allowed because",
+                    " breaks leptos-fluent's compile-time checking of translations.",
+                ),
+            ]
+        );
+    }
+
+    #[test]
+    fn use_rename_to_tr_macros() {
+        // Forbid importing renaming with `use ... as` `tr` and `move_tr`
+        let content = quote! {
+            use foobar::foo as move_tr;
+            use barbaz as tr;
+            use tr;
+            use move_tr;
+            use foo::{tr, move_tr};
+
+            fn App() -> impl IntoView {
+                view! {
+                    <p>{move_tr!("select-a-language")}</p>
+                    <p>{move_tr!("html-tag-lang-is", { "foo" => "value1", "bar" => "value2" })}</p>
+                }
+            }
+        };
+        let visitor = visitor_from_file_content(&content.to_string());
+
+        assert_eq!(
+            visitor.tr_macros,
+            vec![
+                tr_macro!("move_tr", "select-a-language", Vec::new()),
+                tr_macro!(
+                    "move_tr",
+                    "html-tag-lang-is",
+                    vec!["foo".to_string(), "bar".to_string()]
+                ),
+            ]
+        );
+        assert_eq!(
+            visitor.errors,
+            vec![
+                concat!(
+                    "Importing as `move_tr` is not allowed because breaks",
+                    " leptos-fluent's compile-time checking of translations.",
+                ),
+                concat!(
+                    "Importing as `tr` is not allowed because",
+                    " breaks leptos-fluent's compile-time checking of translations.",
+                ),
+                concat!(
+                    "Importing `tr` is not allowed because",
+                    " breaks leptos-fluent's compile-time checking of translations.",
+                ),
+                concat!(
+                    "Importing `move_tr` is not allowed because",
+                    " breaks leptos-fluent's compile-time checking of translations.",
+                ),
+                concat!(
+                    "Importing `tr` is not allowed because",
+                    " breaks leptos-fluent's compile-time checking of translations.",
+                ),
+                concat!(
+                    "Importing `move_tr` is not allowed because",
+                    " breaks leptos-fluent's compile-time checking of translations.",
+                ),
+            ]
+        );
+    }
+
+    #[test]
+    fn use_rename_leptos_fluent() {
+        // Forbid importing `leptos-fluent` renaming with `use ... as`
+        let content = quote! {
+            use leptos_fluent as lf;
+            use whatever::leptos_fluent as lf2;
+
+            fn App() -> impl IntoView {
+                view! {
+                    <p>{move_tr!("select-a-language")}</p>
+                    <p>{move_tr!("html-tag-lang-is", { "foo" => "value1", "bar" => "value2" })}</p>
+                }
+            }
+        };
+        let visitor = visitor_from_file_content(&content.to_string());
+
+        assert_eq!(
+            visitor.tr_macros,
+            vec![
+                tr_macro!("move_tr", "select-a-language", Vec::new()),
+                tr_macro!(
+                    "move_tr",
+                    "html-tag-lang-is",
+                    vec!["foo".to_string(), "bar".to_string()]
+                ),
+            ]
+        );
+        assert_eq!(
+            visitor.errors,
+            vec![
+                concat!(
+                    "Importing `leptos-fluent` as `lf` is not allowed because",
+                    " breaks leptos-fluent's compile-time checking of translations.",
+                ),
+                concat!(
+                    "Importing `leptos-fluent` as `lf2` is not allowed because",
+                    " breaks leptos-fluent's compile-time checking of translations.",
+                ),
+            ]
+        );
     }
 }

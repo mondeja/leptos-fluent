@@ -6,7 +6,7 @@ use std::path::Path;
 #[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
 pub(crate) fn run(
     globstr: &str,
-    workspace_path: &Path,
+    workspace_path: impl AsRef<Path>,
     fluent_resources: &FluentResources,
     fluent_file_paths: &FluentFilePaths,
     core_locales_path: &Option<String>,
@@ -14,10 +14,11 @@ pub(crate) fn run(
 ) -> (Vec<String>, Vec<String>) {
     let mut errors = Vec::new();
 
+    let ws_path = workspace_path.as_ref();
     let (tr_macros, tr_macros_errors) = gather_tr_macro_defs_from_rs_files(
-        &workspace_path.join(globstr),
+        ws_path.join(globstr),
         #[cfg(not(test))]
-        workspace_path,
+        ws_path,
     );
 
     #[cfg(feature = "tracing")]
@@ -35,7 +36,7 @@ pub(crate) fn run(
     let (fluent_entries, fluent_syntax_errors) = build_fluent_entries(
         fluent_resources,
         fluent_file_paths,
-        workspace_path.to_str().unwrap(),
+        &workspace_path,
         core_locales_path,
         core_locales_content,
     );

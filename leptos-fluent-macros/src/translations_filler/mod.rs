@@ -8,7 +8,7 @@ use std::rc::Rc;
 #[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
 pub(crate) fn run(
     globstr: &str,
-    workspace_path: &Path,
+    workspace_path: impl AsRef<Path>,
     fluent_resources: &FluentResources,
     fluent_file_paths: &FluentFilePaths,
     core_locales_path: &Option<String>,
@@ -16,10 +16,19 @@ pub(crate) fn run(
 ) -> (Vec<(String, Vec<String>)>, Vec<String>) {
     let mut errors = Vec::new();
 
+    let (fluent_entries, fluent_syntax_errors) = build_fluent_entries(
+        fluent_resources,
+        fluent_file_paths,
+        &workspace_path,
+        core_locales_path,
+        core_locales_content,
+    );
+
+    let ws_path = workspace_path.as_ref();
     let (tr_macros, tr_macros_errors) = gather_tr_macro_defs_from_rs_files(
-        &workspace_path.join(globstr),
+        ws_path.join(globstr),
         #[cfg(not(test))]
-        workspace_path,
+        ws_path,
     );
 
     #[cfg(feature = "tracing")]
@@ -33,14 +42,6 @@ pub(crate) fn run(
     }
 
     errors.extend(tr_macros_errors);
-
-    let (fluent_entries, fluent_syntax_errors) = build_fluent_entries(
-        fluent_resources,
-        fluent_file_paths,
-        workspace_path.to_str().unwrap(),
-        core_locales_path,
-        core_locales_content,
-    );
 
     #[cfg(feature = "tracing")]
     if !&fluent_syntax_errors.is_empty() {
@@ -83,7 +84,7 @@ pub(crate) fn run(
             &mut resource_strs.first().unwrap().clone();
         let file_path =
             fluent_file_paths.get(language).unwrap().first().unwrap();
-        let rel_file_path = pathdiff::diff_paths(file_path, workspace_path)
+        let rel_file_path = pathdiff::diff_paths(file_path, ws_path)
             .unwrap()
             .as_path()
             .to_str()

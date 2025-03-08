@@ -15,8 +15,6 @@ pub fn I18n(children: Children) -> impl IntoView {
         children: children(),
         translations: [TRANSLATIONS],
         locales: "./locales",
-        check_translations: "./src/**/*.rs",
-        fill_translations: "./src/**/*.rs",
     }
 }
 
