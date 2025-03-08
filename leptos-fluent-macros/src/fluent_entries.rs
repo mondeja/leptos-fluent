@@ -3,6 +3,7 @@ use fluent_syntax::ast::{
     CallArguments, Expression, InlineExpression, PatternElement,
 };
 use std::collections::HashMap;
+use std::path::Path;
 use std::rc::Rc;
 
 pub(crate) type FluentEntries = HashMap<Rc<String>, Vec<FluentEntry>>;
@@ -198,12 +199,14 @@ fn get_fluent_entries_from_resource(
 pub(crate) fn build_fluent_entries(
     fluent_resources: &FluentResources,
     fluent_file_paths: &FluentFilePaths,
-    workspace_path: &str,
+    workspace_path: &impl AsRef<Path>,
     core_locales_path: &Option<String>,
     core_locales_content: &Option<String>,
 ) -> (FluentEntries, Vec<String>) {
     let mut fluent_entries: FluentEntries = HashMap::new();
     let mut errors: Vec<String> = Vec::new();
+
+    let ws_path = workspace_path.as_ref();
 
     for (lang, resources) in fluent_resources {
         fluent_entries.insert(Rc::clone(lang), vec![]);
@@ -224,7 +227,7 @@ pub(crate) fn build_fluent_entries(
                             .and_then(|paths| paths.get(index))
                             .unwrap();
                         let rel_file_path =
-                            pathdiff::diff_paths(file_path, workspace_path)
+                            pathdiff::diff_paths(file_path, ws_path)
                                 .unwrap()
                                 .as_path()
                                 .to_str()
@@ -250,7 +253,7 @@ pub(crate) fn build_fluent_entries(
                         .and_then(|paths| paths.get(index))
                         .unwrap();
                     let rel_file_path =
-                        pathdiff::diff_paths(file_path, workspace_path)
+                        pathdiff::diff_paths(file_path, ws_path)
                             .unwrap()
                             .as_path()
                             .to_str()
@@ -291,7 +294,7 @@ pub(crate) fn build_fluent_entries(
                     if !errs.is_empty() {
                         let rel_file_path = pathdiff::diff_paths(
                             core_locales_path.as_ref().unwrap(),
-                            workspace_path,
+                            ws_path,
                         )
                         .unwrap()
                         .as_path()
@@ -361,6 +364,11 @@ fn line_col_from_index_content(content: &str, index: usize) -> (usize, usize) {
 mod tests {
     use super::*;
     use std::borrow::Cow;
+    use std::path::PathBuf;
+
+    fn workspace_path() -> PathBuf {
+        PathBuf::from("./")
+    }
 
     fn cross_platform_path_repr(path: &str) -> Cow<'_, str> {
         #[cfg(target_os = "windows")]
@@ -395,11 +403,10 @@ mod tests {
                 vec!["./locales/es-ES/foo.ftl".to_string()],
             ),
         ]);
-        let workspace_path = "./";
         let (entries, errors) = build_fluent_entries(
             &fluent_resources,
             &fluent_file_paths,
-            workspace_path,
+            &workspace_path(),
             &None,
             &None,
         );
@@ -447,11 +454,10 @@ mod tests {
             Rc::new("en-US".to_string()),
             vec!["./locales/en-US/foo.ftl".to_string()],
         )]);
-        let workspace_path = "./";
         let (entries, errors) = build_fluent_entries(
             &fluent_resources,
             &fluent_file_paths,
-            workspace_path,
+            &workspace_path(),
             &None,
             &None,
         );
@@ -472,11 +478,10 @@ mod tests {
             Rc::new("en-US".to_string()),
             vec!["./locales/en-US/foo.ftl".to_string()],
         )]);
-        let workspace_path = "./";
         let (entries, errors) = build_fluent_entries(
             &fluent_resources,
             &fluent_file_paths,
-            workspace_path,
+            &workspace_path(),
             &None,
             &None,
         );
@@ -515,11 +520,10 @@ mod tests {
             Rc::new("en-US".to_string()),
             vec!["./locales/en-US/foo.ftl".to_string()],
         )]);
-        let workspace_path = "./";
         let (entries, errors) = build_fluent_entries(
             &fluent_resources,
             &fluent_file_paths,
-            workspace_path,
+            &workspace_path(),
             &None,
             &None,
         );
@@ -561,11 +565,10 @@ emails2 = Number of unread emails { NUMBER($unreadEmails) }
             Rc::new("en-US".to_string()),
             vec!["./locales/en-US/foo.ftl".to_string()],
         )]);
-        let workspace_path = "./";
         let (entries, errors) = build_fluent_entries(
             &fluent_resources,
             &fluent_file_paths,
-            workspace_path,
+            &workspace_path(),
             &None,
             &None,
         );
@@ -620,11 +623,10 @@ your-rank = { NUMBER($pos, type: "ordinal") ->
             Rc::new("en-US".to_string()),
             vec!["./locales/en-US/foo.ftl".to_string()],
         )]);
-        let workspace_path = "./";
         let (entries, errors) = build_fluent_entries(
             &fluent_resources,
             &fluent_file_paths,
-            workspace_path,
+            &workspace_path(),
             &None,
             &None,
         );
@@ -668,11 +670,10 @@ units-unit-conversion-continuation-recursive = {units-unit-conversion}, where {u
             Rc::new("en-US".to_string()),
             vec!["./locales/en-US/foo.ftl".to_string()],
         )]);
-        let workspace_path = "./";
         let (entries, errors) = build_fluent_entries(
             &fluent_resources,
             &fluent_file_paths,
-            workspace_path,
+            &workspace_path(),
             &None,
             &None,
         );
@@ -728,11 +729,10 @@ bar = My {not-found} message reference
             Rc::new("en-US".to_string()),
             vec!["./locales/en-US/foo.ftl".to_string()],
         )]);
-        let workspace_path = "./";
         let (entries, errors) = build_fluent_entries(
             &fluent_resources,
             &fluent_file_paths,
-            workspace_path,
+            &workspace_path(),
             &None,
             &None,
         );

@@ -1,5 +1,7 @@
+use std::borrow::Cow;
 use std::fs;
 use std::path::PathBuf;
+use std::rc::Rc;
 
 pub(crate) type ParsedLanguage = (String, String, String, Option<String>);
 
@@ -27,6 +29,7 @@ fn fill_languages_file(
                     match code_to_country_code(lang_code) {
                         Some(country_code) => {
                             country_code_to_emoji_flag(&country_code)
+                                .map(|f| f.to_owned())
                         }
                         None => None,
                     },
@@ -44,6 +47,7 @@ fn fill_languages_file(
                     match code_to_country_code(lang_code) {
                         Some(country_code) => {
                             country_code_to_emoji_flag(&country_code)
+                                .map(|f| f.to_owned())
                         }
                         None => None,
                     },
@@ -264,56 +268,49 @@ pub(crate) fn read_locales_folder(
 
     let mut errors = vec![];
 
-    let mut iso639_language_codes = vec![];
-    let mut entries = vec![];
+    let mut language_codes: Vec<(String, Rc<str>)> = vec![];
     for entry in fs::read_dir(path).expect("Couldn't read locales folder") {
         let entry = entry.expect("Couldn't read entry");
         let path = entry.path();
         if !path.is_dir() {
             continue;
         }
-        let lang_code = path.file_name().unwrap().to_str().unwrap().to_string();
-        iso639_language_codes.push(code_to_iso639(&lang_code));
-        entries.push(entry);
+        let lang_code = path.file_name().unwrap().to_str().unwrap();
+        let iso639_code = code_to_iso639(lang_code).into_owned();
+        language_codes.push((iso639_code, Rc::clone(&lang_code.into())));
     }
 
+    let iso639_language_codes: Vec<&str> =
+        language_codes.iter().map(|(a, _)| a.as_ref()).collect();
     let mut locales = vec![];
-    for entry in entries {
-        let lang_code = entry
-            .path()
-            .file_name()
-            .unwrap()
-            .to_str()
-            .unwrap()
-            .to_string();
-        let iso639_code = code_to_iso639(&lang_code);
+    for (iso639_code, lang_code) in &language_codes {
         let use_country_code = iso639_language_codes
             .iter()
-            .filter(|&c| c == &iso639_code)
+            .filter(|&c| c == iso639_code)
             .count()
             > 1;
         let lang_name =
-            language_name_from_language_code(&lang_code, use_country_code);
+            language_name_from_language_code(lang_code, use_country_code);
         if lang_name.is_empty() {
             errors.push(format!(
                 concat!(
                     "Couldn't find language name for code \"{}\". Provide it",
                     " from a languages file (see `languages` parameter).",
                 ),
-                lang_code,
+                &lang_code,
             ));
             continue;
         }
-        let lang_dir = iso639_to_dir(&iso639_code);
-        let flag = match code_to_country_code(&lang_code) {
+        let lang_dir = iso639_to_dir(iso639_code);
+        let flag = match code_to_country_code(lang_code) {
             Some(country_code) => country_code_to_emoji_flag(&country_code),
             None => None,
         };
         locales.push((
-            lang_code,
+            lang_code.to_string(),
             lang_name.to_string(),
             lang_dir.to_string(),
-            flag,
+            flag.map(|f| f.to_string()),
         ));
     }
     locales.sort_by(|a, b| a.1.cmp(&b.1));
@@ -374,15 +371,24 @@ fn generate_code_for_static_language(
     )
 }
 
-fn code_to_iso639(code: &str) -> String {
+fn code_to_iso639(code: &str) -> Cow<'_, str> {
     let splitter = if code.contains('_') {
         '_'
     } else if code.contains('-') {
         '-'
+    } else if code.chars().any(char::is_uppercase) {
+        return code.to_lowercase().into();
     } else {
-        return code.to_lowercase();
+        return code.into();
     };
-    code.split(splitter).collect::<Vec<&str>>()[0].to_string()
+    let mut iso639 = String::with_capacity(code.len());
+    for ch in code.chars() {
+        if ch == splitter {
+            break;
+        }
+        iso639.push(ch);
+    }
+    iso639.into()
 }
 
 fn code_to_country_code(code: &str) -> Option<String> {
@@ -1856,7 +1862,7 @@ fn language_name_from_language_code(
     }
 
     let c = code_to_iso639(code);
-    match c.as_str() {
+    match c.into_owned().as_str() {
         "aa" => "’Afar Af",
         "ab" => "Аҧсуа бызшәа",
         "ae" => "Avestan",
@@ -2044,7 +2050,7 @@ fn language_name_from_language_code(
     }
 }
 
-pub fn country_code_to_emoji_flag(code: &str) -> Option<String> {
+pub fn country_code_to_emoji_flag(code: &str) -> Option<&'static str> {
     match code.to_uppercase().as_str() {
         "AD" => Some("🇦🇩"),
         "AE" => Some("🇦🇪"),
@@ -2297,5 +2303,4 @@ pub fn country_code_to_emoji_flag(code: &str) -> Option<String> {
         "ZW" => Some("🇿🇼"),
         _ => None,
     }
-    .map(|s| s.to_string())
 }

@@ -387,6 +387,7 @@ fn get_language_from_url_path(path: &str) -> &str {
 leptos_fluent! {
     // ...
     url_path: get_language_from_url_path,
+    initial_language_from_url_path: true,
 }
 ```
 

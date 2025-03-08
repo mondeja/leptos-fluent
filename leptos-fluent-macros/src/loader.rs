@@ -1741,7 +1741,7 @@ impl Parse for I18nLoader {
             }
         }
 
-        Ok(Self {
+        let loader_ = Self {
             fluent_file_paths: fluent_resources_and_file_paths.1,
             children,
             translations,
@@ -1805,6 +1805,8 @@ impl Parse for I18nLoader {
             initial_language_from_data_file,
             #[cfg(feature = "system")]
             data_file_key,
-        })
+        };
+
+        Ok(loader_)
     }
 }

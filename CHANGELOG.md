@@ -1,5 +1,20 @@
 # CHANGELOG
 
+## Unreleased - [0.2.7]
+
+### Enhacements
+
+- Forbid a few expressions in files inside `check_translations` parameter glob.
+  These breaks translations checker requirement of having a single `tr!` or
+  `move_tr!` source of thruth per file. The forbidden expressions are:
+  - `use tr;`
+  - `use move_tr;`
+  - `use whatever::tr;`
+  - `use whatever::move_tr;`
+  - `use leptos_fluent::tr as whatever;`
+  - `use leptos_fluent::move_tr as whatever;`
+  - `use leptos_fluent as whatever;`
+
 ## 2025-03-07 - [0.2.6]
 
 ### New features
@@ -678,6 +693,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.2.7]: https://github.com/mondeja/leptos-fluent/compare/v0.2.6...master
 [0.2.6]: https://github.com/mondeja/leptos-fluent/compare/v0.2.5...v0.2.6
 [0.2.5]: https://github.com/mondeja/leptos-fluent/compare/v0.2.4...v0.2.5
 [0.2.4]: https://github.com/mondeja/leptos-fluent/compare/v0.2.3...v0.2.4
