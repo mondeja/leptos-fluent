@@ -28,7 +28,7 @@
 - Allow to pass expressions `leptos_fluent!` macro parameters related to server
   functions.
 - Add `i18n.tr` and `i18n.tr_with_args` methods.
-- Deprecate `tr_impl(i18n, id)` and `tr_impl_with_args(i18n, id, args)` functions.
+- Deprecate `tr_impl(i18n, id)` and `tr_with_args_impl(i18n, id, args)` functions.
   Use `i18n.tr(id)` and `i18n.tr_with_args(id, args)` methods instead.
 
 ### Bug fixes
@@ -76,7 +76,7 @@
 
 - Update Russian language name. From `Русский язык` ("Russian language") to
   `Русский` ("Russian").
-- Document `tr_impl` and `tr_impl_with_args` functions. Recommend their usage for
+- Document `tr_impl` and `tr_with_args_impl` functions. Recommend their usage for
   dynamic translations.
 
 ## 2025-01-23 - [0.2.3]

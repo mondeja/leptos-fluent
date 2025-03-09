@@ -742,7 +742,7 @@ pub fn i18n() -> I18n {
 /// Get the translation of a text identifier to the current language.
 #[deprecated(
     since = "0.2.7",
-    note = "Use `i18n.tr(text_id)` instead of `tr_impl(i18n, text_id)`.  The function will be removed in v0.3.0."
+    note = "will be removed in v0.3.0. Use `i18n.tr(text_id)` instead of `tr_impl(i18n, text_id)`."
 )]
 #[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
 pub fn tr_impl(i18n: I18n, text_id: &str) -> String {
@@ -752,7 +752,7 @@ pub fn tr_impl(i18n: I18n, text_id: &str) -> String {
 /// Get the translation of a text identifier to the current language with arguments.
 #[deprecated(
     since = "0.2.7",
-    note = "Use `i18n.tr_with_args(text_id, args)` instead of `tr_impl_with_args(i18n, text_id, args)`. The function will be removed in v0.3.0."
+    note = "will be removed in v0.3.0. Use `i18n.tr_with_args(text_id, args)` instead of `tr_with_args_impl(i18n, text_id, args)`."
 )]
 #[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
 pub fn tr_with_args_impl(
