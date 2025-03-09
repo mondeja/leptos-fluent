@@ -314,11 +314,18 @@ jobs:
         run: |
           option=$([ "${{ matrix.toolchain }}" == "nightly" ] && echo "--features=leptos-fluent/nightly" || echo "")
           echo "features=$option" >> $GITHUB_OUTPUT
+
       - name: Build with trunk
-        if: startsWith(matrix.example, 'csr')
-        run: |
-          cd examples/${{ matrix.example }}
-          trunk build --release ${{ steps.build-features.outputs.features }}
+        # Sometimes trunk fails to download wasm-opt and other tools, so we retry
+        uses: nick-fields/retry@v3
+        with:
+          timeout_minutes: 20
+          max_attempts: 3
+          retry_wait_seconds: 2
+          warning_on_retry: false
+          command: |
+            cd examples/${{ matrix.example }}
+            trunk build --release ${{ steps.build-features.outputs.features }}
       - name: Build with cargo-leptos
         if: startsWith(matrix.example, 'ssr')
         run: |
