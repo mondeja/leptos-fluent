@@ -122,6 +122,7 @@ pub fn leptos_fluent(
         initial_language_from_url_param,
         url_param,
         initial_language_from_url_param_to_localstorage,
+        initial_language_from_url_param_to_sessionstorage,
         initial_language_from_url_param_to_cookie,
         initial_language_from_url_param_to_server_function,
         set_language_to_url_param,
@@ -148,6 +149,7 @@ pub fn leptos_fluent(
         cookie_attrs,
         initial_language_from_cookie,
         initial_language_from_cookie_to_localstorage,
+        initial_language_from_cookie_to_sessionstorage,
         initial_language_from_cookie_to_server_function,
         set_language_to_cookie,
         initial_language_from_server_function,
@@ -343,11 +345,7 @@ pub fn leptos_fluent(
 
                 match param.expr {
                     Some(ref expr) => {
-                        let q = quote! {
-                            if #expr {
-                                #effect_quote
-                            }
-                        };
+                        let q = quote!(if #expr {#effect_quote});
                         match param.exprpath {
                             Some(ref path) => quote!(#path{#q}),
                             None => q,
@@ -427,11 +425,7 @@ pub fn leptos_fluent(
                 .iter()
                 .map(|param| match param.expr {
                     Some(ref expr) => {
-                        let q = quote! {
-                            if #expr {
-                                #effect_quote
-                            }
-                        };
+                        let q = quote!(if #expr {#effect_quote});
                         match param.exprpath {
                             Some(ref path) => quote!(#path{#q}),
                             None => q,
@@ -455,11 +449,7 @@ pub fn leptos_fluent(
                 .iter()
                 .map(|param| match param.expr {
                     Some(ref expr) => {
-                        let q = quote! {
-                            if #expr {
-                                #effect_quote
-                            }
-                        };
+                        let q = quote!(if #expr {#effect_quote});
                         match param.exprpath {
                             Some(ref path) => quote!(#path{#q}),
                             None => q,
@@ -837,11 +827,31 @@ pub fn leptos_fluent(
                 .iter()
                 .map(|param| match param.expr {
                     Some(ref expr) => {
-                        let q = quote! {
-                            if #expr {
-                                #effect_quote
-                            }
-                        };
+                        let q = quote!(if #expr {#effect_quote});
+                        match param.exprpath {
+                            Some(ref path) => quote!(#path{#q}),
+                            None => q,
+                        }
+                    }
+                    None => quote!(),
+                })
+                .collect()
+        };
+
+        #[cfg(not(feature = "ssr"))]
+        let set_to_sessionstorage_quote: proc_macro2::TokenStream = {
+            let effect_quote = quote! {
+                ::leptos_fluent::sessionstorage::set(
+                    #sessionstorage_key_quote,
+                    &l.id.to_string()
+                );
+            };
+
+            initial_language_from_url_param_to_sessionstorage
+                .iter()
+                .map(|param| match param.expr {
+                    Some(ref expr) => {
+                        let q = quote!(if #expr {#effect_quote});
                         match param.exprpath {
                             Some(ref path) => quote!(#path{#q}),
                             None => q,
@@ -866,11 +876,7 @@ pub fn leptos_fluent(
                 .iter()
                 .map(|param| match param.expr {
                     Some(ref expr) => {
-                        let q = quote! {
-                            if #expr {
-                                #effect_quote
-                            }
-                        };
+                        let q = quote!(if #expr {#effect_quote});
                         match param.exprpath {
                             Some(ref path) => quote!(#path{#q}),
                             None => q,
@@ -884,6 +890,7 @@ pub fn leptos_fluent(
         #[cfg(feature = "ssr")]
         {
             _ = initial_language_from_url_param_to_localstorage;
+            _ = initial_language_from_url_param_to_sessionstorage;
             _ = initial_language_from_url_param_to_cookie;
         }
 
@@ -913,6 +920,7 @@ pub fn leptos_fluent(
                 if let Some(l) = lang {
                     #hydrate_rerender_quote
                     #set_to_localstorage_quote
+                    #set_to_sessionstorage_quote
                     #set_to_cookie_quote
                     #set_to_server_function_quote
                 }
@@ -1244,11 +1252,7 @@ pub fn leptos_fluent(
             initial_language_from_navigator_to_localstorage.iter().map(|param| {
                 match param.expr {
                     Some(ref expr) => {
-                        let q = quote! {
-                            if #expr {
-                                #effect_quote
-                            }
-                        };
+                        let q = quote!(if #expr {#effect_quote});
                         match param.exprpath {
                             Some(ref path) => quote!(#path{#q}),
                             None => q,
@@ -1270,11 +1274,7 @@ pub fn leptos_fluent(
             initial_language_from_navigator_to_sessionstorage.iter().map(|param| {
                 match param.expr {
                     Some(ref expr) => {
-                        let q = quote! {
-                            if #expr {
-                                #effect_quote
-                            }
-                        };
+                        let q = quote!(if #expr {#effect_quote});
                         match param.exprpath {
                             Some(ref path) => quote!(#path{#q}),
                             None => q,
@@ -1297,11 +1297,7 @@ pub fn leptos_fluent(
             initial_language_from_navigator_to_cookie.iter().map(|param| {
                 match param.expr {
                     Some(ref expr) => {
-                        let q = quote! {
-                            if #expr {
-                                #effect_quote
-                            }
-                        };
+                        let q = quote!(if #expr {#effect_quote});
                         match param.exprpath {
                             Some(ref path) => quote!(#path{#q}),
                             None => q,
@@ -1378,6 +1374,14 @@ pub fn leptos_fluent(
     let set_language_from_navigator_quote: proc_macro2::TokenStream = {
         #[cfg(not(feature = "ssr"))]
         {
+            #[cfg(feature = "debug")]
+            let log_language_quote = quote! {
+                ::leptos::logging::log!("[leptos-fluent/debug] Language changed to {:?}", &l);
+            };
+
+            #[cfg(not(feature = "debug"))]
+            let log_language_quote = quote!();
+
             let effect_quote = quote! {
                 use ::leptos_fluent::web_sys::wasm_bindgen::JsCast;
                 let closure: Box<dyn FnMut(_)> = Box::new(
@@ -1389,7 +1393,7 @@ pub fn leptos_fluent(
                                 continue;
                             }
                             let l = ::leptos_fluent::l(&language.unwrap(), &LANGUAGES);
-                            ::leptos::logging::log!("Language changed to {:?}", &l);
+                            #log_language_quote
                             if let Some(l) = l {
                                 #set_language_quote;
                                 break;
@@ -1411,11 +1415,7 @@ pub fn leptos_fluent(
                 .iter()
                 .map(|param| match param.expr {
                     Some(ref expr) => {
-                        let q = quote! {
-                            if #expr {
-                                #effect_quote
-                            }
-                        };
+                        let q = quote!(if #expr {#effect_quote});
                         match param.exprpath {
                             Some(ref path) => quote!(#path{#q}),
                             None => q,
@@ -1556,11 +1556,29 @@ pub fn leptos_fluent(
             initial_language_from_cookie_to_localstorage.iter().map(|param| {
                 match param.expr {
                     Some(ref expr) => {
-                        let q = quote! {
-                            if #expr {
-                                #effect_quote
-                            }
-                        };
+                        let q = quote!(if #expr {#effect_quote});
+                        match param.exprpath {
+                            Some(ref path) => quote!(#path{#q}),
+                            None => q,
+                        }
+                    },
+                    None => quote!(),
+                }
+            }).collect()
+        };
+
+        let initial_language_from_cookie_to_sessionstorage_quote: proc_macro2::TokenStream = {
+            let effect_quote = quote! {
+                ::leptos_fluent::sessionstorage::set(
+                    #sessionstorage_key_quote,
+                    &l.id.to_string()
+                );
+            };
+
+            initial_language_from_cookie_to_sessionstorage.iter().map(|param| {
+                match param.expr {
+                    Some(ref expr) => {
+                        let q = quote!(if #expr {#effect_quote});
                         match param.exprpath {
                             Some(ref path) => quote!(#path{#q}),
                             None => q,
@@ -1576,6 +1594,7 @@ pub fn leptos_fluent(
                 if let Some(l) = ::leptos_fluent::l(&cookie, &LANGUAGES) {
                     lang = Some(l);
                     #initial_language_from_cookie_to_localstorage_quote
+                    #initial_language_from_cookie_to_sessionstorage_quote
                     #initial_language_from_cookie_to_server_function_quote
                 }
             }
@@ -1635,6 +1654,7 @@ pub fn leptos_fluent(
     {
         _ = initial_language_from_cookie;
         _ = initial_language_from_cookie_to_localstorage;
+        _ = initial_language_from_cookie_to_sessionstorage;
         _ = cookie_attrs;
         _ = set_language_to_cookie;
     }
@@ -1870,6 +1890,10 @@ pub fn leptos_fluent(
                         lit_bool_exprs(
                             &initial_language_from_url_param_to_localstorage,
                         );
+                    let initial_language_from_url_param_to_sessionstorage =
+                        lit_bool_exprs(
+                            &initial_language_from_url_param_to_sessionstorage,
+                        );
                     let initial_language_from_url_param_to_cookie_quote =
                         lit_bool_exprs(&initial_language_from_url_param_to_cookie);
                     let initial_language_from_url_param_to_server_function_quote =
@@ -1955,6 +1979,10 @@ pub fn leptos_fluent(
                         lit_bool_exprs(
                             &initial_language_from_cookie_to_localstorage,
                         );
+                    let initial_language_from_cookie_to_sessionstorage_quote =
+                        lit_bool_exprs(
+                            &initial_language_from_cookie_to_sessionstorage,
+                        );
                     let initial_language_from_cookie_to_server_function_quote =
                         identifiers_as_bools(
                             &initial_language_from_cookie_to_server_function,
@@ -2033,6 +2061,7 @@ pub fn leptos_fluent(
                             url_param: #url_param_quote,
                             initial_language_from_url_param: #initial_language_from_url_param_quote,
                             initial_language_from_url_param_to_localstorage: #initial_language_from_url_param_to_localstorage,
+                            initial_language_from_url_param_to_sessionstorage: #initial_language_from_url_param_to_sessionstorage,
                             initial_language_from_url_param_to_cookie: #initial_language_from_url_param_to_cookie_quote,
                             initial_language_from_url_param_to_server_function: #initial_language_from_url_param_to_server_function_quote,
                             set_language_to_url_param: #set_language_to_url_param_quote,
@@ -2059,6 +2088,7 @@ pub fn leptos_fluent(
                             cookie_attrs: #cookie_attrs_quote,
                             initial_language_from_cookie: #initial_language_from_cookie_quote,
                             initial_language_from_cookie_to_localstorage: #initial_language_from_cookie_to_localstorage_quote,
+                            initial_language_from_cookie_to_sessionstorage: #initial_language_from_cookie_to_sessionstorage_quote,
                             initial_language_from_cookie_to_server_function: #initial_language_from_cookie_to_server_function_quote,
                             set_language_to_cookie: #set_language_to_cookie_quote,
                             initial_language_from_server_function: #initial_language_from_server_function_quote,

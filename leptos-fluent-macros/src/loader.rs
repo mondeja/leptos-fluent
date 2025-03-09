@@ -454,6 +454,7 @@ pub(crate) struct I18nLoader {
     pub url_param: LitStrExpr,
     pub initial_language_from_url_param: Vec<LitBoolExpr>,
     pub initial_language_from_url_param_to_localstorage: Vec<LitBoolExpr>,
+    pub initial_language_from_url_param_to_sessionstorage: Vec<LitBoolExpr>,
     pub initial_language_from_url_param_to_cookie: Vec<LitBoolExpr>,
     pub initial_language_from_url_param_to_server_function: Vec<Identifier>,
     pub set_language_to_url_param: Vec<LitBoolExpr>,
@@ -481,6 +482,7 @@ pub(crate) struct I18nLoader {
     pub cookie_attrs: LitStrExpr,
     pub initial_language_from_cookie: Vec<LitBoolExpr>,
     pub initial_language_from_cookie_to_localstorage: Vec<LitBoolExpr>,
+    pub initial_language_from_cookie_to_sessionstorage: Vec<LitBoolExpr>,
     pub initial_language_from_cookie_to_server_function: Vec<Identifier>,
     pub set_language_to_cookie: Vec<LitBoolExpr>,
     pub initial_language_from_server_function: Vec<Identifier>,
@@ -523,6 +525,9 @@ impl Parse for I18nLoader {
         let mut url_param = LitStrExpr::new();
         let mut initial_language_from_url_param: Vec<LitBoolExpr> = Vec::new();
         let mut initial_language_from_url_param_to_localstorage: Vec<
+            LitBoolExpr,
+        > = Vec::new();
+        let mut initial_language_from_url_param_to_sessionstorage: Vec<
             LitBoolExpr,
         > = Vec::new();
         let mut initial_language_from_url_param_to_cookie: Vec<LitBoolExpr> =
@@ -576,6 +581,9 @@ impl Parse for I18nLoader {
         let mut initial_language_from_cookie: Vec<LitBoolExpr> = Vec::new();
         let mut initial_language_from_cookie_to_localstorage: Vec<LitBoolExpr> =
             Vec::new();
+        let mut initial_language_from_cookie_to_sessionstorage: Vec<
+            LitBoolExpr,
+        > = Vec::new();
         let mut initial_language_from_cookie_to_server_function: Vec<
             Identifier,
         > = Vec::new();
@@ -850,6 +858,21 @@ impl Parse for I18nLoader {
                     "initial_language_from_url_param_to_localstorage",
                 )?;
                 initial_language_from_url_param_to_localstorage.push(param);
+            } else if k == "initial_language_from_url_param_to_sessionstorage" {
+                let mut param = LitBoolExpr::new();
+                parse_runtime_exprpath!(exprpath, param);
+                parse_struct_field_init_shorthand!(
+                    struct_field_init_shorthand,
+                    param,
+                    k_token_stream_str,
+                    initial_language_from_url_param_to_sessionstorage
+                );
+                parse_litbool_or_expr_param(
+                    input,
+                    &mut param.expr,
+                    "initial_language_from_url_param_to_sessionstorage",
+                )?;
+                initial_language_from_url_param_to_sessionstorage.push(param);
             } else if k == "initial_language_from_url_param_to_cookie" {
                 let mut param = LitBoolExpr::new();
                 parse_runtime_exprpath!(exprpath, param);
@@ -1234,6 +1257,21 @@ impl Parse for I18nLoader {
                     "initial_language_from_cookie_to_localstorage",
                 )?;
                 initial_language_from_cookie_to_localstorage.push(param);
+            } else if k == "initial_language_from_cookie_to_sessionstorage" {
+                let mut param = LitBoolExpr::new();
+                parse_runtime_exprpath!(exprpath, param);
+                parse_struct_field_init_shorthand!(
+                    struct_field_init_shorthand,
+                    param,
+                    k_token_stream_str,
+                    initial_language_from_cookie_to_sessionstorage
+                );
+                parse_litbool_or_expr_param(
+                    input,
+                    &mut param.expr,
+                    "initial_language_from_cookie_to_sessionstorage",
+                )?;
+                initial_language_from_cookie_to_sessionstorage.push(param);
             } else if k == "initial_language_from_cookie_to_server_function" {
                 let mut param = Identifier::new();
                 parse_runtime_exprpath!(exprpath, param);
@@ -1840,6 +1878,7 @@ impl Parse for I18nLoader {
             url_param,
             initial_language_from_url_param,
             initial_language_from_url_param_to_localstorage,
+            initial_language_from_url_param_to_sessionstorage,
             initial_language_from_url_param_to_cookie,
             initial_language_from_url_param_to_server_function,
             set_language_to_url_param,
@@ -1866,6 +1905,7 @@ impl Parse for I18nLoader {
             cookie_attrs,
             initial_language_from_cookie,
             initial_language_from_cookie_to_localstorage,
+            initial_language_from_cookie_to_sessionstorage,
             initial_language_from_cookie_to_server_function,
             set_language_to_cookie,
             initial_language_from_server_function,

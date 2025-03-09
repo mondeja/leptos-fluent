@@ -14,6 +14,12 @@
   - `use leptos_fluent::tr as whatever;`
   - `use leptos_fluent::move_tr as whatever;`
   - `use leptos_fluent as whatever;`
+- Add next new parameters to `leptos_fluent!` macro related to browser's
+  session storage:
+  - `initial_language_from_url_param_to_sessionstorage` to set the initial
+    language from URL parameter to session storage.
+  - `initial_language_from_cookie_to_sessionstorage` to set the initial language
+    from a cookie to session storage.
 
 ### Enhancements
 

@@ -348,6 +348,17 @@ leptos_fluent! {
 }
 ```
 
+### <span style="opacity:.5">CSR </span> | `initial_language_from_url_param_to_sessionstorage`
+
+Get initial language from [URL parameter] and save it to [session storage].
+
+```rust
+leptos_fluent! {
+    // ...
+    initial_language_from_url_param_to_sessionstorage: true,
+}
+```
+
 ### <span style="opacity:.5">CSR </span> | `initial_language_from_url_param_to_cookie`
 
 Get initial language from [URL parameter] and save it to a [cookie].
@@ -669,6 +680,17 @@ Get the initial language from the cookie and save it in [local storage].
 leptos_fluent! {
     // ...
     initial_language_from_cookie_to_localstorage: true,
+}
+```
+
+### <span style="opacity:.5">CSR </span> | `initial_language_from_cookie_to_sessionstorage`
+
+Get the initial language from the cookie and save it in [session storage].
+
+```rust
+leptos_fluent! {
+    // ...
+    initial_language_from_cookie_to_sessionstorage: true,
 }
 ```
 
