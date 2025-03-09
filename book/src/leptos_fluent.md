@@ -435,6 +435,17 @@ leptos_fluent! {
 }
 ```
 
+### <span style="opacity:.5">CSR </span> | `initial_language_from_url_path_to_sessionstorage`
+
+Set initial language from [URL path] to [session storage].
+
+```rust
+leptos_fluent! {
+    // ...
+    initial_language_from_url_path_to_sessionstorage: true,
+}
+```
+
 <!-- markdownlint-disable MD013 -->
 
 ### <span style="opacity:.5">CSR </span> | `localstorage_key: `<span style="color: #b5bd68;font-size: 16px; opacity:.9;">"lang"</span>
