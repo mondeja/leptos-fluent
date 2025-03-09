@@ -360,20 +360,20 @@ jobs:
       - name: leptos-fluent type sizes
         run: |
           cd leptos-fluent
-          cargo +nightly rustc -- -Zprint-type-sizes > ../leptos-fluent-type-sizes.txt
-          cat ../leptos-fluent-type-sizes.txt
+          cargo +nightly rustc -- -Zprint-type-sizes > ../leptos-fluent-type-sizes.log
+          cat ../leptos-fluent-type-sizes.log
       - name: leptos-fluent-macros type sizes
         run: |
           cd leptos-fluent-macros
-          cargo +nightly rustc -- -Zprint-type-sizes > ../leptos-fluent-macros-type-sizes.txt
-          cat ../leptos-fluent-macros-type-sizes.txt
+          cargo +nightly rustc -- -Zprint-type-sizes > ../leptos-fluent-macros-type-sizes.log
+          cat ../leptos-fluent-macros-type-sizes.log
       - name: Upload type sizes
         uses: actions/upload-artifact@v4
         with:
           name: type-sizes
           path: |
-            leptos-fluent-type-sizes.txt
-            leptos-fluent-macros-type-sizes.txt
+            leptos-fluent-type-sizes.log
+            leptos-fluent-macros-type-sizes.log
 
   test-release-leptos-fluent-macros:
     needs:
