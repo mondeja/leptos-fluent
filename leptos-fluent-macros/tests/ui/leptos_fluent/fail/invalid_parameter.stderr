@@ -1,4 +1,4 @@
-error: Not a valid parameter 'invalid_parameter' for leptos_fluent! macro.
+error: Invalid parameter 'invalid_parameter' for leptos_fluent! macro.
   --> tests/ui/leptos_fluent/fail/invalid_parameter.rs:17:9
    |
 17 |         invalid_parameter: "foo",

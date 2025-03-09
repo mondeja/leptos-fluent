@@ -10,7 +10,7 @@ path = "src/lib.rs"
 
 [dependencies]
 leptos = { version = "0.7", features = ["csr"] }
-leptos-fluent = { path = "../../leptos-fluent", features = ["json"] }
+leptos-fluent = { path = "../../leptos-fluent", features = ["json", "debug"] }
 fluent-templates = { version = ">=0.13", default-features = false, features = [
   "macros",
   "walkdir",

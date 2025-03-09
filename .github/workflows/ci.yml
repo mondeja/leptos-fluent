@@ -338,6 +338,43 @@ jobs:
           cd examples/${{ matrix.example }}
           cargo build --release ${{ steps.build-features.outputs.features }}
 
+  report-type-sizes:
+    needs:
+      - unit-tests
+      - build-book
+      - end2end-tests
+      - build-examples
+    name: Report type sizes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set nightly toolchain
+        uses: ./.github/actions/set-toolchain
+        with:
+          channel: nightly
+      - name: Setup Rust
+        uses: hecrj/setup-rust-action@v2
+        with:
+          rust-version: nightly
+          profile: minimal
+      - name: leptos-fluent type sizes
+        run: |
+          cd leptos-fluent
+          cargo +nightly rustc -- -Zprint-type-sizes > ../leptos-fluent-type-sizes.txt
+          cat ../leptos-fluent-type-sizes.txt
+      - name: leptos-fluent-macros type sizes
+        run: |
+          cd leptos-fluent-macros
+          cargo +nightly rustc -- -Zprint-type-sizes > ../leptos-fluent-macros-type-sizes.txt
+          cat ../leptos-fluent-macros-type-sizes.txt
+      - name: Upload type sizes
+        uses: actions/upload-artifact@v4
+        with:
+          name: type-sizes
+          path: |
+            leptos-fluent-type-sizes.txt
+            leptos-fluent-macros-type-sizes.txt
+
   test-release-leptos-fluent-macros:
     needs:
       - qa

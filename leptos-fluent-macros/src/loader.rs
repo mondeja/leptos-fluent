@@ -6,6 +6,7 @@ use crate::{
 };
 use quote::ToTokens;
 use std::path::PathBuf;
+use std::rc::Rc;
 use syn::{
     parse::{Parse, ParseStream},
     spanned::Spanned,
@@ -15,46 +16,64 @@ use syn::{
 fn parse_litstr_or_expr_param(
     input: ParseStream,
     strlit: &mut Option<syn::LitStr>,
-    expr: &mut Option<syn::Expr>,
+    expr: &mut Option<TokenStreamStr>,
     param_name: &'static str,
 ) -> Result<()> {
-    match input.parse::<syn::LitStr>() {
-        Ok(lit) => {
-            *strlit = Some(lit);
+    if input.peek(syn::LitStr) {
+        let lit = input.parse::<syn::LitStr>()?;
+        *strlit = Some(lit);
+        return Ok(());
+    }
+
+    if input.peek(syn::LitBool) {
+        let value = input.parse::<syn::LitBool>()?.value.to_string();
+        return Err(syn::Error::new(
+            input.span(),
+            format!(
+                concat!(
+                    "Invalid value for '{}' of leptos_fluent! macro.",
+                    " Must be a literal string or a valid expression.",
+                    " Found a literal boolean '{}'.",
+                ),
+                param_name, &value,
+            ),
+        ));
+    }
+
+    let mut found = input.to_string();
+
+    match input.parse::<syn::Expr>() {
+        Ok(e) => {
+            *expr = Some(TokenStreamStr::from(
+                e.to_token_stream().to_string().as_str(),
+            ));
             Ok(())
         }
-        Err(_) => match input.parse::<syn::Expr>() {
-            Ok(e) => {
-                *expr = Some(e);
-                Ok(())
+        Err(_) => {
+            if found.contains('\n') && found.contains(',') {
+                found = found
+                    .split('\n')
+                    .next()
+                    .unwrap()
+                    .split(": ")
+                    .last()
+                    .unwrap()
+                    .strip_suffix(',')
+                    .unwrap()
+                    .to_string();
             }
-            Err(_) => {
-                let found: std::borrow::Cow<'_, str> =
-                    match input.parse::<syn::Lit>() {
-                        Ok(lit) => lit.to_token_stream().to_string().into(),
-                        Err(_) => {
-                            if input.is_empty() {
-                                "(empty)".into()
-                            } else {
-                                input.to_string().into()
-                            }
-                        }
-                    };
-
-                Err(syn::Error::new(
-                    input.span(),
-                    format!(
-                        concat!(
-                            "Not a valid value for '{}' of leptos_fluent! macro.",
-                            " Must be a literal string or a valid expression.",
-                            " Found {}",
-                        ),
-                        param_name,
-                        &found,
+            Err(syn::Error::new(
+                input.span(),
+                format!(
+                    concat!(
+                        "Invalid value for '{}' of leptos_fluent! macro.",
+                        " Must be a literal string or a valid expression.",
+                        " Found '{}'.",
                     ),
-                ))
-            }
-        },
+                    param_name, &found,
+                ),
+            ))
+        }
     }
 }
 
@@ -62,30 +81,7 @@ fn parse_litstr_or_expr_param_noop(
     input: ParseStream,
     param_name: &'static str,
 ) -> Result<()> {
-    match input.parse::<syn::LitStr>() {
-        Ok(_) => Ok(()),
-        Err(_) => match input.parse::<syn::Expr>() {
-            Ok(_) => Ok(()),
-            Err(_) => {
-                let input_str = input.to_string();
-                Err(syn::Error::new(
-                    input.span(),
-                    format!(
-                        concat!(
-                            "Not a valid value for '{}' of leptos_fluent! macro.",
-                            " Must be a literal string or a valid expression.",
-                            " Found {}",
-                        ),
-                        param_name,
-                        match input_str.is_empty() {
-                            true => "(empty)",
-                            false => &input_str,
-                        },
-                    ),
-                ))
-            }
-        },
-    }
+    parse_litstr_or_expr_param(input, &mut None, &mut None, param_name)
 }
 
 macro_rules! parse_litstr_or_expr_param_with_maybe_comptime_exprpath {
@@ -95,7 +91,10 @@ macro_rules! parse_litstr_or_expr_param_with_maybe_comptime_exprpath {
             if !evaluated_exprpath.supported {
                 return Err(syn::Error::new(
                     e.span(),
-                    exprpath_not_supported_error_message(e, &$k),
+                    exprpath_not_supported_error_message(
+                        e.to_string().as_str(),
+                        &$k,
+                    ),
                 ));
             } else if !evaluated_exprpath.result {
                 parse_litstr_or_expr_param_noop(&$input, $param_name)?;
@@ -120,56 +119,51 @@ macro_rules! parse_litstr_or_expr_param_with_maybe_comptime_exprpath {
 
 fn parse_litbool_or_expr_param(
     input: ParseStream,
-    expr: &mut Option<syn::Expr>,
+    expr: &mut Option<TokenStreamStr>,
     param_name: &'static str,
 ) -> Result<()> {
+    let input_str = input.to_string();
     match input.parse::<syn::LitBool>() {
         Ok(lit) => {
-            *expr = Some(syn::Expr::Lit(syn::ExprLit {
-                attrs: Vec::new(),
-                lit: syn::Lit::Bool(lit.clone()),
-            }));
+            *expr = Some(TokenStreamStr::from(lit.value.to_string().as_str()));
             Ok(())
         }
         Err(_) => match input.parse::<syn::Expr>() {
             Ok(e) => {
-                *expr = Some(e);
+                *expr = Some(TokenStreamStr::from(
+                    e.to_token_stream().to_string().as_str(),
+                ));
                 Ok(())
             }
-            Err(_) => {
-                let input_str = input.to_string();
-                Err(syn::Error::new(
-                    input.span(),
-                    format!(
-                        concat!(
-                            "Not a valid value for '{}' of leptos_fluent! macro.",
-                            " Must be a literal string or a valid expression.",
-                            " Found {}",
-                        ),
-                        param_name,
-                        match input_str.is_empty() {
-                            true => "(empty)",
-                            false => &input_str,
-                        },
+            Err(_) => Err(syn::Error::new(
+                input.span(),
+                format!(
+                    concat!(
+                        "Invalid value for '{}' of leptos_fluent! macro.",
+                        " Must be a literal boolean or a valid expression.",
+                        " Found {}",
                     ),
-                ))
-            }
+                    param_name,
+                    match input_str.is_empty() {
+                        true => "(empty)",
+                        false => &input_str,
+                    },
+                ),
+            )),
         },
     }
 }
 
 macro_rules! parse_struct_field_init_shorthand {
-    ($shorthand:ident, $param:ident, $k:ident) => {
+    ($shorthand:ident, $param:ident, $k_token_stream_str:ident) => {
         if $shorthand {
-            $param.expr =
-                Some(syn::Expr::Verbatim($k.to_string().parse().unwrap()));
+            $param.expr = Some($k_token_stream_str);
             continue;
         }
     };
-    ($shorthand:ident, $param:ident, $k:ident, $vec:ident) => {
+    ($shorthand:ident, $param:ident, $k_token_stream_str:ident, $vec:ident) => {
         if $shorthand {
-            $param.expr =
-                Some(syn::Expr::Verbatim($k.to_string().parse().unwrap()));
+            $param.expr = Some($k_token_stream_str);
             $vec.push($param);
             continue;
         }
@@ -231,44 +225,64 @@ impl Parse for SimpleOrCompound {
 
 /// A collection of loaders (both simple and compound ones) to use
 /// for translating.
-pub(crate) struct Translations {
-    pub(crate) simple: Vec<syn::Path>,
-    pub(crate) compound: Vec<syn::Path>,
-}
+pub(crate) struct Translations(Rc<str>);
 
 impl Parse for Translations {
     fn parse(input: ParseStream) -> Result<Self> {
         // example of input
         // [loader1, loader2] + loaders1 + loaders2 + [loader3]
-        let mut simple = Vec::new();
-        let mut compound = Vec::new();
 
         let loaders = syn::punctuated::Punctuated::<
             SimpleOrCompound,
             syn::Token![+],
         >::parse_separated_nonempty(input)?;
+
+        if loaders.is_empty() {
+            return Err(syn::Error::new(
+                input.span(),
+                "Need to pass at least one translations loader",
+            ));
+        }
+
+        let mut translations_quote =
+            "{let mut loaders = Vec::new();".to_string();
         for loader in loaders.into_iter() {
             match loader {
                 SimpleOrCompound::Simple(x) => {
                     for loader in x.0.into_iter() {
-                        simple.push(loader);
+                        translations_quote.push_str(&format!(
+                            "loaders.push(&{});",
+                            loader.to_token_stream()
+                        ));
                     }
                 }
                 SimpleOrCompound::Compound(compound_loader) => {
-                    compound.push(compound_loader.0);
+                    translations_quote.push_str("loaders.extend(");
+                    translations_quote.push_str(
+                        &compound_loader.0.to_token_stream().to_string(),
+                    );
+                    translations_quote.push_str(");");
                 }
             }
         }
 
-        Ok(Self { simple, compound })
+        translations_quote.push_str("loaders}");
+        Ok(Self(Rc::from(translations_quote)))
     }
 }
 
-fn exprpath_not_supported_error_message(
-    expr: &proc_macro2::TokenStream,
-    k: &syn::Ident,
-) -> String {
-    let exprpath_str = expr.to_string();
+impl ToTokens for Translations {
+    fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
+        tokens.extend(proc_macro2::TokenStream::from_iter(
+            self.0
+                .to_string()
+                .parse::<proc_macro2::TokenStream>()
+                .unwrap(),
+        ));
+    }
+}
+
+fn exprpath_not_supported_error_message(expr: &str, k: &syn::Ident) -> String {
     format!(
         concat!(
             "The parameter '{}' of leptos_fluent! macro does not accept the",
@@ -287,7 +301,7 @@ leptos_fluent! {{
 ```
 ",
         ),
-        k, exprpath_str, exprpath_str, k, k, k,
+        k, expr, expr, k, k, k,
     )
 }
 
@@ -298,7 +312,10 @@ macro_rules! evaluate_compile_time_exprpath_set_none {
             if !evaluated_exprpath.supported {
                 return Err(syn::Error::new(
                     e.span(),
-                    exprpath_not_supported_error_message(e, &$k),
+                    exprpath_not_supported_error_message(
+                        e.to_string().as_str(),
+                        &$k,
+                    ),
                 ));
             } else if !evaluated_exprpath.result {
                 $field = None;
@@ -307,9 +324,11 @@ macro_rules! evaluate_compile_time_exprpath_set_none {
     };
 }
 
-macro_rules! clone_runtime_exprpath {
-    ($exprpath:ident, $field:ident) => {
-        $field.exprpath.clone_from(&$exprpath);
+macro_rules! parse_runtime_exprpath {
+    ($exprpath:ident, $param:ident) => {
+        if let Some(ref path) = $exprpath {
+            $param.exprpath = Some(path.as_str().into());
+        }
     };
 }
 
@@ -330,10 +349,38 @@ macro_rules! struct_field_init_shorthand_not_supported {
     };
 }
 
+/// Abstract implementation for token streams expressions.
+///
+/// This is used to parse expressions that are not string literals, like
+/// expressions and literal booleans.
+#[derive(Debug)]
+pub(crate) struct TokenStreamStr(Rc<str>);
+
+impl ToTokens for TokenStreamStr {
+    fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
+        let token_stream =
+            self.0.to_string().parse::<proc_macro2::TokenStream>();
+        tokens.extend(token_stream);
+    }
+}
+
+impl Parse for TokenStreamStr {
+    fn parse(input: ParseStream) -> Result<Self> {
+        let token_stream = input.parse::<proc_macro2::TokenStream>()?;
+        Ok(Self(Rc::from(token_stream.to_string())))
+    }
+}
+
+impl From<&str> for TokenStreamStr {
+    fn from(s: &str) -> Self {
+        Self(Rc::from(s))
+    }
+}
+
 #[derive(Default)]
 pub(crate) struct LitBoolExpr {
-    pub expr: Option<syn::Expr>,
-    pub exprpath: Option<proc_macro2::TokenStream>,
+    pub expr: Option<TokenStreamStr>,
+    pub exprpath: Option<TokenStreamStr>,
 }
 
 impl LitBoolExpr {
@@ -345,7 +392,7 @@ impl LitBoolExpr {
 #[derive(Default)]
 pub(crate) struct LitStrExpr {
     pub lit: Option<syn::LitStr>,
-    pub expr: Option<syn::Expr>,
+    pub expr: Option<TokenStreamStr>,
 }
 
 impl LitStrExpr {
@@ -356,8 +403,8 @@ impl LitStrExpr {
 
 #[derive(Default)]
 pub(crate) struct Identifier {
-    pub ident: Option<syn::Ident>,
-    pub exprpath: Option<proc_macro2::TokenStream>,
+    pub ident: Option<TokenStreamStr>,
+    pub exprpath: Option<TokenStreamStr>,
 }
 
 impl Identifier {
@@ -368,8 +415,8 @@ impl Identifier {
 
 #[derive(Default)]
 pub(crate) struct LitBool {
-    pub lit: Option<syn::LitBool>,
-    pub exprpath: Option<proc_macro2::TokenStream>,
+    pub lit: Option<bool>,
+    pub exprpath: Option<TokenStreamStr>,
 }
 
 impl LitBool {
@@ -380,8 +427,8 @@ impl LitBool {
 
 #[derive(Default)]
 pub(crate) struct Expr {
-    pub expr: Option<syn::Expr>,
-    pub exprpath: Option<proc_macro2::TokenStream>,
+    pub expr: Option<TokenStreamStr>,
+    pub exprpath: Option<TokenStreamStr>,
 }
 
 impl Expr {
@@ -566,8 +613,10 @@ impl Parse for I18nLoader {
         let mut data_file_key = LitStrExpr::new();
 
         while !input.is_empty() {
-            let mut exprpath: Option<proc_macro2::TokenStream> = None;
-            let k;
+            let mut exprpath: Option<String> = None;
+            let mut exprpath_token_stream: Option<proc_macro2::TokenStream> =
+                None;
+            let k: syn::Ident;
             if input.peek(syn::Ident)
                 && (input.peek2(syn::Token![:]) || input.peek2(syn::Token![,]))
             {
@@ -618,9 +667,11 @@ impl Parse for I18nLoader {
                         .iter()
                         .take(new_expr_stream.len() - 1)
                         .cloned();
-                    exprpath = Some(proc_macro2::TokenStream::from_iter(
+                    let stream = proc_macro2::TokenStream::from_iter(
                         except_last.into_iter(),
-                    ));
+                    );
+                    exprpath = Some(stream.to_string());
+                    exprpath_token_stream = Some(stream);
                 } else {
                     return Err(syn::Error::new(
                         expr.span(),
@@ -645,16 +696,20 @@ impl Parse for I18nLoader {
                 input.parse::<syn::Token![:]>()?;
             }
 
+            let k_token_stream_str =
+                TokenStreamStr::from(k.to_string().as_str());
             if k == "children" {
                 let mut param = Expr::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     param,
-                    k,
+                    k_token_stream_str,
                     children
                 );
-                param.expr = Some(input.parse()?);
+                let expr = input.parse::<syn::Expr>()?;
+                param.expr =
+                    Some(expr.to_token_stream().to_string().as_str().into());
                 children.push(param);
             } else if k == "translations" {
                 struct_field_init_shorthand_not_supported!(
@@ -663,7 +718,7 @@ impl Parse for I18nLoader {
                 );
                 translations = Some(input.parse()?);
                 evaluate_compile_time_exprpath_set_none!(
-                    exprpath,
+                    exprpath_token_stream,
                     k,
                     translations
                 );
@@ -674,7 +729,7 @@ impl Parse for I18nLoader {
                 );
                 locales_path = Some(input.parse()?);
                 evaluate_compile_time_exprpath_set_none!(
-                    exprpath,
+                    exprpath_token_stream,
                     k,
                     locales_path
                 );
@@ -685,7 +740,7 @@ impl Parse for I18nLoader {
                 );
                 core_locales_path = Some(input.parse()?);
                 evaluate_compile_time_exprpath_set_none!(
-                    exprpath,
+                    exprpath_token_stream,
                     k,
                     core_locales_path
                 );
@@ -696,7 +751,7 @@ impl Parse for I18nLoader {
                 );
                 languages_path = Some(input.parse()?);
                 evaluate_compile_time_exprpath_set_none!(
-                    exprpath,
+                    exprpath_token_stream,
                     k,
                     languages_path
                 );
@@ -707,7 +762,7 @@ impl Parse for I18nLoader {
                 );
                 check_translations = Some(input.parse()?);
                 evaluate_compile_time_exprpath_set_none!(
-                    exprpath,
+                    exprpath_token_stream,
                     k,
                     check_translations
                 );
@@ -718,17 +773,17 @@ impl Parse for I18nLoader {
                 );
                 fill_translations = Some(input.parse()?);
                 evaluate_compile_time_exprpath_set_none!(
-                    exprpath,
+                    exprpath_token_stream,
                     k,
                     fill_translations
                 );
             } else if k == "sync_html_tag_lang" {
                 let mut param = LitBoolExpr::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     param,
-                    k,
+                    k_token_stream_str,
                     sync_html_tag_lang
                 );
                 parse_litbool_or_expr_param(
@@ -739,11 +794,11 @@ impl Parse for I18nLoader {
                 sync_html_tag_lang.push(param);
             } else if k == "sync_html_tag_dir" {
                 let mut param = LitBoolExpr::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     param,
-                    k,
+                    k_token_stream_str,
                     sync_html_tag_dir
                 );
                 parse_litbool_or_expr_param(
@@ -756,10 +811,10 @@ impl Parse for I18nLoader {
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     url_param,
-                    k
+                    k_token_stream_str
                 );
                 parse_litstr_or_expr_param_with_maybe_comptime_exprpath!(
-                    exprpath,
+                    exprpath_token_stream,
                     k,
                     input,
                     url_param,
@@ -767,11 +822,11 @@ impl Parse for I18nLoader {
                 );
             } else if k == "initial_language_from_url_param" {
                 let mut param = LitBoolExpr::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     param,
-                    k,
+                    k_token_stream_str,
                     initial_language_from_url_param
                 );
                 parse_litbool_or_expr_param(
@@ -782,11 +837,11 @@ impl Parse for I18nLoader {
                 initial_language_from_url_param.push(param);
             } else if k == "initial_language_from_url_param_to_localstorage" {
                 let mut param = LitBoolExpr::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     param,
-                    k,
+                    k_token_stream_str,
                     initial_language_from_url_param_to_localstorage
                 );
                 parse_litbool_or_expr_param(
@@ -797,11 +852,11 @@ impl Parse for I18nLoader {
                 initial_language_from_url_param_to_localstorage.push(param);
             } else if k == "initial_language_from_url_param_to_cookie" {
                 let mut param = LitBoolExpr::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     param,
-                    k,
+                    k_token_stream_str,
                     initial_language_from_url_param_to_cookie
                 );
                 parse_litbool_or_expr_param(
@@ -813,20 +868,23 @@ impl Parse for I18nLoader {
             } else if k == "initial_language_from_url_param_to_server_function"
             {
                 let mut param = Identifier::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 if struct_field_init_shorthand {
-                    param.ident = Some(k);
+                    param.ident = Some(k_token_stream_str);
                 } else {
-                    param.ident = Some(input.parse()?);
+                    let expr = input.parse::<syn::Expr>()?;
+                    param.ident = Some(
+                        expr.to_token_stream().to_string().as_str().into(),
+                    );
                 }
                 initial_language_from_url_param_to_server_function.push(param);
             } else if k == "set_language_to_url_param" {
                 let mut param = LitBoolExpr::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     param,
-                    k,
+                    k_token_stream_str,
                     set_language_to_url_param
                 );
                 parse_litbool_or_expr_param(
@@ -839,10 +897,10 @@ impl Parse for I18nLoader {
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     localstorage_key,
-                    k
+                    k_token_stream_str
                 );
                 parse_litstr_or_expr_param_with_maybe_comptime_exprpath!(
-                    exprpath,
+                    exprpath_token_stream,
                     k,
                     input,
                     localstorage_key,
@@ -850,11 +908,11 @@ impl Parse for I18nLoader {
                 );
             } else if k == "initial_language_from_localstorage" {
                 let mut param = LitBoolExpr::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     param,
-                    k,
+                    k_token_stream_str,
                     initial_language_from_localstorage
                 );
                 parse_litbool_or_expr_param(
@@ -865,11 +923,11 @@ impl Parse for I18nLoader {
                 initial_language_from_localstorage.push(param);
             } else if k == "initial_language_from_localstorage_to_cookie" {
                 let mut param = LitBoolExpr::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     param,
-                    k,
+                    k_token_stream_str,
                     initial_language_from_localstorage_to_cookie
                 );
                 parse_litbool_or_expr_param(
@@ -882,11 +940,11 @@ impl Parse for I18nLoader {
                 == "initial_language_from_localstorage_to_sessionstorage"
             {
                 let mut param = LitBoolExpr::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     param,
-                    k,
+                    k_token_stream_str,
                     initial_language_from_localstorage_to_sessionstorage
                 );
                 parse_litbool_or_expr_param(
@@ -900,21 +958,24 @@ impl Parse for I18nLoader {
                 == "initial_language_from_localstorage_to_server_function"
             {
                 let mut param = Identifier::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 if struct_field_init_shorthand {
-                    param.ident = Some(k);
+                    param.ident = Some(k_token_stream_str);
                 } else {
-                    param.ident = Some(input.parse()?);
+                    let expr = input.parse::<syn::Expr>()?;
+                    param.ident = Some(
+                        expr.to_token_stream().to_string().as_str().into(),
+                    );
                 }
                 initial_language_from_localstorage_to_server_function
                     .push(param);
             } else if k == "set_language_to_localstorage" {
                 let mut param = LitBoolExpr::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     param,
-                    k,
+                    k_token_stream_str,
                     set_language_to_localstorage
                 );
                 parse_litbool_or_expr_param(
@@ -927,10 +988,10 @@ impl Parse for I18nLoader {
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     sessionstorage_key,
-                    k
+                    k_token_stream_str
                 );
                 parse_litstr_or_expr_param_with_maybe_comptime_exprpath!(
-                    exprpath,
+                    exprpath_token_stream,
                     k,
                     input,
                     sessionstorage_key,
@@ -938,11 +999,11 @@ impl Parse for I18nLoader {
                 );
             } else if k == "initial_language_from_sessionstorage" {
                 let mut param = LitBoolExpr::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     param,
-                    k,
+                    k_token_stream_str,
                     initial_language_from_sessionstorage
                 );
                 parse_litbool_or_expr_param(
@@ -953,11 +1014,11 @@ impl Parse for I18nLoader {
                 initial_language_from_sessionstorage.push(param);
             } else if k == "initial_language_from_sessionstorage_to_cookie" {
                 let mut param = LitBoolExpr::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     param,
-                    k,
+                    k_token_stream_str,
                     initial_language_from_sessionstorage_to_cookie
                 );
                 parse_litbool_or_expr_param(
@@ -970,11 +1031,11 @@ impl Parse for I18nLoader {
                 == "initial_language_from_sessionstorage_to_localstorage"
             {
                 let mut param = LitBoolExpr::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     param,
-                    k,
+                    k_token_stream_str,
                     initial_language_from_sessionstorage_to_localstorage
                 );
                 parse_litbool_or_expr_param(
@@ -988,21 +1049,24 @@ impl Parse for I18nLoader {
                 == "initial_language_from_sessionstorage_to_server_function"
             {
                 let mut param = Identifier::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 if struct_field_init_shorthand {
-                    param.ident = Some(k);
+                    param.ident = Some(k_token_stream_str);
                 } else {
-                    param.ident = Some(input.parse()?);
+                    let expr = input.parse::<syn::Expr>()?;
+                    param.ident = Some(
+                        expr.to_token_stream().to_string().as_str().into(),
+                    );
                 }
                 initial_language_from_sessionstorage_to_server_function
                     .push(param);
             } else if k == "set_language_to_sessionstorage" {
                 let mut param = LitBoolExpr::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     param,
-                    k,
+                    k_token_stream_str,
                     set_language_to_sessionstorage
                 );
                 parse_litbool_or_expr_param(
@@ -1013,11 +1077,11 @@ impl Parse for I18nLoader {
                 set_language_to_sessionstorage.push(param);
             } else if k == "initial_language_from_navigator" {
                 let mut param = LitBoolExpr::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     param,
-                    k,
+                    k_token_stream_str,
                     initial_language_from_navigator
                 );
                 parse_litbool_or_expr_param(
@@ -1028,11 +1092,11 @@ impl Parse for I18nLoader {
                 initial_language_from_navigator.push(param);
             } else if k == "initial_language_from_navigator_to_localstorage" {
                 let mut param = LitBoolExpr::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     param,
-                    k,
+                    k_token_stream_str,
                     initial_language_from_navigator_to_localstorage
                 );
                 parse_litbool_or_expr_param(
@@ -1043,11 +1107,11 @@ impl Parse for I18nLoader {
                 initial_language_from_navigator_to_localstorage.push(param);
             } else if k == "initial_language_from_navigator_to_sessionstorage" {
                 let mut param = LitBoolExpr::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     param,
-                    k,
+                    k_token_stream_str,
                     initial_language_from_navigator_to_sessionstorage
                 );
                 parse_litbool_or_expr_param(
@@ -1058,11 +1122,11 @@ impl Parse for I18nLoader {
                 initial_language_from_navigator_to_sessionstorage.push(param);
             } else if k == "initial_language_from_navigator_to_cookie" {
                 let mut param = LitBoolExpr::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     param,
-                    k,
+                    k_token_stream_str,
                     initial_language_from_navigator_to_cookie
                 );
                 parse_litbool_or_expr_param(
@@ -1074,20 +1138,23 @@ impl Parse for I18nLoader {
             } else if k == "initial_language_from_navigator_to_server_function"
             {
                 let mut param = Identifier::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 if struct_field_init_shorthand {
-                    param.ident = Some(k);
+                    param.ident = Some(k_token_stream_str);
                 } else {
-                    param.ident = Some(input.parse()?);
+                    let expr = input.parse::<syn::Expr>()?;
+                    param.ident = Some(
+                        expr.to_token_stream().to_string().as_str().into(),
+                    );
                 }
                 initial_language_from_navigator_to_server_function.push(param);
             } else if k == "initial_language_from_accept_language_header" {
                 let mut param = LitBoolExpr::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     param,
-                    k,
+                    k_token_stream_str,
                     initial_language_from_accept_language_header
                 );
                 parse_litbool_or_expr_param(
@@ -1098,11 +1165,11 @@ impl Parse for I18nLoader {
                 initial_language_from_accept_language_header.push(param);
             } else if k == "set_language_from_navigator" {
                 let mut param = LitBoolExpr::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     param,
-                    k,
+                    k_token_stream_str,
                     set_language_from_navigator
                 );
                 parse_litbool_or_expr_param(
@@ -1115,10 +1182,10 @@ impl Parse for I18nLoader {
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     cookie_name,
-                    k
+                    k_token_stream_str
                 );
                 parse_litstr_or_expr_param_with_maybe_comptime_exprpath!(
-                    exprpath,
+                    exprpath_token_stream,
                     k,
                     input,
                     cookie_name,
@@ -1128,10 +1195,10 @@ impl Parse for I18nLoader {
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     cookie_attrs,
-                    k
+                    k_token_stream_str
                 );
                 parse_litstr_or_expr_param_with_maybe_comptime_exprpath!(
-                    exprpath,
+                    exprpath_token_stream,
                     k,
                     input,
                     cookie_attrs,
@@ -1139,11 +1206,11 @@ impl Parse for I18nLoader {
                 );
             } else if k == "initial_language_from_cookie" {
                 let mut param = LitBoolExpr::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     param,
-                    k,
+                    k_token_stream_str,
                     initial_language_from_cookie
                 );
                 parse_litbool_or_expr_param(
@@ -1154,11 +1221,11 @@ impl Parse for I18nLoader {
                 initial_language_from_cookie.push(param);
             } else if k == "initial_language_from_cookie_to_localstorage" {
                 let mut param = LitBoolExpr::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     param,
-                    k,
+                    k_token_stream_str,
                     initial_language_from_cookie_to_localstorage
                 );
                 parse_litbool_or_expr_param(
@@ -1169,20 +1236,23 @@ impl Parse for I18nLoader {
                 initial_language_from_cookie_to_localstorage.push(param);
             } else if k == "initial_language_from_cookie_to_server_function" {
                 let mut param = Identifier::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 if struct_field_init_shorthand {
-                    param.ident = Some(k);
+                    param.ident = Some(k_token_stream_str);
                 } else {
-                    param.ident = Some(input.parse()?);
+                    let expr = input.parse::<syn::Expr>()?;
+                    param.ident = Some(
+                        expr.to_token_stream().to_string().as_str().into(),
+                    );
                 }
                 initial_language_from_cookie_to_server_function.push(param);
             } else if k == "set_language_to_cookie" {
                 let mut param = LitBoolExpr::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     param,
-                    k,
+                    k_token_stream_str,
                     set_language_to_cookie
                 );
                 parse_litbool_or_expr_param(
@@ -1193,20 +1263,23 @@ impl Parse for I18nLoader {
                 set_language_to_cookie.push(param);
             } else if k == "initial_language_from_server_function" {
                 let mut param = Identifier::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 if struct_field_init_shorthand {
-                    param.ident = Some(k);
+                    param.ident = Some(k_token_stream_str);
                 } else {
-                    param.ident = Some(input.parse()?);
+                    let expr = input.parse::<syn::Expr>()?;
+                    param.ident = Some(
+                        expr.to_token_stream().to_string().as_str().into(),
+                    );
                 }
                 initial_language_from_server_function.push(param);
             } else if k == "initial_language_from_server_function_to_cookie" {
                 let mut param = LitBoolExpr::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     param,
-                    k,
+                    k_token_stream_str,
                     initial_language_from_server_function_to_cookie
                 );
                 parse_litbool_or_expr_param(
@@ -1219,11 +1292,11 @@ impl Parse for I18nLoader {
                 == "initial_language_from_server_function_to_localstorage"
             {
                 let mut param = LitBoolExpr::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     param,
-                    k,
+                    k_token_stream_str,
                     initial_language_from_server_function_to_localstorage
                 );
                 parse_litbool_or_expr_param(
@@ -1235,20 +1308,26 @@ impl Parse for I18nLoader {
                     .push(param);
             } else if k == "set_language_to_server_function" {
                 let mut param = Identifier::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 if struct_field_init_shorthand {
-                    param.ident = Some(k);
+                    param.ident = Some(k_token_stream_str);
                 } else {
-                    param.ident = Some(input.parse()?);
+                    let expr = input.parse::<syn::Expr>()?;
+                    param.ident = Some(
+                        expr.to_token_stream().to_string().as_str().into(),
+                    );
                 }
                 set_language_to_server_function.push(param);
             } else if k == "url_path" {
-                if let Some(ref e) = exprpath {
+                if let Some(ref e) = exprpath_token_stream {
                     let evaluated_exprpath = crate::evaluate_exprpath(e);
                     if !evaluated_exprpath.supported {
                         return Err(syn::Error::new(
                             e.span(),
-                            exprpath_not_supported_error_message(e, &k),
+                            exprpath_not_supported_error_message(
+                                e.to_string().as_str(),
+                                &k,
+                            ),
                         ));
                     } else if evaluated_exprpath.result {
                         if struct_field_init_shorthand {
@@ -1264,11 +1343,11 @@ impl Parse for I18nLoader {
                 }
             } else if k == "initial_language_from_url_path" {
                 let mut param = LitBoolExpr::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     param,
-                    k,
+                    k_token_stream_str,
                     initial_language_from_url_path
                 );
                 parse_litbool_or_expr_param(
@@ -1279,11 +1358,11 @@ impl Parse for I18nLoader {
                 initial_language_from_url_path.push(param);
             } else if k == "initial_language_from_url_path_to_cookie" {
                 let mut param = LitBoolExpr::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     param,
-                    k,
+                    k_token_stream_str,
                     initial_language_from_url_path_to_cookie
                 );
                 parse_litbool_or_expr_param(
@@ -1294,11 +1373,11 @@ impl Parse for I18nLoader {
                 initial_language_from_url_path_to_cookie.push(param);
             } else if k == "initial_language_from_url_path_to_localstorage" {
                 let mut param = LitBoolExpr::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     param,
-                    k,
+                    k_token_stream_str,
                     initial_language_from_url_path_to_localstorage
                 );
                 parse_litbool_or_expr_param(
@@ -1309,22 +1388,25 @@ impl Parse for I18nLoader {
                 initial_language_from_url_path_to_localstorage.push(param);
             } else if k == "initial_language_from_url_path_to_server_function" {
                 let mut param = Identifier::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 if struct_field_init_shorthand {
-                    param.ident = Some(k);
+                    param.ident = Some(k_token_stream_str);
                 } else {
-                    param.ident = Some(input.parse()?);
+                    let expr = input.parse::<syn::Expr>()?;
+                    param.ident = Some(
+                        expr.to_token_stream().to_string().as_str().into(),
+                    );
                 }
                 initial_language_from_url_path_to_server_function.push(param);
             } else if k == "initial_language_from_system" {
                 #[cfg(feature = "system")]
                 {
                     let mut param = LitBoolExpr::new();
-                    clone_runtime_exprpath!(exprpath, param);
+                    parse_runtime_exprpath!(exprpath, param);
                     parse_struct_field_init_shorthand!(
                         struct_field_init_shorthand,
                         param,
-                        k,
+                        k_token_stream_str,
                         initial_language_from_system
                     );
                     parse_litbool_or_expr_param(
@@ -1350,11 +1432,11 @@ impl Parse for I18nLoader {
                 #[cfg(feature = "system")]
                 {
                     let mut param = LitBoolExpr::new();
-                    clone_runtime_exprpath!(exprpath, param);
+                    parse_runtime_exprpath!(exprpath, param);
                     parse_struct_field_init_shorthand!(
                         struct_field_init_shorthand,
                         param,
-                        k,
+                        k_token_stream_str,
                         initial_language_from_data_file
                     );
                     parse_litbool_or_expr_param(
@@ -1380,11 +1462,11 @@ impl Parse for I18nLoader {
                 #[cfg(feature = "system")]
                 {
                     let mut param = LitBoolExpr::new();
-                    clone_runtime_exprpath!(exprpath, param);
+                    parse_runtime_exprpath!(exprpath, param);
                     parse_struct_field_init_shorthand!(
                         struct_field_init_shorthand,
                         param,
-                        k,
+                        k_token_stream_str,
                         initial_language_from_system_to_data_file
                     );
                     parse_litbool_or_expr_param(
@@ -1410,11 +1492,11 @@ impl Parse for I18nLoader {
                 #[cfg(feature = "system")]
                 {
                     let mut param = LitBoolExpr::new();
-                    clone_runtime_exprpath!(exprpath, param);
+                    parse_runtime_exprpath!(exprpath, param);
                     parse_struct_field_init_shorthand!(
                         struct_field_init_shorthand,
                         param,
-                        k,
+                        k_token_stream_str,
                         set_language_to_data_file
                     );
                     parse_litbool_or_expr_param(
@@ -1440,10 +1522,10 @@ impl Parse for I18nLoader {
                 parse_struct_field_init_shorthand!(
                     struct_field_init_shorthand,
                     data_file_key,
-                    k
+                    k_token_stream_str
                 );
                 parse_litstr_or_expr_param_with_maybe_comptime_exprpath!(
-                    exprpath,
+                    exprpath_token_stream,
                     k,
                     input,
                     data_file_key,
@@ -1451,18 +1533,18 @@ impl Parse for I18nLoader {
                 );
             } else if k == "provide_meta_context" {
                 let mut param = LitBool::new();
-                clone_runtime_exprpath!(exprpath, param);
+                parse_runtime_exprpath!(exprpath, param);
                 struct_field_init_shorthand_not_supported!(
                     struct_field_init_shorthand,
                     k
                 );
-                param.lit = Some(input.parse()?);
+                param.lit = Some(input.parse::<syn::LitBool>()?.value());
                 provide_meta_context.push(param);
             } else {
                 return Err(syn::Error::new(
                     k.span(),
                     format!(
-                        "Not a valid parameter '{k}' for leptos_fluent! macro."
+                        "Invalid parameter '{k}' for leptos_fluent! macro."
                     ),
                 ));
             }
