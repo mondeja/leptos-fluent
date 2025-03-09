@@ -986,6 +986,7 @@ pub struct LeptosFluentMeta {
     pub initial_language_from_url_path: bool,
     pub initial_language_from_url_path_to_cookie: bool,
     pub initial_language_from_url_path_to_localstorage: bool,
+    pub initial_language_from_url_path_to_sessionstorage: bool,
     pub initial_language_from_url_path_to_server_function: bool, // *
     #[cfg(feature = "system")]
     pub initial_language_from_system: bool,

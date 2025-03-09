@@ -20,6 +20,8 @@
     language from URL parameter to session storage.
   - `initial_language_from_cookie_to_sessionstorage` to set the initial language
     from a cookie to session storage.
+  - `initial_language_from_url_path_to_sessionstorage` to set the initial
+    language from URL path to session storage.
 
 ### Enhancements
 

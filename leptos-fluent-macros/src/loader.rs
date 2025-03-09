@@ -493,6 +493,7 @@ pub(crate) struct I18nLoader {
     pub initial_language_from_url_path: Vec<LitBoolExpr>,
     pub initial_language_from_url_path_to_cookie: Vec<LitBoolExpr>,
     pub initial_language_from_url_path_to_localstorage: Vec<LitBoolExpr>,
+    pub initial_language_from_url_path_to_sessionstorage: Vec<LitBoolExpr>,
     pub initial_language_from_url_path_to_server_function: Vec<Identifier>,
     #[cfg(feature = "system")]
     pub initial_language_from_system: Vec<LitBoolExpr>,
@@ -602,6 +603,9 @@ impl Parse for I18nLoader {
         let mut initial_language_from_url_path_to_cookie: Vec<LitBoolExpr> =
             Vec::new();
         let mut initial_language_from_url_path_to_localstorage: Vec<
+            LitBoolExpr,
+        > = Vec::new();
+        let mut initial_language_from_url_path_to_sessionstorage: Vec<
             LitBoolExpr,
         > = Vec::new();
         let mut initial_language_from_url_path_to_server_function: Vec<
@@ -1424,6 +1428,21 @@ impl Parse for I18nLoader {
                     "initial_language_from_url_path_to_localstorage",
                 )?;
                 initial_language_from_url_path_to_localstorage.push(param);
+            } else if k == "initial_language_from_url_path_to_sessionstorage" {
+                let mut param = LitBoolExpr::new();
+                parse_runtime_exprpath!(exprpath, param);
+                parse_struct_field_init_shorthand!(
+                    struct_field_init_shorthand,
+                    param,
+                    k_token_stream_str,
+                    initial_language_from_url_path_to_sessionstorage
+                );
+                parse_litbool_or_expr_param(
+                    input,
+                    &mut param.expr,
+                    "initial_language_from_url_path_to_sessionstorage",
+                )?;
+                initial_language_from_url_path_to_sessionstorage.push(param);
             } else if k == "initial_language_from_url_path_to_server_function" {
                 let mut param = Identifier::new();
                 parse_runtime_exprpath!(exprpath, param);
@@ -1916,6 +1935,7 @@ impl Parse for I18nLoader {
             initial_language_from_url_path,
             initial_language_from_url_path_to_cookie,
             initial_language_from_url_path_to_localstorage,
+            initial_language_from_url_path_to_sessionstorage,
             initial_language_from_url_path_to_server_function,
             #[cfg(feature = "system")]
             initial_language_from_system,
