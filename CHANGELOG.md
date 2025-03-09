@@ -2,7 +2,7 @@
 
 ## Unreleased - [0.2.7]
 
-### Enhacements
+### New features
 
 - Forbid a few expressions in files inside `check_translations` parameter glob.
   These break translations checker's requirement of one `tr!` macros source of
@@ -14,6 +14,15 @@
   - `use leptos_fluent::tr as whatever;`
   - `use leptos_fluent::move_tr as whatever;`
   - `use leptos_fluent as whatever;`
+
+### Enhancements
+
+- Allow to pass expressions `leptos_fluent!` macro parameters related to server
+  functions.
+
+### Bug fixes
+
+- Fix bugs raising some errors when parsing `leptos_fluent!` macro parameters.
 
 ## 2025-03-07 - [0.2.6]
 

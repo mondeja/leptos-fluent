@@ -32,8 +32,8 @@ pub(crate) use fluent_resources::{
 };
 use languages::build_languages_quote;
 pub(crate) use languages::ParsedLanguage;
-use loader::{I18nLoader, Identifier, LitBoolExpr};
-use quote::quote;
+use loader::{I18nLoader, Identifier, LitBoolExpr, TokenStreamStr};
+use quote::{quote, ToTokens};
 
 #[cfg(feature = "debug")]
 #[inline(always)]
@@ -1765,44 +1765,11 @@ pub fn leptos_fluent(
         }
     };
 
-    let translations_quote = {
-        let loader::Translations { simple, compound } = translations;
-
-        let simple_loaders_quote = quote!([#(& #simple),*]);
-        let extend_simple_loaders_quote =
-            match simple_loaders_quote.to_string() == "[]" {
-                true => quote!(),
-                false => quote! {
-                    for loader in #simple_loaders_quote {
-                        all_loaders.push(loader);
-                    }
-                },
-            };
-        let extend_compound_loaders_quote = quote!(#(
-            all_loaders.extend(#compound);
-        );*);
-
-        match extend_simple_loaders_quote.is_empty()
-            && extend_compound_loaders_quote.is_empty()
-        {
-            true => quote!(Vec::new()),
-            false => quote! {
-                {
-                    let mut all_loaders = Vec::new();
-                    #extend_simple_loaders_quote
-                    #extend_compound_loaders_quote
-
-                    all_loaders
-                }
-            },
-        }
-    };
-
     let leptos_fluent_provide_meta_context_quote: proc_macro2::TokenStream = {
         let bool_param =
-            |expr: &Option<syn::Expr>| -> proc_macro2::TokenStream {
+            |expr: &Option<TokenStreamStr>| -> proc_macro2::TokenStream {
                 match expr {
-                    Some(ref expr) => quote! { #expr },
+                    Some(ref expr) => expr.into_token_stream(),
                     None => quote! { false },
                 }
             };
@@ -1847,13 +1814,13 @@ pub fn leptos_fluent(
             };
 
         let litstr_or_default = |lit: &Option<syn::LitStr>,
-                                 expr: &Option<syn::Expr>,
+                                 expr: &Option<TokenStreamStr>,
                                  default_: &'static str|
          -> proc_macro2::TokenStream {
             match lit {
                 Some(ref lit) => quote! { #lit },
                 None => match expr {
-                    Some(ref expr) => quote! { #expr },
+                    Some(ref expr) => expr.into_token_stream(),
                     None => quote! { #default_ },
                 },
             }
@@ -1882,12 +1849,7 @@ pub fn leptos_fluent(
             };
 
         provide_meta_context.iter().map(|param| {
-            let provide_meta_context_value = match param.lit {
-                Some(ref lit) => lit.value(),
-                None => false,
-            };
-
-            match provide_meta_context_value {
+            match param.lit.unwrap_or(false) {
                 true => {
                     let core_locales_quote = maybe_litstr_param(&core_locales_path);
                     let languages_quote =
@@ -2150,7 +2112,7 @@ pub fn leptos_fluent(
             let i18n = ::leptos_fluent::I18n {
                 language: ::leptos::prelude::RwSignal::new(initial_lang),
                 languages: &LANGUAGES,
-                translations: ::leptos::prelude::Signal::derive(move || #translations_quote),
+                translations: ::leptos::prelude::Signal::derive(move || #translations),
             };
             ::leptos::context::provide_context::<::leptos_fluent::I18n>(i18n);
             i18n
