@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## Unreleased - [0.2.7]
+## 2025-03-10 - [0.2.7]
 
 ### New features
 
@@ -714,7 +714,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
-[0.2.7]: https://github.com/mondeja/leptos-fluent/compare/v0.2.6...master
+[0.2.7]: https://github.com/mondeja/leptos-fluent/compare/v0.2.6...v0.2.7
 [0.2.6]: https://github.com/mondeja/leptos-fluent/compare/v0.2.5...v0.2.6
 [0.2.5]: https://github.com/mondeja/leptos-fluent/compare/v0.2.4...v0.2.5
 [0.2.4]: https://github.com/mondeja/leptos-fluent/compare/v0.2.3...v0.2.4
