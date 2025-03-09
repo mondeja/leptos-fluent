@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## Unreleased - [0.2.7]
+## 2025-03-10 - [0.2.7]
 
 ### New features
 
@@ -27,10 +27,14 @@
 
 - Allow to pass expressions `leptos_fluent!` macro parameters related to server
   functions.
+- Add `i18n.tr` and `i18n.tr_with_args` methods.
+- Deprecate `tr_impl(i18n, id)` and `tr_with_args_impl(i18n, id, args)` functions.
+  Use `i18n.tr(id)` and `i18n.tr_with_args(id, args)` methods instead.
 
 ### Bug fixes
 
 - Fix bugs raising some errors when parsing `leptos_fluent!` macro parameters.
+- Fix error shown when passing dynamic values as `tr!` and `move_tr!` macros ids.
 
 ## 2025-03-07 - [0.2.6]
 
@@ -72,7 +76,7 @@
 
 - Update Russian language name. From `Русский язык` ("Russian language") to
   `Русский` ("Russian").
-- Document `tr_impl` and `tr_impl_with_args` functions. Recommend their usage for
+- Document `tr_impl` and `tr_with_args_impl` functions. Recommend their usage for
   dynamic translations.
 
 ## 2025-01-23 - [0.2.3]
@@ -710,7 +714,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
-[0.2.7]: https://github.com/mondeja/leptos-fluent/compare/v0.2.6...master
+[0.2.7]: https://github.com/mondeja/leptos-fluent/compare/v0.2.6...v0.2.7
 [0.2.6]: https://github.com/mondeja/leptos-fluent/compare/v0.2.5...v0.2.6
 [0.2.5]: https://github.com/mondeja/leptos-fluent/compare/v0.2.4...v0.2.5
 [0.2.4]: https://github.com/mondeja/leptos-fluent/compare/v0.2.3...v0.2.4
