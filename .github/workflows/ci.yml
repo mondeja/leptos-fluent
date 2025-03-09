@@ -314,7 +314,6 @@ jobs:
         run: |
           option=$([ "${{ matrix.toolchain }}" == "nightly" ] && echo "--features=leptos-fluent/nightly" || echo "")
           echo "features=$option" >> $GITHUB_OUTPUT
-
       - name: Build with trunk
         # Sometimes trunk fails to download wasm-opt and other tools, so we retry
         uses: nick-fields/retry@v3
