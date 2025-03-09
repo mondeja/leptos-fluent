@@ -55,7 +55,7 @@ cargo test -p leptos-fluent -p leptos-fluent-macros -p leptos-fluent-tests
 ### Reference
 
 ```sh
-cargo doc --open --no-deps
+cargo doc --open --no-deps -p leptos-fluent -p leptos-fluent-macros
 ```
 
 ### Book

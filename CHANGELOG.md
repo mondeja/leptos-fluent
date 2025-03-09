@@ -27,10 +27,14 @@
 
 - Allow to pass expressions `leptos_fluent!` macro parameters related to server
   functions.
+- Add `i18n.tr` and `i18n.tr_with_args` methods.
+- Deprecate `tr_impl(i18n, id)` and `tr_impl_with_args(i18n, id, args)` functions.
+  Use `i18n.tr(id)` and `i18n.tr_with_args(id, args)` methods instead.
 
 ### Bug fixes
 
 - Fix bugs raising some errors when parsing `leptos_fluent!` macro parameters.
+- Fix error shown when passing dynamic values as `tr!` and `move_tr!` macros ids.
 
 ## 2025-03-07 - [0.2.6]
 
