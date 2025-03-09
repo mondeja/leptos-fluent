@@ -209,20 +209,27 @@ of <code>leptos_fluent!</code> macro.</p>
 
 // not allowed
 let text_id = "my-translation";
-tr!(text_id);</code></pre>
-<p>Instead, use <code>tr_impl</code> and <code>tr_with_args_impl</code> functions:</p>
-<pre><code class="language-rust">use leptos_fluent::{expect_i18n, tr_impl as tr};
+tr!(text_id);
+/*
+error: argument must be a string literal
+  --&gt; src/lib.rs
+   |
+   |     tr!(text_id);
+   |     ^^^^^^^^^^^^
+*/</code></pre>
+<p>Instead, use <code>i18n.tr</code> and <code>i18n.tr_with_args</code> methods:</p>
+<pre><code class="language-rust">use leptos_fluent::expect_i18n;
 
 let text_id = "my-translation";
-tr(expect_i18n(), text_id);</code></pre>
+expect_i18n().tr(text_id);</code></pre>
 <pre><code class="language-rust">use std::collections::HashMap;
-use leptos_fluent::{expect_i18n, tr_with_args_impl as tr_with_args};
+use leptos_fluent::expect_i18n;
 
 let text_id = "hello-args";
 let mut args = HashMap::new();
 args.insert("name", "World");
-tr_with_args(expect_i18n(), text_id, args);</code></pre>
-<p>Note that <code>tr_impl</code> and <code>tr_with_args_impl</code> functions are not reactive,
+expect_i18n().tr_with_args(text_id, args);</code></pre>
+<p>Note that <code>i18n.tr</code> and <code>i18n.tr_with_args</code> methods are not reactive,
 so you need to enclose their calls in a reactive context like a function to
 update the view on the fly when the language changes, and that the translations
 checker will not be able to check passed translation data at compile time,
