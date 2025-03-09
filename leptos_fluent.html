@@ -196,12 +196,14 @@ locale. It is used in the root component of the application.</p>
 <li><a href="#csr--ssr---url_param-lang">CSR + SSR  | <code>url_param: </code>"lang"</a></li>
 <li><a href="#csr--ssr---initial_language_from_url_param">CSR + SSR  | <code>initial_language_from_url_param</code></a></li>
 <li><a href="#csr---initial_language_from_url_param_to_localstorage">CSR  | <code>initial_language_from_url_param_to_localstorage</code></a></li>
+<li><a href="#csr---initial_language_from_url_param_to_sessionstorage">CSR  | <code>initial_language_from_url_param_to_sessionstorage</code></a></li>
 <li><a href="#csr---initial_language_from_url_param_to_cookie">CSR  | <code>initial_language_from_url_param_to_cookie</code></a></li>
 <li><a href="#csr---set_language_to_url_param">CSR  | <code>set_language_to_url_param</code></a></li>
 <li><a href="#csr--ssr---url_path">CSR + SSR  | <code>url_path</code></a></li>
 <li><a href="#csr--ssr---initial_language_from_url_path">CSR + SSR  | <code>initial_language_from_url_path</code></a></li>
 <li><a href="#csr---initial_language_from_url_path_to_cookie">CSR  | <code>initial_language_from_url_path_to_cookie</code></a></li>
 <li><a href="#csr---initial_language_from_url_path_to_localstorage">CSR  | <code>initial_language_from_url_path_to_localstorage</code></a></li>
+<li><a href="#csr---initial_language_from_url_path_to_sessionstorage">CSR  | <code>initial_language_from_url_path_to_sessionstorage</code></a></li>
 <li><a href="#csr---localstorage_key-lang">CSR  | <code>localstorage_key: </code>"lang"</a></li>
 <li><a href="#csr---initial_language_from_localstorage">CSR  | <code>initial_language_from_localstorage</code></a></li>
 <li><a href="#csr---initial_language_from_localstorage_to_cookie">CSR  | <code>initial_language_from_localstorage_to_cookie</code></a></li>
@@ -222,6 +224,7 @@ locale. It is used in the root component of the application.</p>
 <li><a href="#csr---cookie_attrs-">CSR  | <code>cookie_attrs: </code>""</a></li>
 <li><a href="#csr--ssr---initial_language_from_cookie">CSR + SSR  | <code>initial_language_from_cookie</code></a></li>
 <li><a href="#csr---initial_language_from_cookie_to_localstorage">CSR  | <code>initial_language_from_cookie_to_localstorage</code></a></li>
+<li><a href="#csr---initial_language_from_cookie_to_sessionstorage">CSR  | <code>initial_language_from_cookie_to_sessionstorage</code></a></li>
 <li><a href="#csr---set_language_to_cookie">CSR  | <code>set_language_to_cookie</code></a></li>
 <li><a href="#system--initial_language_from_system">system | <code>initial_language_from_system</code></a></li>
 <li><a href="#system--initial_language_from_data_file">system | <code>initial_language_from_data_file</code></a></li>
@@ -514,6 +517,12 @@ language.</p>
     // ...
     initial_language_from_url_param_to_localstorage: true,
 }</code></pre>
+<h3 id="csr---initial_language_from_url_param_to_sessionstorage"><a class="header" href="#csr---initial_language_from_url_param_to_sessionstorage"><span style="opacity:.5">CSR </span> | <code>initial_language_from_url_param_to_sessionstorage</code></a></h3>
+<p>Get initial language from <a href="https://developer.mozilla.org/docs/Web/API/URLSearchParams">URL parameter</a> and save it to <a href="https://developer.mozilla.org/docs/Web/API/Window/sessionStorage">session storage</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    initial_language_from_url_param_to_sessionstorage: true,
+}</code></pre>
 <h3 id="csr---initial_language_from_url_param_to_cookie"><a class="header" href="#csr---initial_language_from_url_param_to_cookie"><span style="opacity:.5">CSR </span> | <code>initial_language_from_url_param_to_cookie</code></a></h3>
 <p>Get initial language from <a href="https://developer.mozilla.org/docs/Web/API/URLSearchParams">URL parameter</a> and save it to a <a href="https://developer.mozilla.org/docs/Web/HTTP/Cookies">cookie</a>.</p>
 <pre><code class="language-rust">leptos_fluent! {
@@ -559,6 +568,12 @@ leptos_fluent! {
 <pre><code class="language-rust">leptos_fluent! {
     // ...
     initial_language_from_url_path_to_localstorage: true,
+}</code></pre>
+<h3 id="csr---initial_language_from_url_path_to_sessionstorage"><a class="header" href="#csr---initial_language_from_url_path_to_sessionstorage"><span style="opacity:.5">CSR </span> | <code>initial_language_from_url_path_to_sessionstorage</code></a></h3>
+<p>Set initial language from <a href="https://developer.mozilla.org/docs/Web/API/URL/pathname">URL path</a> to <a href="https://developer.mozilla.org/docs/Web/API/Window/sessionStorage">session storage</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    initial_language_from_url_path_to_sessionstorage: true,
 }</code></pre>
 <!-- markdownlint-disable MD013 -->
 <h3 id="csr---localstorage_key-lang"><a class="header" href="#csr---localstorage_key-lang"><span style="opacity:.5">CSR </span> | <code>localstorage_key: </code><span style="color: #b5bd68;font-size: 16px; opacity:.9;">"lang"</span></a></h3>
@@ -695,6 +710,12 @@ leptos_fluent! {
 <pre><code class="language-rust">leptos_fluent! {
     // ...
     initial_language_from_cookie_to_localstorage: true,
+}</code></pre>
+<h3 id="csr---initial_language_from_cookie_to_sessionstorage"><a class="header" href="#csr---initial_language_from_cookie_to_sessionstorage"><span style="opacity:.5">CSR </span> | <code>initial_language_from_cookie_to_sessionstorage</code></a></h3>
+<p>Get the initial language from the cookie and save it in <a href="https://developer.mozilla.org/docs/Web/API/Window/sessionStorage">session storage</a>.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    // ...
+    initial_language_from_cookie_to_sessionstorage: true,
 }</code></pre>
 <h3 id="csr---set_language_to_cookie"><a class="header" href="#csr---set_language_to_cookie"><span style="opacity:.5">CSR </span> | <code>set_language_to_cookie</code></a></h3>
 <p>Set the current language to the cookie.</p>
