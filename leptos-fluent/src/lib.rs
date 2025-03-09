@@ -721,7 +721,7 @@ const EXPECT_I18N_ERROR_MESSAGE: &str = concat!(
 
 /// Expect the current context for localization.
 #[cfg_attr(feature = "tracing", tracing::instrument(level = "trace"))]
-#[inline(always)]
+#[inline]
 pub fn expect_i18n() -> I18n {
     if let Some(i18n) = use_i18n() {
         i18n
@@ -736,13 +736,7 @@ pub fn expect_i18n() -> I18n {
 #[cfg_attr(feature = "tracing", tracing::instrument(level = "trace"))]
 #[inline(always)]
 pub fn i18n() -> I18n {
-    if let Some(i18n) = use_i18n() {
-        i18n
-    } else {
-        #[cfg(feature = "tracing")]
-        tracing::error!(EXPECT_I18N_ERROR_MESSAGE);
-        panic!("{}", EXPECT_I18N_ERROR_MESSAGE)
-    }
+    expect_i18n()
 }
 
 /// Get the translation of a text identifier to the current language.
@@ -797,9 +791,9 @@ pub fn tr_with_args_impl(
 /// or `i18n.tr_with_args` methods directly.
 #[macro_export]
 macro_rules! tr {
-    ($text_id:literal$(,)?) => {$crate::expect_i18n().tr($text_id)};
+    ($text_id:literal$(,)?) => {$crate::i18n().tr($text_id)};
     ($text_id:literal, {$($key:literal => $value:expr),*$(,)?}$(,)?) => {{
-        $crate::expect_i18n().tr_with_args($text_id, &{
+        $crate::i18n().tr_with_args($text_id, &{
             let mut map = ::std::collections::HashMap::new();
             $(
                 map.insert($key.into(), $value.into());
