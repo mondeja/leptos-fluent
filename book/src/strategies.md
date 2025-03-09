@@ -84,9 +84,12 @@ are available:
 | :------------------------------------------- | :-------------------------------------------------------- |
 | [URL parameter] to [cookie]                  | `initial_language_from_url_param_to_cookie`               |
 | [URL parameter] to [local storage]           | `initial_language_from_url_param_to_localstorage`         |
+| [URL parameter] to [session storage]         | `initial_language_from_url_param_to_sessionstorage`       |
 | [URL path] to [cookie]                       | `initial_language_from_url_path_to_cookie`                |
 | [URL path] to [local storage]                | `initial_language_from_url_path_to_localstorage`          |
+| [URL path] to [session storage]              | `initial_language_from_url_path_to_sessionstorage`        |
 | [Cookie] to [local storage]                  | `initial_language_from_cookie_to_localstorage`            |
+| [Cookie] to [session storage]                | `initial_language_from_cookie_to_sessionstorage`          |
 | [Local storage] to [cookie]                  | `initial_language_from_localstorage_to_cookie`            |
 | [Local storage] to [session storage]         | `initial_language_from_localstorage_to_sessionstorage`    |
 | [Local storage] to [server function]         | `initial_language_from_localstorage_to_server_function`   |
@@ -138,7 +141,7 @@ The names of the settings can be configured using the following parameters:
 | Browser [local storage]   | `localstorage_key`   |   `"lang"`    |
 | Browser [session storage] | `sessionstorage_key` |   `"lang"`    |
 | [URL parameter]           | `url_param`          |   `"lang"`    |
-| [URL path] extractor fn   | `url_path`           |      ❌       |
+| [URL path] extractor `fn` | `url_path`           |      ❌       |
 
 ### <a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Desktop applications
 

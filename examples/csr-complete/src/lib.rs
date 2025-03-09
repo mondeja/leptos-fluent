@@ -27,6 +27,7 @@ fn I18n(children: Children) -> impl IntoView {
         url_param: "lang",
         initial_language_from_url_param: true,
         initial_language_from_url_param_to_localstorage: true,
+        initial_language_from_url_param_to_sessionstorage: true,
         initial_language_from_url_param_to_cookie: true,
         set_language_to_url_param: true,
         localstorage_key: "language",
@@ -41,6 +42,7 @@ fn I18n(children: Children) -> impl IntoView {
         initial_language_from_navigator: true,
         initial_language_from_navigator_to_cookie: true,
         initial_language_from_navigator_to_localstorage: true,
+        initial_language_from_navigator_to_sessionstorage: true,
         set_language_from_navigator: true,
     }
 }

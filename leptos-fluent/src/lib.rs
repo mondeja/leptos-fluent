@@ -948,6 +948,7 @@ pub struct LeptosFluentMeta {
     pub url_param: &'static str,
     pub initial_language_from_url_param: bool,
     pub initial_language_from_url_param_to_localstorage: bool,
+    pub initial_language_from_url_param_to_sessionstorage: bool,
     pub initial_language_from_url_param_to_cookie: bool,
     pub initial_language_from_url_param_to_server_function: bool, // *
     pub set_language_to_url_param: bool,
@@ -974,6 +975,7 @@ pub struct LeptosFluentMeta {
     pub cookie_attrs: &'static str,
     pub initial_language_from_cookie: bool,
     pub initial_language_from_cookie_to_localstorage: bool,
+    pub initial_language_from_cookie_to_sessionstorage: bool,
     pub initial_language_from_cookie_to_server_function: bool, // *
     pub set_language_to_cookie: bool,
     pub initial_language_from_server_function: bool, // *
@@ -984,6 +986,7 @@ pub struct LeptosFluentMeta {
     pub initial_language_from_url_path: bool,
     pub initial_language_from_url_path_to_cookie: bool,
     pub initial_language_from_url_path_to_localstorage: bool,
+    pub initial_language_from_url_path_to_sessionstorage: bool,
     pub initial_language_from_url_path_to_server_function: bool, // *
     #[cfg(feature = "system")]
     pub initial_language_from_system: bool,
