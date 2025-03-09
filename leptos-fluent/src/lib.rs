@@ -745,6 +745,7 @@ pub fn i18n() -> I18n {
     note = "will be removed in v0.3.0. Use `i18n.tr(text_id)` instead of `tr_impl(i18n, text_id)`."
 )]
 #[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
+#[inline(always)]
 pub fn tr_impl(i18n: I18n, text_id: &str) -> String {
     i18n.tr(text_id)
 }
@@ -755,6 +756,7 @@ pub fn tr_impl(i18n: I18n, text_id: &str) -> String {
     note = "will be removed in v0.3.0. Use `i18n.tr_with_args(text_id, args)` instead of `tr_with_args_impl(i18n, text_id, args)`."
 )]
 #[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
+#[inline(always)]
 pub fn tr_with_args_impl(
     i18n: I18n,
     text_id: &str,
