@@ -25,7 +25,7 @@
 
 ### Enhancements
 
-- Allow to pass expressions `leptos_fluent!` macro parameters related to server
+- Allow to pass expressions as `leptos_fluent!` macro parameters related to server
   functions.
 - Add `i18n.tr` and `i18n.tr_with_args` methods.
 - Deprecate `tr_impl(i18n, id)` and `tr_with_args_impl(i18n, id, args)` functions.
