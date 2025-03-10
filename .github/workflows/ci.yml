@@ -293,20 +293,14 @@ jobs:
         uses: cargo-bins/cargo-binstall@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Check if cargo-leptos is installed
-        id: check-cargo-leptos
+      - name: Install cargo-leptos
         if: startsWith(matrix.example, 'ssr')
         run: |
           if ! command -v cargo-leptos &> /dev/null; then
-            echo "installed=false" >> $GITHUB_OUTPUT
+            cargo binstall -y cargo-leptos
           else
-            echo "installed=true" >> $GITHUB_OUTPUT
+            echo "cargo-leptos is already installed"
           fi
-      - name: Install cargo-leptos
-        if: |
-          startsWith(matrix.example, 'ssr')
-          && steps.check-cargo-leptos.outputs.installed == 'false'
-        run: cargo binstall -y cargo-leptos
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Get build features

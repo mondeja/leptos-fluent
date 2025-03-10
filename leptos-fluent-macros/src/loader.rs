@@ -305,6 +305,19 @@ leptos_fluent! {{
     )
 }
 
+fn compile_time_exprpath_not_supported_error_message(
+    expr: &str,
+    k: &syn::Ident,
+) -> String {
+    format!(
+        concat!(
+            "The parameter '{}' of leptos_fluent! macro does not accept the",
+            " compile-time expression path '{}'."
+        ),
+        k, expr,
+    )
+}
+
 macro_rules! evaluate_compile_time_exprpath_set_none {
     ($exprpath:ident, $k:ident, $field:ident) => {
         if let Some(ref e) = $exprpath {
@@ -312,7 +325,7 @@ macro_rules! evaluate_compile_time_exprpath_set_none {
             if !evaluated_exprpath.supported {
                 return Err(syn::Error::new(
                     e.span(),
-                    exprpath_not_supported_error_message(
+                    compile_time_exprpath_not_supported_error_message(
                         e.to_string().as_str(),
                         &$k,
                     ),
@@ -649,7 +662,7 @@ impl Parse for I18nLoader {
                                 0 => concat!(
                                     " (empty).\n",
                                     "If you're using double curly braces syntax",
-                                    " (`leptos_fluent! {{ ... }}` make sure to",
+                                    " (`leptos_fluent! {{ ... }}`) make sure to",
                                     " use single curly braces syntax",
                                     " (`leptos_fluent! { ... }`)."
                                 ).to_string(),

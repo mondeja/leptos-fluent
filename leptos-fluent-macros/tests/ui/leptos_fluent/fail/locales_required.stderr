@@ -2,8 +2,9 @@ error: Missing `locales` parameter
   --> tests/ui/leptos_fluent/fail/locales_required.rs:14:5
    |
 14 | /     leptos_fluent! {
-15 | |         translations: [TRANSLATIONS],
-16 | |     };
+15 | |         children: children(),
+16 | |         translations: [TRANSLATIONS],
+17 | |     }
    | |_____^
    |
    = note: this error originates in the macro `leptos_fluent` (in Nightly builds, run with -Z macro-backtrace for more info)

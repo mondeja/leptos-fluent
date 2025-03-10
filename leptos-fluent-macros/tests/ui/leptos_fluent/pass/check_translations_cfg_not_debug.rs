@@ -10,7 +10,20 @@ static_loader! {
     };
 }
 
+#[cfg(debug_assertions)]
+#[component]
+fn I18n(children: Children) -> impl IntoView {
+    leptos_fluent! {
+        children: children(),
+        translations: [TRANSLATIONS],
+        locales: "../../../../examples/csr-minimal/locales",
+        #[cfg(not(debug_assertions))]
+        check_translations: "../../../../leptos-fluent-macros/tests/ui/leptos_fluent/pass/check_translations_cfg.rs"
+    }
+}
+
 #[cfg(not(debug_assertions))]
+#[component]
 pub fn App() -> impl IntoView {
     view! { <p>Foo</p> }
 }
@@ -18,14 +31,11 @@ pub fn App() -> impl IntoView {
 #[cfg(debug_assertions)]
 #[component]
 pub fn App() -> impl IntoView {
-    leptos_fluent! {
-        translations: [TRANSLATIONS],
-        locales: "../../../../examples/csr-minimal/locales",
-        #[cfg(not(debug_assertions))]
-        check_translations: "../../../../leptos-fluent-macros/tests/ui/leptos_fluent/pass/check_translations_cfg.rs"
-    };
-
-    view! { <p>{move_tr!("select-a-language")}</p> }
+    view! {
+        <I18n>
+            <p>{move_tr!("select-a-language")}</p>
+        </I18n>
+    }
 }
 
 fn main() {}

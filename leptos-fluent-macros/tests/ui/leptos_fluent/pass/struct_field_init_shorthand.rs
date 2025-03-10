@@ -10,18 +10,26 @@ static_loader! {
 }
 
 #[component]
-pub fn App() -> impl IntoView {
+fn I18n(children: Children) -> impl IntoView {
     let cookie_name = "my_cookie";
     let initial_language_from_cookie = true;
 
     leptos_fluent! {
+        children: children(),
         translations: [TRANSLATIONS],
         cookie_name,
         locales: "../../../../examples/csr-minimal/locales",
         initial_language_from_cookie,
-    };
+    }
+}
 
-    view! { <p>Foo</p> }
+#[component]
+pub fn App() -> impl IntoView {
+    view! {
+        <I18n>
+            <p>+</p>
+        </I18n>
+    }
 }
 
 fn main() {}

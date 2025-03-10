@@ -1,7 +1,7 @@
 error: Missing `translations` parameter
- --> tests/ui/leptos_fluent/fail/empty.rs:6:5
+ --> tests/ui/leptos_fluent/fail/only_children.rs:6:5
   |
-6 |     leptos_fluent! {};
-  |     ^^^^^^^^^^^^^^^^^
+6 |     leptos_fluent! {children: children()}
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
   = note: this error originates in the macro `leptos_fluent` (in Nightly builds, run with -Z macro-backtrace for more info)

@@ -10,8 +10,9 @@ static_loader! {
 }
 
 #[component]
-pub fn App() -> impl IntoView {
+fn I18n(children: Children) -> impl IntoView {
     leptos_fluent! {
+        children: children(),
         translations: [TRANSLATIONS],
         locales: "../../../../examples/csr-minimal/locales",
         sync_html_tag_lang: true,
@@ -31,9 +32,16 @@ pub fn App() -> impl IntoView {
         initial_language_from_localstorage_to_cookie: true,
         set_language_to_localstorage: true,
         initial_language_from_navigator: true,
-    };
+    }
+}
 
-    view! { <p>Foo</p> }
+#[component]
+pub fn App() -> impl IntoView {
+    view! {
+        <I18n>
+            <p>+</p>
+        </I18n>
+    }
 }
 
 fn main() {}

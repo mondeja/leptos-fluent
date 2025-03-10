@@ -2,11 +2,12 @@ error[E0308]: mismatched types
   --> tests/ui/leptos_fluent/fail/invalid_type.rs:15:5
    |
 15 | /     leptos_fluent! {
-16 | |         translations: [TRANSLATIONS],
-17 | |         locales: "../../../../examples/csr-minimal/locales",
-18 | |         url_param,
-19 | |         initial_language_from_url_param: true,
-20 | |     };
+16 | |         children: children(),
+17 | |         translations: [TRANSLATIONS],
+18 | |         locales: "../../../../examples/csr-minimal/locales",
+19 | |         url_param,
+20 | |         initial_language_from_url_param: true,
+21 | |     }
    | |     ^
    | |     |
    | |_____expected `&str`, found integer

@@ -803,8 +803,8 @@ macro_rules! tr {
             map
         })
     }};
-    ($i18n:expr, $text_id:literal$(,)?) => {$i18n.tr($text_id)};
-    ($i18n:expr, $text_id:literal, {$($key:literal => $value:expr),*$(,)?}$(,)?) => {{
+    ($i18n:ident, $text_id:literal$(,)?) => {$i18n.tr($text_id)};
+    ($i18n:ident, $text_id:literal, {$($key:literal => $value:expr),*$(,)?}$(,)?) => {{
         $i18n.tr_with_args($text_id, &{
             let mut map = ::std::collections::HashMap::new();
             $(
@@ -814,17 +814,17 @@ macro_rules! tr {
         })
     }};
     // It seems that these branches are detected as invalid argument types by the compiler
-    ($text_id:ident$(,)?) => {
-        compile_error!(format!("Expected a string literal, got an identifier '{}'", stringify!($text_id)))
+    ($text_id:expr$(,)?) => {
+        compile_error!(format!("Expected a string literal, got an expression '{}'", stringify!($text_id)))
     };
-    ($text_id:ident, {$($key:literal => $value:expr),*$(,)?}$(,)?) => {
-        compile_error!(format!("Expected a string literal, got an identifier '{}'", stringify!($text_id)))
+    ($text_id:expr, {$($key:literal => $value:expr),*$(,)?}$(,)?) => {
+        compile_error!(format!("Expected a string literal, got an expression '{}'", stringify!($text_id)))
     };
-    ($i18n:expr, $text_id:ident$(,)?) => {
-        compile_error!(format!("Expected a string literal, got an identifier '{}'", stringify!($text_id)))
+    ($i18n:expr, $text_id:expr$(,)?) => {
+        compile_error!(format!("Expected a string literal, got an expression '{}'", stringify!($text_id)))
     };
-    ($i18n:expr, $text_id:ident, {$($key:literal => $value:expr),*$(,)?}$(,)?) => {
-        compile_error!(format!("Expected a string literal, got an identifier '{}'", stringify!($text_id)))
+    ($i18n:expr, $text_id:expr, {$($key:literal => $value:expr),*$(,)?}$(,)?) => {
+        compile_error!(format!("Expected a string literal, got an expression '{}'", stringify!($text_id)))
     };
 }
 
@@ -867,27 +867,27 @@ macro_rules! move_tr {
             )*
         }))
     };
-    ($i18n:expr, $text_id:literal$(,)?) => {
-        ::leptos::Signal::derive(move || $crate::tr!($i18n, $text_id))
+    ($i18n:ident, $text_id:literal$(,)?) => {
+        ::leptos::prelude::Signal::derive(move || $crate::tr!($i18n, $text_id))
     };
-    ($i18n:expr, $text_id:literal, {$($key:literal => $value:expr),*$(,)?}$(,)?) => {
-        ::leptos::Signal::derive(move || $crate::tr!($i18n, $text_id, {
+    ($i18n:ident, $text_id:literal, {$($key:literal => $value:expr),*$(,)?}$(,)?) => {
+        ::leptos::prelude::Signal::derive(move || $crate::tr!($i18n, $text_id, {
             $(
                 $key => $value,
             )*
         }))
     };
-    ($text_id:ident$(,)?) => {
-        compile_error!(format!("Expected a string literal, got an identifier '{}'", stringify!($text_id)))
+    ($text_id:expr$(,)?) => {
+        compile_error!(format!("Expected a string literal, got an expression '{}'", stringify!($text_id)))
     };
-    ($text_id:ident, {$($key:literal => $value:expr),*$(,)?}$(,)?) => {
-        compile_error!(format!("Expected a string literal, got an identifier '{}'", stringify!($text_id)))
+    ($text_id:expr, {$($key:literal => $value:expr),*$(,)?}$(,)?) => {
+        compile_error!(format!("Expected a string literal, got an expression '{}'", stringify!($text_id)))
     };
-    ($i18n:expr, $text_id:ident$(,)?) => {
-        compile_error!(format!("Expected a string literal, got an identifier '{}'", stringify!($text_id)))
+    ($i18n:expr, $text_id:expr$(,)?) => {
+        compile_error!(format!("Expected a string literal, got an expression '{}'", stringify!($text_id)))
     };
-    ($i18n:expr, $text_id:ident, {$($key:literal => $value:expr),*$(,)?}$(,)?) => {
-        compile_error!(format!("Expected a string literal, got an identifier '{}'", stringify!($text_id)))
+    ($i18n:expr, $text_id:expr, {$($key:literal => $value:expr),*$(,)?}$(,)?) => {
+        compile_error!(format!("Expected a string literal, got an expression '{}'", stringify!($text_id)))
     };
 }
 

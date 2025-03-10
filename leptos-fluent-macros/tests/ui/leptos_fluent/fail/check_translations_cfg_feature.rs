@@ -11,15 +11,23 @@ static_loader! {
 }
 
 #[component]
-pub fn App() -> impl IntoView {
+fn I18n(children: Children) -> impl IntoView {
     leptos_fluent! {
+        children: children(),
         translations: [TRANSLATIONS],
         locales: "../../../../examples/csr-minimal/locales",
         #[cfg(feature = "ssr")]
         check_translations: "../../../../leptos-fluent-macros/tests/ui/leptos_fluent/fail/check_translations_cfg_feature.rs"
-    };
+    }
+}
 
-    view! { <p>{move_tr!("select-a-language")}</p> }
+#[component]
+pub fn App() -> impl IntoView {
+    view! {
+        <I18n>
+            <p>{move_tr!("select-a-language")}</p>
+        </I18n>
+    }
 }
 
 fn main() {}

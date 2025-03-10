@@ -1,0 +1,15 @@
+error: argument must be a string literal
+ --> tests/ui/leptos_fluent/fail/tr_macros_ident_id.rs:5:9
+  |
+5 |     _ = tr!(foo);
+  |         ^^^^^^^^
+  |
+  = note: this error originates in the macro `format` which comes from the expansion of the macro `tr` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: argument must be a string literal
+ --> tests/ui/leptos_fluent/fail/tr_macros_ident_id.rs:8:9
+  |
+8 |     _ = move_tr!(bar);
+  |         ^^^^^^^^^^^^^
+  |
+  = note: this error originates in the macro `format` which comes from the expansion of the macro `move_tr` (in Nightly builds, run with -Z macro-backtrace for more info)
