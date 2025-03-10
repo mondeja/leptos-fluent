@@ -10,12 +10,20 @@ static_loader! {
 }
 
 #[component]
-pub fn App() -> impl IntoView {
+pub fn I18n(children: Children) -> impl IntoView {
     leptos_fluent! {
+        children: children(),
         translations: [TRANSLATIONS],
-    };
+    }
+}
 
-    view! { <p>Foo</p> }
+#[component]
+pub fn App() -> impl IntoView {
+    view! {
+        <I18n>
+            <p>+</p>
+        </I18n>
+    }
 }
 
 fn main() {}

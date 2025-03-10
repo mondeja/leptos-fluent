@@ -1,6 +1,6 @@
 error: Expected an expression with 'key: value', '#[...] key: value', 'key,' or `#[...] key,` format. Found:
        : "foo",
-  --> tests/ui/leptos_fluent/fail/empty_parameter.rs:17:9
+  --> tests/ui/leptos_fluent/fail/empty_parameter.rs:18:9
    |
-17 |         : "foo",
+18 |         : "foo",
    |         ^

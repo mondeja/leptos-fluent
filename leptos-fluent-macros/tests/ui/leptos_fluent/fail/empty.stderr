@@ -1,7 +1,13 @@
 error: Missing `translations` parameter
  --> tests/ui/leptos_fluent/fail/empty.rs:6:5
   |
-6 |     leptos_fluent! {};
+6 |     leptos_fluent! {}
   |     ^^^^^^^^^^^^^^^^^
   |
   = note: this error originates in the macro `leptos_fluent` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0599]: no method named `children` found for struct `EmptyPropsBuilder` in the current scope
+  --> tests/ui/leptos_fluent/fail/empty.rs:11:20
+   |
+11 |     view! { <I18n><p>+</p></I18n> }
+   |                    ^ method not found in `EmptyPropsBuilder`
