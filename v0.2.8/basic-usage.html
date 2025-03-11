@@ -1,0 +1,443 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Advanced usage - leptos-fluent</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Internationalization framework for Leptos using Fluent.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="./mdbook-admonish.css">
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">leptos-fluent</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/mondeja/leptos-fluent/tree/master/book" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/mondeja/leptos-fluent/edit/master/book/src/basic-usage.md" title="Suggest an edit" aria-label="Suggest an edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="basic-usage"><a class="header" href="#basic-usage">Basic usage</a></h1>
+<ul>
+<li><a href="#minimal-skeleton">Minimal skeleton</a></li>
+<li><a href="#translating-messages">Translating messages</a></li>
+<li><a href="#retrieving-the-i18n-context">Retrieving the <code>I18n</code> context</a></li>
+<li><a href="#using-the-i18n-context">Using the <code>I18n</code> context</a>
+<ul>
+<li><a href="#update-language">Update language</a></li>
+<li><a href="#get-active-language">Get active language</a></li>
+<li><a href="#get-available-languages">Get available languages</a></li>
+<li><a href="#check-if-a-language-is-active">Check if a language is active</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="minimal-skeleton"><a class="header" href="#minimal-skeleton">Minimal skeleton</a></h2>
+<p>The most basic CSR app is reproduced here:</p>
+<pre><code class="language-plaintext">.
+├── 📄 Cargo.toml
+├── 📁 locales
+│   ├── 📁 en
+│   │   └── 📄 main.ftl
+│   └── 📁 es
+│       └── 📄 main.ftl
+└── 📁 src
+    ├── 📄 main.rs
+    └── 📄 lib.rs
+</code></pre>
+<pre><code class="language-ftl"># locales/en/main.ftl
+select-a-language = Select a language:
+language-selected-is = The selected language is { $lang }.
+</code></pre>
+<pre><code class="language-ftl"># locales/es/main.ftl
+select-a-language = Selecciona un idioma:
+language-selected-is = El idioma seleccionado es { $lang }.
+</code></pre>
+<pre><code class="language-rust">// src/lib.rs
+use fluent_templates::static_loader;
+use leptos::prelude::*;
+use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, Language};
+
+static_loader! {
+    pub static TRANSLATIONS = {
+        locales: "./locales",
+        fallback_language: "en",
+    };
+}
+
+#[component]
+pub fn I18n(children: Children) -&gt; impl IntoView {
+    leptos_fluent! {
+        children: children(),
+        translations: [TRANSLATIONS],
+        locales: "./locales",
+    }
+}
+
+#[component]
+pub fn App() -&gt; impl IntoView {
+    view! {
+        &lt;I18n&gt;
+            &lt;LanguageSelector/&gt;
+        &lt;/I18n&gt;
+    }
+}
+
+#[component]
+fn LanguageSelector() -&gt; impl IntoView {
+    // Use `expect_i18n()` to get the current i18n context:
+    let i18n = expect_i18n();
+
+    view! {
+        &lt;p&gt;{move_tr!("select-a-language")}&lt;/p&gt;
+        &lt;fieldset&gt;
+            {move || {
+                i18n.languages.iter().map(|lang| render_language(lang)).collect::&lt;Vec&lt;_&gt;&gt;()
+            }}
+        &lt;/fieldset&gt;
+        &lt;p&gt;
+            {move_tr!(
+                 "language-selected-is",
+                 { "lang" =&gt; i18n.language.get().name }
+            )}
+        &lt;/p&gt;
+    }
+}
+
+fn render_language(lang: &amp;'static Language) -&gt; impl IntoView {
+    // Passed as atrribute, `Language` is converted to their code,
+    // so `&lt;input id=lang` becomes `&lt;input id=lang.id.to_string()`
+    let i18n = expect_i18n();
+    view! {
+        &lt;div&gt;
+            &lt;label for=lang&gt;{lang.name}&lt;/label&gt;
+            &lt;input
+                id=lang
+                value=lang
+                name="language"
+                checked=lang.is_active()
+                on:click=move |_| i18n.language.set(lang)
+                type="radio"
+            /&gt;
+        &lt;/div&gt;
+    }
+}</code></pre>
+<pre><code class="language-rust">// src/main.rs
+pub fn main() {
+    console_error_panic_hook::set_once();
+    leptos::mount::mount_to_body(minimal_example::App);
+}</code></pre>
+<pre><code class="language-toml"># Cargo.toml
+[package]
+name = "minimal-example"
+edition = "2021"
+version = "0.1.0"
+
+[lib]
+name = "minimal_example"
+path = "src/lib.rs"
+
+[dependencies]
+leptos = { version = "0.7", features = ["csr"] }
+leptos-fluent = "0.2"
+fluent-templates = "0.13"
+console_error_panic_hook = "0.1"
+
+# Using cargo-leptos
+[package.metadata.leptos]
+watch-additional-files = ["locales"]
+</code></pre>
+<h2 id="translating-messages"><a class="header" href="#translating-messages">Translating messages</a></h2>
+<p>Use the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.move_tr.html"><code>move_tr!</code></a> macro to translate a string. The macro takes the key of the
+translation and an optional object with the variables to interpolate:</p>
+<pre><code class="language-rust">move_tr!("select-a-language")
+
+move_tr!("language-selected-is", { "lang" =&gt; i18n.language.get().name })</code></pre>
+<p>Additionally, use the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.tr.html"><code>tr!</code></a> macro to translate a string inside
+a reactive context. Note that if is not inside a reactive context,
+the translation won't be updated on the fly when the language changes.
+This can lead to warnings in console output like:</p>
+<div id="admonition-warning" class="admonition admonish-warning" role="note" aria-labelledby="admonition-warning-title">
+<div class="admonition-title">
+<div id="admonition-warning-title">
+<p>Warning</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-warning"></a>
+</div>
+<div>
+<pre><code class="language-shell">At `./path/to/file.rs:ln`, you access a signal or memo (defined at
+`./path/to/file.rs:ln`) outside of a reactive context. This might mean your
+app is not responding to changes in signal values in the way you expect.
+</code></pre>
+</div>
+</div>
+<p>Can be fixed by replacing calls to <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.tr.html"><code>tr!</code></a> with <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.move_tr.html"><code>move_tr!</code></a> or wrapping the
+<a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.tr.html"><code>tr!</code></a> calls in a reactive context.</p>
+<p>The previous code <em>could</em> be rewritten as:</p>
+<pre><code class="language-rust">move || tr!("select-a-language")
+
+move || tr!("language-selected-is", { "lang" =&gt; i18n.language.get().name })</code></pre>
+<p>The main difference is that <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.move_tr.html"><code>move_tr!</code></a> encapsulates the movement in a
+<a href="https://docs.rs/reactive_graph/0.1.0/reactive_graph/wrappers/read/struct.Signal.html"><code>leptos::Signal</code></a>, strictly would be rewritten as:</p>
+<pre><code class="language-rust">Signal::derive(move || tr!("select-a-language"))</code></pre>
+<h2 id="retrieving-the-i18n-context"><a class="header" href="#retrieving-the-i18n-context">Retrieving the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html"><code>I18n</code></a> context</a></h2>
+<p>Use the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.expect_i18n.html"><code>expect_i18n</code></a> function to get the current i18n context:</p>
+<pre><code class="language-rust">let i18n = leptos_fluent::expect_i18n();</code></pre>
+<p>It is exported as <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.i18n.html"><code>i18n</code></a> too:</p>
+<pre><code class="language-rust">let i18n = leptos_fluent::i18n();</code></pre>
+<p>The function <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.use_i18n.html"><code>use_i18n</code></a> returns an <code>Option</code> with the current i18n context:</p>
+<pre><code class="language-rust">let i18n = leptos_fluent::use_i18n().expect("No `I18n` context found");</code></pre>
+<h2 id="using-the-i18n-context"><a class="header" href="#using-the-i18n-context">Using the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html"><code>I18n</code></a> context</a></h2>
+<p>The i18n context has the following fields:</p>
+<ul>
+<li><a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.language"><code>language</code></a>: A read-write signal with a pointer to the static current active language.</li>
+<li><a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.languages"><code>languages</code></a>: A pointer to a static list of pointers of the static available languages.</li>
+<li><a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.translations"><code>translations</code></a>: A signal to the vector of <a href="https://docs.rs/fluent-templates/latest/fluent_templates">fluent-templates</a> loaders that stores
+the translations.</li>
+</ul>
+<h3 id="update-language"><a class="header" href="#update-language">Update language</a></h3>
+<p>To update the language, use <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html#method.activate"><code>lang.activate</code></a> or the <code>set</code> method of <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.language"><code>language</code></a>:</p>
+<pre><code class="language-rust">lang.activate();
+
+expect_i18n().language.set(lang);</code></pre>
+<div id="admonition-nightly" class="admonition admonish-tip" role="note" aria-labelledby="admonition-nightly-title">
+<div class="admonition-title">
+<div id="admonition-nightly-title">
+<p>Nightly</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-nightly"></a>
+</div>
+<div>
+<p>When <code>nightly</code> feature is enabled, can be updated passing a new language to the
+context as a function with:</p>
+<pre><code class="language-rust">let i18n = leptos_fluent::i18n();
+i18n(lang);</code></pre>
+</div>
+</div>
+<h3 id="get-active-language"><a class="header" href="#get-active-language">Get active language</a></h3>
+<p>To get the current active language, use <code>get</code> method of <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.language"><code>language</code></a> field:</p>
+<pre><code class="language-rust">let i18n = leptos_fluent::i18n();
+let lang = i18n.language.get();</code></pre>
+<div id="admonition-nightly-1" class="admonition admonish-tip" role="note" aria-labelledby="admonition-nightly-1-title">
+<div class="admonition-title">
+<div id="admonition-nightly-1-title">
+<p>Nightly</p>
+</div>
+<a class="admonition-anchor-link" href="#admonition-nightly-1"></a>
+</div>
+<div>
+<p>When <code>nightly</code> enabled, can get the active language with:</p>
+<pre><code class="language-rust">let i18n = leptos_fluent::i18n();
+let lang = i18n();</code></pre>
+</div>
+</div>
+<h3 id="get-available-languages"><a class="header" href="#get-available-languages">Get available languages</a></h3>
+<p>To get the available languages, iterate over the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.languages"><code>languages</code></a> field:</p>
+<pre><code class="language-rust">i18n.languages.iter()</code></pre>
+<h3 id="check-if-a-language-is-active"><a class="header" href="#check-if-a-language-is-active">Check if a language is active</a></h3>
+<p>To check if a language is the active one, use <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html#method.is_active"><code>is_active</code></a> method of a
+<a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html"><code>leptos_fluent::Language</code></a> struct:</p>
+<pre><code class="language-rust">lang.is_active()
+
+lang == expect_i18n().language.get()</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="install.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="strategies.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="install.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="strategies.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+        <script>
+            window.playground_line_numbers = true;
+        </script>
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+        <script src="ace.js"></script>
+        <script src="editor.js"></script>
+        <script src="mode-rust.js"></script>
+        <script src="theme-dawn.js"></script>
+        <script src="theme-tomorrow_night.js"></script>
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>
