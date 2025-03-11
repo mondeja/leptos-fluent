@@ -1,4 +1,4 @@
-# leptos-fluent book
+# leptos-fluent
 
 **leptos-fluent** is a framework for internationalizing [Leptos] applications
 using [Fluent]. It has all the batteries included to handle language switching,

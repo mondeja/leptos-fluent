@@ -2,7 +2,7 @@
 
 # Summary
 
-[Introduction](./intro.md)
+[leptos-fluent book](./intro.md)
 
 # User guide
 
@@ -11,7 +11,7 @@
 - [Strategies](./strategies.md)
 - [Languages](./languages.md)
 - [Checking translations](./checking-translations.md)
-- [Advanced usage](./basic-usage.md)
+- [Advanced usage](./advanced-usage.md)
 - [FAQs](./faqs.md)
 
 # Reference
