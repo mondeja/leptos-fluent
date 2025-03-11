@@ -813,7 +813,150 @@ macro_rules! tr {
             map
         })
     }};
-    // It seems that these branches are detected as invalid argument types by the compiler
+
+    //
+    // Next dynamic syntax is accepted by the translations checker.
+    //
+    // The cases are numbered to track them easily as it can grow in the future.
+    //
+
+    // 001 if_elseif_else
+    //   only text_id
+    (
+        if $condition:tt {
+            $text_id:literal
+        } $(else if $else_if_condition:tt {
+            $else_if_text_id:literal
+        })* else { $else_text_id:literal }
+        $(,)?
+    ) => {
+        if $condition {
+            $crate::tr!($text_id)
+        } $(else if $else_if_condition {
+            $crate::tr!($else_if_text_id)
+        })* else {
+            $crate::tr!($else_text_id)
+        }
+    };
+    //   with i18n
+    (
+        $i18n:ident,
+        if $condition:tt {
+            $text_id:literal
+        } $(else if $else_if_condition:tt {
+            $else_if_text_id:literal
+        })* else { $else_text_id:literal }
+        $(,)?
+    ) => {
+        if $condition {
+            $i18n.tr($text_id)
+        } $(else if $else_if_condition {
+            $i18n.tr($else_if_text_id)
+        })* else {
+            $i18n.tr($else_text_id)
+        }
+    };
+    //   with args
+    (
+        if $condition:tt {
+            $text_id:literal
+        } $(else if $else_if_condition:tt {
+            $else_if_text_id:literal
+        })* else { $else_text_id:literal },
+        {$($key:literal => $value:expr),*$(,)?}
+        $(,)?
+    ) => {
+        {
+            let mut map = ::std::collections::HashMap::new();
+            $(
+                map.insert($key.into(), $value.into());
+            )*
+            if $condition {
+                $crate::i18n().tr_with_args($text_id, &map)
+            } $(else if $else_if_condition {
+                $crate::i18n().tr_with_args($else_if_text_id, &map)
+            })* else {
+                $crate::i18n().tr_with_args($else_text_id, &map)
+            }
+        }
+    };
+    //   with i18n and args
+    (
+        $i18n:ident,
+        if $condition:tt {
+            $text_id:literal
+        } $(else if $else_if_condition:tt {
+            $else_if_text_id:literal
+        })* else { $else_text_id:literal },
+        {$($key:literal => $value:expr),*$(,)?}
+        $(,)?
+    ) => {
+        {
+            let mut map = ::std::collections::HashMap::new();
+            $(
+                map.insert($key.into(), $value.into());
+            )*
+            if $condition {
+                $i18n.tr_with_args($text_id, &map)
+            } $(else if $else_if_condition {
+                $i18n.tr_with_args($else_if_text_id, &map)
+            })* else {
+                $i18n.tr_with_args($else_text_id, &map)
+            }
+        }
+    };
+
+    //   no else
+    (
+        if $condition:tt {
+            $text_id:literal
+        } $(else if $else_if_condition:tt {
+            $else_if_text_id:literal
+        })*
+        $(,)?
+    ) => {
+        compile_error!("Expected `else` branch")
+    };
+    //   no else with i18n
+    (
+        $i18n:ident,
+        if $condition:tt {
+            $text_id:literal
+        } $(else if $else_if_condition:tt {
+            $else_if_text_id:literal
+        })*
+        $(,)?
+    ) => {
+        compile_error!("Expected `else` branch")
+    };
+    //   no else with args
+    (
+        if $condition:tt {
+            $text_id:literal
+        } $(else if $else_if_condition:tt {
+            $else_if_text_id:literal
+        })*,
+        {$($key:literal => $value:expr),*$(,)?}
+        $(,)?
+    ) => {
+        compile_error!("Expected `else` branch")
+    };
+    //   no else with i18n and args
+    (
+        $i18n:ident,
+        if $condition:tt {
+            $text_id:literal
+        } $(else if $else_if_condition:tt {
+            $else_if_text_id:literal
+        })*,
+        {$($key:literal => $value:expr),*$(,)?}
+        $(,)?
+    ) => {
+        compile_error!("Expected `else` branch")
+    };
+
+    // It seems that the next branches are excluded by the compiler and instead is triggering
+    // a compile error with the message 'argument must be a string literal'.
     ($text_id:expr$(,)?) => {
         compile_error!(format!("Expected a string literal, got an expression '{}'", stringify!($text_id)))
     };
@@ -877,6 +1020,142 @@ macro_rules! move_tr {
             )*
         }))
     };
+
+    // 001 if_elseif_else
+    //   only text id
+    (
+        if $condition:tt {
+            $text_id:literal
+        } $(else if $else_if_condition:tt {
+            $else_if_text_id:literal
+        })* else { $else_text_id:literal }
+        $(,)?
+    ) => {
+        ::leptos::prelude::Signal::derive(move || if $condition {
+            $crate::tr!($text_id)
+        } $(else if $else_if_condition {
+            $crate::tr!($else_if_text_id)
+        })* else {
+            $crate::tr!($else_text_id)
+        })
+    };
+    //   with i18n
+    (
+        $i18n:ident,
+        if $condition:tt {
+            $text_id:literal
+        } $(else if $else_if_condition:tt {
+            $else_if_text_id:literal
+        })* else { $else_text_id:literal }
+        $(,)?
+    ) => {
+        ::leptos::prelude::Signal::derive(move || if $condition {
+            $i18n.tr($text_id)
+        } $(else if $else_if_condition {
+            $i18n.tr($else_if_text_id)
+        })* else {
+            $i18n.tr($else_text_id)
+        })
+    };
+    //   with args
+    (
+        if $condition:tt {
+            $text_id:literal
+        } $(else if $else_if_condition:tt {
+            $else_if_text_id:literal
+        })* else { $else_text_id:literal },
+        {$($key:literal => $value:expr),*$(,)?}
+        $(,)?
+    ) => {
+        ::leptos::prelude::Signal::derive(move || {
+            let mut map = ::std::collections::HashMap::new();
+            $(
+                map.insert($key.into(), $value.into());
+            )*
+            if $condition {
+                $crate::i18n().tr_with_args($text_id, &map)
+            } $(else if $else_if_condition {
+                $crate::i18n().tr_with_args($else_if_text_id, &map)
+            })* else {
+                $crate::i18n().tr_with_args($else_text_id, &map)
+            }
+        })
+    };
+    //   with i18n and args
+    (
+        $i18n:ident,
+        if $condition:tt {
+            $text_id:literal
+        } $(else if $else_if_condition:tt {
+            $else_if_text_id:literal
+        })* else { $else_text_id:literal },
+        {$($key:literal => $value:expr),*$(,)?}
+        $(,)?
+    ) => {
+        ::leptos::prelude::Signal::derive(move || {
+            let mut map = ::std::collections::HashMap::new();
+            $(
+                map.insert($key.into(), $value.into());
+            )*
+            if $condition {
+                $i18n.tr_with_args($text_id, &map)
+            } $(else if $else_if_condition {
+                $i18n.tr_with_args($else_if_text_id, &map)
+            })* else {
+                $i18n.tr_with_args($else_text_id, &map)
+            }
+        })
+    };
+
+    //   no else
+    (
+        if $condition:tt {
+            $text_id:literal
+        } $(else if $else_if_condition:tt {
+            $else_if_text_id:literal
+        })*
+        $(,)?
+    ) => {
+        compile_error!("Expected `else` branch")
+    };
+    //   no else with i18n
+    (
+        $i18n:ident,
+        if $condition:tt {
+            $text_id:literal
+        } $(else if $else_if_condition:tt {
+            $else_if_text_id:literal
+        })*
+        $(,)?
+    ) => {
+        compile_error!("Expected `else` branch")
+    };
+    //   no else with args
+    (
+        if $condition:tt {
+            $text_id:literal
+        } $(else if $else_if_condition:tt {
+            $else_if_text_id:literal
+        })*,
+        {$($key:literal => $value:expr),*$(,)?}
+        $(,)?
+    ) => {
+        compile_error!("Expected `else` branch")
+    };
+    //   no else with i18n and args
+    (
+        $i18n:ident,
+        if $condition:tt {
+            $text_id:literal
+        } $(else if $else_if_condition:tt {
+            $else_if_text_id:literal
+        })*,
+        {$($key:literal => $value:expr),*$(,)?}
+        $(,)?
+    ) => {
+        compile_error!("Expected `else` branch")
+    };
+
     ($text_id:expr$(,)?) => {
         compile_error!(format!("Expected a string literal, got an expression '{}'", stringify!($text_id)))
     };

@@ -2,6 +2,24 @@
 
 ## Unreleased - [0.2.8]
 
+### Enhancements
+
+Allow to pass dynamic values to `tr!` and `move_tr!` macros ids following certain
+patterns keeping translations checking. The following patterns are allowed:
+
+```rust
+use leptos_fluent::{tr, move_tr}
+
+let (foo, bar) = (false, true);
+
+_ = tr!(if foo { "foo" } else { "bar" });
+_ = move_tr!(if foo { "foo" } else if bar { "bar" } else { "baz" });
+```
+
+See the [Advanced usage] section of the book for more information.
+
+[Advanced usage]: https://mondeja.github.io/leptos-fluent/advanced-usage.html
+
 ### Bug fixes
 
 - Forbid to pass an expression as `$i18n` parameter of `tr!` macros, it must

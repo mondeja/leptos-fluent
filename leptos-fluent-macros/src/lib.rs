@@ -1545,7 +1545,6 @@ pub fn leptos_fluent(
     #[cfg(all(not(feature = "actix"), not(feature = "axum"), feature = "ssr"))]
     let initial_language_from_accept_language_header_quote = quote! {};
 
-    // No SSR
     #[cfg(not(feature = "ssr"))]
     {
         _ = initial_language_from_accept_language_header;
@@ -2209,7 +2208,6 @@ pub fn leptos_fluent(
                 </Provider>
             }
         }
-
     };
 
     #[cfg(feature = "debug")]
@@ -2222,17 +2220,17 @@ pub fn leptos_fluent(
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use trybuild;
 
     #[test]
-    fn ui_pass() {
+    fn leptos_fluent_trybuild_pass() {
         let t = trybuild::TestCases::new();
         t.pass("tests/ui/leptos_fluent/pass/*.rs");
     }
 
     #[test]
-    fn ui_fail() {
+    fn leptos_fluent_trybuild_fail() {
         let t = trybuild::TestCases::new();
         t.compile_fail("tests/ui/leptos_fluent/fail/*.rs");
     }

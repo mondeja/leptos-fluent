@@ -1,9 +1,9 @@
-# Introduction
+# leptos-fluent book
 
 **leptos-fluent** is a framework for internationalizing [Leptos] applications
 using [Fluent]. It has all the batteries included to handle language switching,
 translations management, multiple strategies for activating translations at
-initialization, different modes of persistent storage, and more.
+initialization, different modes of persistent storage, and much more.
 
 [![Crates.io](https://img.shields.io/crates/v/leptos-fluent?logo=rust)](https://crates.io/crates/leptos-fluent)
 [![License](https://img.shields.io/crates/l/leptos-fluent?logo=mit)](https://github.com/mondeja/leptos-fluent/blob/master/LICENSE)
@@ -21,11 +21,7 @@ The main goals of **leptos-fluent** are:
 
 ## Help and support
 
-<!-- markdownlint-disable MD013 -->
-
 [![Discord channel][discord-badge]][`#leptos-fluent` channel]
-
-<!-- markdownlint-enable MD013 -->
 
 You can ask for help and support in the [`#leptos-fluent` channel] of
 [Leptos Discord server], [open a discussion] in the GitHub repository or

@@ -15,6 +15,7 @@ pub fn I18n(children: Children) -> impl IntoView {
         children: children(),
         translations: [TRANSLATIONS],
         locales: "./locales",
+        check_translations: "./src/**/*.rs",
     }
 }
 
@@ -32,6 +33,15 @@ pub fn LanguageSelector() -> impl IntoView {
     let i18n = expect_i18n();
 
     view! {
+        <p>
+            {move_tr!(
+                if {i18n.language.get().id.to_string() == *"en"} {
+                    "language-is-english"
+                } else {
+                    "language-is-spanish"
+                }
+            )}
+        </p>
         <p>{move_tr!("select-a-language")}</p>
         <fieldset>
             {move || {

@@ -1,0 +1,132 @@
+error: Expected `else` branch
+  --> tests/ui/leptos_fluent/fail/tr_macros_001.rs:45:9
+   |
+45 |       _ = tr!(if foo {
+   |  _________^
+46 | |         "foo"
+47 | |     } else if bar {
+48 | |         "bar"
+49 | |     });
+   | |______^
+   |
+   = note: this error originates in the macro `tr` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: Expected `else` branch
+  --> tests/ui/leptos_fluent/fail/tr_macros_001.rs:52:9
+   |
+52 |       _ = tr!(
+   |  _________^
+53 | |         i18n,
+54 | |         if foo {
+55 | |             "foo"
+...  |
+58 | |         }
+59 | |     );
+   | |_____^
+   |
+   = note: this error originates in the macro `tr` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: Expected `else` branch
+  --> tests/ui/leptos_fluent/fail/tr_macros_001.rs:60:9
+   |
+60 |       _ = tr!(if foo {
+   |  _________^
+61 | |         "foo"
+62 | |     } else if bar {
+63 | |         "bar"
+...  |
+67 | |         "arg2" => "value2",
+68 | |     });
+   | |______^
+   |
+   = note: this error originates in the macro `tr` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: Expected `else` branch
+  --> tests/ui/leptos_fluent/fail/tr_macros_001.rs:69:9
+   |
+69 |       _ = move_tr!(if foo {
+   |  _________^
+70 | |         "foo"
+71 | |     } else if bar {
+72 | |         "bar"
+...  |
+76 | |         "arg2" => "value2",
+77 | |     });
+   | |______^
+   |
+   = note: this error originates in the macro `move_tr` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: Expected `else` branch
+  --> tests/ui/leptos_fluent/fail/tr_macros_001.rs:78:9
+   |
+78 |       _ = tr!(i18n, if foo {
+   |  _________^
+79 | |         "foo"
+80 | |     } else if bar {
+81 | |         "bar"
+...  |
+85 | |         "arg2" => "value2",
+86 | |     });
+   | |______^
+   |
+   = note: this error originates in the macro `tr` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0308]: mismatched types
+  --> tests/ui/leptos_fluent/fail/tr_macros_001.rs:92:9
+   |
+89 |       _ = tr!(if foo {
+   |  _________-
+90 | |         "foo"
+91 | |     } else if bar {
+92 | |         42
+   | |         ^^ expected `&str`, found integer
+93 | |     } else {
+94 | |         "baz"
+95 | |     });
+   | |______- arguments to this method are incorrect
+   |
+note: method defined here
+  --> $WORKSPACE/leptos-fluent/src/lib.rs
+   |
+   |     pub fn tr(&self, text_id: &str) -> String {
+   |            ^^
+
+error[E0308]: mismatched types
+   --> tests/ui/leptos_fluent/fail/tr_macros_001.rs:97:9
+    |
+96  |       _ = move_tr!(if foo {
+    |  _________-
+97  | |         800u32
+    | |         ^^^^^^ expected `&str`, found `u32`
+98  | |     } else if bar {
+99  | |         42
+100 | |     } else {
+101 | |         "baz"
+102 | |     });
+    | |______- arguments to this method are incorrect
+    |
+note: method defined here
+   --> $WORKSPACE/leptos-fluent/src/lib.rs
+    |
+    |     pub fn tr(&self, text_id: &str) -> String {
+    |            ^^
+
+error[E0308]: mismatched types
+   --> tests/ui/leptos_fluent/fail/tr_macros_001.rs:99:9
+    |
+96  |       _ = move_tr!(if foo {
+    |  _________-
+97  | |         800u32
+98  | |     } else if bar {
+99  | |         42
+    | |         ^^ expected `&str`, found integer
+100 | |     } else {
+101 | |         "baz"
+102 | |     });
+    | |______- arguments to this method are incorrect
+    |
+note: method defined here
+   --> $WORKSPACE/leptos-fluent/src/lib.rs
+    |
+    |     pub fn tr(&self, text_id: &str) -> String {
+    |            ^^

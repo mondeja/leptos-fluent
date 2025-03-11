@@ -11,6 +11,7 @@
 - [Strategies](./strategies.md)
 - [Languages](./languages.md)
 - [Checking translations](./checking-translations.md)
+- [Advanced usage](./basic-usage.md)
 - [FAQs](./faqs.md)
 
 # Reference
