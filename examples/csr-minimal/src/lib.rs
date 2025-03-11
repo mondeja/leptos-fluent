@@ -15,6 +15,7 @@ pub fn I18n(children: Children) -> impl IntoView {
         children: children(),
         translations: [TRANSLATIONS],
         locales: "./locales",
+        check_translations: "./src/**/*.rs",
     }
 }
 
@@ -55,5 +56,14 @@ pub fn LanguageSelector() -> impl IntoView {
                     .collect::<Vec<_>>()
             }}
         </fieldset>
+        <pre>
+            {move_tr!(
+                if {i18n.language.get().id.to_string() == *"en"} {
+                    "language-is-english"
+                } else {
+                    "language-is-spanish"
+                }
+            )}
+        </pre>
     }
 }

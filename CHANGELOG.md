@@ -1,6 +1,24 @@
 # CHANGELOG
 
-## Unreleased - [0.2.8]
+## 2025-03-11 - [0.2.8]
+
+### New features
+
+Allow to pass dynamic values to `tr!` and `move_tr!` macros ids following certain
+patterns keeping translations checking. The following patterns are allowed:
+
+```rust
+use leptos_fluent::{tr, move_tr}
+
+let (foo, bar) = (false, true);
+
+_ = tr!(if foo { "foo" } else { "bar" });
+_ = move_tr!(if foo { "foo" } else if bar { "bar" } else { "baz" });
+```
+
+See the [Advanced usage] section of the book for more information.
+
+[Advanced usage]: https://mondeja.github.io/leptos-fluent/advanced-usage.html
 
 ### Bug fixes
 
@@ -722,7 +740,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
-[0.2.8]: https://github.com/mondeja/leptos-fluent/compare/v0.2.7...master
+[0.2.8]: https://github.com/mondeja/leptos-fluent/compare/v0.2.7...v0.2.8
 [0.2.7]: https://github.com/mondeja/leptos-fluent/compare/v0.2.6...v0.2.7
 [0.2.6]: https://github.com/mondeja/leptos-fluent/compare/v0.2.5...v0.2.6
 [0.2.5]: https://github.com/mondeja/leptos-fluent/compare/v0.2.4...v0.2.5
