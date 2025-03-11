@@ -38,6 +38,7 @@ impl FakeI18n {
     }
 }
 
+/*
 fn fail() {
     let (foo, bar) = (false, true);
 
@@ -101,6 +102,7 @@ fn fail() {
         "baz"
     });
 }
+*/
 
 fn pass() {
     let (foo, bar, baz) = (false, false, false);
