@@ -2,7 +2,7 @@
 
 ## Unreleased - [0.2.8]
 
-### Enhancements
+### New features
 
 Allow to pass dynamic values to `tr!` and `move_tr!` macros ids following certain
 patterns keeping translations checking. The following patterns are allowed:
