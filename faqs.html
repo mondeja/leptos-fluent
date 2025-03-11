@@ -165,16 +165,9 @@
 <li><a href="#how-to-get-languageidentifier">How to get <code>LanguageIdentifier</code>?</a></li>
 <li><a href="#custom-cookie-attributes-are-invalid">Custom cookie attributes are invalid</a></li>
 <li><a href="#how-to-get-the-fallback-language">How to get the fallback language</a></li>
-<li><a href="#dynamic-translations-keys">Dynamic translations keys</a></li>
-<li><a href="#tr-and-move_tr-outside-reactive-graph"><code>tr!</code> and <code>move_tr!</code> outside reactive graph</a>
-<ul>
-<li><a href="#on-events-panics">On events, panics</a></li>
-</ul>
-</li>
 <li><a href="#why-examples-dont-use-for-component">Why examples don't use <code>&lt;For/&gt;</code> component?</a></li>
 <li><a href="#how-to-manage-translations-on-server-actions">How to manage translations on server actions</a></li>
 <li><a href="#how-to-get-values-of-leptos_fluent-macro-at-runtime">How to get values of <code>leptos_fluent!</code> macro at runtime?</a></li>
-<li><a href="#configuration-conditional-checks">Configuration conditional checks</a></li>
 </ul>
 <h3 id="how-to-get-languageidentifier"><a class="header" href="#how-to-get-languageidentifier">How to get <a href="https://docs.rs/unic-langid/latest/unic_langid/struct.LanguageIdentifier.html"><code>LanguageIdentifier</code></a>?</a></h3>
 <pre><code class="language-rust">use fluent_templates::LanguageIdentifier;</code></pre>
@@ -201,94 +194,6 @@ leptos_fluent! {
 <h3 id="how-to-get-the-fallback-language"><a class="header" href="#how-to-get-the-fallback-language">How to get the fallback language</a></h3>
 <p>From fluent-templates <code>v0.10</code> onwards can be obtained from your translations.</p>
 <pre><code class="language-rust">let fallback_language = expect_i18n().translations.get()[0].fallback();</code></pre>
-<h3 id="dynamic-translations-keys"><a class="header" href="#dynamic-translations-keys">Dynamic translations keys</a></h3>
-<p>Dynamic translations keys can't be passed to <code>tr!</code> and <code>move_tr!</code> macros because
-variables will not be checkable at compile time by <code>check_translations</code> option
-of <code>leptos_fluent!</code> macro.</p>
-<pre><code class="language-rust">use leptos_fluent::tr;
-
-// not allowed
-let text_id = "my-translation";
-tr!(text_id);
-/*
-error: argument must be a string literal
-  --&gt; src/lib.rs
-   |
-   |     tr!(text_id);
-   |     ^^^^^^^^^^^^
-*/</code></pre>
-<p>Instead, use <code>i18n.tr</code> and <code>i18n.tr_with_args</code> methods:</p>
-<pre><code class="language-rust">use leptos_fluent::expect_i18n;
-
-let text_id = "my-translation";
-expect_i18n().tr(text_id);</code></pre>
-<pre><code class="language-rust">use std::collections::HashMap;
-use leptos_fluent::expect_i18n;
-
-let text_id = "hello-args";
-let mut args = HashMap::new();
-args.insert("name", "World");
-expect_i18n().tr_with_args(text_id, args);</code></pre>
-<p>Note that <code>i18n.tr</code> and <code>i18n.tr_with_args</code> methods are not reactive,
-so you need to enclose their calls in a reactive context like a function to
-update the view on the fly when the language changes, and that the translations
-checker will not be able to check passed translation data at compile time,
-even if they're defined as literals.</p>
-<h3 id="tr-and-move_tr-outside-reactive-graph"><a class="header" href="#tr-and-move_tr-outside-reactive-graph"><code>tr!</code> and <code>move_tr!</code> outside reactive graph</a></h3>
-<p>Outside the reactive ownership tree, mainly known as the <em>reactive graph</em>,
-we can't obtain the context of <code>I18n</code> using <code>expect_context::&lt;leptos_fluent::I18n&gt;()</code>,
-which is what <code>tr!</code> and <code>move_tr!</code> do internally. Instead, we can pass the context
-as first parameter to the macros:</p>
-<pre><code class="language-rust">let i18n = expect_i18n();
-
-let translated_signal = move_tr!(i18n, "my-translation");</code></pre>
-<p>And some shortcuts cannot be used. Rewrite all the code that calls <code>expect_context</code>
-internally:</p>
-<ul>
-<li>Use <code>i18n.language.set(lang)</code> instead of <code>lang.activate()</code>.</li>
-<li>Use <code>lang == i18n.language.get()</code> instead of <code>lang.is_active()</code>.</li>
-</ul>
-<h4 id="on-events-panics"><a class="header" href="#on-events-panics">On events, panics</a></h4>
-<p>For example, the next code panics when the <code>&lt;div&gt;</code> container is clicked:</p>
-<pre><code class="language-rust">#[component]
-pub fn App() -&gt; impl IntoView {
-    view! {
-        &lt;Show when=|| true&gt;
-            &lt;Child/&gt;
-        &lt;/Show&gt;
-    }
-}
-
-#[component]
-pub fn Child() -&gt; impl IntoView {
-    view! {
-        &lt;div on:click=|_| {
-            tr!("my-translation");
-        }&gt;"CLICK ME!"&lt;/div&gt;
-    }
-}</code></pre>
-<p>With Leptos v0.7, whatever <code>tr!</code> macro used in the <code>on:</code> event will panic,
-but with Leptos v0.6, this outsiding of the ownership tree has been ignored
-from the majority of the cases as unintended behavior.</p>
-<p>To avoid that, pass the i18n context as first parameter to <code>tr!</code> or <code>move_tr!</code>:</p>
-<pre><code class="language-rust">#[component]
-pub fn App() -&gt; impl IntoView {
-    view! {
-        &lt;Show when=|| true&gt;
-            &lt;Child/&gt;
-        &lt;/Show&gt;
-    }
-}
-
-#[component]
-pub fn Child() -&gt; impl IntoView {
-    let i18n = expect_i18n();
-    view! {
-        &lt;div on:click=|_| {
-            tr!(i18n, "my-translation");
-        }&gt;"CLICK ME!"&lt;/div&gt;
-    }
-}</code></pre>
 <h3 id="why-examples-dont-use-for-component"><a class="header" href="#why-examples-dont-use-for-component">Why examples don't use <a href="https://docs.rs/leptos/latest/leptos/control_flow/fn.For.html"><code>&lt;For/&gt;</code></a> component?</a></h3>
 <div id="admonition-bug" class="admonition admonish-bug" role="note" aria-labelledby="admonition-bug-title">
 <div class="admonition-title">
@@ -376,20 +281,12 @@ with the method <code>I18n::meta</code>:</p>
 
 // ... later
 println!("Macro parameters: {:?}", expect_i18n().meta().unwrap());</code></pre>
-<h3 id="configuration-conditional-checks"><a class="header" href="#configuration-conditional-checks"><a href="https://doc.rust-lang.org/rust-by-example/attribute/cfg.html">Configuration conditional checks</a></a></h3>
-<pre><code class="language-rust">leptos_fluent! {
-    // ...
-    #[cfg(debug_assertions)]
-    set_language_to_url_param: true,
-    #[cfg(not(debug_assertions))]
-    set_language_to_url_param: false,
-}</code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="checking-translations.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="basic-usage.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
@@ -403,7 +300,7 @@ println!("Macro parameters: {:?}", expect_i18n().meta().unwrap());</code></pre>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="checking-translations.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="basic-usage.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
