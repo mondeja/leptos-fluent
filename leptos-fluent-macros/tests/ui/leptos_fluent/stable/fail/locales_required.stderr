@@ -1,5 +1,5 @@
 error: Missing `locales` parameter
-  --> tests/ui/leptos_fluent/fail/locales_required.rs:14:5
+  --> tests/ui/leptos_fluent/stable/fail/locales_required.rs:14:5
    |
 14 | /     leptos_fluent! {
 15 | |         children: children(),

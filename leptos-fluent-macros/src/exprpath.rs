@@ -33,12 +33,40 @@ pub(crate) fn evaluate_exprpath(
                     false
                 }
             }
+            // accept only leptos-fluent-macro features
+            cfg_expr::Predicate::Feature(f) => {
+                if *f == "nightly" {
+                    cfg!(feature = "nightly")
+                } else if *f == "ssr" {
+                    cfg!(feature = "ssr")
+                } else if *f == "hydrate" {
+                    cfg!(feature = "hydrate")
+                } else if *f == "system" {
+                    cfg!(feature = "system")
+                } else if *f == "tracing" {
+                    cfg!(feature = "tracing")
+                } else if *f == "actix" {
+                    cfg!(feature = "actix")
+                } else if *f == "axum" {
+                    cfg!(feature = "axum")
+                } else if *f == "json" {
+                    cfg!(feature = "json")
+                } else if *f == "json5" {
+                    cfg!(feature = "json5")
+                } else if *f == "yaml" {
+                    cfg!(feature = "yaml")
+                } else if *f == "debug" {
+                    cfg!(feature = "debug")
+                } else {
+                    supported = false;
+                    false
+                }
+            }
             // proc_macro predicates are impossible to check because works at crate level
             // and we are inside the leptos-fluent-macro expansion
             //cfg_expr::Predicate::ProcMacro => unimplemented!(),
-            // feature, flag and key-value predicates are impossible to check at compile
+            // key-value predicates are impossible to check at compile
             // time because they are not constant expressions
-            //cfg_expr::Predicate::Feature(_) => unimplemented!(),
             //cfg_expr::Predicate::TargetFeature(_) => unimplemented!(),
             //cfg_expr::Predicate::Flag(_) => unimplemented!(),
             //cfg_expr::Predicate::KeyValue { .. } => unimplemented!(),

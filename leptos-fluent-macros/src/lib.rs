@@ -187,12 +187,12 @@ pub fn leptos_fluent(
     // Less code possible on nightly
     #[cfg(feature = "nightly")]
     let get_language_quote = quote! {
-        ::leptos_fluent::i18n()()
+        (::leptos_fluent::i18n())()
     };
 
     #[cfg(all(feature = "nightly", not(feature = "ssr")))]
     let set_language_quote = quote! {
-        ::leptos_fluent::i18n()(l)
+        (::leptos_fluent::i18n())(l)
     };
 
     #[cfg(not(feature = "nightly"))]
@@ -2226,12 +2226,22 @@ mod tests {
     #[test]
     fn leptos_fluent_trybuild_pass() {
         let t = trybuild::TestCases::new();
-        t.pass("tests/ui/leptos_fluent/pass/*.rs");
+
+        #[cfg(feature = "nightly")]
+        t.pass("tests/ui/leptos_fluent/nightly/pass/*.rs");
+
+        // some tests are flaky on nightly
+        #[cfg(not(feature = "nightly"))]
+        {
+            t.pass("tests/ui/leptos_fluent/nightly/pass/*.rs");
+            t.pass("tests/ui/leptos_fluent/stable/pass/*.rs");
+        }
     }
 
+    #[cfg(not(feature = "nightly"))]
     #[test]
     fn leptos_fluent_trybuild_fail() {
         let t = trybuild::TestCases::new();
-        t.compile_fail("tests/ui/leptos_fluent/fail/*.rs");
+        t.compile_fail("tests/ui/leptos_fluent/stable/fail/*.rs");
     }
 }

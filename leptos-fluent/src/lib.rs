@@ -2,6 +2,7 @@
 #![forbid(unsafe_code)]
 #![cfg_attr(feature = "nightly", feature(fn_traits))]
 #![cfg_attr(feature = "nightly", feature(unboxed_closures))]
+#![cfg_attr(feature = "nightly", feature(stmt_expr_attributes))]
 
 //! [![Crates.io](https://img.shields.io/crates/v/leptos-fluent?logo=rust)](https://crates.io/crates/leptos-fluent)
 //! [![License](https://img.shields.io/crates/l/leptos-fluent?logo=mit)](https://github.com/mondeja/leptos-fluent/blob/master/LICENSE)
@@ -794,24 +795,43 @@ pub fn tr_with_args_impl(
 #[macro_export]
 macro_rules! tr {
     ($text_id:literal$(,)?) => {$crate::i18n().tr($text_id)};
-    ($text_id:literal, {$($key:literal => $value:expr),*$(,)?}$(,)?) => {{
-        $crate::i18n().tr_with_args($text_id, &{
-            let mut map = ::std::collections::HashMap::new();
-            $(
-                map.insert($key.into(), $value.into());
-            )*
-            map
-        })
+    (
+        $text_id:literal,
+        $( #[$args_cfgs:meta] )*
+        {$($key:literal => $value:expr),*$(,)?}
+        $(,)?
+    ) => {{
+        $crate::i18n().tr_with_args(
+            $text_id,
+            $( #[$args_cfgs] )*
+            &{
+                let mut map = ::std::collections::HashMap::new();
+                $(
+                    map.insert($key.into(), $value.into());
+                )*
+                map
+            }
+        )
     }};
     ($i18n:ident, $text_id:literal$(,)?) => {$i18n.tr($text_id)};
-    ($i18n:ident, $text_id:literal, {$($key:literal => $value:expr),*$(,)?}$(,)?) => {{
-        $i18n.tr_with_args($text_id, &{
-            let mut map = ::std::collections::HashMap::new();
-            $(
-                map.insert($key.into(), $value.into());
-            )*
-            map
-        })
+    (
+        $i18n:ident,
+        $text_id:literal,
+        $( #[$args_cfgs:meta] )*
+        {$($key:literal => $value:expr),*$(,)?}
+        $(,)?
+    ) => {{
+        $i18n.tr_with_args(
+            $text_id,
+            $( #[$args_cfgs] )*
+            &{
+                let mut map = ::std::collections::HashMap::new();
+                $(
+                    map.insert($key.into(), $value.into());
+                )*
+                map
+            }
+        )
     }};
 
     //
@@ -823,6 +843,7 @@ macro_rules! tr {
     // 001 if_elseif_else
     //   only text_id
     (
+        $( #[$if_cfgs:meta] )*
         if $condition:tt {
             $text_id:literal
         } $(else if $else_if_condition:tt {
@@ -830,6 +851,7 @@ macro_rules! tr {
         })* else { $else_text_id:literal }
         $(,)?
     ) => {
+        $(#[$if_cfgs])*
         if $condition {
             $crate::tr!($text_id)
         } $(else if $else_if_condition {
@@ -841,6 +863,7 @@ macro_rules! tr {
     //   with i18n
     (
         $i18n:ident,
+        $( #[$if_cfgs:meta] )*
         if $condition:tt {
             $text_id:literal
         } $(else if $else_if_condition:tt {
@@ -848,6 +871,7 @@ macro_rules! tr {
         })* else { $else_text_id:literal }
         $(,)?
     ) => {
+        $( #[$if_cfgs] )*
         if $condition {
             $i18n.tr($text_id)
         } $(else if $else_if_condition {
@@ -858,19 +882,27 @@ macro_rules! tr {
     };
     //   with args
     (
+        $( #[$if_cfgs:meta] )*
         if $condition:tt {
             $text_id:literal
         } $(else if $else_if_condition:tt {
             $else_if_text_id:literal
         })* else { $else_text_id:literal },
+        $( #[$args_cfgs:meta] )*
         {$($key:literal => $value:expr),*$(,)?}
         $(,)?
     ) => {
+
         {
-            let mut map = ::std::collections::HashMap::new();
-            $(
-                map.insert($key.into(), $value.into());
-            )*
+            $( #[$args_cfgs] )*
+            let map = {
+                let mut map = ::std::collections::HashMap::new();
+                $(
+                    map.insert($key.into(), $value.into());
+                )*
+                map
+            };
+            $( #[$if_cfgs] )*
             if $condition {
                 $crate::i18n().tr_with_args($text_id, &map)
             } $(else if $else_if_condition {
@@ -883,19 +915,26 @@ macro_rules! tr {
     //   with i18n and args
     (
         $i18n:ident,
+        $( #[$if_cfgs:meta] )*
         if $condition:tt {
             $text_id:literal
         } $(else if $else_if_condition:tt {
             $else_if_text_id:literal
         })* else { $else_text_id:literal },
+        $( #[$args_cfgs:meta] )*
         {$($key:literal => $value:expr),*$(,)?}
         $(,)?
     ) => {
         {
-            let mut map = ::std::collections::HashMap::new();
-            $(
-                map.insert($key.into(), $value.into());
-            )*
+            $( #[$args_cfgs] )*
+            let map = {
+                let mut map = ::std::collections::HashMap::new();
+                $(
+                    map.insert($key.into(), $value.into());
+                )*
+                map
+            };
+            $( #[$if_cfgs] )*
             if $condition {
                 $i18n.tr_with_args($text_id, &map)
             } $(else if $else_if_condition {
@@ -908,6 +947,7 @@ macro_rules! tr {
 
     //   no else
     (
+        $( #[$if_cfgs:meta] )*
         if $condition:tt {
             $text_id:literal
         } $(else if $else_if_condition:tt {
@@ -920,6 +960,7 @@ macro_rules! tr {
     //   no else with i18n
     (
         $i18n:ident,
+        $( #[$if_cfgs:meta] )*
         if $condition:tt {
             $text_id:literal
         } $(else if $else_if_condition:tt {
@@ -931,11 +972,13 @@ macro_rules! tr {
     };
     //   no else with args
     (
+        $( #[$if_cfgs:meta] )*
         if $condition:tt {
             $text_id:literal
         } $(else if $else_if_condition:tt {
             $else_if_text_id:literal
         })*,
+        $( #[$args_cfgs:meta] )*
         {$($key:literal => $value:expr),*$(,)?}
         $(,)?
     ) => {
@@ -944,11 +987,13 @@ macro_rules! tr {
     //   no else with i18n and args
     (
         $i18n:ident,
+        $( #[$if_cfgs:meta] )*
         if $condition:tt {
             $text_id:literal
         } $(else if $else_if_condition:tt {
             $else_if_text_id:literal
         })*,
+        $( #[$args_cfgs:meta] )*
         {$($key:literal => $value:expr),*$(,)?}
         $(,)?
     ) => {
@@ -957,16 +1002,34 @@ macro_rules! tr {
 
     // It seems that the next branches are excluded by the compiler and instead is triggering
     // a compile error with the message 'argument must be a string literal'.
-    ($text_id:expr$(,)?) => {
+    (
+        $( #[$id_cfgs:meta] )*
+        $text_id:expr$(,)?
+    ) => {
         compile_error!(format!("Expected a string literal, got an expression '{}'", stringify!($text_id)))
     };
-    ($text_id:expr, {$($key:literal => $value:expr),*$(,)?}$(,)?) => {
+    (
+        $( #[$id_cfgs:meta] )*
+        $text_id:expr,
+        $( #[$args_cfgs:meta] )*
+        {$($key:literal => $value:expr),*$(,)?}$(,)?
+    ) => {
         compile_error!(format!("Expected a string literal, got an expression '{}'", stringify!($text_id)))
     };
-    ($i18n:expr, $text_id:expr$(,)?) => {
+    (
+        $i18n:expr,
+        $( #[$id_cfgs:meta] )*
+        $text_id:expr$(,)?
+    ) => {
         compile_error!(format!("Expected a string literal, got an expression '{}'", stringify!($text_id)))
     };
-    ($i18n:expr, $text_id:expr, {$($key:literal => $value:expr),*$(,)?}$(,)?) => {
+    (
+        $i18n:expr,
+        $( #[$id_cfgs:meta] )*
+        $text_id:expr,
+        $( #[$args_cfgs:meta] )*
+        {$($key:literal => $value:expr),*$(,)?}$(,)?
+    ) => {
         compile_error!(format!("Expected a string literal, got an expression '{}'", stringify!($text_id)))
     };
 }
@@ -1003,27 +1066,48 @@ macro_rules! move_tr {
     ($text_id:literal$(,)?) => {
         ::leptos::prelude::Signal::derive(move || $crate::tr!($text_id))
     };
-    ($text_id:literal, {$($key:literal => $value:expr),*$(,)?}$(,)?) => {
-        ::leptos::prelude::Signal::derive(move || $crate::tr!($text_id, {
-            $(
-                $key => $value,
-            )*
-        }))
+    (
+        $text_id:literal,
+        $( #[$args_cfgs:meta] )*
+        {$($key:literal => $value:expr),*$(,)?}
+        $(,)?
+    ) => {
+        ::leptos::prelude::Signal::derive(move || $crate::tr!(
+            $text_id,
+            $( #[$args_cfgs] )*
+            {
+                $(
+                    $key => $value,
+                )*
+            }
+        ))
     };
     ($i18n:ident, $text_id:literal$(,)?) => {
         ::leptos::prelude::Signal::derive(move || $crate::tr!($i18n, $text_id))
     };
-    ($i18n:ident, $text_id:literal, {$($key:literal => $value:expr),*$(,)?}$(,)?) => {
-        ::leptos::prelude::Signal::derive(move || $crate::tr!($i18n, $text_id, {
-            $(
-                $key => $value,
-            )*
-        }))
+    (
+        $i18n:ident,
+        $text_id:literal,
+        $( #[$args_cfgs:meta] )*
+        {$($key:literal => $value:expr),*$(,)?}
+        $(,)?
+    ) => {
+        ::leptos::prelude::Signal::derive(move || $crate::tr!(
+            $i18n,
+            $text_id,
+            $( #[$args_cfgs] )*
+            {
+                $(
+                    $key => $value,
+                )*
+            }
+        ))
     };
 
     // 001 if_elseif_else
     //   only text id
     (
+        $( #[$if_cfgs:meta] )*
         if $condition:tt {
             $text_id:literal
         } $(else if $else_if_condition:tt {
@@ -1031,17 +1115,21 @@ macro_rules! move_tr {
         })* else { $else_text_id:literal }
         $(,)?
     ) => {
-        ::leptos::prelude::Signal::derive(move || if $condition {
-            $crate::tr!($text_id)
-        } $(else if $else_if_condition {
-            $crate::tr!($else_if_text_id)
-        })* else {
-            $crate::tr!($else_text_id)
+        ::leptos::prelude::Signal::derive(move || {
+            $( #[$if_cfgs] )*
+            if $condition {
+                $crate::tr!($text_id)
+            } $(else if $else_if_condition {
+                $crate::tr!($else_if_text_id)
+            })* else {
+                $crate::tr!($else_text_id)
+            }
         })
     };
     //   with i18n
     (
         $i18n:ident,
+        $( #[$if_cfgs:meta] )*
         if $condition:tt {
             $text_id:literal
         } $(else if $else_if_condition:tt {
@@ -1049,29 +1137,39 @@ macro_rules! move_tr {
         })* else { $else_text_id:literal }
         $(,)?
     ) => {
-        ::leptos::prelude::Signal::derive(move || if $condition {
-            $i18n.tr($text_id)
-        } $(else if $else_if_condition {
-            $i18n.tr($else_if_text_id)
-        })* else {
-            $i18n.tr($else_text_id)
+        ::leptos::prelude::Signal::derive(move || {
+            $( #[$if_cfgs] )*
+            if $condition {
+                $i18n.tr($text_id)
+            } $(else if $else_if_condition {
+                $i18n.tr($else_if_text_id)
+            })* else {
+                $i18n.tr($else_text_id)
+            }
         })
     };
     //   with args
     (
+        $( #[$if_cfgs:meta] )*
         if $condition:tt {
             $text_id:literal
         } $(else if $else_if_condition:tt {
             $else_if_text_id:literal
         })* else { $else_text_id:literal },
+        $( #[$args_cfgs:meta] )*
         {$($key:literal => $value:expr),*$(,)?}
         $(,)?
     ) => {
         ::leptos::prelude::Signal::derive(move || {
-            let mut map = ::std::collections::HashMap::new();
-            $(
-                map.insert($key.into(), $value.into());
-            )*
+            $( #[$args_cfgs] )*
+            let map = {
+                let mut map = ::std::collections::HashMap::new();
+                $(
+                    map.insert($key.into(), $value.into());
+                )*
+                map
+            };
+            $( #[$if_cfgs] )*
             if $condition {
                 $crate::i18n().tr_with_args($text_id, &map)
             } $(else if $else_if_condition {
@@ -1084,19 +1182,26 @@ macro_rules! move_tr {
     //   with i18n and args
     (
         $i18n:ident,
+        $( #[$if_cfgs:meta] )*
         if $condition:tt {
             $text_id:literal
         } $(else if $else_if_condition:tt {
             $else_if_text_id:literal
         })* else { $else_text_id:literal },
+        $( #[$args_cfgs:meta] )*
         {$($key:literal => $value:expr),*$(,)?}
         $(,)?
     ) => {
         ::leptos::prelude::Signal::derive(move || {
-            let mut map = ::std::collections::HashMap::new();
-            $(
-                map.insert($key.into(), $value.into());
-            )*
+            $( #[$args_cfgs] )*
+            let map = {
+                let mut map = ::std::collections::HashMap::new();
+                $(
+                    map.insert($key.into(), $value.into());
+                )*
+                map
+            };
+            $( #[$if_cfgs] )*
             if $condition {
                 $i18n.tr_with_args($text_id, &map)
             } $(else if $else_if_condition {
@@ -1109,6 +1214,7 @@ macro_rules! move_tr {
 
     //   no else
     (
+        $( #[$if_cfgs:meta] )*
         if $condition:tt {
             $text_id:literal
         } $(else if $else_if_condition:tt {
@@ -1121,6 +1227,7 @@ macro_rules! move_tr {
     //   no else with i18n
     (
         $i18n:ident,
+        $( #[$if_cfgs:meta] )*
         if $condition:tt {
             $text_id:literal
         } $(else if $else_if_condition:tt {
@@ -1132,11 +1239,13 @@ macro_rules! move_tr {
     };
     //   no else with args
     (
+        $( #[$if_cfgs:meta] )*
         if $condition:tt {
             $text_id:literal
         } $(else if $else_if_condition:tt {
             $else_if_text_id:literal
         })*,
+        $( #[$args_cfgs:meta] )*
         {$($key:literal => $value:expr),*$(,)?}
         $(,)?
     ) => {
@@ -1145,11 +1254,13 @@ macro_rules! move_tr {
     //   no else with i18n and args
     (
         $i18n:ident,
+        $( #[$if_cfgs:meta] )*
         if $condition:tt {
             $text_id:literal
         } $(else if $else_if_condition:tt {
             $else_if_text_id:literal
         })*,
+        $( #[$args_cfgs:meta] )*
         {$($key:literal => $value:expr),*$(,)?}
         $(,)?
     ) => {
@@ -1159,13 +1270,24 @@ macro_rules! move_tr {
     ($text_id:expr$(,)?) => {
         compile_error!(format!("Expected a string literal, got an expression '{}'", stringify!($text_id)))
     };
-    ($text_id:expr, {$($key:literal => $value:expr),*$(,)?}$(,)?) => {
+    (
+        $text_id:expr,
+        $( #[$args_cfgs:meta] )*
+        {$($key:literal => $value:expr),*$(,)?}
+        $(,)?
+    ) => {
         compile_error!(format!("Expected a string literal, got an expression '{}'", stringify!($text_id)))
     };
     ($i18n:expr, $text_id:expr$(,)?) => {
         compile_error!(format!("Expected a string literal, got an expression '{}'", stringify!($text_id)))
     };
-    ($i18n:expr, $text_id:expr, {$($key:literal => $value:expr),*$(,)?}$(,)?) => {
+    (
+        $i18n:expr,
+        $text_id:expr,
+        $( #[$args_cfgs:meta] )*
+        {$($key:literal => $value:expr),*$(,)?}
+        $(,)?
+    ) => {
         compile_error!(format!("Expected a string literal, got an expression '{}'", stringify!($text_id)))
     };
 }

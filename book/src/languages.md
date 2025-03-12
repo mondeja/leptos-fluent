@@ -43,7 +43,7 @@ their own language, and not in the current language of the application.
 ## Inferred language names
 
 When not using a languages file, the language names are inferred from
-the language codes used for Fluent file names following the next rules:
+the language codes used for `locales` directories following the next rules:
 
 1. If only a language code is provided, use "Language name"
    (see [full-list][list-1]).

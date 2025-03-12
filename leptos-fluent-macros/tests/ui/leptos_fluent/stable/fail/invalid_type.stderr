@@ -1,5 +1,5 @@
 error[E0308]: mismatched types
-  --> tests/ui/leptos_fluent/fail/invalid_type.rs:15:5
+  --> tests/ui/leptos_fluent/stable/fail/invalid_type.rs:15:5
    |
 15 | /     leptos_fluent! {
 16 | |         children: children(),

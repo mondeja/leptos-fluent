@@ -159,19 +159,28 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runs-on:
-          - ubuntu-latest
-          - macos-latest
-          - windows-latest
+        include:
+          - runs-on: ubuntu-latest
+            toolchain: stable
+          - runs-on: macos-latest
+            toolchain: stable
+          - runs-on: windows-latest
+            toolchain: stable
+          - runs-on: ubuntu-latest
+            toolchain: nightly
+          - runs-on: macos-latest
+            toolchain: nightly
     steps:
       - uses: actions/checkout@v4
-      - name: Get toolchain
-        id: toolchain
-        uses: ./.github/actions/get-toolchain
+      - name: Change toolchain to nightly
+        if: matrix.toolchain == 'nightly'
+        uses: ./.github/actions/set-toolchain
+        with:
+          channel: nightly
       - name: Setup Rust
         uses: hecrj/setup-rust-action@v2
         with:
-          rust-version: ${{ steps.toolchain.outputs.channel }}
+          rust-version: ${{ matrix.toolchain }}
           profile: minimal
           targets: wasm32-unknown-unknown
       - name: Install wasm-pack
@@ -187,7 +196,13 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-unit-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/Cargo.lock') }}
       - name: Run unit tests
-        run: cargo test -p leptos-fluent -p leptos-fluent-macros -p leptos-fluent-tests
+        shell: bash
+        run: |
+          args=""
+          if [ "${{ matrix.toolchain }}" == "nightly" ]; then
+            args="--features=leptos-fluent/nightly,leptos-fluent-macros/nightly,leptos/nightly"
+          fi
+          cargo test $args -p leptos-fluent -p leptos-fluent-macros -p leptos-fluent-tests
 
   end2end-tests:
     needs: check-toolchain-is-stable
