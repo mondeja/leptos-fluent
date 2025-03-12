@@ -192,6 +192,7 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-unit-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/Cargo.lock') }}
       - name: Run unit tests
+        shell: bash
         run: |
           args=""
           if [ "${{ matrix.toolchain }}" == "nightly" ]; then

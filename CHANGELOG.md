@@ -24,7 +24,7 @@
   Requires the nightly feature `stmt_expr_attributes`.
 
 - Allow to pass `#[cfg(feature = ...]` only for `leptos-fluent` features to
-  compile-time parameters of `leptos_fluent!` macro like `check_translations`:
+  compile-time parameters of `leptos_fluent!` macro like `check_translations`.
 
   ```rust
   leptos_fluent! {
