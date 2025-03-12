@@ -723,7 +723,7 @@ as an <a href="https://en.wikipedia.org/wiki/ISO_639">ISO 639 language code</a> 
 their own language, and not in the current language of the application.</p>
 <h2 id="inferred-language-names"><a class="header" href="#inferred-language-names">Inferred language names</a></h2>
 <p>When not using a languages file, the language names are inferred from
-the language codes used for Fluent file names following the next rules:</p>
+the language codes used for <code>locales</code> directories following the next rules:</p>
 <ol>
 <li>If only a language code is provided, use "Language name"
 (see <a href="https://github.com/mondeja/leptos-fluent/blob/427712b05a5d42d765967e1edf01fd4d666e8c25/leptos-fluent-macros/src/languages.rs#L1860">full-list</a>).</li>
@@ -872,7 +872,7 @@ separation of contexts in the codebase.</p>
 <ul>
 <li><a href="advanced-usage.html#dynamic-compile-time-checking">Dynamic compile time checking</a>
 <ul>
-<li><a href="advanced-usage.html#if-else-if-else"><code>if (else-if)? else</code></a></li>
+<li><a href="advanced-usage.html#if-else-if-else"><code>if (else if)? else</code></a></li>
 </ul>
 </li>
 </ul>
@@ -973,7 +973,7 @@ even if they're defined as literals.</p>
 <code>check_translations</code> option of <code>leptos_fluent!</code> macro, you must give some
 information about the keys you're using leptos-fluent.</p>
 <p>Currently, the next patterns are supported:</p>
-<h4 id="if-else-if-else"><a class="header" href="#if-else-if-else"><code>if (else-if)? else</code></a></h4>
+<h4 id="if-else-if-else"><a class="header" href="#if-else-if-else"><code>if (else if)? else</code></a></h4>
 <pre><code class="language-rust">use leptos_fluent::{tr, move_tr};
 
 let (foo, bar) = (false, true);
@@ -981,12 +981,28 @@ let (foo, bar) = (false, true);
 tr!(if foo {"foo"} else {"bar"});
 move_tr!(if foo {"foo"} else if bar {"bar"} else {"baz"});</code></pre>
 <p>Of course, other associated variants are supported:</p>
-<pre><code class="language-rust">tr!(
+<pre><code class="language-rust">// stable
+#[allow(unused_parens)]
+_ = tr!(
     i18n,
-    if {my_signal.get() &amp;&amp; my_function()} {"foo"} else {"bar"},
+    if (my_signal.get() &amp;&amp; my_function()) {"foo"} else {"bar"},
     {
         "arg1" =&gt; "value1",
         "arg2" =&gt; "value2",
+    }
+);
+
+// nightly
+#![feature(stmt_expr_attributes)]
+
+_ = move_tr!(
+    i18n,
+    #[allow(unused_parens)]
+    if (my_signal.get() &amp;&amp; my_function()) {"foo"} else {"bar"},
+    #[allow(unused_braces)]
+    {
+        "arg1" =&gt; "value1",
+        "arg2" =&gt; {"value2"},
     }
 );</code></pre>
 <h2 id="configuration-conditional-checks"><a class="header" href="#configuration-conditional-checks">Configuration conditional checks</a></h2>
