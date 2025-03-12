@@ -160,7 +160,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - runs-om: ubuntu-latest
+          - runs-on: ubuntu-latest
             toolchain: stable
           - runs-on: macos-latest
             toolchain: stable
