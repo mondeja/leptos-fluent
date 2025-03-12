@@ -1,5 +1,39 @@
 # CHANGELOG
 
+## 2025-03-13 - [0.2.9]
+
+### Ehancements
+
+- Allow to pass attributes to `tr!` macro parameters. For example:
+
+  ```rust
+  #![feature(stmt_expr_attributes)]
+
+  _ = tr!(
+      i18n,
+      #[allow(unused_parens)]
+      if (my_signal.get() && my_function()) {"foo"} else {"bar"},
+      #[allow(unused_braces)]
+      {
+          "arg1" => {"value1"},
+          "arg2" => "value2",
+      }
+  );
+  ```
+
+  Requires the nightly feature `stmt_expr_attributes`.
+
+- Allow to pass `#[cfg(feature = ...]` only for `leptos-fluent` features to
+  compile-time parameters of `leptos_fluent!` macro like `check_translations`:
+
+  ```rust
+  leptos_fluent! {
+      // ...
+      #[cfg(feature = "debug")]
+      check_translations: "./src/**/*.rs",
+  }
+  ```
+
 ## 2025-03-11 - [0.2.8]
 
 ### New features
@@ -740,6 +774,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.2.9]: https://github.com/mondeja/leptos-fluent/compare/v0.2.8...v0.2.9
 [0.2.8]: https://github.com/mondeja/leptos-fluent/compare/v0.2.7...v0.2.8
 [0.2.7]: https://github.com/mondeja/leptos-fluent/compare/v0.2.6...v0.2.7
 [0.2.6]: https://github.com/mondeja/leptos-fluent/compare/v0.2.5...v0.2.6

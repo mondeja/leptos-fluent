@@ -1,5 +1,0 @@
-error: The parameter 'check_translations' of leptos_fluent! macro does not accept the compile-time expression path '#[cfg(feature = "ssr")]'.
-  --> tests/ui/leptos_fluent/fail/check_translations_cfg_feature.rs:19:9
-   |
-19 |         #[cfg(feature = "ssr")]
-   |         ^

@@ -39,7 +39,7 @@ fn I18n(children: Children) -> impl IntoView {
 pub fn App() -> impl IntoView {
     view! {
         <I18n>
-            <p>+</p>
+            <p></p>
         </I18n>
     }
 }

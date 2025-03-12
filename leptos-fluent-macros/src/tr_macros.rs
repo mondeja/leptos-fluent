@@ -1,3 +1,4 @@
+use core::fmt::{self, Debug, Formatter};
 use quote::ToTokens;
 use std::path::Path;
 use syn::visit::Visit;
@@ -79,7 +80,6 @@ fn tr_macros_from_file_path(
     }
 }
 
-#[cfg_attr(any(debug_assertions, feature = "tracing"), derive(Debug))]
 pub(crate) struct TranslationMacro {
     pub(crate) name: String,
     pub(crate) message_name: String,
@@ -105,6 +105,18 @@ impl PartialEq for TranslationMacro {
             && self.start == other.start;
         #[cfg(test)]
         return equal;
+    }
+}
+
+impl Debug for TranslationMacro {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "TranslationMacro {{ name: {name:?}, message_name: {message_name:?}, placeables: {placeables:?} }}",
+            name = self.name,
+            message_name = self.message_name,
+            placeables = self.placeables,
+        )
     }
 }
 
@@ -150,12 +162,12 @@ pub(crate) struct TranslationsMacrosVisitor {
 }
 
 macro_rules! parse_if_elseif_else {
-    ($self:ident, $group:ident, $skip_first:literal) => {{
-        let stream: Vec<proc_macro2::TokenTree> = if $skip_first {
-            $group.stream().into_iter().skip(2).collect()
-        } else {
-            $group.stream().into_iter().collect()
-        };
+    ($self:ident, $group:ident, $n_parsed_tokens:ident) => {{
+        let stream = $group
+            .stream()
+            .into_iter()
+            .skip($n_parsed_tokens)
+            .collect::<proc_macro2::TokenStream>();
 
         let mut n_parsed_tokens = 0;
         let mut condition = String::new();
@@ -234,6 +246,9 @@ macro_rules! parse_if_elseif_else {
             } else if let proc_macro2::TokenTree::Punct(punct) = token {
                 if punct.as_char() == ',' {
                     break;
+                } else if punct.as_char() == '#' {
+                    n_parsed_tokens += 1;
+                    break;
                 }
             }
         }
@@ -273,7 +288,7 @@ impl TranslationsMacrosVisitor {
         &mut self,
         tokens: &proc_macro2::TokenStream,
     ) {
-        // println!("tokens: {:#?}\n----------------------\n", tokens);
+        // println!("\ntokens: {:#?}\n----------------------", tokens);
 
         // Inside a macro group like `view!`
         for token in tokens.clone() {
@@ -350,9 +365,13 @@ impl TranslationsMacrosVisitor {
                     if first_ident == "if" {
                         // is conditional message
                         n_parsed_tokens +=
-                            parse_if_elseif_else!(self, group, false);
+                            parse_if_elseif_else!(self, group, n_parsed_tokens);
                     } else {
                         n_parsed_tokens += 2;
+                        if group.stream().into_iter().count() < 3 {
+                            continue;
+                        }
+
                         let group_second_token =
                             group.stream().into_iter().nth(2).unwrap();
                         if let proc_macro2::TokenTree::Ident(second_ident) =
@@ -361,8 +380,11 @@ impl TranslationsMacrosVisitor {
                             // probably is conditional message
                             if second_ident == "if" {
                                 // is conditional message
-                                n_parsed_tokens +=
-                                    parse_if_elseif_else!(self, group, true);
+                                n_parsed_tokens += parse_if_elseif_else!(
+                                    self,
+                                    group,
+                                    n_parsed_tokens
+                                );
                             }
                         } else if let proc_macro2::TokenTree::Literal(literal) =
                             group_second_token
@@ -386,8 +408,54 @@ impl TranslationsMacrosVisitor {
                                     }
                                 }
                             }
+                        } else if let proc_macro2::TokenTree::Punct(punct) =
+                            group_second_token
+                        {
+                            if punct.as_char() == '#' {
+                                // inside an attribute
+                                n_parsed_tokens += 2;
+                            }
+                            let next_token = group
+                                .stream()
+                                .into_iter()
+                                .nth(n_parsed_tokens)
+                                .unwrap();
+                            if let proc_macro2::TokenTree::Ident(ident) =
+                                next_token
+                            {
+                                if ident == "if" {
+                                    // is conditional message
+                                    n_parsed_tokens += parse_if_elseif_else!(
+                                        self,
+                                        group,
+                                        n_parsed_tokens
+                                    );
+                                }
+                            }
                         } else {
                             n_parsed_tokens += 1;
+                        }
+                    }
+                } else if let proc_macro2::TokenTree::Punct(punct) =
+                    group_first_token
+                {
+                    if punct.as_char() == '#' {
+                        // inside an attribute
+                        n_parsed_tokens += 2;
+                    }
+                    let next_token = group
+                        .stream()
+                        .into_iter()
+                        .nth(n_parsed_tokens)
+                        .unwrap();
+                    if let proc_macro2::TokenTree::Ident(ident) = next_token {
+                        if ident == "if" {
+                            // is conditional message
+                            n_parsed_tokens += parse_if_elseif_else!(
+                                self,
+                                group,
+                                n_parsed_tokens
+                            );
                         }
                     }
                 }
@@ -408,68 +476,82 @@ impl TranslationsMacrosVisitor {
                 if n_parsed_tokens <= group_n_tokens {
                     let args_token =
                         group.stream().into_iter().nth(n_parsed_tokens);
-
-                    if let Some(proc_macro2::TokenTree::Group(args_group)) =
+                    if let Some(proc_macro2::TokenTree::Punct(punct)) =
                         args_token
                     {
-                        if args_group.stream().into_iter().count() >= 4 {
-                            let mut after_comma = true;
-                            for token in args_group.stream() {
-                                if let proc_macro2::TokenTree::Literal(
-                                    literal,
-                                ) = token
-                                {
-                                    if !after_comma {
-                                        continue;
-                                    }
+                        if punct.as_char() == ',' {
+                            n_parsed_tokens += 1;
+                        } else if punct.as_char() == '#' {
+                            n_parsed_tokens += 2;
+                        }
+                    }
 
-                                    match value_from_literal(
-                                        &literal,
-                                        self.current_tr_macro.as_ref().unwrap(),
-                                    ) {
-                                        Ok(value) => {
-                                            match self.current_messages.as_mut() {
-                                            Some(CurrentMessages::Single(
-                                                _,
-                                                ref mut placeables,
-                                            )) => {
-                                                placeables.push(value);
-                                            }
-                                            Some(
-                                                CurrentMessages::Conditional(
-                                                    ref mut messages,
-                                                ),
-                                            ) => {
-                                                for (
-                                                    _condition,
-                                                    (_text_id, placeables),
-                                                ) in messages.iter_mut()
-                                                {
-                                                    placeables
-                                                        .push(value.clone());
+                    let group_n_tokens = group.stream().into_iter().count();
+                    if n_parsed_tokens <= group_n_tokens {
+                        let args_token =
+                            group.stream().into_iter().nth(n_parsed_tokens);
+                        if let Some(proc_macro2::TokenTree::Group(args_group)) =
+                            args_token
+                        {
+                            if args_group.stream().into_iter().count() >= 4 {
+                                let mut after_comma = true;
+                                for token in args_group.stream() {
+                                    if let proc_macro2::TokenTree::Literal(
+                                        literal,
+                                    ) = token
+                                    {
+                                        if !after_comma {
+                                            continue;
+                                        }
+
+                                        match value_from_literal(
+                                            &literal,
+                                            self.current_tr_macro.as_ref().unwrap(),
+                                        ) {
+                                            Ok(value) => {
+                                                match self.current_messages.as_mut() {
+                                                Some(CurrentMessages::Single(
+                                                    _,
+                                                    ref mut placeables,
+                                                )) => {
+                                                    placeables.push(value);
                                                 }
+                                                Some(
+                                                    CurrentMessages::Conditional(
+                                                        ref mut messages,
+                                                    ),
+                                                ) => {
+                                                    for (
+                                                        _condition,
+                                                        (_text_id, placeables),
+                                                    ) in messages.iter_mut()
+                                                    {
+                                                        placeables
+                                                            .push(value.clone());
+                                                    }
+                                                }
+                                                None => {}
                                             }
-                                            None => {}
-                                        }
-                                        }
-                                        Err(error) => {
-                                            if !self.errors.contains(&error) {
-                                                self.errors.push(error);
                                             }
+                                            Err(error) => {
+                                                if !self.errors.contains(&error) {
+                                                    self.errors.push(error);
+                                                }
 
-                                            // invalid placeable found, so
-                                            // skip the current macro
-                                            self.current_tr_macro = None;
-                                            self.current_tr_macro_punct = None;
-                                            self.current_messages = None;
-                                            break;
+                                                // invalid placeable found, so
+                                                // skip the current macro
+                                                self.current_tr_macro = None;
+                                                self.current_tr_macro_punct = None;
+                                                self.current_messages = None;
+                                                break;
+                                            }
                                         }
+                                    } else if let proc_macro2::TokenTree::Punct(
+                                        punct,
+                                    ) = token
+                                    {
+                                        after_comma = punct.as_char() == ',';
                                     }
-                                } else if let proc_macro2::TokenTree::Punct(
-                                    punct,
-                                ) = token
-                                {
-                                    after_comma = punct.as_char() == ',';
                                 }
                             }
                         }
@@ -684,6 +766,8 @@ mod tests {
                 name: $name.to_string(),
                 message_name: $message_name.to_string(),
                 placeables: $placeables,
+                #[cfg(feature = "nightly")]
+                start: proc_macro2::LineColumn { line: 0, column: 0 },
             }
         };
     }
@@ -1402,6 +1486,158 @@ mod tests {
                 tr_macro!("move_tr", "foo21", Vec::new()),
                 tr_macro!("move_tr", "bar21", Vec::new()),
             ]
+        );
+        assert!(visitor.errors.is_empty());
+    }
+
+    #[cfg(feature = "nightly")]
+    #[test]
+    fn tr_macros_attributes() {
+        let content = quote! {
+            use leptos_fluent::{tr, move_tr, expect_i18n};
+
+            #[component]
+            fn App() -> impl IntoView {
+                let i18n = expect_i18n();
+                let (foo, bar) = (true, false);
+
+                _ = tr!(
+                    #[allow(unused_braces)]
+                    if foo {"foo1"} else {"bar1"}
+                );
+
+                _ = move_tr!(
+                    #[allow(unused_braces)]
+                    if foo {"foo2"} else {"bar2"}
+                );
+
+                _ = tr!(
+                    #[allow(unused_braces, unused_parens)]
+                    if foo {
+                        "foo3"
+                    } else {
+                        "bar3"
+                    },
+                    { "foo4" => "value1", "bar4" => "value2" }
+                );
+                _ = move_tr!(
+                    if foo {"foo5"} else {"bar5"}
+                    #[allow(unused_braces, unused_parens)]
+                    { "foo6" => {"value1"}, "bar6" => ("value2") }
+                );
+                _ = tr!(
+                    "foo7",
+                    #[allow(unused_braces, unused_parens)]
+                    { "foo8" => {"value1"}, "bar8" => ("value2") }
+                );
+
+                _ = move_tr!(
+                    i18n,
+                    "foo9",
+                    #[allow(unused_braces, unused_parens)]
+                    { "foo10" => {"value1"}, "bar10" => ("value2") }
+                );
+
+                _ = tr!(
+                    i18n,
+                    #[allow(unused_braces, unused_parens)]
+                    if foo {"foo11"} else {"bar11"}
+                    #[allow(unused_braces, unused_parens)]
+                    { "foo12" => {"value1"}, "bar12" => ("value2") }
+                );
+
+                _ = move_tr!(
+                    i18n,
+                    #[allow(unused_braces, unused_parens)]
+                    if foo {"foo13"} else if bar {"bar13"} else {"baz13"}
+                    #[allow(unused_braces, unused_parens)]
+                    { "foo14" => {"value1"}, "bar14" => ("value2") }
+                );
+
+                // is not valid to use attrs on literal and the macros
+                // parser can't parse the next syntax:
+                _ = tr!(
+                    #[allow(unused_braces, unused_parens)]
+                    "foo15",
+                    #[allow(unused_braces, unused_parens)]
+                    { "foo16" => {"value1"}, "bar16" => ("value2") }
+                );
+
+                view! {
+                    <p></p>
+                }
+            }
+        };
+        let visitor = visitor_from_file_content(&content.to_string());
+
+        assert_eq!(
+            visitor.tr_macros,
+            vec![
+                tr_macro!("tr", "foo1", Vec::new()),
+                tr_macro!("tr", "bar1", Vec::new()),
+                tr_macro!("move_tr", "foo2", Vec::new()),
+                tr_macro!("move_tr", "bar2", Vec::new()),
+                tr_macro!(
+                    "tr",
+                    "foo3",
+                    vec!["foo4".to_string(), "bar4".to_string()]
+                ),
+                tr_macro!(
+                    "tr",
+                    "bar3",
+                    vec!["foo4".to_string(), "bar4".to_string()]
+                ),
+                tr_macro!(
+                    "move_tr",
+                    "foo5",
+                    vec!["foo6".to_string(), "bar6".to_string()]
+                ),
+                tr_macro!(
+                    "move_tr",
+                    "bar5",
+                    vec!["foo6".to_string(), "bar6".to_string()]
+                ),
+                tr_macro!(
+                    "tr",
+                    "foo7",
+                    vec!["foo8".to_string(), "bar8".to_string()]
+                ),
+                tr_macro!(
+                    "move_tr",
+                    "foo9",
+                    vec!["foo10".to_string(), "bar10".to_string()]
+                ),
+                tr_macro!(
+                    "tr",
+                    "foo11",
+                    vec!["foo12".to_string(), "bar12".to_string()]
+                ),
+                tr_macro!(
+                    "tr",
+                    "bar11",
+                    vec!["foo12".to_string(), "bar12".to_string()]
+                ),
+                tr_macro!(
+                    "move_tr",
+                    "foo13",
+                    vec!["foo14".to_string(), "bar14".to_string()]
+                ),
+                tr_macro!(
+                    "move_tr",
+                    "bar13",
+                    vec!["foo14".to_string(), "bar14".to_string()]
+                ),
+                tr_macro!(
+                    "move_tr",
+                    "baz13",
+                    vec!["foo14".to_string(), "bar14".to_string()]
+                ),
+                /* This is not catched: tr_macro!(
+                    "tr",
+                    "foo15",
+                    vec!["foo16".to_string(), "bar16".to_string()]
+                ),*/
+            ],
         );
         assert!(visitor.errors.is_empty());
     }

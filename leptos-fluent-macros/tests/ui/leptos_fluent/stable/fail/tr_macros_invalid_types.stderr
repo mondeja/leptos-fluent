@@ -1,5 +1,5 @@
 error: argument must be a string literal
- --> tests/ui/leptos_fluent/fail/tr_macros_invalid_types.rs:8:9
+ --> tests/ui/leptos_fluent/stable/fail/tr_macros_invalid_types.rs:8:9
   |
 8 |     _ = move_tr!(MyStruct(1));
   |         ^^^^^^^^^^^^^^^^^^^^^
@@ -7,7 +7,7 @@ error: argument must be a string literal
   = note: this error originates in the macro `format` which comes from the expansion of the macro `move_tr` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: argument must be a string literal
-  --> tests/ui/leptos_fluent/fail/tr_macros_invalid_types.rs:10:9
+  --> tests/ui/leptos_fluent/stable/fail/tr_macros_invalid_types.rs:10:9
    |
 10 |     _ = tr!(());
    |         ^^^^^^^
@@ -15,7 +15,7 @@ error: argument must be a string literal
    = note: this error originates in the macro `format` which comes from the expansion of the macro `tr` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0308]: mismatched types
- --> tests/ui/leptos_fluent/fail/tr_macros_invalid_types.rs:6:13
+ --> tests/ui/leptos_fluent/stable/fail/tr_macros_invalid_types.rs:6:13
   |
 6 |     _ = tr!(1);
   |         ----^-

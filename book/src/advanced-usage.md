@@ -126,7 +126,7 @@ information about the keys you're using leptos-fluent.
 
 Currently, the next patterns are supported:
 
-#### `if (else-if)? else`
+#### `if (else if)? else`
 
 ```rust
 use leptos_fluent::{tr, move_tr};
@@ -140,12 +140,28 @@ move_tr!(if foo {"foo"} else if bar {"bar"} else {"baz"});
 Of course, other associated variants are supported:
 
 ```rust
-tr!(
+// stable
+#[allow(unused_parens)]
+_ = tr!(
     i18n,
-    if {my_signal.get() && my_function()} {"foo"} else {"bar"},
+    if (my_signal.get() && my_function()) {"foo"} else {"bar"},
     {
         "arg1" => "value1",
         "arg2" => "value2",
+    }
+);
+
+// nightly
+#![feature(stmt_expr_attributes)]
+
+_ = move_tr!(
+    i18n,
+    #[allow(unused_parens)]
+    if (my_signal.get() && my_function()) {"foo"} else {"bar"},
+    #[allow(unused_braces)]
+    {
+        "arg1" => "value1",
+        "arg2" => {"value2"},
     }
 );
 ```

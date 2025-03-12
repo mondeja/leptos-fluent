@@ -1,6 +1,6 @@
 error: Expected an expression with 'key: value', '#[...] key: value', 'key,' or `#[...] key,` format. Found: (empty).
        If you're using double curly braces syntax (`leptos_fluent! {{ ... }}`) make sure to use single curly braces syntax (`leptos_fluent! { ... }`).
-  --> tests/ui/leptos_fluent/fail/double_curly_braces.rs:14:5
+  --> tests/ui/leptos_fluent/stable/fail/double_curly_braces.rs:14:5
    |
 14 | /     leptos_fluent! {{
 15 | |         children: children(),
