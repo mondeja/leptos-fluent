@@ -2,8 +2,8 @@
 
 ## Unreleased - [0.2.10]
 
-- Allow to be installed on future Leptos v0.8 as is compatible
-  with leptos-fluent v0.2.\* releases.
+- Allow to be installed with future Leptos v0.8 as is compatible
+  with leptos-fluent v0.2 releases.
 
 ## 2025-03-13 - [0.2.9]
 
