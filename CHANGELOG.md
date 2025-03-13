@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## Unreleased - [0.2.10]
+
+- Allow to be installed with future Leptos v0.8 as is compatible
+  with leptos-fluent v0.2 releases.
+
 ## 2025-03-13 - [0.2.9]
 
 ### Ehancements
@@ -774,6 +779,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.2.10]: https://github.com/mondeja/leptos-fluent/compare/v0.2.9...master
 [0.2.9]: https://github.com/mondeja/leptos-fluent/compare/v0.2.8...v0.2.9
 [0.2.8]: https://github.com/mondeja/leptos-fluent/compare/v0.2.7...v0.2.8
 [0.2.7]: https://github.com/mondeja/leptos-fluent/compare/v0.2.6...v0.2.7
