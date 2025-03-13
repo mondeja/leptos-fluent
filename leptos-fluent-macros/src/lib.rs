@@ -32,7 +32,7 @@ pub(crate) use fluent_resources::{
 };
 use languages::build_languages_quote;
 pub(crate) use languages::ParsedLanguage;
-use loader::{I18nLoader, Identifier, LitBoolExpr, TokenStreamStr};
+use loader::{I18nLoader, LitBoolExprOrIdent, TokenStreamStr};
 use quote::{quote, ToTokens};
 
 #[cfg(feature = "debug")]
@@ -471,7 +471,7 @@ pub fn leptos_fluent(
         initial_language_from_server_function
             .iter()
             .map(|param| {
-                let ident = &param.ident;
+                let ident = &param.expr;
                 let effect_quote = quote! {
                     ::leptos::task::spawn(async move {
                         let lang_result = #ident().await;
@@ -487,7 +487,7 @@ pub fn leptos_fluent(
                     });
                 };
 
-                match param.ident {
+                match param.expr {
                     Some(_) => {
                         let quote = quote! {
                             if lang.is_none() {
@@ -507,7 +507,7 @@ pub fn leptos_fluent(
 
     let sync_language_with_server_function_quote: proc_macro2::TokenStream =
         set_language_to_server_function.iter().map(|param| {
-            let ident = &param.ident;
+            let ident = &param.expr;
             let effect_quote = quote! {
                 ::leptos::prelude::Effect::new(move |_| {
                     ::leptos::task::spawn(async {
@@ -516,7 +516,7 @@ pub fn leptos_fluent(
                 });
             };
 
-            match param.ident {
+            match param.expr {
                 Some(_) => match param.exprpath {
                     Some(ref path) => quote! { #path{#effect_quote} },
                     None => effect_quote,
@@ -527,7 +527,7 @@ pub fn leptos_fluent(
 
     let initial_language_from_url_path_to_server_function_quote: proc_macro2::TokenStream =
         initial_language_from_url_path_to_server_function.iter().map(|param| {
-            match param.ident {
+            match param.expr {
                 Some(ref ident) => {
                     let quote = quote! {
                         ::leptos::task::spawn(async move {
@@ -747,7 +747,7 @@ pub fn leptos_fluent(
             false => quote! {{
                 use ::leptos_fluent::leptos_meta::{provide_meta_context, Html};
                 provide_meta_context();
-                view! {
+                ::leptos::prelude::view! {
                     <Html #attr_lang_quote #attr_dir_quote/>
                 }
             }},
@@ -924,7 +924,7 @@ pub fn leptos_fluent(
         let set_to_server_function_quote: proc_macro2::TokenStream =
             initial_language_from_url_param_to_server_function
                 .iter()
-                .map(|param| match param.ident {
+                .map(|param| match param.expr {
                     Some(ref ident) => {
                         let quote = quote! {
                             ::leptos::task::spawn(async move {
@@ -1076,7 +1076,7 @@ pub fn leptos_fluent(
 
         let initial_language_from_localstorage_to_server_function_quote: proc_macro2::TokenStream =
             initial_language_from_localstorage_to_server_function.iter().map(|param| {
-                match param.ident {
+                match param.expr {
                     Some(ref ident) => {
                         let quote = quote! {
                             ::leptos::task::spawn(async move {
@@ -1178,7 +1178,7 @@ pub fn leptos_fluent(
 
         let initial_language_from_sessionstorage_to_server_function_quote: proc_macro2::TokenStream =
             initial_language_from_sessionstorage_to_server_function.iter().map(|param| {
-                match param.ident {
+                match param.expr {
                     Some(ref ident) => {
                         let quote = quote! {
                             ::leptos::task::spawn(async move {
@@ -1337,7 +1337,7 @@ pub fn leptos_fluent(
 
         let initial_language_from_navigator_to_server_function_quote: proc_macro2::TokenStream =
             initial_language_from_navigator_to_server_function.iter().map(|param| {
-                match param.ident {
+                match param.expr {
                     Some(ref ident) => {
                         let quote = quote! {
                             ::leptos::task::spawn(async move {
@@ -1553,7 +1553,7 @@ pub fn leptos_fluent(
     // Cookie
     let initial_language_from_cookie_to_server_function_quote: proc_macro2::TokenStream =
         initial_language_from_cookie_to_server_function.iter().map(|param| {
-            match param.ident {
+            match param.expr {
                 Some(ref ident) => {
                     let quote = quote! {
                         ::leptos::task::spawn(async move {
@@ -1812,37 +1812,6 @@ pub fn leptos_fluent(
     };
 
     let leptos_fluent_provide_meta_context_quote: proc_macro2::TokenStream = {
-        let bool_param =
-            |expr: &Option<TokenStreamStr>| -> proc_macro2::TokenStream {
-                match expr {
-                    Some(ref expr) => expr.into_token_stream(),
-                    None => quote! { false },
-                }
-            };
-
-        let lit_bool_exprs =
-            |params: &[LitBoolExpr]| -> proc_macro2::TokenStream {
-                if params.is_empty() {
-                    return quote! { false };
-                }
-
-                params
-                    .iter()
-                    .map(|param| {
-                        let quote = bool_param(&param.expr);
-                        match quote.is_empty() {
-                            true => quote!(),
-                            false => match param.exprpath {
-                                Some(ref path) => {
-                                    quote!(#path{#quote})
-                                }
-                                None => quote,
-                            },
-                        }
-                    })
-                    .collect()
-            };
-
         let maybe_litstr_param =
             |lit: &Option<String>| -> proc_macro2::TokenStream {
                 match lit {
@@ -1872,8 +1841,8 @@ pub fn leptos_fluent(
             }
         };
 
-        let identifiers_as_bools =
-            |params: &[Identifier]| -> proc_macro2::TokenStream {
+        let lit_bool_expr_or_idents =
+            |params: &[LitBoolExprOrIdent]| -> proc_macro2::TokenStream {
                 if params.is_empty() {
                     return quote! { false };
                 }
@@ -1881,8 +1850,15 @@ pub fn leptos_fluent(
                 params
                     .iter()
                     .map(|param| {
-                        let quote = match param.ident {
-                            Some(_) => quote! { true },
+                        let quote = match &param.expr {
+                            Some(ident) => match ident
+                                .to_token_stream()
+                                .to_string()
+                                .as_str()
+                            {
+                                "false" => quote! { false },
+                                _ => quote! { true },
+                            },
                             None => quote! { false },
                         };
 
@@ -1905,91 +1881,91 @@ pub fn leptos_fluent(
                     let fill_translations_quote =
                         maybe_some_litstr_param(&fill_translations);
                     let sync_html_tag_lang_quote =
-                        lit_bool_exprs(&sync_html_tag_lang);
+                        lit_bool_expr_or_idents(&sync_html_tag_lang);
                     let sync_html_tag_dir_quote =
-                        lit_bool_exprs(&sync_html_tag_dir);
+                        lit_bool_expr_or_idents(&sync_html_tag_dir);
                     let url_param_quote =
                         litstr_or_default(&url_param.lit, &url_param.expr, "lang");
                     let initial_language_from_url_param_quote =
-                        lit_bool_exprs(&initial_language_from_url_param);
+                        lit_bool_expr_or_idents(&initial_language_from_url_param);
                     let initial_language_from_url_param_to_localstorage =
-                        lit_bool_exprs(
+                        lit_bool_expr_or_idents(
                             &initial_language_from_url_param_to_localstorage,
                         );
                     let initial_language_from_url_param_to_sessionstorage =
-                        lit_bool_exprs(
+                        lit_bool_expr_or_idents(
                             &initial_language_from_url_param_to_sessionstorage,
                         );
                     let initial_language_from_url_param_to_cookie_quote =
-                        lit_bool_exprs(&initial_language_from_url_param_to_cookie);
+                        lit_bool_expr_or_idents(&initial_language_from_url_param_to_cookie);
                     let initial_language_from_url_param_to_server_function_quote =
-                        identifiers_as_bools(
+                        lit_bool_expr_or_idents(
                             &initial_language_from_url_param_to_server_function,
                         );
                     let set_language_to_url_param_quote =
-                        lit_bool_exprs(&set_language_to_url_param);
+                        lit_bool_expr_or_idents(&set_language_to_url_param);
                     let localstorage_key_quote = litstr_or_default(
                         &localstorage_key.lit,
                         &localstorage_key.expr,
                         "lang",
                     );
                     let initial_language_from_localstorage_quote =
-                        lit_bool_exprs(&initial_language_from_localstorage);
+                        lit_bool_expr_or_idents(&initial_language_from_localstorage);
                     let initial_language_from_localstorage_to_cookie_quote =
-                        lit_bool_exprs(
+                        lit_bool_expr_or_idents(
                             &initial_language_from_localstorage_to_cookie,
                         );
                     let initial_language_from_localstorage_to_sessionstorage_quote =
-                        lit_bool_exprs(
+                        lit_bool_expr_or_idents(
                             &initial_language_from_localstorage_to_sessionstorage,
                         );
                     let initial_language_from_localstorage_to_server_function_quote =
-                        identifiers_as_bools(
+                        lit_bool_expr_or_idents(
                             &initial_language_from_localstorage_to_server_function,
                         );
                     let set_language_to_localstorage_quote =
-                        lit_bool_exprs(&set_language_to_localstorage);
+                        lit_bool_expr_or_idents(&set_language_to_localstorage);
                     let sessionstorage_key_quote = litstr_or_default(
                         &sessionstorage_key.lit,
                         &sessionstorage_key.expr,
                         "lang",
                     );
                     let initial_language_from_sessionstorage_quote =
-                        lit_bool_exprs(&initial_language_from_sessionstorage);
+                        lit_bool_expr_or_idents(&initial_language_from_sessionstorage);
                     let initial_language_from_sessionstorage_to_cookie_quote =
-                        lit_bool_exprs(
+                        lit_bool_expr_or_idents(
                             &initial_language_from_sessionstorage_to_cookie,
                         );
                     let initial_language_from_sessionstorage_to_localstorage_quote =
-                        lit_bool_exprs(
+                        lit_bool_expr_or_idents(
                             &initial_language_from_sessionstorage_to_localstorage,
                         );
                     let initial_language_from_sessionstorage_to_server_function_quote =
-                        identifiers_as_bools(
+                        lit_bool_expr_or_idents(
                             &initial_language_from_sessionstorage_to_server_function,
                         );
                     let set_language_to_sessionstorage_quote =
-                        lit_bool_exprs(&set_language_to_sessionstorage);
+                        lit_bool_expr_or_idents(&set_language_to_sessionstorage);
                     let initial_language_from_navigator_quote =
-                        lit_bool_exprs(&initial_language_from_navigator);
+                        lit_bool_expr_or_idents(&initial_language_from_navigator);
                     let initial_language_from_navigator_to_localstorage_quote =
-                        lit_bool_exprs(
+                        lit_bool_expr_or_idents(
                             &initial_language_from_navigator_to_localstorage,
                         );
                     let initial_language_from_navigator_to_sessionstorage_quote =
-                        lit_bool_exprs(
+                        lit_bool_expr_or_idents(
                             &initial_language_from_navigator_to_sessionstorage,
                         );
                     let initial_language_from_navigator_to_cookie_quote =
-                        lit_bool_exprs(&initial_language_from_navigator_to_cookie);
+                        lit_bool_expr_or_idents(&initial_language_from_navigator_to_cookie);
                     let initial_language_from_navigator_to_server_function_quote =
-                        identifiers_as_bools(
+                        lit_bool_expr_or_idents(
                             &initial_language_from_navigator_to_server_function,
                         );
                     let set_language_from_navigator_quote =
-                        lit_bool_exprs(&set_language_from_navigator);
+                        lit_bool_expr_or_idents(&set_language_from_navigator);
                     let initial_language_from_accept_language_header_quote =
-                        lit_bool_exprs(
+                        lit_bool_expr_or_idents(
                             &initial_language_from_accept_language_header,
                         );
                     let cookie_name_quote = litstr_or_default(
@@ -2000,50 +1976,50 @@ pub fn leptos_fluent(
                     let cookie_attrs_quote =
                         litstr_or_default(&cookie_attrs.lit, &cookie_attrs.expr, "");
                     let initial_language_from_cookie_quote =
-                        lit_bool_exprs(&initial_language_from_cookie);
+                        lit_bool_expr_or_idents(&initial_language_from_cookie);
                     let initial_language_from_cookie_to_localstorage_quote =
-                        lit_bool_exprs(
+                        lit_bool_expr_or_idents(
                             &initial_language_from_cookie_to_localstorage,
                         );
                     let initial_language_from_cookie_to_sessionstorage_quote =
-                        lit_bool_exprs(
+                        lit_bool_expr_or_idents(
                             &initial_language_from_cookie_to_sessionstorage,
                         );
                     let initial_language_from_cookie_to_server_function_quote =
-                        identifiers_as_bools(
+                        lit_bool_expr_or_idents(
                             &initial_language_from_cookie_to_server_function,
                         );
                     let set_language_to_cookie_quote =
-                        lit_bool_exprs(&set_language_to_cookie);
+                        lit_bool_expr_or_idents(&set_language_to_cookie);
                     let initial_language_from_server_function_quote =
-                        identifiers_as_bools(
+                        lit_bool_expr_or_idents(
                             &initial_language_from_server_function,
                         );
                     let initial_language_from_server_function_to_cookie_quote =
-                        lit_bool_exprs(
+                        lit_bool_expr_or_idents(
                             &initial_language_from_server_function_to_cookie,
                         );
                     let initial_language_from_server_function_to_localstorage_quote =
-                        lit_bool_exprs(
+                        lit_bool_expr_or_idents(
                             &initial_language_from_server_function_to_localstorage,
                         );
                     let set_language_to_server_function_quote =
-                        identifiers_as_bools(&set_language_to_server_function);
+                        lit_bool_expr_or_idents(&set_language_to_server_function);
                     let url_path_quote = if url_path.is_some() {quote!{true}} else {quote!{false}};
                     let initial_language_from_url_path_quote =
-                        lit_bool_exprs(&initial_language_from_url_path);
+                        lit_bool_expr_or_idents(&initial_language_from_url_path);
                     let initial_language_from_url_path_to_cookie_quote =
-                        lit_bool_exprs(&initial_language_from_url_path_to_cookie);
+                        lit_bool_expr_or_idents(&initial_language_from_url_path_to_cookie);
                     let initial_language_from_url_path_to_localstorage_quote =
-                        lit_bool_exprs(
+                        lit_bool_expr_or_idents(
                             &initial_language_from_url_path_to_localstorage,
                         );
                     let initial_language_from_url_path_to_sessionstorage_quote =
-                        lit_bool_exprs(
+                        lit_bool_expr_or_idents(
                             &initial_language_from_url_path_to_sessionstorage,
                         );
                     let initial_language_from_url_path_to_server_function_quote =
-                        identifiers_as_bools(
+                        lit_bool_expr_or_idents(
                             &initial_language_from_url_path_to_server_function,
                         );
 
@@ -2054,15 +2030,15 @@ pub fn leptos_fluent(
                         #[cfg(feature = "system")]
                         {
                             let initial_language_from_system_quote =
-                                lit_bool_exprs(&initial_language_from_system);
+                                lit_bool_expr_or_idents(&initial_language_from_system);
                             let initial_language_from_data_file_quote =
-                                lit_bool_exprs(&initial_language_from_data_file);
+                                lit_bool_expr_or_idents(&initial_language_from_data_file);
                             let initial_language_from_system_to_data_file_quote =
-                                lit_bool_exprs(
+                                lit_bool_expr_or_idents(
                                     &initial_language_from_system_to_data_file,
                                 );
                             let set_language_to_data_file_quote =
-                                lit_bool_exprs(&set_language_to_data_file);
+                                lit_bool_expr_or_idents(&set_language_to_data_file);
                             let data_file_key_quote = litstr_or_default(
                                 &data_file_key.lit,
                                 &data_file_key.expr,
@@ -2201,7 +2177,7 @@ pub fn leptos_fluent(
         };
         {
             use ::leptos::context::Provider;
-            ::leptos::view! {
+            ::leptos::prelude::view! {
                 <Provider value={i18n}>
                     #sync_html_tag_quote
                     {#children_quote}
