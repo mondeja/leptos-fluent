@@ -1736,8 +1736,8 @@ pub fn leptos_fluent(
                     .get(::axum::http::header::COOKIE)
                     .and_then(|header| header.to_str().ok())
                     .and_then(|cookie| {
-                        let cookie = cookie.split(';').find(|c| c.starts_with(#cookie_name_quote));
-                        cookie.map(|c| c.split('=').nth(1).unwrap().to_string())
+                        let cookie = cookie.split(';').find(|c| c.trim_start().starts_with(#cookie_name_quote));
+                        cookie.map(|c| c.split('=').nth(1).unwrap().trim_start().to_string())
                     });
 
                 if let Some(cookie) = maybe_cookie {
