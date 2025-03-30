@@ -1,0 +1,377 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Strategies - leptos-fluent</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Internationalization framework for Leptos using Fluent.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="./mdbook-admonish.css">
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">leptos-fluent</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/mondeja/leptos-fluent/tree/master/book" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/mondeja/leptos-fluent/edit/master/book/src/strategies.md" title="Suggest an edit" aria-label="Suggest an edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <!-- markdownlint-disable MD013 MD033 MD055 MD056 -->
+<h1 id="strategies"><a class="header" href="#strategies">Strategies</a></h1>
+<p>All the features of the framework are optional, following a declarative
+"opt-in" configuration method.</p>
+<ul>
+<li><a href="#loading-the-initial-language-of-the-user">Loading the initial language of the user</a></li>
+<li><a href="#csr---updating-the-language-on-the-client">CSR  | Updating the language on the client</a>
+<ul>
+<li><a href="#system--desktop-applications">system | Desktop applications</a></li>
+</ul>
+</li>
+<li><a href="#csr---updating-the-language-from-initialization-on-the-client">CSR  | Updating the language from initialization on the client</a>
+<ul>
+<li><a href="#csr--ssr">CSR + SSR</a></li>
+<li><a href="#system--desktop-applications-1">system | Desktop applications</a></li>
+</ul>
+</li>
+<li><a href="#csr---client-side-effects">CSR  | Client side effects</a></li>
+<li><a href="#csr--ssr---names">CSR + SSR  | Names</a>
+<ul>
+<li><a href="#system--desktop-applications-2">system | Desktop applications</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="loading-the-initial-language-of-the-user"><a class="header" href="#loading-the-initial-language-of-the-user">Loading the initial language of the user</a></h2>
+<p>The initial language of the user can be set in different ways:</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: center">CSR</th><th style="text-align: center">SSR</th><th style="text-align: center">Desktop</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a></th></tr></thead><tbody>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/URLSearchParams">URL parameter</a></td><td style="text-align: center">✅</td><td style="text-align: center">✅</td><td style="text-align: center">❌</td><td style="text-align: left"><code>initial_language_from_url_param</code></td></tr>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/URL/pathname">URL path</a></td><td style="text-align: center">✅</td><td style="text-align: center">✅</td><td style="text-align: center">❌</td><td style="text-align: left"><code>initial_language_from_url_path</code></td></tr>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/Document/cookie">Cookie</a></td><td style="text-align: center">✅</td><td style="text-align: center">✅</td><td style="text-align: center">❌</td><td style="text-align: left"><code>initial_language_from_cookie</code></td></tr>
+<tr><td style="text-align: left"><a href="https://book.leptos.dev/server/25_server_functions.html">Server function</a></td><td style="text-align: center">✅</td><td style="text-align: center">✅</td><td style="text-align: center">❌</td><td style="text-align: left"><code>initial_language_from_server_function</code></td></tr>
+<tr><td style="text-align: left">Browser <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a></td><td style="text-align: center">✅</td><td style="text-align: center">❌</td><td style="text-align: center">❌</td><td style="text-align: left"><code>initial_language_from_localstorage</code></td></tr>
+<tr><td style="text-align: left">Browser <a href="https://developer.mozilla.org/docs/Web/API/Window/sessionStorage">session storage</a></td><td style="text-align: center">✅</td><td style="text-align: center">❌</td><td style="text-align: center">❌</td><td style="text-align: left"><code>initial_language_from_sessionstorage</code></td></tr>
+<tr><td style="text-align: left">Browser <a href="https://developer.mozilla.org/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a></td><td style="text-align: center">✅</td><td style="text-align: center">❌</td><td style="text-align: center">❌</td><td style="text-align: left"><code>initial_language_from_navigator</code></td></tr>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/HTTP/Headers/Accept-Language"><code>Accept-Language</code></a> header</td><td style="text-align: center">❌</td><td style="text-align: center">✅</td><td style="text-align: center">❌</td><td style="text-align: left"><code>initial_language_from_accept_language_header</code></td></tr>
+<tr><td style="text-align: left"><a href="https://github.com/i509VCB/current_locale">System language</a></td><td style="text-align: center">❌</td><td style="text-align: center">❌</td><td style="text-align: center">✅</td><td style="text-align: left"><code>initial_language_from_system</code></td></tr>
+<tr><td style="text-align: left">Data file</td><td style="text-align: center">❌</td><td style="text-align: center">❌</td><td style="text-align: center">✅</td><td style="text-align: left"><code>initial_language_from_data_file</code></td></tr>
+</tbody></table>
+</div>
+<p>All of them can be defined at the same time or just one of them at the same
+time. The first language source found will be used and nexts discharged.
+The order of precedence is:</p>
+<ul>
+<li><strong>SSR</strong>
+<ol>
+<li><a href="https://book.leptos.dev/server/25_server_functions.html">Server function</a></li>
+<li><a href="https://developer.mozilla.org/docs/Web/API/URLSearchParams">URL parameter</a></li>
+<li><a href="https://developer.mozilla.org/docs/Web/API/URL/pathname">URL path</a></li>
+<li><a href="https://developer.mozilla.org/docs/Web/API/Document/cookie">Cookie</a></li>
+<li><a href="https://developer.mozilla.org/docs/Web/HTTP/Headers/Accept-Language"><code>Accept-Language</code></a> header</li>
+</ol>
+</li>
+<li><strong>CSR</strong>
+<ol>
+<li><a href="https://book.leptos.dev/server/25_server_functions.html">Server function</a></li>
+<li><a href="https://developer.mozilla.org/docs/Web/API/URLSearchParams">URL parameter</a></li>
+<li><a href="https://developer.mozilla.org/docs/Web/API/URL/pathname">URL path</a></li>
+<li><a href="https://developer.mozilla.org/docs/Web/API/Document/cookie">Cookie</a></li>
+<li>Browser <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a></li>
+<li>Browser <a href="https://developer.mozilla.org/docs/Web/API/Window/sessionStorage">session storage</a></li>
+<li>Browser <a href="https://developer.mozilla.org/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a></li>
+</ol>
+</li>
+<li><strong>Desktop</strong> (<a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><code>system</code> feature</a>)
+<ol>
+<li>Data file</li>
+<li><a href="https://github.com/i509VCB/current_locale">System language</a></li>
+</ol>
+</li>
+</ul>
+<h2 id="csr---updating-the-language-on-the-client"><a class="header" href="#csr---updating-the-language-on-the-client"><span style="opacity:.5">CSR </span> | Updating the language on the client</a></h2>
+<p>When the user changes the language and <code>I18n::language.set</code> is called, the
+framework can perform a side effect to update the language in the client. The
+following strategies are available:</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a></th></tr></thead><tbody>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/URLSearchParams">URL parameter</a></td><td style="text-align: left"><code>set_language_to_url_param</code></td></tr>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/Document/cookie">Cookie</a></td><td style="text-align: left"><code>set_language_to_cookie</code></td></tr>
+<tr><td style="text-align: left">Browser <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a></td><td style="text-align: left"><code>set_language_to_localstorage</code></td></tr>
+<tr><td style="text-align: left">Browser <a href="https://developer.mozilla.org/docs/Web/API/Window/sessionStorage">session storage</a></td><td style="text-align: left"><code>set_language_to_sessionstorage</code></td></tr>
+<tr><td style="text-align: left"><a href="https://book.leptos.dev/server/25_server_functions.html">Server function</a></td><td style="text-align: left"><code>set_language_to_server_function</code></td></tr>
+</tbody></table>
+</div>
+<p>When the user changes the language in the browser settings, the framework can
+perform a side effect to reflect the language change in the client.
+The following strategies are available:</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a></th></tr></thead><tbody>
+<tr><td style="text-align: left">Browser <a href="https://developer.mozilla.org/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a></td><td style="text-align: left"><code>set_language_from_navigator</code></td></tr>
+</tbody></table>
+</div>
+<h3 id="system--desktop-applications"><a class="header" href="#system--desktop-applications"><a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Desktop applications</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a></th></tr></thead><tbody>
+<tr><td style="text-align: left">Data file</td><td style="text-align: left"><code>set_language_to_data_file</code></td></tr>
+</tbody></table>
+</div>
+<h2 id="csr---updating-the-language-from-initialization-on-the-client"><a class="header" href="#csr---updating-the-language-from-initialization-on-the-client"><span style="opacity:.5">CSR </span> | Updating the language from initialization on the client</a></h2>
+<p>When a language is loaded from initialization, the framework can perform a side
+effect to persistently storage the language in the client. The following strategies
+are available:</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a></th></tr></thead><tbody>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/URLSearchParams">URL parameter</a> to <a href="https://developer.mozilla.org/docs/Web/API/Document/cookie">cookie</a></td><td style="text-align: left"><code>initial_language_from_url_param_to_cookie</code></td></tr>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/URLSearchParams">URL parameter</a> to <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a></td><td style="text-align: left"><code>initial_language_from_url_param_to_localstorage</code></td></tr>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/URLSearchParams">URL parameter</a> to <a href="https://developer.mozilla.org/docs/Web/API/Window/sessionStorage">session storage</a></td><td style="text-align: left"><code>initial_language_from_url_param_to_sessionstorage</code></td></tr>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/URL/pathname">URL path</a> to <a href="https://developer.mozilla.org/docs/Web/API/Document/cookie">cookie</a></td><td style="text-align: left"><code>initial_language_from_url_path_to_cookie</code></td></tr>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/URL/pathname">URL path</a> to <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a></td><td style="text-align: left"><code>initial_language_from_url_path_to_localstorage</code></td></tr>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/URL/pathname">URL path</a> to <a href="https://developer.mozilla.org/docs/Web/API/Window/sessionStorage">session storage</a></td><td style="text-align: left"><code>initial_language_from_url_path_to_sessionstorage</code></td></tr>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/Document/cookie">Cookie</a> to <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a></td><td style="text-align: left"><code>initial_language_from_cookie_to_localstorage</code></td></tr>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/Document/cookie">Cookie</a> to <a href="https://developer.mozilla.org/docs/Web/API/Window/sessionStorage">session storage</a></td><td style="text-align: left"><code>initial_language_from_cookie_to_sessionstorage</code></td></tr>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">Local storage</a> to <a href="https://developer.mozilla.org/docs/Web/API/Document/cookie">cookie</a></td><td style="text-align: left"><code>initial_language_from_localstorage_to_cookie</code></td></tr>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">Local storage</a> to <a href="https://developer.mozilla.org/docs/Web/API/Window/sessionStorage">session storage</a></td><td style="text-align: left"><code>initial_language_from_localstorage_to_sessionstorage</code></td></tr>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">Local storage</a> to <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a></td><td style="text-align: left"><code>initial_language_from_localstorage_to_server_function</code></td></tr>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/Window/sessionStorage">Session storage</a> to <a href="https://developer.mozilla.org/docs/Web/API/Document/cookie">cookie</a></td><td style="text-align: left"><code>initial_language_from_sessionstorage_to_cookie</code></td></tr>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/Window/sessionStorage">Session storage</a> to <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a></td><td style="text-align: left"><code>initial_language_from_sessionstorage_to_localstorage</code></td></tr>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/Window/sessionStorage">Session storage</a> to <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a></td><td style="text-align: left"><code>initial_language_from_sessionstorage_to_server_function</code></td></tr>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a> to <a href="https://developer.mozilla.org/docs/Web/API/Document/cookie">cookie</a></td><td style="text-align: left"><code>initial_language_from_navigator_to_cookie</code></td></tr>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a> to <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a></td><td style="text-align: left"><code>initial_language_from_navigator_to_localstorage</code></td></tr>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a> to <a href="https://developer.mozilla.org/docs/Web/API/Window/sessionStorage">session storage</a></td><td style="text-align: left"><code>initial_language_from_navigator_to_sessionstorage</code></td></tr>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a> to <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a></td><td style="text-align: left"><code>initial_language_from_navigator_to_server_function</code></td></tr>
+<tr><td style="text-align: left"><a href="https://book.leptos.dev/server/25_server_functions.html">Server function</a> to <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a></td><td style="text-align: left"><code>initial_language_from_server_function_to_localstorage</code></td></tr>
+</tbody></table>
+</div>
+<h3 id="csr--ssr"><a class="header" href="#csr--ssr"><span style="opacity:.5">CSR + SSR</span></a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a></th></tr></thead><tbody>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/URLSearchParams">URL parameter</a> to <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a></td><td style="text-align: left"><code>initial_language_from_url_param_to_server_function</code></td></tr>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/URL/pathname">URL path</a> to <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a></td><td style="text-align: left"><code>initial_language_from_url_path_to_server_function</code></td></tr>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/Document/cookie">Cookie</a> to <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a></td><td style="text-align: left"><code>initial_language_from_cookie_to_server_function</code></td></tr>
+<tr><td style="text-align: left"><a href="https://book.leptos.dev/server/25_server_functions.html">Server function</a> to <a href="https://developer.mozilla.org/docs/Web/API/Document/cookie">cookie</a></td><td style="text-align: left"><code>initial_language_from_server_function_to_cookie</code></td></tr>
+</tbody></table>
+</div>
+<h3 id="system--desktop-applications-1"><a class="header" href="#system--desktop-applications-1"><a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Desktop applications</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a></th></tr></thead><tbody>
+<tr><td style="text-align: left"><a href="https://github.com/i509VCB/current_locale">System language</a> to data file</td><td style="text-align: left"><code>initial_language_from_system_to_data_file</code></td></tr>
+</tbody></table>
+</div>
+<h2 id="csr---client-side-effects"><a class="header" href="#csr---client-side-effects"><span style="opacity:.5">CSR </span> | Client side effects</a></h2>
+<p>When the user updates the language, the framework can perform side effects to
+update the language in the client. The following side effects are available:</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">Side effect</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a></th></tr></thead><tbody>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/HTML/Global_attributes/lang"><code>&lt;html lang="..."&gt;</code></a> attribute</td><td style="text-align: left"><code>sync_html_tag_lang</code></td></tr>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/HTML/Global_attributes/dir"><code>&lt;html dir="..."&gt;</code></a> attribute</td><td style="text-align: left"><code>sync_html_tag_dir</code></td></tr>
+</tbody></table>
+</div>
+<h2 id="csr--ssr---names"><a class="header" href="#csr--ssr---names"><span style="opacity:.5">CSR + SSR </span> | Names</a></h2>
+<p>The names of the settings can be configured using the following parameters:</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a></th><th style="text-align: center">Default value</th></tr></thead><tbody>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/Document/cookie">Cookie</a></td><td style="text-align: left"><code>cookie_name</code></td><td style="text-align: center"><code>"lf-lang"</code></td></tr>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/Document/cookie#write_a_new_cookie">Cookie attributes</a></td><td style="text-align: left"><code>cookie_attrs</code></td><td style="text-align: center"><code>""</code></td></tr>
+<tr><td style="text-align: left">Browser <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a></td><td style="text-align: left"><code>localstorage_key</code></td><td style="text-align: center"><code>"lang"</code></td></tr>
+<tr><td style="text-align: left">Browser <a href="https://developer.mozilla.org/docs/Web/API/Window/sessionStorage">session storage</a></td><td style="text-align: left"><code>sessionstorage_key</code></td><td style="text-align: center"><code>"lang"</code></td></tr>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/URLSearchParams">URL parameter</a></td><td style="text-align: left"><code>url_param</code></td><td style="text-align: center"><code>"lang"</code></td></tr>
+<tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/URL/pathname">URL path</a> extractor <code>fn</code></td><td style="text-align: left"><code>url_path</code></td><td style="text-align: center">❌</td></tr>
+</tbody></table>
+</div>
+<h3 id="system--desktop-applications-2"><a class="header" href="#system--desktop-applications-2"><a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Desktop applications</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a></th><th style="text-align: left">Default value</th></tr></thead><tbody>
+<tr><td style="text-align: left">Data file</td><td style="text-align: left"><code>data_file_key</code></td><td style="text-align: left"><code>"leptos-fluent"</code></td></tr>
+</tbody></table>
+</div>
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="basic-usage.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="languages.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="basic-usage.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="languages.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+        <script>
+            window.playground_line_numbers = true;
+        </script>
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+        <script src="ace.js"></script>
+        <script src="editor.js"></script>
+        <script src="mode-rust.js"></script>
+        <script src="theme-dawn.js"></script>
+        <script src="theme-tomorrow_night.js"></script>
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>
