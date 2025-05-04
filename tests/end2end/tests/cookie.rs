@@ -30,7 +30,7 @@ async fn test_cookie() {
     cookie::delete(COOKIE_NAME);
     mount!(App);
     assert!(en().checked());
-    assert_eq!(element_text("p"), "Select a language:");
+    assert_eq!(element_text("p"), "Foo bar");
     unmount!();
 
     cookie::set(COOKIE_NAME, "es", "");
