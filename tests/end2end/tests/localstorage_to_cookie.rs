@@ -41,7 +41,7 @@ async fn test_localstorage_to_cookie() {
     localstorage::delete(LOCALSTORAGE_KEY);
     mount!(App);
     assert!(en().checked());
-    assert_eq!(element_text("p"), "Foo bar:");
+    assert_eq!(element_text("p"), "Select a language:");
     unmount!();
 
     localstorage::set(LOCALSTORAGE_KEY, "es");
