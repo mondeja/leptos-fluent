@@ -41,7 +41,7 @@ tracing = { version = "0.1", optional = true }
 
 [dev-dependencies]
 trybuild = "1"
-leptos = "0.7"
+leptos = "0.8"
 leptos-fluent.workspace = true
 
 [features]

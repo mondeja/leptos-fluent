@@ -14,7 +14,7 @@ fluent-templates = { version = "0.13", default-features = false, features = [
 leptos-fluent-csr-minimal-example = { path = "../../../examples/csr-minimal" }
 wasm-bindgen = "0.2"
 wasm-bindgen-test = "0.3"
-leptos = "0.7"
+leptos = "0.8"
 
 [package.metadata.cargo-machete]
 ignored = ["fluent-templates", "wasm-bindgen"]
