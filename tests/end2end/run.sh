@@ -4,25 +4,13 @@ EXITCODE=0
 BROWSER=$1
 
 set -x
-cd tests/end2end
-wasm-pack test --headless --$BROWSER
-if [ $? -ne 0 ]; then
-  EXITCODE=1
-fi
+wasm-pack test --headless "--$BROWSER" tests/end2end || EXITCODE=1
 
-for dir in */; do
-  if [ "$dir" = "tests-helpers/" ] || [ "$dir" = "tests/" ]; then
+for dir in tests/end2end/*/; do
+  if [ "$dir" = "tests/end2end/helpers/" ] || [ "$dir" = "tests/end2end/tests/" ]; then
     continue;
   fi
-  cd $dir
-  wasm-pack test --headless --$BROWSER
-  if [ $? -ne 0 ]; then
-    EXITCODE=1
-  fi
-  cd ..
+  wasm-pack test --headless "--$BROWSER" "$dir" || EXITCODE=1
 done
-
-cd ..
-set +x
 
 exit $EXITCODE

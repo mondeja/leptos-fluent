@@ -252,6 +252,7 @@ jobs:
           max_attempts: 3
           retry_wait_seconds: 1
           warning_on_retry: false
+          shell: bash
           command: bash tests/end2end/run.sh ${{ matrix.browser }}
 
   build-examples:
@@ -437,7 +438,7 @@ jobs:
         id: version
         uses: ./.github/actions/get-version
       - name: Update version
-        run: sed -i "s/^leptos-fluent-macros = .*/leptos-fluent-macros = \"=${{ steps.version.outputs.version }}\"/" leptos-fluent/Cargo.toml
+        run: sed -i "s/^leptos-fluent-macros.*/leptos-fluent-macros = \"=${{ steps.version.outputs.version }}\"/" leptos-fluent/Cargo.toml
       - name: Publish
         run: |
           cargo login ${{ secrets.CRATES_TOKEN }}

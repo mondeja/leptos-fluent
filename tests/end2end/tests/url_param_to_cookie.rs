@@ -1,7 +1,7 @@
+use end2end_helpers::{element_text, input_by_id, mount, unmount};
 use leptos::prelude::*;
 use leptos_fluent::{cookie, leptos_fluent, url};
 use leptos_fluent_csr_minimal_example::{LanguageSelector, TRANSLATIONS};
-use tests_helpers::{element_text, input_by_id, mount, unmount};
 use wasm_bindgen_test::*;
 
 wasm_bindgen_test_configure!(run_in_browser);
@@ -10,17 +10,25 @@ const URL_PARAM: &str = "my-weird-url-param";
 const COOKIE_NAME: &str = "my-weird-cookie-name";
 
 #[component]
-pub fn App() -> impl IntoView {
+fn I18n(children: Children) -> impl IntoView {
     leptos_fluent! {
+        children: children(),
         translations: [TRANSLATIONS],
         locales: "../../examples/csr-minimal/locales",
         initial_language_from_url_param: true,
         url_param: URL_PARAM,
         initial_language_from_url_param_to_cookie: true,
         cookie_name: COOKIE_NAME,
-    };
+    }
+}
 
-    view! { <LanguageSelector /> }
+#[component]
+fn App() -> impl IntoView {
+    view! {
+        <I18n>
+            <LanguageSelector />
+        </I18n>
+    }
 }
 
 #[wasm_bindgen_test]

@@ -8,7 +8,7 @@ members = [
   "examples/ssr-hydrate-axum",
   "tests",
   "tests/end2end",
-  "tests/end2end/tests-helpers",
+  "tests/end2end/helpers",
   "tests/end2end/initial-language-from-navigator",
   "tests/end2end/set-language-to-cookie",
   "tests/end2end/set-language-to-localstorage",
@@ -29,3 +29,7 @@ opt-level = 'z'
 lto = true
 codegen-units = 1
 panic = "abort"
+
+[workspace.dependencies]
+leptos-fluent = { path = "./leptos-fluent" }
+end2end-helpers = { path = "./tests/end2end/helpers" }

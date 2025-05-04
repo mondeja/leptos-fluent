@@ -9,8 +9,8 @@ name = "leptos_fluent_csr_minimal_example"
 path = "src/lib.rs"
 
 [dependencies]
-leptos = { version = "0.7", features = ["csr"] }
-leptos-fluent = { path = "../../leptos-fluent" }
+leptos = { version = "0.8", features = ["csr"] }
+leptos-fluent.workspace = true
 fluent-templates = { version = ">=0.13", default-features = false, features = [
   "macros",
   "walkdir",

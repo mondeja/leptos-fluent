@@ -1,7 +1,7 @@
+use end2end_helpers::{element_text, html, input_by_id, mount, sleep, unmount};
 use leptos::prelude::*;
 use leptos_fluent::localstorage;
 use leptos_fluent_csr_complete_example::App;
-use tests_helpers::{element_text, html, input_by_id, mount, sleep, unmount};
 use wasm_bindgen_test::*;
 
 wasm_bindgen_test_configure!(run_in_browser);
