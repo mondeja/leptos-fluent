@@ -10,8 +10,9 @@ const LOCALSTORAGE_KEY: &str = "ilfn";
 const COOKIE: &str = "ilfn";
 
 #[component]
-pub fn App() -> impl IntoView {
+fn I18n(children: Children) -> impl IntoView {
     leptos_fluent! {
+        children: children(),
         translations: [TRANSLATIONS],
         locales: "../../../examples/csr-minimal/locales",
         initial_language_from_navigator: true,
@@ -19,9 +20,16 @@ pub fn App() -> impl IntoView {
         initial_language_from_navigator_to_cookie: true,
         localstorage_key: LOCALSTORAGE_KEY,
         cookie_name: COOKIE,
-    };
+    }
+}
 
-    view! { <LanguageSelector /> }
+#[component]
+fn App() -> impl IntoView {
+    view! {
+        <I18n>
+            <LanguageSelector />
+        </I18n>
+    }
 }
 
 #[wasm_bindgen_test]

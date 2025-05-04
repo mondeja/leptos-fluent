@@ -9,16 +9,24 @@ wasm_bindgen_test_configure!(run_in_browser);
 const COOKIE_NAME: &str = "my-weird-cookie-name";
 
 #[component]
-pub fn App() -> impl IntoView {
+fn I18n(children: Children) -> impl IntoView {
     leptos_fluent! {
+        children: children(),
         translations: [TRANSLATIONS],
         locales: "../../examples/csr-minimal/locales",
         initial_language_from_cookie: true,
         cookie_name: COOKIE_NAME,
         set_language_to_cookie: true,
-    };
+    }
+}
 
-    view! { <LanguageSelector /> }
+#[component]
+fn App() -> impl IntoView {
+    view! {
+        <I18n>
+            <LanguageSelector />
+        </I18n>
+    }
 }
 
 #[wasm_bindgen_test]

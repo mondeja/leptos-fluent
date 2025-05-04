@@ -19,39 +19,46 @@ fn App() -> impl IntoView {
 }
 
 #[component]
-fn Child() -> impl IntoView {
-    use wasm_bindgen::JsCast;
+fn I18n(children: Children) -> impl IntoView {
     leptos_fluent! {
+        children: children(),
         translations: [TRANSLATIONS],
         locales: "../../examples/csr-minimal/locales",
-    };
+    }
+}
+
+#[component]
+fn Child() -> impl IntoView {
+    use wasm_bindgen::JsCast;
     view! {
-        <div
-            id="fails"
-            on:click=|ev| {
-                if use_i18n().is_some() {
+        <I18n>
+            <div
+                id="fails"
+                on:click=|ev| {
+                    if use_i18n().is_some() {
+                        ev.target()
+                            .unwrap()
+                            .unchecked_into::<web_sys::HtmlElement>()
+                            .set_inner_text("CLICKED!");
+                    }
+                }
+            >
+
+                "CLICK ME!"
+            </div>
+            <div
+                id="success"
+                on:click=|ev| {
                     ev.target()
                         .unwrap()
                         .unchecked_into::<web_sys::HtmlElement>()
                         .set_inner_text("CLICKED!");
                 }
-            }
-        >
+            >
 
-            "CLICK ME!"
-        </div>
-        <div
-            id="success"
-            on:click=|ev| {
-                ev.target()
-                    .unwrap()
-                    .unchecked_into::<web_sys::HtmlElement>()
-                    .set_inner_text("CLICKED!");
-            }
-        >
-
-            "CLICK ME!"
-        </div>
+                "CLICK ME!"
+            </div>
+        </I18n>
     }
 }
 

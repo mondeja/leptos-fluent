@@ -10,17 +10,25 @@ const LOCALSTORAGE_KEY: &str = "my-weird-localstorage-key";
 const SESSIONSTORAGE_KEY: &str = "my-weird-sessionstorage-key";
 
 #[component]
-pub fn App() -> impl IntoView {
+fn I18n(children: Children) -> impl IntoView {
     leptos_fluent! {
+        children: children(),
         translations: [TRANSLATIONS],
         locales: "../../examples/csr-minimal/locales",
         initial_language_from_sessionstorage: true,
         sessionstorage_key: SESSIONSTORAGE_KEY,
         initial_language_from_sessionstorage_to_localstorage: true,
         localstorage_key: LOCALSTORAGE_KEY,
-    };
+    }
+}
 
-    view! { <LanguageSelector /> }
+#[component]
+fn App() -> impl IntoView {
+    view! {
+        <I18n>
+            <LanguageSelector />
+        </I18n>
+    }
 }
 
 #[wasm_bindgen_test]

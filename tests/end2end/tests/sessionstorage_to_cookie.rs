@@ -10,17 +10,25 @@ const COOKIE_NAME: &str = "my-weird-cookie-name";
 const SESSIONSTORAGE_KEY: &str = "my-weird-sessionstorage-key";
 
 #[component]
-pub fn App() -> impl IntoView {
+fn I18n(children: Children) -> impl IntoView {
     leptos_fluent! {
+        children: children(),
         translations: [TRANSLATIONS],
         locales: "../../examples/csr-minimal/locales",
         initial_language_from_sessionstorage: true,
         sessionstorage_key: SESSIONSTORAGE_KEY,
         initial_language_from_sessionstorage_to_cookie: true,
         cookie_name: COOKIE_NAME,
-    };
+    }
+}
 
-    view! { <LanguageSelector /> }
+#[component]
+fn App() -> impl IntoView {
+    view! {
+        <I18n>
+            <LanguageSelector />
+        </I18n>
+    }
 }
 
 #[wasm_bindgen_test]

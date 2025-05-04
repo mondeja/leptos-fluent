@@ -9,16 +9,24 @@ wasm_bindgen_test_configure!(run_in_browser);
 const SESSIONSTORAGE_KEY: &str = "sltc";
 
 #[component]
-pub fn App() -> impl IntoView {
+fn I18n(children: Children) -> impl IntoView {
     leptos_fluent! {
+        children: children(),
         translations: [TRANSLATIONS],
         locales: "../../../examples/csr-minimal/locales",
         initial_language_from_navigator: true,
         sessionstorage_key: SESSIONSTORAGE_KEY,
         set_language_to_sessionstorage: true,
-    };
+    }
+}
 
-    view! { <LanguageSelector /> }
+#[component]
+fn App() -> impl IntoView {
+    view! {
+        <I18n>
+            <LanguageSelector />
+        </I18n>
+    }
 }
 
 #[wasm_bindgen_test]
