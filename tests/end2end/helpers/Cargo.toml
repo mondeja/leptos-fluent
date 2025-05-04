@@ -1,5 +1,5 @@
 [package]
-name = "tests-helpers"
+name = "end2end-helpers"
 edition = "2021"
 version = "0.1.0"
 publish = false

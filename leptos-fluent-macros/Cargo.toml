@@ -42,7 +42,7 @@ tracing = { version = "0.1", optional = true }
 [dev-dependencies]
 trybuild = "1"
 leptos = "0.7"
-leptos-fluent = { path = "../leptos-fluent" }
+leptos-fluent.workspace = true
 
 [features]
 nightly = ["proc-macro2/span-locations"]

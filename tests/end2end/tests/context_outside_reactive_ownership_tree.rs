@@ -1,10 +1,10 @@
+use end2end_helpers::{input_by_id, mount, unmount};
 /// See:
 /// - https://github.com/leptos-rs/leptos/issues/2852
 /// - https://github.com/mondeja/leptos-fluent/issues/231
 use leptos::{control_flow::Show, prelude::*};
 use leptos_fluent::{leptos_fluent, use_i18n};
 use leptos_fluent_csr_minimal_example::TRANSLATIONS;
-use tests_helpers::{input_by_id, mount, unmount};
 use wasm_bindgen_test::*;
 
 wasm_bindgen_test_configure!(run_in_browser);

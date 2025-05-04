@@ -5,8 +5,8 @@ version = "0.1.0"
 publish = false
 
 [dependencies]
-tests-helpers = { path = "../tests-helpers" }
-leptos-fluent = { path = "../../../leptos-fluent" }
+end2end-helpers.workspace = true
+leptos-fluent.workspace = true
 fluent-templates = { version = "0.13", default-features = false, features = [
   "macros",
   "walkdir",

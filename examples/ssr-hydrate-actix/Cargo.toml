@@ -15,7 +15,7 @@ leptos = "0.7"
 leptos_meta = "0.7"
 leptos_actix = { version = "0.7", optional = true }
 leptos_router = "0.7"
-leptos-fluent = { path = "../../leptos-fluent" }
+leptos-fluent.workspace = true
 fluent-templates = { version = ">=0.13", default-features = false, features = [
   "macros",
   "walkdir",

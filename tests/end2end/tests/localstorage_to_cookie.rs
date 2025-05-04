@@ -1,7 +1,7 @@
+use end2end_helpers::{element_text, input_by_id, mount, unmount};
 use leptos::prelude::*;
 use leptos_fluent::{cookie, leptos_fluent, localstorage};
 use leptos_fluent_csr_minimal_example::{LanguageSelector, TRANSLATIONS};
-use tests_helpers::{element_text, input_by_id, mount, unmount};
 use wasm_bindgen_test::*;
 
 wasm_bindgen_test_configure!(run_in_browser);
