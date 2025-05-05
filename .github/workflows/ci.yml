@@ -237,6 +237,8 @@ jobs:
         uses: taiki-e/install-action@v2
         with:
           tool: wasm-pack
+      - name: Install wasm-pack-test-all
+        run: cargo install wasm-pack-test-all
       - name: Cache dependencies
         uses: actions/cache@v4
         with:
@@ -252,8 +254,7 @@ jobs:
           max_attempts: 3
           retry_wait_seconds: 1
           warning_on_retry: false
-          shell: bash
-          command: bash tests/end2end/run.sh ${{ matrix.browser }}
+          command: wasm-pack-test-all tests/end2end --${{ matrix.browser }}
 
   build-examples:
     needs: check-toolchain-is-stable
