@@ -238,7 +238,7 @@ jobs:
         with:
           tool: wasm-pack
       - name: Install wasm-pack-test-all
-        run: cargo install wasm-pack-test-all
+        run: cargo install --force wasm-pack-test-all
       - name: Cache dependencies
         uses: actions/cache@v4
         with:
