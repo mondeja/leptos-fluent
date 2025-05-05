@@ -254,7 +254,8 @@ jobs:
           max_attempts: 3
           retry_wait_seconds: 1
           warning_on_retry: false
-          command: wasm-pack-test-all tests/end2end --${{ matrix.browser }}
+          shell: bash
+          command: wasm-pack-test-all tests/end2end --${{ matrix.browser }} --headless -- --offline
 
   build-examples:
     needs: check-toolchain-is-stable
