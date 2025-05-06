@@ -1,4 +1,4 @@
-use end2end_helpers::{element_text, input_by_id, mount, unmount};
+use end2end_helpers::{element_text, input_by_id, mount};
 use leptos::prelude::*;
 use leptos_fluent::{cookie, leptos_fluent, localstorage};
 use leptos_fluent_csr_minimal_example::{LanguageSelector, TRANSLATIONS};
@@ -39,24 +39,27 @@ async fn test_localstorage_to_cookie() {
     // initial_language_from_localstorage_to_cookie
     cookie::delete(COOKIE_NAME);
     localstorage::delete(LOCALSTORAGE_KEY);
-    mount!(App);
-    assert!(en().checked());
-    assert_eq!(element_text("p"), "Select a language:");
-    unmount!();
+    {
+        mount!(App);
+        assert!(en().checked());
+        assert_eq!(element_text("p"), "Select a language:");
+    }
 
     localstorage::set(LOCALSTORAGE_KEY, "es");
     cookie::delete(COOKIE_NAME);
-    mount!(App);
-    assert!(es().checked());
-    assert_eq!(element_text("p"), "Selecciona un idioma:");
-    assert_eq!(cookie::get(COOKIE_NAME), Some("es".to_string()));
-    unmount!();
+    {
+        mount!(App);
+        assert!(es().checked());
+        assert_eq!(element_text("p"), "Selecciona un idioma:");
+        assert_eq!(cookie::get(COOKIE_NAME), Some("es".to_string()));
+    }
 
     localstorage::set(LOCALSTORAGE_KEY, "en");
     cookie::delete(COOKIE_NAME);
-    mount!(App);
-    assert!(en().checked());
-    assert_eq!(element_text("p"), "Select a language:");
-    assert_eq!(cookie::get(COOKIE_NAME), Some("en".to_string()));
-    unmount!();
+    {
+        mount!(App);
+        assert!(en().checked());
+        assert_eq!(element_text("p"), "Select a language:");
+        assert_eq!(cookie::get(COOKIE_NAME), Some("en".to_string()));
+    }
 }

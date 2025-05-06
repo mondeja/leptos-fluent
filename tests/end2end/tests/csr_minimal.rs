@@ -1,4 +1,4 @@
-use end2end_helpers::{element_text, html, input_by_id, mount, sleep, unmount};
+use end2end_helpers::{element_text, html, input_by_id, mount, sleep};
 use leptos::prelude::*;
 use leptos_fluent::localstorage;
 use leptos_fluent_csr_minimal_example::App;
@@ -45,6 +45,4 @@ async fn csr_minimal_example() {
     sleep(30).await;
     assert!(en().checked());
     assert_eq!(html().lang(), "".to_string());
-
-    unmount!();
 }

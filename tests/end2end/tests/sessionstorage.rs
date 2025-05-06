@@ -1,4 +1,4 @@
-use end2end_helpers::{element_text, input_by_id, mount, unmount};
+use end2end_helpers::{element_text, input_by_id, mount};
 use leptos::prelude::*;
 use leptos_fluent::{leptos_fluent, sessionstorage};
 use leptos_fluent_csr_minimal_example::{LanguageSelector, TRANSLATIONS};
@@ -35,14 +35,16 @@ async fn initial_language_from_sessionstorage() {
     let en = move || input_by_id("en");
 
     sessionstorage::set(SESSIONSTORAGE_KEY, "es");
-    mount!(App);
-    assert!(es().checked());
-    assert_eq!(element_text("p"), "Selecciona un idioma:");
-    unmount!();
+    {
+        mount!(App);
+        assert!(es().checked());
+        assert_eq!(element_text("p"), "Selecciona un idioma:");
+    }
 
     sessionstorage::set(SESSIONSTORAGE_KEY, "en");
-    mount!(App);
-    assert!(en().checked());
-    assert_eq!(element_text("p"), "Select a language:");
-    unmount!();
+    {
+        mount!(App);
+        assert!(en().checked());
+        assert_eq!(element_text("p"), "Select a language:");
+    }
 }

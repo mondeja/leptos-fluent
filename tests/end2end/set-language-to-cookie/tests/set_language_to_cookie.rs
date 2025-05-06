@@ -1,4 +1,4 @@
-use end2end_helpers::{element_text, input_by_id, mount, sleep, unmount};
+use end2end_helpers::{element_text, input_by_id, mount, sleep};
 use leptos::prelude::*;
 use leptos_fluent::{cookie, leptos_fluent};
 use leptos_fluent_csr_minimal_example::{LanguageSelector, TRANSLATIONS};
@@ -44,6 +44,4 @@ async fn test_set_language_to_cookie() {
     assert!(es().checked());
     assert_eq!(element_text("p"), "Selecciona un idioma:");
     assert_eq!(cookie::get(COOKIE), Some("es".to_string()));
-
-    unmount!();
 }

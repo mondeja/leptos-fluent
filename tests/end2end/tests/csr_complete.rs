@@ -1,4 +1,4 @@
-use end2end_helpers::{element_text, html, input_by_id, mount, sleep, unmount};
+use end2end_helpers::{element_text, html, input_by_id, mount, sleep};
 use leptos::prelude::*;
 use leptos_fluent::localstorage;
 use leptos_fluent_csr_complete_example::App;
@@ -56,6 +56,4 @@ async fn csr_complete_example() {
     sleep(30).await;
     assert_eq!(localstorage::get("language"), Some("en".to_string()));
     localstorage::delete("language");
-
-    unmount!();
 }

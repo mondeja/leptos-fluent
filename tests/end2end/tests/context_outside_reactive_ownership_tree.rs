@@ -1,4 +1,4 @@
-use end2end_helpers::{input_by_id, mount, unmount};
+use end2end_helpers::{input_by_id, mount};
 /// See:
 /// - https://github.com/leptos-rs/leptos/issues/2852
 /// - https://github.com/mondeja/leptos-fluent/issues/231
@@ -67,15 +67,17 @@ async fn context_outside_reactive_ownership_tree() {
     let fails_div = move || input_by_id("fails");
     let success_div = move || input_by_id("success");
 
-    mount!(App);
-    assert_eq!(fails_div().inner_text(), "CLICK ME!");
-    fails_div().click();
-    assert_eq!(fails_div().inner_text(), "CLICK ME!");
-    unmount!();
+    {
+        mount!(App);
+        assert_eq!(fails_div().inner_text(), "CLICK ME!");
+        fails_div().click();
+        assert_eq!(fails_div().inner_text(), "CLICK ME!");
+    }
 
-    mount!(App);
-    assert_eq!(success_div().inner_text(), "CLICK ME!");
-    success_div().click();
-    assert_eq!(success_div().inner_text(), "CLICKED!");
-    unmount!();
+    {
+        mount!(App);
+        assert_eq!(success_div().inner_text(), "CLICK ME!");
+        success_div().click();
+        assert_eq!(success_div().inner_text(), "CLICKED!");
+    }
 }
