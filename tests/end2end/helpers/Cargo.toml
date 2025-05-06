@@ -7,9 +7,7 @@ publish = false
 [dependencies]
 leptos = "0.8"
 web-sys = { version = "0.3", features = [
-  "Window",
-  "Document",
-  "Navigator",
+  "HtmlInputElement",
   "Storage"
 ] }
 wasm-bindgen.workspace = true
