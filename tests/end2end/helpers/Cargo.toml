@@ -8,9 +8,7 @@ publish = false
 leptos = "0.8"
 leptos_meta = "0.8"
 web-sys = { version = "0.3", features = ["Navigator", "Storage"] }
-js-sys = "0.3"
 wasm-bindgen.workspace = true
-wasm-bindgen-futures = "0.4"
 gloo-timers = {version = "0.3", features = ["futures"] }
 
 [package.metadata.cargo-machete]
