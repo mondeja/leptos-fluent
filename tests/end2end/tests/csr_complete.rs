@@ -1,4 +1,5 @@
-use end2end_helpers::{element_text, html, input_by_id, mount, sleep_a_moment};
+use end2end_helpers::{element_text, input_by_id, mount, sleep_a_moment};
+use gloo_utils::document_element;
 use leptos::prelude::*;
 use leptos_fluent::localstorage;
 use leptos_fluent_csr_complete_example::App;
@@ -33,16 +34,28 @@ async fn csr_complete_example() {
     es().click();
     sleep_a_moment().await;
     assert!(es().checked());
-    assert_eq!(html().lang(), "es".to_string());
+    assert_eq!(
+        document_element().get_attribute("lang"),
+        Some("es".to_string())
+    );
     en().click();
     sleep_a_moment().await;
-    assert_eq!(html().lang(), "en".to_string());
+    assert_eq!(
+        document_element().get_attribute("lang"),
+        Some("en".to_string())
+    );
 
     // sync_html_tag_dir
-    assert_eq!(html().dir(), "ltr".to_string());
+    assert_eq!(
+        document_element().get_attribute("dir"),
+        Some("ltr".to_string())
+    );
     es().click();
     sleep_a_moment().await;
-    assert_eq!(html().dir(), "auto".to_string());
+    assert_eq!(
+        document_element().get_attribute("dir"),
+        Some("auto".to_string())
+    );
     en().click();
     sleep_a_moment().await;
 

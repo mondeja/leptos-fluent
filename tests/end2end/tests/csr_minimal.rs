@@ -1,4 +1,5 @@
-use end2end_helpers::{element_text, html, input_by_id, mount, sleep_a_moment};
+use end2end_helpers::{element_text, input_by_id, mount, sleep_a_moment};
+use gloo_utils::document_element;
 use leptos::prelude::*;
 use leptos_fluent::localstorage;
 use leptos_fluent_csr_minimal_example::App;
@@ -35,14 +36,14 @@ async fn csr_minimal_example() {
 
     // sync_html_tag_lang not activated
     sleep_a_moment().await;
-    html().remove_attribute("lang").unwrap();
-    assert_eq!(html().lang(), "".to_string());
+    document_element().remove_attribute("lang").unwrap();
+    assert_eq!(document_element().get_attribute("lang"), None);
     es().click();
     sleep_a_moment().await;
     assert!(es().checked());
-    assert_eq!(html().lang(), "".to_string());
+    assert_eq!(document_element().get_attribute("lang"), None);
     en().click();
     sleep_a_moment().await;
     assert!(en().checked());
-    assert_eq!(html().lang(), "".to_string());
+    assert_eq!(document_element().get_attribute("lang"), None);
 }

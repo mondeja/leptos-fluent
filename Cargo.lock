@@ -860,6 +860,7 @@ name = "end2end-helpers"
 version = "0.1.0"
 dependencies = [
  "gloo-timers",
+ "gloo-utils",
  "leptos",
  "wasm-bindgen",
  "web-sys",
@@ -1755,6 +1756,7 @@ version = "0.1.0"
 dependencies = [
  "end2end-helpers",
  "fluent-templates",
+ "gloo-utils",
  "leptos",
  "leptos-fluent",
  "leptos-fluent-csr-complete-example",

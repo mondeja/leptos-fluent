@@ -35,3 +35,4 @@ leptos-fluent = { path = "./leptos-fluent" }
 end2end-helpers = { path = "./tests/end2end/helpers" }
 wasm-bindgen = "0.2"
 wasm-bindgen-test = "0.3"
+gloo-utils = { version = "0.2", default-features = false }

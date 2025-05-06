@@ -6,6 +6,12 @@ publish = false
 
 [dependencies]
 leptos = "0.8"
-web-sys = { version = "0.3", features = ["Navigator", "Storage"] }
+web-sys = { version = "0.3", features = [
+  "Window",
+  "Document",
+  "Navigator",
+  "Storage"
+] }
 wasm-bindgen.workspace = true
-gloo-timers = {version = "0.3", features = ["futures"] }
+gloo-timers = { version = "0.3", features = ["futures"] }
+gloo-utils.workspace = true

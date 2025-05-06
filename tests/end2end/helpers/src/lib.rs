@@ -3,11 +3,11 @@ pub struct Mounter;
 impl Drop for Mounter {
     fn drop(&mut self) {
         use wasm_bindgen::JsCast;
-        ::leptos::prelude::document()
+        ::gloo_utils::document()
             .body()
             .unwrap()
             .remove_child(
-                ::leptos::prelude::document()
+                ::gloo_utils::document()
                     .get_element_by_id("wrapper")
                     .unwrap()
                     .unchecked_ref(),
@@ -28,12 +28,12 @@ macro_rules! mount {
 }
 
 /// Wait a moment for the DOM to update.
-pub async fn sleep_a_moment() {
-    gloo_timers::future::sleep(std::time::Duration::from_millis(30)).await;
+pub fn sleep_a_moment() -> gloo_timers::future::TimeoutFuture {
+    gloo_timers::future::sleep(std::time::Duration::from_millis(30))
 }
 
 pub fn element_text(selector: &str) -> String {
-    ::leptos::prelude::document()
+    gloo_utils::document()
         .query_selector(selector)
         .unwrap()
         .unwrap()
@@ -43,16 +43,8 @@ pub fn element_text(selector: &str) -> String {
 
 pub fn input_by_id(id: &str) -> web_sys::HtmlInputElement {
     use wasm_bindgen::JsCast;
-    leptos::prelude::document()
+    gloo_utils::document()
         .get_element_by_id(id)
         .unwrap()
         .unchecked_into::<web_sys::HtmlInputElement>()
-}
-
-pub fn html() -> web_sys::HtmlHtmlElement {
-    use wasm_bindgen::JsCast;
-    leptos::prelude::document()
-        .document_element()
-        .unwrap()
-        .unchecked_into::<web_sys::HtmlHtmlElement>()
 }
