@@ -237,16 +237,8 @@ jobs:
         uses: taiki-e/install-action@v2
         with:
           tool: wasm-pack
-      - name: Clone wasm-pack-test-all
-        uses: actions/checkout@v4
-        with:
-          repository: mondeja/wasm-pack-test-all
-          path: wasm-pack-test-all
-          ref: debug-leptos-fluent
       - name: Install wasm-pack-test-all
-        run: |
-          cd wasm-pack-test-all
-          cargo build
+        run: cargo install --force wasm-pack-test-all
       - name: Cache dependencies
         uses: actions/cache@v4
         with:
@@ -263,7 +255,7 @@ jobs:
           retry_wait_seconds: 1
           warning_on_retry: false
           shell: bash
-          command: ./wasm-pack-test-all/target/debug/wasm-pack-test-all tests/end2end --${{ matrix.browser }} --headless
+          command: wasm-pack-test-all tests/end2end --${{ matrix.browser }} --headless
 
   build-examples:
     needs: check-toolchain-is-stable
