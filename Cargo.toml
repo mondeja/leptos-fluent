@@ -14,7 +14,6 @@ members = [
   "tests/end2end/set-language-to-localstorage",
   "tests/end2end/set-language-to-sessionstorage",
 ]
-exclude = ["wasm-pack-test-all"]
 resolver = "2"
 
 [workspace.package]
