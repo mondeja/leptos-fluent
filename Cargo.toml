@@ -33,3 +33,5 @@ panic = "abort"
 [workspace.dependencies]
 leptos-fluent = { path = "./leptos-fluent" }
 end2end-helpers = { path = "./tests/end2end/helpers" }
+wasm-bindgen.workspace = true
+wasm-bindgen-test.workspace = true
