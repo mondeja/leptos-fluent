@@ -1,4 +1,4 @@
-use end2end_helpers::{element_text, input_by_id, mount, sleep};
+use end2end_helpers::{element_text, input_by_id, mount, sleep_a_moment};
 use leptos::prelude::*;
 use leptos_fluent::{leptos_fluent, url};
 use leptos_fluent_csr_minimal_example::{LanguageSelector, TRANSLATIONS};
@@ -39,13 +39,13 @@ async fn test_url_param() {
         mount!(App);
         assert_eq!(leptos::prelude::window().location().search().unwrap(), "");
         es().click();
-        sleep(30).await;
+        sleep_a_moment().await;
         assert_eq!(
             leptos::prelude::window().location().search().unwrap(),
             format!("?{URL_PARAM}=es")
         );
         en().click();
-        sleep(30).await;
+        sleep_a_moment().await;
         assert_eq!(
             leptos::prelude::window().location().search().unwrap(),
             format!("?{URL_PARAM}=en")

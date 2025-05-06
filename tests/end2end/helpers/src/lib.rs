@@ -27,17 +27,9 @@ macro_rules! mount {
     };
 }
 
-pub async fn sleep(delay: i32) {
-    let mut cb = |resolve: js_sys::Function, _reject: js_sys::Function| {
-        ::leptos::prelude::window()
-            .set_timeout_with_callback_and_timeout_and_arguments_0(
-                &resolve, delay,
-            )
-            .unwrap();
-    };
-
-    let p = ::js_sys::Promise::new(&mut cb);
-    ::wasm_bindgen_futures::JsFuture::from(p).await.unwrap();
+/// Wait a moment for the DOM to update.
+pub async fn sleep_a_moment() {
+    gloo_timers::future::sleep(std::time::Duration::from_millis(30)).await;
 }
 
 pub fn element_text(selector: &str) -> String {

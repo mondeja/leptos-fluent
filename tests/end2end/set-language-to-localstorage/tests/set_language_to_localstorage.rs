@@ -1,4 +1,4 @@
-use end2end_helpers::{element_text, input_by_id, mount, sleep};
+use end2end_helpers::{element_text, input_by_id, mount, sleep_a_moment};
 use leptos::prelude::*;
 use leptos_fluent::{leptos_fluent, localstorage};
 use leptos_fluent_csr_minimal_example::{LanguageSelector, TRANSLATIONS};
@@ -40,7 +40,7 @@ async fn test_set_language_to_localstorage() {
     assert_eq!(element_text("p"), "Select a language:");
 
     es().click();
-    sleep(30).await;
+    sleep_a_moment().await;
     assert!(es().checked());
     assert_eq!(element_text("p"), "Selecciona un idioma:");
     assert_eq!(localstorage::get(LOCALSTORAGE_KEY), Some("es".to_string()));
