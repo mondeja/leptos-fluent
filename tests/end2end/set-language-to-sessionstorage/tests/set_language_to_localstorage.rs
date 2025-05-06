@@ -1,4 +1,4 @@
-use end2end_helpers::{element_text, input_by_id, mount, sleep, unmount};
+use end2end_helpers::{element_text, input_by_id, mount, sleep_a_moment};
 use leptos::prelude::*;
 use leptos_fluent::{leptos_fluent, sessionstorage};
 use leptos_fluent_csr_minimal_example::{LanguageSelector, TRANSLATIONS};
@@ -40,13 +40,11 @@ async fn test_set_language_to_sessionstorage() {
     assert_eq!(element_text("p"), "Select a language:");
 
     es().click();
-    sleep(30).await;
+    sleep_a_moment().await;
     assert!(es().checked());
     assert_eq!(element_text("p"), "Selecciona un idioma:");
     assert_eq!(
         sessionstorage::get(SESSIONSTORAGE_KEY),
         Some("es".to_string())
     );
-
-    unmount!();
 }

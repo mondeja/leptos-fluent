@@ -6,11 +6,10 @@ publish = false
 
 [dependencies]
 leptos = "0.8"
-leptos_meta = "0.8"
-web-sys = { version = "0.3", features = ["Navigator", "Storage"] }
-js-sys = "0.3"
-wasm-bindgen = "0.2"
-wasm-bindgen-futures = "0.4"
-
-[package.metadata.cargo-machete]
-ignored = ["leptos_meta"]
+web-sys = { version = "0.3", features = [
+  "HtmlInputElement",
+  "Storage"
+] }
+wasm-bindgen.workspace = true
+gloo-timers = { version = "0.3", features = ["futures"] }
+gloo-utils.workspace = true

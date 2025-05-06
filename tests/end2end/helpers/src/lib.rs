@@ -1,44 +1,39 @@
-#[macro_export]
-macro_rules! mount {
-    ($app:ident) => {{
-        ::leptos::mount::mount_to_body(
-            move || ::leptos::view! { <div id="wrapper"><$app/></div> },
-        );
-    }};
-}
+pub struct Mounter;
 
-#[macro_export]
-macro_rules! unmount {
-    () => {{
+impl Drop for Mounter {
+    fn drop(&mut self) {
         use wasm_bindgen::JsCast;
-        ::leptos::prelude::document()
+        ::gloo_utils::document()
             .body()
             .unwrap()
             .remove_child(
-                ::leptos::prelude::document()
+                ::gloo_utils::document()
                     .get_element_by_id("wrapper")
                     .unwrap()
                     .unchecked_ref(),
             )
             .unwrap();
-    }};
+    }
 }
 
-pub async fn sleep(delay: i32) {
-    let mut cb = |resolve: js_sys::Function, _reject: js_sys::Function| {
-        ::leptos::prelude::window()
-            .set_timeout_with_callback_and_timeout_and_arguments_0(
-                &resolve, delay,
-            )
-            .unwrap();
+/// Mounts the app to the body of the document in a wrapper container.
+#[macro_export]
+macro_rules! mount {
+    ($app:ident) => {
+        let ___app_mounter = $crate::Mounter {};
+        ::leptos::mount::mount_to_body(
+            move || ::leptos::view! { <div id="wrapper"><$app/></div> },
+        );
     };
+}
 
-    let p = ::js_sys::Promise::new(&mut cb);
-    ::wasm_bindgen_futures::JsFuture::from(p).await.unwrap();
+/// Wait a moment for the DOM to update.
+pub fn sleep_a_moment() -> gloo_timers::future::TimeoutFuture {
+    gloo_timers::future::sleep(std::time::Duration::from_millis(30))
 }
 
 pub fn element_text(selector: &str) -> String {
-    ::leptos::prelude::document()
+    gloo_utils::document()
         .query_selector(selector)
         .unwrap()
         .unwrap()
@@ -48,16 +43,8 @@ pub fn element_text(selector: &str) -> String {
 
 pub fn input_by_id(id: &str) -> web_sys::HtmlInputElement {
     use wasm_bindgen::JsCast;
-    leptos::prelude::document()
+    gloo_utils::document()
         .get_element_by_id(id)
         .unwrap()
         .unchecked_into::<web_sys::HtmlInputElement>()
-}
-
-pub fn html() -> web_sys::HtmlHtmlElement {
-    use wasm_bindgen::JsCast;
-    leptos::prelude::document()
-        .document_element()
-        .unwrap()
-        .unchecked_into::<web_sys::HtmlHtmlElement>()
 }

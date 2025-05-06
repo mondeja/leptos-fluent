@@ -1,4 +1,5 @@
-use end2end_helpers::{element_text, html, input_by_id, mount, sleep, unmount};
+use end2end_helpers::{element_text, input_by_id, mount, sleep_a_moment};
+use gloo_utils::document_element;
 use leptos::prelude::*;
 use leptos_fluent::localstorage;
 use leptos_fluent_csr_minimal_example::App;
@@ -18,7 +19,7 @@ async fn csr_minimal_example() {
     // translations working
     assert_eq!(element_text("p"), "Select a language:");
     es().click();
-    sleep(30).await;
+    sleep_a_moment().await;
     assert!(es().checked());
     assert!(!en().checked());
     assert_eq!(element_text("p"), "Selecciona un idioma:");
@@ -27,24 +28,22 @@ async fn csr_minimal_example() {
     localstorage::delete("language");
     assert_eq!(localstorage::get("language"), None);
     en().click();
-    sleep(30).await;
+    sleep_a_moment().await;
     assert_eq!(localstorage::get("language"), None);
     es().click();
-    sleep(30).await;
+    sleep_a_moment().await;
     assert_eq!(localstorage::get("language"), None);
 
     // sync_html_tag_lang not activated
-    sleep(30).await;
-    html().remove_attribute("lang").unwrap();
-    assert_eq!(html().lang(), "".to_string());
+    sleep_a_moment().await;
+    document_element().remove_attribute("lang").unwrap();
+    assert_eq!(document_element().get_attribute("lang"), None);
     es().click();
-    sleep(30).await;
+    sleep_a_moment().await;
     assert!(es().checked());
-    assert_eq!(html().lang(), "".to_string());
+    assert_eq!(document_element().get_attribute("lang"), None);
     en().click();
-    sleep(30).await;
+    sleep_a_moment().await;
     assert!(en().checked());
-    assert_eq!(html().lang(), "".to_string());
-
-    unmount!();
+    assert_eq!(document_element().get_attribute("lang"), None);
 }

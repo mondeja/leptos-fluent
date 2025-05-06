@@ -1,4 +1,4 @@
-use end2end_helpers::{element_text, input_by_id, mount, unmount};
+use end2end_helpers::{element_text, input_by_id, mount};
 use leptos::prelude::*;
 use leptos_fluent::{leptos_fluent, localstorage, sessionstorage};
 use leptos_fluent_csr_minimal_example::{LanguageSelector, TRANSLATIONS};
@@ -39,24 +39,27 @@ async fn test_sessionstorage_to_localstorage() {
     // initial_language_from_sessionstorage_to_localstorage
     localstorage::delete(LOCALSTORAGE_KEY);
     sessionstorage::delete(SESSIONSTORAGE_KEY);
-    mount!(App);
-    assert!(en().checked());
-    assert_eq!(element_text("p"), "Select a language:");
-    unmount!();
+    {
+        mount!(App);
+        assert!(en().checked());
+        assert_eq!(element_text("p"), "Select a language:");
+    }
 
     sessionstorage::set(SESSIONSTORAGE_KEY, "es");
     localstorage::delete(LOCALSTORAGE_KEY);
-    mount!(App);
-    assert!(es().checked());
-    assert_eq!(element_text("p"), "Selecciona un idioma:");
-    assert_eq!(localstorage::get(LOCALSTORAGE_KEY), Some("es".to_string()));
-    unmount!();
+    {
+        mount!(App);
+        assert!(es().checked());
+        assert_eq!(element_text("p"), "Selecciona un idioma:");
+        assert_eq!(localstorage::get(LOCALSTORAGE_KEY), Some("es".to_string()));
+    }
 
     sessionstorage::set(SESSIONSTORAGE_KEY, "en");
     localstorage::delete(LOCALSTORAGE_KEY);
-    mount!(App);
-    assert!(en().checked());
-    assert_eq!(element_text("p"), "Select a language:");
-    assert_eq!(localstorage::get(LOCALSTORAGE_KEY), Some("en".to_string()));
-    unmount!();
+    {
+        mount!(App);
+        assert!(en().checked());
+        assert_eq!(element_text("p"), "Select a language:");
+        assert_eq!(localstorage::get(LOCALSTORAGE_KEY), Some("en".to_string()));
+    }
 }

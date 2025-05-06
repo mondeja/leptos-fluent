@@ -1,4 +1,4 @@
-use end2end_helpers::{element_text, input_by_id, mount, unmount};
+use end2end_helpers::{element_text, input_by_id, mount};
 use leptos::prelude::*;
 use leptos_fluent::{cookie, leptos_fluent};
 use leptos_fluent_csr_minimal_example::{LanguageSelector, TRANSLATIONS};
@@ -36,20 +36,23 @@ async fn test_cookie() {
 
     // initial_language_from_cookie
     cookie::delete(COOKIE_NAME);
-    mount!(App);
-    assert!(en().checked());
-    assert_eq!(element_text("p"), "Select a language:");
-    unmount!();
+    {
+        mount!(App);
+        assert!(en().checked());
+        assert_eq!(element_text("p"), "Select a language:");
+    }
 
     cookie::set(COOKIE_NAME, "es", "");
-    mount!(App);
-    assert!(es().checked());
-    assert_eq!(element_text("p"), "Selecciona un idioma:");
-    unmount!();
+    {
+        mount!(App);
+        assert!(es().checked());
+        assert_eq!(element_text("p"), "Selecciona un idioma:");
+    }
 
     cookie::set(COOKIE_NAME, "en", "");
-    mount!(App);
-    assert!(en().checked());
-    assert_eq!(element_text("p"), "Select a language:");
-    unmount!();
+    {
+        mount!(App);
+        assert!(en().checked());
+        assert_eq!(element_text("p"), "Select a language:");
+    }
 }

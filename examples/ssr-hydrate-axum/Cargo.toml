@@ -23,7 +23,7 @@ fluent-templates = { version = "0.13", default-features = false, features = [
   "macros",
   "walkdir",
 ] }
-wasm-bindgen = "0.2"
+wasm-bindgen.workspace = true
 
 [features]
 csr = ["leptos/csr"]

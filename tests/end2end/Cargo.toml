@@ -7,21 +7,18 @@ publish = false
 [dependencies]
 end2end-helpers.workspace = true
 leptos-fluent.workspace = true
-fluent-templates = { version = "0.13", default-features = false, features = [
-  "macros",
-  "walkdir",
-] }
-leptos-fluent-csr-minimal-example = { path = "../../examples/csr-minimal" }
-leptos-fluent-csr-complete-example = { path = "../../examples/csr-complete" }
+fluent-templates.workspace = true
+leptos-fluent-csr-minimal-example.workspace = true
+leptos-fluent-csr-complete-example.workspace = true
 web-sys = { version = "0.3", features = [
   "Location",
   "Storage",
   "UrlSearchParams",
 ] }
-wasm-bindgen = "0.2"
-wasm-bindgen-test = "0.3"
+wasm-bindgen.workspace = true
+wasm-bindgen-test.workspace = true
 leptos = "0.8"
-leptos_meta = "0.8"
+gloo-utils.workspace = true
 
 [package.metadata.cargo-machete]
-ignored = ["fluent-templates", "leptos_meta"]
+ignored = ["fluent-templates"]
