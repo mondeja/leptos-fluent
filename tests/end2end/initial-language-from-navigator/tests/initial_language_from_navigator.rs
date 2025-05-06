@@ -1,4 +1,4 @@
-use end2end_helpers::{element_text, input_by_id, mount, mount};
+use end2end_helpers::{element_text, input_by_id, mount};
 use leptos::prelude::*;
 use leptos_fluent::{cookie, leptos_fluent, localstorage};
 use leptos_fluent_csr_minimal_example::{LanguageSelector, TRANSLATIONS};
