@@ -860,11 +860,8 @@ name = "end2end-helpers"
 version = "0.1.0"
 dependencies = [
  "gloo-timers",
- "js-sys",
  "leptos",
- "leptos_meta",
  "wasm-bindgen",
- "wasm-bindgen-futures",
  "web-sys",
 ]
 
