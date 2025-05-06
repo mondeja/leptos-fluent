@@ -11,36 +11,33 @@ pre-commit install
 
 ### End to end tests
 
-- End to end tests are located at _tests/end2end/_
+End to end tests are located at _tests/end2end/_. To install the dependencies, run:
 
 ```sh
-cargo install wasm-pack
+cargo install wasm-pack wasm-pack-test-all
 ```
 
-You need a browser installed. Run:
+Make sure that you've a browser compatible with [`wasm-pack test`] installed.
+Then run:
 
 ```sh
-cd tests/end2end
-wasm-pack test --{browser} --headless
+wasm-pack-test-all tests/end2end --{browser} --headless
 ```
 
 where `{browser}` is one of `firefox`, `chrome`, or `safari`. For example:
 
 ```sh
-cd tests/end2end
-wasm-pack test --firefox --headless
+wasm-pack-test-all tests/end2end --firefox --headless
 ```
 
-To run a test suite pass it in the `--test` flag.
+To run a test use [`wasm-pack test`] directly and pass it in the `--test` flag.
 For example, to run the `csr_complete` test suite run:
 
 ```sh
-cd tests/end2end
-wasm-pack test --firefox --headless --test csr_complete
+wasm-pack test --firefox --headless tests/end2end --test csr_complete
 ```
 
-To run all tests with custom _webdriver.json_ files execute
-_tests/end2end/run.sh_.
+[`wasm-pack test`]: https://rustwasm.github.io/wasm-pack/book/commands/test.html
 
 ### Unit tests
 
@@ -65,6 +62,5 @@ cargo install mdbook
 ```
 
 ```sh
-cd book
-mdbook serve --open
+mdbook serve book --open
 ```
