@@ -27,11 +27,6 @@ macro_rules! mount {
     };
 }
 
-/// Wait a moment for the DOM to update.
-pub fn sleep_a_moment() -> gloo_timers::future::TimeoutFuture {
-    gloo_timers::future::sleep(std::time::Duration::from_millis(30))
-}
-
 pub fn element_text(selector: &str) -> String {
     gloo_utils::document()
         .query_selector(selector)

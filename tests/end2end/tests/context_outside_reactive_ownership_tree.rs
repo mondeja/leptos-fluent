@@ -63,7 +63,7 @@ fn Child() -> impl IntoView {
 }
 
 #[wasm_bindgen_test]
-async fn context_outside_reactive_ownership_tree() {
+pub async fn context_outside_reactive_ownership_tree() {
     let fails_div = move || input_by_id("fails");
     let success_div = move || input_by_id("success");
 

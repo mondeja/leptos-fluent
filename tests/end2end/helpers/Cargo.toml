@@ -11,5 +11,4 @@ web-sys = { version = "0.3", features = [
   "Storage"
 ] }
 wasm-bindgen.workspace = true
-gloo-timers = { version = "0.3", features = ["futures"] }
 gloo-utils.workspace = true

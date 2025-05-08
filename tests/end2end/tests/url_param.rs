@@ -1,8 +1,9 @@
-use end2end_helpers::{element_text, input_by_id, mount, sleep_a_moment};
+use end2end_helpers::{element_text, input_by_id, mount};
 use leptos::prelude::*;
 use leptos_fluent::{leptos_fluent, url};
 use leptos_fluent_csr_minimal_example::{LanguageSelector, TRANSLATIONS};
 use wasm_bindgen_test::*;
+use web_sys_ec::{Ec, Wait};
 
 wasm_bindgen_test_configure!(run_in_browser);
 
@@ -30,7 +31,7 @@ fn App() -> impl IntoView {
 }
 
 #[wasm_bindgen_test]
-async fn test_url_param() {
+pub async fn test_url_param() {
     let es = move || input_by_id("es");
     let en = move || input_by_id("en");
 
@@ -39,17 +40,13 @@ async fn test_url_param() {
         mount!(App);
         assert_eq!(leptos::prelude::window().location().search().unwrap(), "");
         es().click();
-        sleep_a_moment().await;
-        assert_eq!(
-            leptos::prelude::window().location().search().unwrap(),
-            format!("?{URL_PARAM}=es")
-        );
+        Wait(1)
+            .until(Ec::LocationSearchIs(format!("?{URL_PARAM}=es")))
+            .await;
         en().click();
-        sleep_a_moment().await;
-        assert_eq!(
-            leptos::prelude::window().location().search().unwrap(),
-            format!("?{URL_PARAM}=en")
-        );
+        Wait(1)
+            .until(Ec::LocationSearchIs(format!("?{URL_PARAM}=en")))
+            .await;
     }
 
     // initial_language_from_url_param
