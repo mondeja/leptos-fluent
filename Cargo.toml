@@ -42,4 +42,4 @@ fluent-templates = { version = "0.13", default-features = false, features = [
 ] }
 leptos-fluent-csr-minimal-example = { path = "./examples/csr-minimal" }
 leptos-fluent-csr-complete-example = { path = "./examples/csr-complete" }
-web-sys-ec = "0.0.1"
+web-sys-ec = "0.1.0"

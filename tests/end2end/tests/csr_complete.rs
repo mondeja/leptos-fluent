@@ -19,26 +19,17 @@ pub async fn csr_complete_example() {
     // translations working
     en().click();
     Wait(1)
-        .until((
-            By::TagName("p"),
-            Ec::InnerTextContains("Select a language:"),
-        ))
+        .until(("p", Ec::InnerTextContains("Select a language:")))
         .await;
     es().click();
     Wait(1)
-        .until((
-            By::TagName("p"),
-            Ec::InnerTextContains("Selecciona un idioma:"),
-        ))
+        .until(("p", Ec::InnerTextContains("Selecciona un idioma:")))
         .await;
     assert!(es().checked());
     assert!(!en().checked());
     en().click();
     Wait(1)
-        .until((
-            By::TagName("p"),
-            Ec::InnerTextContains("Select a language:"),
-        ))
+        .until(("p", Ec::InnerTextContains("Select a language:")))
         .await;
     assert!(en().checked());
     assert_eq!(element_text("p"), "Select a language:");
@@ -47,12 +38,12 @@ pub async fn csr_complete_example() {
     // sync_html_tag_lang
     es().click();
     Wait(1)
-        .until((By::TagName("html"), Ec::AttributeValueIs("lang", "es")))
+        .until(("html", Ec::AttributeValueIs("lang", "es")))
         .await;
     assert!(es().checked());
     en().click();
     Wait(1)
-        .until((By::TagName("html"), Ec::AttributeValueIs("lang", "en")))
+        .until(("html", Ec::AttributeValueIs("lang", "en")))
         .await;
 
     // sync_html_tag_dir
@@ -62,11 +53,11 @@ pub async fn csr_complete_example() {
     );
     es().click();
     Wait(1)
-        .until((By::TagName("html"), Ec::AttributeValueIs("dir", "auto")))
+        .until(("html", Ec::AttributeValueIs("dir", "auto")))
         .await;
     en().click();
     Wait(1)
-        .until((By::TagName("html"), Ec::AttributeValueIs("dir", "auto")))
+        .until(("html", Ec::AttributeValueIs("dir", "auto")))
         .await;
 
     // set_language_to_localstorage

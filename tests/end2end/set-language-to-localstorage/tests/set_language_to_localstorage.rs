@@ -42,10 +42,7 @@ pub async fn test_set_language_to_localstorage() {
 
     es().click();
     Wait(1)
-        .until((
-            By::TagName("p"),
-            Ec::InnerTextContains("Selecciona un idioma:"),
-        ))
+        .until(("p", Ec::InnerTextContains("Selecciona un idioma:")))
         .await;
     assert!(es().checked());
     assert_eq!(localstorage::get(LOCALSTORAGE_KEY), Some("es".to_string()));

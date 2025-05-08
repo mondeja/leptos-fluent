@@ -21,10 +21,7 @@ pub async fn csr_minimal_example() {
     assert_eq!(element_text("p"), "Select a language:");
     es().click();
     Wait(1)
-        .until((
-            By::TagName("p"),
-            Ec::InnerTextContains("Selecciona un idioma:"),
-        ))
+        .until(("p", Ec::InnerTextContains("Selecciona un idioma:")))
         .await;
     assert!(es().checked());
     assert!(!en().checked());
@@ -35,18 +32,12 @@ pub async fn csr_minimal_example() {
     assert_eq!(localstorage::get("language"), None);
     en().click();
     Wait(1)
-        .until((
-            By::TagName("p"),
-            Ec::InnerTextContains("Select a language:"),
-        ))
+        .until(("p", Ec::InnerTextContains("Select a language:")))
         .await;
     assert_eq!(localstorage::get("language"), None);
     es().click();
     Wait(1)
-        .until((
-            By::TagName("p"),
-            Ec::InnerTextContains("Selecciona un idioma:"),
-        ))
+        .until(("p", Ec::InnerTextContains("Selecciona un idioma:")))
         .await;
     assert_eq!(localstorage::get("language"), None);
 
@@ -55,19 +46,13 @@ pub async fn csr_minimal_example() {
     assert_eq!(document_element().get_attribute("lang"), None);
     es().click();
     Wait(1)
-        .until((
-            By::TagName("p"),
-            Ec::InnerTextContains("Selecciona un idioma:"),
-        ))
+        .until(("p", Ec::InnerTextContains("Selecciona un idioma:")))
         .await;
     assert!(es().checked());
     assert_eq!(document_element().get_attribute("lang"), None);
     en().click();
     Wait(1)
-        .until((
-            By::TagName("p"),
-            Ec::InnerTextContains("Select a language:"),
-        ))
+        .until(("p", Ec::InnerTextContains("Select a language:")))
         .await;
     assert!(en().checked());
     assert_eq!(document_element().get_attribute("lang"), None);
