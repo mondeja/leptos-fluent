@@ -1723,7 +1723,6 @@ dependencies = [
  "leptos-fluent",
  "leptos-fluent-csr-minimal-example",
  "wasm-bindgen-test",
- "web-sys",
  "web-sys-ec",
 ]
 
