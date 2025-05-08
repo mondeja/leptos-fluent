@@ -1,9 +1,10 @@
-use end2end_helpers::{element_text, input_by_id, mount, sleep_a_moment};
+use end2end_helpers::{element_text, input_by_id, mount};
 use gloo_utils::document_element;
 use leptos::prelude::*;
 use leptos_fluent::localstorage;
 use leptos_fluent_csr_minimal_example::App;
 use wasm_bindgen_test::*;
+use web_sys_ec::{By, Ec, Wait};
 
 wasm_bindgen_test_configure!(run_in_browser);
 
@@ -19,7 +20,12 @@ async fn csr_minimal_example() {
     // translations working
     assert_eq!(element_text("p"), "Select a language:");
     es().click();
-    sleep_a_moment().await;
+    Wait(1)
+        .until((
+            By::TagName("p"),
+            Ec::InnerTextContains("Selecciona un idioma:"),
+        ))
+        .await;
     assert!(es().checked());
     assert!(!en().checked());
     assert_eq!(element_text("p"), "Selecciona un idioma:");
@@ -28,22 +34,41 @@ async fn csr_minimal_example() {
     localstorage::delete("language");
     assert_eq!(localstorage::get("language"), None);
     en().click();
-    sleep_a_moment().await;
+    Wait(1)
+        .until((
+            By::TagName("p"),
+            Ec::InnerTextContains("Select a language:"),
+        ))
+        .await;
     assert_eq!(localstorage::get("language"), None);
     es().click();
-    sleep_a_moment().await;
+    Wait(1)
+        .until((
+            By::TagName("p"),
+            Ec::InnerTextContains("Selecciona un idioma:"),
+        ))
+        .await;
     assert_eq!(localstorage::get("language"), None);
 
     // sync_html_tag_lang not activated
-    sleep_a_moment().await;
     document_element().remove_attribute("lang").unwrap();
     assert_eq!(document_element().get_attribute("lang"), None);
     es().click();
-    sleep_a_moment().await;
+    Wait(1)
+        .until((
+            By::TagName("p"),
+            Ec::InnerTextContains("Selecciona un idioma:"),
+        ))
+        .await;
     assert!(es().checked());
     assert_eq!(document_element().get_attribute("lang"), None);
     en().click();
-    sleep_a_moment().await;
+    Wait(1)
+        .until((
+            By::TagName("p"),
+            Ec::InnerTextContains("Select a language:"),
+        ))
+        .await;
     assert!(en().checked());
     assert_eq!(document_element().get_attribute("lang"), None);
 }

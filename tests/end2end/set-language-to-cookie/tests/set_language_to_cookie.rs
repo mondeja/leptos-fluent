@@ -1,8 +1,9 @@
-use end2end_helpers::{element_text, input_by_id, mount, sleep_a_moment};
+use end2end_helpers::{element_text, input_by_id, mount};
 use leptos::prelude::*;
 use leptos_fluent::{cookie, leptos_fluent};
 use leptos_fluent_csr_minimal_example::{LanguageSelector, TRANSLATIONS};
 use wasm_bindgen_test::*;
+use web_sys_ec::{By, Ec, Wait};
 
 wasm_bindgen_test_configure!(run_in_browser);
 
@@ -40,8 +41,12 @@ async fn test_set_language_to_cookie() {
     assert_eq!(element_text("p"), "Select a language:");
 
     es().click();
-    sleep_a_moment().await;
+    Wait(1)
+        .until((
+            By::TagName("p"),
+            Ec::InnerTextContains("Selecciona un idioma:"),
+        ))
+        .await;
     assert!(es().checked());
-    assert_eq!(element_text("p"), "Selecciona un idioma:");
     assert_eq!(cookie::get(COOKIE), Some("es".to_string()));
 }

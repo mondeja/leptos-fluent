@@ -859,7 +859,6 @@ dependencies = [
 name = "end2end-helpers"
 version = "0.1.0"
 dependencies = [
- "gloo-timers",
  "gloo-utils",
  "leptos",
  "wasm-bindgen",
@@ -1724,6 +1723,8 @@ dependencies = [
  "leptos-fluent",
  "leptos-fluent-csr-minimal-example",
  "wasm-bindgen-test",
+ "web-sys",
+ "web-sys-ec",
 ]
 
 [[package]]
@@ -1736,6 +1737,7 @@ dependencies = [
  "leptos-fluent",
  "leptos-fluent-csr-minimal-example",
  "wasm-bindgen-test",
+ "web-sys-ec",
 ]
 
 [[package]]
@@ -1748,6 +1750,7 @@ dependencies = [
  "leptos-fluent",
  "leptos-fluent-csr-minimal-example",
  "wasm-bindgen-test",
+ "web-sys-ec",
 ]
 
 [[package]]
@@ -1764,6 +1767,7 @@ dependencies = [
  "wasm-bindgen",
  "wasm-bindgen-test",
  "web-sys",
+ "web-sys-ec",
 ]
 
 [[package]]
@@ -3743,6 +3747,17 @@ checksum = "33b6dd2ef9186f1f2072e409e99cd22a975331a6b3591b12c764e0e55c60d5d2"
 dependencies = [
  "js-sys",
  "wasm-bindgen",
+]
+
+[[package]]
+name = "web-sys-ec"
+version = "0.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "38153d7c178f76bb4594c24b3cae3ce1138d3a3e9ce5368deee8d46a19aba8bc"
+dependencies = [
+ "gloo-timers",
+ "js-sys",
+ "web-sys",
 ]
 
 [[package]]

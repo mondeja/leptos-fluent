@@ -11,6 +11,8 @@ fluent-templates.workspace = true
 leptos-fluent-csr-minimal-example.workspace = true
 wasm-bindgen-test.workspace = true
 leptos = "0.8"
+web-sys = "0.3"
+web-sys-ec.workspace = true
 
 [package.metadata.cargo-machete]
 ignored = ["fluent-templates"]
