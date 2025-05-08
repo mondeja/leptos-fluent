@@ -31,7 +31,7 @@ pub fn App() -> impl IntoView {
 }
 
 #[wasm_bindgen_test]
-async fn test_set_language_to_cookie() {
+pub async fn test_set_language_to_cookie() {
     let en = move || input_by_id("en");
     let es = move || input_by_id("es");
 

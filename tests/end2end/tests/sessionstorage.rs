@@ -30,7 +30,7 @@ fn App() -> impl IntoView {
 }
 
 #[wasm_bindgen_test]
-async fn initial_language_from_sessionstorage() {
+pub async fn initial_language_from_sessionstorage() {
     let es = move || input_by_id("es");
     let en = move || input_by_id("en");
 

@@ -9,7 +9,7 @@ use web_sys_ec::{By, Ec, Wait};
 wasm_bindgen_test_configure!(run_in_browser);
 
 #[wasm_bindgen_test]
-async fn csr_complete_example() {
+pub async fn csr_complete_example() {
     localstorage::delete("language");
 
     mount!(App);

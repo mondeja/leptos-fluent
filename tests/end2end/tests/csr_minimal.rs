@@ -9,7 +9,7 @@ use web_sys_ec::{By, Ec, Wait};
 wasm_bindgen_test_configure!(run_in_browser);
 
 #[wasm_bindgen_test]
-async fn csr_minimal_example() {
+pub async fn csr_minimal_example() {
     mount!(App);
     let es = move || input_by_id("es");
     let en = move || input_by_id("en");

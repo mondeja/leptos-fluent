@@ -31,7 +31,7 @@ fn App() -> impl IntoView {
 }
 
 #[wasm_bindgen_test]
-async fn test_url_param() {
+pub async fn test_url_param() {
     let es = move || input_by_id("es");
     let en = move || input_by_id("en");
 

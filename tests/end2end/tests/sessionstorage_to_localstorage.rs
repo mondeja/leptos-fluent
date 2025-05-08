@@ -32,7 +32,7 @@ fn App() -> impl IntoView {
 }
 
 #[wasm_bindgen_test]
-async fn test_sessionstorage_to_localstorage() {
+pub async fn test_sessionstorage_to_localstorage() {
     let es = move || input_by_id("es");
     let en = move || input_by_id("en");
 
