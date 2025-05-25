@@ -3,7 +3,7 @@ use leptos::prelude::*;
 use leptos_fluent::{cookie, leptos_fluent};
 use leptos_fluent_csr_minimal_example::{LanguageSelector, TRANSLATIONS};
 use wasm_bindgen_test::*;
-use web_sys_ec::{By, Ec, Wait};
+use web_sys_ec::{Ec, Wait};
 
 wasm_bindgen_test_configure!(run_in_browser);
 

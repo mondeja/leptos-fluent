@@ -40,10 +40,10 @@ jobs:
         id: toolchain
         uses: ./.github/actions/get-toolchain
       - name: Setup Rust
-        uses: hecrj/setup-rust-action@v2
+        uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
-          rust-version: ${{ steps.toolchain.outputs.channel }}
-          profile: minimal
+          toolchain: ${{ steps.toolchain.outputs.channel }}
+          components: clippy,rustfmt
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -52,15 +52,6 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install pre-commit
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-            ~/.cache/pre-commit
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/Cargo.lock') }}-${{ hashFiles('**/.pre-commit-config.yaml') }}
       - name: Install libgtk
         run: |
           sudo apt-get update
@@ -113,10 +104,9 @@ jobs:
         id: toolchain
         uses: ./.github/actions/get-toolchain
       - name: Setup Rust
-        uses: hecrj/setup-rust-action@v2
+        uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
-          rust-version: ${{ steps.toolchain.outputs.channel }}
-          profile: minimal
+          toolchain: ${{ steps.toolchain.outputs.channel }}
       - name: Install cargo-machete
         uses: taiki-e/install-action@v2
         with:
@@ -134,16 +124,15 @@ jobs:
         id: toolchain
         uses: ./.github/actions/get-toolchain
       - name: Setup Rust
-        uses: hecrj/setup-rust-action@v2
+        uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
-          rust-version: ${{ steps.toolchain.outputs.channel }}
-          profile: minimal
+          toolchain: ${{ steps.toolchain.outputs.channel }}
       - name: Install cargo binstall
         uses: cargo-bins/cargo-binstall@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install mdbook
-        run: cargo binstall -y mdbook mdbook-admonish mdbook-toc
+        run: cargo binstall -y --force mdbook mdbook-admonish mdbook-toc
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Build book
@@ -178,23 +167,14 @@ jobs:
         with:
           channel: nightly
       - name: Setup Rust
-        uses: hecrj/setup-rust-action@v2
+        uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
-          rust-version: ${{ matrix.toolchain }}
-          profile: minimal
-          targets: wasm32-unknown-unknown
+          toolchain: ${{ matrix.toolchain }}
+          target: wasm32-unknown-unknown
       - name: Install wasm-pack
         uses: taiki-e/install-action@v2
         with:
           tool: wasm-pack
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-unit-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/Cargo.lock') }}
       - name: Run unit tests
         shell: bash
         run: |
@@ -228,25 +208,16 @@ jobs:
         id: toolchain
         uses: ./.github/actions/get-toolchain
       - name: Setup Rust
-        uses: hecrj/setup-rust-action@v2
+        uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
-          rust-version: ${{ steps.toolchain.outputs.channel }}
-          profile: minimal
-          targets: wasm32-unknown-unknown
+          toolchain: ${{ steps.toolchain.outputs.channel }}
+          target: wasm32-unknown-unknown
       - name: Install wasm-pack
         uses: taiki-e/install-action@v2
         with:
           tool: wasm-pack
       - name: Install wasm-pack-test-all
         run: cargo install --force wasm-pack-test-all
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-end2end-${{ matrix.browser }}-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/Cargo.lock') }}
       - name: Run end to end tests
         uses: nick-fields/retry@v3
         with:
@@ -287,20 +258,10 @@ jobs:
         id: toolchain
         uses: ./.github/actions/get-toolchain
       - name: Setup Rust
-        uses: hecrj/setup-rust-action@v2
+        uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
-          rust-version: ${{ steps.toolchain.outputs.channel }}
-          profile: minimal
-          targets: wasm32-unknown-unknown
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            ~/.cargo/bin
-            target
-          key: ${{ runner.os }}-cargo-${{ matrix.example }}-${{ hashFiles('**/Cargo.toml') }}-${{ hashFiles('**/Cargo.lock') }}-${{ matrix.toolchain }}
+          toolchain: ${{ steps.toolchain.outputs.channel }}
+          target: wasm32-unknown-unknown
       - name: Install trunk
         if: startsWith(matrix.example, 'csr')
         uses: taiki-e/install-action@v2
@@ -370,10 +331,9 @@ jobs:
         with:
           channel: nightly
       - name: Setup Rust
-        uses: hecrj/setup-rust-action@v2
+        uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
-          rust-version: nightly
-          profile: minimal
+          toolchain: nightly
       - name: leptos-fluent type sizes
         run: |
           cd leptos-fluent
@@ -405,7 +365,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Setup Rust
-        uses: hecrj/setup-rust-action@v2
+        uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Publish
         run: |
           cargo login ${{ secrets.CRATES_TOKEN }}
@@ -420,7 +380,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Setup Rust
-        uses: hecrj/setup-rust-action@v2
+        uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Publish
         run: |
           cargo login ${{ secrets.CRATES_TOKEN }}
@@ -435,7 +395,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Setup Rust
-        uses: hecrj/setup-rust-action@v2
+        uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Get project version
         id: version
         uses: ./.github/actions/get-version
@@ -486,7 +446,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Setup Rust
-        uses: hecrj/setup-rust-action@v2
+        uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Install cargo binstall
         uses: cargo-bins/cargo-binstall@main
         env:
