@@ -132,7 +132,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install mdbook
-        run: cargo binstall -y mdbook mdbook-admonish mdbook-toc
+        run: cargo binstall -y --force mdbook mdbook-admonish mdbook-toc
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Build book
