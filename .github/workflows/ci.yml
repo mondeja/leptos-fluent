@@ -471,10 +471,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Get project version
-        id: version
-        uses: ./.github/actions/get-version
+        id: get-version
+        uses: mondeja/get-current-crate-version@main
+        with:
+          working-directory: leptos-fluent
       - name: Install mdbook
-        run: cargo binstall -y mdbook mdbook-admonish mdbook-toc
+        run: cargo binstall -y --force mdbook mdbook-admonish mdbook-toc
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Build book
@@ -484,15 +486,15 @@ jobs:
           mdbook build
           # create versioned copy
           cd ..
-          cp -r book/dist book/v${{ steps.version.outputs.version }}
+          cp -r book/dist book/v${{ steps.get-version.outputs.version }}
       - name: Deploy book
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./book/dist
-      - name: Deploy book v${{ steps.version.outputs.version }}
+      - name: Deploy book v${{ steps.get-version.outputs.version }}
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./book/v${{ steps.version.outputs.version }}
-          destination_dir: v${{ steps.version.outputs.version }}
+          publish_dir: ./book/v${{ steps.get-version.outputs.version }}
+          destination_dir: v${{ steps.get-version.outputs.version }}
