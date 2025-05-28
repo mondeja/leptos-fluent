@@ -363,7 +363,7 @@ jobs:
     name: Test leptos-fluent release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4ç
+      - uses: actions/checkout@v4
       - name: Get project version
         id: get-version
         uses: mondeja/get-current-crate-version@main
