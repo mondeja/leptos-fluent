@@ -109,9 +109,10 @@ will be the same as in the file regardless of the alphabetical order
 of the names.
 ```
 
-The first one in the languages file will used as the initial of the user when
-no other initialization language is discovered. Use the same as the one
-configured as `fallback_language` in `static_loader!`.
+If `default_language` parameter is not passed to `leptos_fluent!` macro, the
+first one in the languages file or language code folder by their alphabetical
+order will used as the initial of the user when no other initialization
+language is discovered.
 
 ```rust
 static_loader! {
@@ -126,6 +127,7 @@ pub fn App() -> impl IntoView {
     leptos_fluent! {
         translations: [TRANSLATIONS],
         languages: "./locales/languages.json5",
+        default_language: "en",
     };
 }
 ```
