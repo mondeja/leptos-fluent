@@ -792,9 +792,10 @@ will be the same as in the file regardless of the alphabetical order
 of the names.</p>
 </div>
 </div>
-<p>The first one in the languages file will used as the initial of the user when
-no other initialization language is discovered. Use the same as the one
-configured as <code>fallback_language</code> in <code>static_loader!</code>.</p>
+<p>If <code>default_language</code> parameter is not passed to <code>leptos_fluent!</code> macro, the
+first one in the languages file or language code folder by their alphabetical
+order will used as the initial of the user when no other initialization
+language is discovered.</p>
 <pre><code class="language-rust">static_loader! {
     static TRANSLATIONS = {
         locales: "./locales",
@@ -807,6 +808,7 @@ pub fn App() -&gt; impl IntoView {
     leptos_fluent! {
         translations: [TRANSLATIONS],
         languages: "./locales/languages.json5",
+        default_language: "en",
     };
 }</code></pre>
 <pre><code class="language-json5">// ./locales/languages.json5
@@ -1214,6 +1216,7 @@ locale. It is used in the root component of the application.</p>
 <li><a href="leptos_fluent.html#translations"><code>translations</code></a></li>
 <li><a href="leptos_fluent.html#locales"><code>locales</code></a></li>
 <li><a href="leptos_fluent.html#children"><code>children</code></a></li>
+<li><a href="leptos_fluent.html#default_language"><code>default_language</code></a></li>
 <li><a href="leptos_fluent.html#core_locales"><code>core_locales</code></a></li>
 <li><a href="leptos_fluent.html#languages"><code>languages</code></a></li>
 <li><a href="leptos_fluent.html#check_translations"><code>check_translations</code></a></li>
@@ -1373,6 +1376,7 @@ leptos_fluent! {
     locales: "./locales",
     translations: [TRANSLATIONS],
     // ^^^^^^^^^^^^^^^^^^^^^^^^^
+    fallback_language: "en",
 }</code></pre>
 <p>Must be the same identifier used in the <a href="https://docs.rs/fluent-templates/latest/fluent_templates/macro.static_loader.html"><code>fluent_templates::static_loader!</code></a>
 macro, which returns an <a href="https://doc.rust-lang.org/std/sync/struct.LazyLock.html"><code>std::sync::LazyLock</code></a> variable.</p>
@@ -1405,6 +1409,27 @@ fn App() -&gt; impl IntoView {
         // ... your components
     }
 }</code></pre>
+<h3 id="default_language"><a class="header" href="#default_language"><code>default_language</code></a></h3>
+<p>Initial language to load when the user does not load any with the
+provided configuration.</p>
+<p>If not defined, the first language in by the alphabetical order of
+their language codes will be used as fallback.</p>
+<pre><code class="language-rust">static_loader! {
+    pub static TRANSLATIONS = {
+        locales: "./locales",
+        fallback_language: "en",
+    };
+}
+
+leptos_fluent! {
+    locales: "./locales",
+    translations: [TRANSLATIONS],
+    default_language: "en",
+    // ^^^^^^^^^^^^^^^^^^^^
+}</code></pre>
+<p>Note that this is not the same as the <code>fallback_language</code> parameter
+of <a href="https://docs.rs/fluent-templates/latest/fluent_templates/macro.static_loader.html"><code>fluent_templates::static_loader!</code></a>, which is used to provide a fallback
+language when a translation is not found in the current language.</p>
 <h3 id="core_locales"><a class="header" href="#core_locales"><code>core_locales</code></a></h3>
 <p>Common locale resources that are shared across all locales.
 Must be relative to the <em>Cargo.toml</em> file, the same
@@ -1413,6 +1438,7 @@ used in the <a href="https://docs.rs/fluent-templates/latest/fluent_templates/ma
     pub static TRANSLATIONS = {
         locales: "./locales",
         core_locales: "./locales/core",
+        fallback_language: "en",
     };
 }
 
