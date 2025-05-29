@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2025-05-29 - [0.2.11]
+
+### New features
+
+- Add `default_language` parameter to `leptos_fluent!` macro to set the initial
+  language if the user does not load any with the provided configuration.
+
 ## 2025-03-30 - [0.2.10]
 
 ### Enhancements
@@ -786,6 +793,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.2.11]: https://github.com/mondeja/leptos-fluent/compare/v0.2.10...v0.2.11
 [0.2.10]: https://github.com/mondeja/leptos-fluent/compare/v0.2.9...v0.2.10
 [0.2.9]: https://github.com/mondeja/leptos-fluent/compare/v0.2.8...v0.2.9
 [0.2.8]: https://github.com/mondeja/leptos-fluent/compare/v0.2.7...v0.2.8

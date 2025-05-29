@@ -20,6 +20,7 @@ fn I18n(children: Children) -> impl IntoView {
         children: children(),
         translations: [TRANSLATIONS],
         locales: "./locales",
+        default_language: "en",
         #[cfg(debug_assertions)] check_translations: "./src/**/*.rs",
         sync_html_tag_lang: true,
         sync_html_tag_dir: true,

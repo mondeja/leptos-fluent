@@ -92,6 +92,9 @@
 //!         children: children(),
 //!         // Path to the locales directory, relative to Cargo.toml.
 //!         locales: "./locales",
+//!         // Initial language when the user don't load any with
+//!         // the provided configuration.
+//!         default_language: "en",
 //!         // Static translations struct provided by fluent-templates.
 //!         translations: [TRANSLATIONS],
 //!         // Check translations correctness in the specified files.
@@ -1382,6 +1385,7 @@ pub struct LeptosFluentMeta {
     pub locales: &'static str,
     pub core_locales: Option<&'static str>,
     pub languages: Option<&'static str>,
+    pub default_language: Option<&'static str>,
     pub check_translations: Option<&'static str>,
     pub fill_translations: Option<&'static str>,
     pub provide_meta_context: bool,

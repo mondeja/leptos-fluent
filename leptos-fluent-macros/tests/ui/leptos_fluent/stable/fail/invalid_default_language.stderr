@@ -1,0 +1,5 @@
+error: Default language 'foobarbaz' not found in defined languages: ["en", "es"]
+  --> tests/ui/leptos_fluent/stable/fail/invalid_default_language.rs:18:27
+   |
+18 |         default_language: "foobarbaz",
+   |                           ^^^^^^^^^^^

@@ -11,7 +11,7 @@ use std::sync::LazyLock;
 pub fn shell(options: LeptosOptions) -> impl IntoView {
     view! {
         <!DOCTYPE html>
-        <html lang="en">
+        <html>
             <head>
                 <meta charset="utf-8" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -42,6 +42,7 @@ fn I18n(children: Children) -> impl IntoView {
         children: children(),
         translations: [TRANSLATIONS, TRANSLATIONS] + COMPOUND,
         locales: "./locales",
+        default_language: "en",
         check_translations: "./src/**/*.rs",
         sync_html_tag_lang: true,
         sync_html_tag_dir: true,

@@ -67,6 +67,7 @@ pub(crate) fn debug(msg: &str) {
 ///     leptos_fluent! {
 ///         children: children(),
 ///         translations: [TRANSLATIONS],
+///         default_language: "en-US",
 ///         languages: "./locales/languages.json",
 ///         sync_html_tag_lang: true,
 ///         sync_html_tag_dir: true,
@@ -114,6 +115,7 @@ pub fn leptos_fluent(
         raw_languages_path,
         locales_path,
         core_locales_path,
+        default_language,
         check_translations,
         fill_translations,
         provide_meta_context,
@@ -1874,6 +1876,13 @@ pub fn leptos_fluent(
             match param.lit.unwrap_or(false) {
                 true => {
                     let core_locales_quote = maybe_litstr_param(&core_locales_path);
+                    let default_language_quote = match &default_language {
+                        Some(ref lang, ..) => {
+                            let code = &lang.0;
+                            quote!(Some(#code))
+                        },
+                        None => quote!(None)
+                    };
                     let languages_quote =
                         maybe_some_litstr_param(&raw_languages_path);
                     let check_translations_quote =
@@ -2060,6 +2069,7 @@ pub fn leptos_fluent(
                             locales: #locales_path,
                             core_locales: #core_locales_quote,
                             languages: #languages_quote,
+                            default_language: #default_language_quote,
                             check_translations: #check_translations_quote,
                             fill_translations: #fill_translations_quote,
                             sync_html_tag_lang: #sync_html_tag_lang_quote,
@@ -2135,6 +2145,11 @@ pub fn leptos_fluent(
         #leptos_fluent_provide_meta_context_quote
     };
 
+    let initial_language_index = match default_language {
+        Some((_, index)) => index,
+        None => 0,
+    };
+
     let init_quote = quote! {
         {
             let mut lang: Option<&'static ::leptos_fluent::Language> = None;
@@ -2143,7 +2158,7 @@ pub fn leptos_fluent(
             let initial_lang = if let Some(l) = lang {
                 l
             } else {
-                LANGUAGES[0]
+                LANGUAGES[#initial_language_index]
             };
 
             let i18n = ::leptos_fluent::I18n {

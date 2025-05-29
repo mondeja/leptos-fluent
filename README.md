@@ -93,6 +93,9 @@ fn I18n(children: Children) -> impl IntoView {
         children: children(),
         // Path to the locales directory, relative to Cargo.toml.
         locales: "./locales",
+        // Initial language when the user don't load any with
+        // the provided configuration.
+        default_language: "en",
         // Static translations struct provided by fluent-templates.
         translations: [TRANSLATIONS],
         // Check translations correctness in the specified files.

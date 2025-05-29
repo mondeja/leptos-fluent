@@ -32,7 +32,7 @@ async fn main() -> std::io::Result<()> {
                 move || {
                     view! {
                         <!DOCTYPE html>
-                        <html lang="en">
+                        <html>
                             <head>
                                 <meta charset="utf-8" />
                                 <meta
