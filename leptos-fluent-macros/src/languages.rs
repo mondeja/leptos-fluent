@@ -3,7 +3,11 @@ use std::fs;
 use std::path::PathBuf;
 use std::rc::Rc;
 
-pub(crate) type ParsedLanguage = (String, String, String, Option<String>);
+type LangCode = String;
+type LangName = String;
+type LangDir = String;
+type LangFlag = Option<String>;
+pub(crate) type ParsedLanguage = (LangCode, LangName, LangDir, LangFlag);
 
 #[cfg(any(feature = "json", feature = "yaml", feature = "json5"))]
 #[derive(serde::Deserialize)]

@@ -432,6 +432,7 @@ pub(crate) struct I18nLoader {
     pub translations: Translations,
     pub languages: Vec<ParsedLanguage>,
     pub languages_path: Option<String>,
+    pub default_language: Option<(String, usize)>,
     pub raw_languages_path: Option<String>,
     pub locales_path: String,
     pub core_locales_path: Option<String>,
@@ -520,6 +521,7 @@ impl Parse for I18nLoader {
         let mut locales_path: Option<syn::LitStr> = None;
         let mut languages_path: Option<syn::LitStr> = None;
         let mut core_locales_path: Option<syn::LitStr> = None;
+        let mut default_language: Option<syn::LitStr> = None;
         let mut translations: Option<Translations> = None;
         let mut check_translations: Option<syn::LitStr> = None;
         let mut fill_translations: Option<syn::LitStr> = None;
@@ -775,6 +777,17 @@ impl Parse for I18nLoader {
                     exprpath_token_stream,
                     k,
                     core_locales_path
+                );
+            } else if k == "default_language" {
+                struct_field_init_shorthand_not_supported!(
+                    struct_field_init_shorthand,
+                    k
+                );
+                default_language = Some(input.parse()?);
+                evaluate_compile_time_exprpath_set_none!(
+                    exprpath_token_stream,
+                    k,
+                    default_language
                 );
             } else if k == "languages" {
                 struct_field_init_shorthand_not_supported!(
@@ -1900,6 +1913,35 @@ impl Parse for I18nLoader {
             }
         }
 
+        let default_language_and_index = if let Some(ref default_language) =
+            default_language
+        {
+            let value = &default_language.value();
+            let languages_clone = languages.clone();
+            let maybe_language_and_index = languages_clone
+                .iter()
+                .enumerate()
+                .find(|(_, (code, ..))| code == value);
+            if maybe_language_and_index.is_none() {
+                let lang_codes = languages_clone
+                    .into_iter()
+                    .map(|(k, ..)| k)
+                    .collect::<Vec<_>>();
+                return Err(syn::Error::new(
+                    default_language.span(),
+                    format!(
+                        "Default language '{}' not found in defined languages: {:?}",
+                        value,
+                        &lang_codes,
+                    ),
+                ));
+            }
+            let (index, (code, ..)) = maybe_language_and_index.unwrap();
+            Some((code.to_string(), index))
+        } else {
+            None
+        };
+
         let loader_ = Self {
             fluent_file_paths: fluent_resources_and_file_paths.1,
             children,
@@ -1909,6 +1951,7 @@ impl Parse for I18nLoader {
             raw_languages_path: languages_path.map(|x| x.value()),
             locales_path: locales_path.unwrap().value(),
             core_locales_path: core_locales_path_str,
+            default_language: default_language_and_index,
             check_translations: check_translations.map(|x| x.value()),
             fill_translations: fill_translations.map(|x| x.value()),
             provide_meta_context,

@@ -33,7 +33,7 @@ fn App() -> impl IntoView {
 }
 
 #[wasm_bindgen_test]
-async fn test_initial_language_from_navigator() {
+pub async fn test_initial_language_from_navigator() {
     let es = move || input_by_id("es");
 
     mount!(App);

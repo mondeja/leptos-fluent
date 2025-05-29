@@ -132,6 +132,7 @@ leptos_fluent! {
     locales: "./locales",
     translations: [TRANSLATIONS],
     // ^^^^^^^^^^^^^^^^^^^^^^^^^
+    fallback_language: "en",
 }
 ```
 
@@ -177,6 +178,34 @@ fn App() -> impl IntoView {
 }
 ```
 
+### `default_language`
+
+Initial language to load when the user does not load any with the
+provided configuration.
+
+If not defined, the first language in by the alphabetical order of
+their language codes will be used as fallback.
+
+```rust
+static_loader! {
+    pub static TRANSLATIONS = {
+        locales: "./locales",
+        fallback_language: "en",
+    };
+}
+
+leptos_fluent! {
+    locales: "./locales",
+    translations: [TRANSLATIONS],
+    default_language: "en",
+    // ^^^^^^^^^^^^^^^^^^^^
+}
+```
+
+Note that this is not the same as the `fallback_language` parameter
+of [`fluent_templates::static_loader!`], which is used to provide a fallback
+language when a translation is not found in the current language.
+
 ### `core_locales`
 
 Common locale resources that are shared across all locales.
@@ -188,6 +217,7 @@ static_loader! {
     pub static TRANSLATIONS = {
         locales: "./locales",
         core_locales: "./locales/core",
+        fallback_language: "en",
     };
 }
 
