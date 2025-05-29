@@ -70,7 +70,7 @@ fn LanguageSelector() -> impl IntoView {
             <li>
                 <p>
                     {move_tr!(
-                        "html-tag-lang-is", { "lang" => expect_i18n().language.read().id.to_string() }
+                        "html-tag-lang-is", { "lang" => expect_i18n().language.get().id.to_string() }
                     )}
                 </p>
                 <p>{move_tr!("add-es-en-url-param")}</p>
@@ -78,7 +78,7 @@ fn LanguageSelector() -> impl IntoView {
             <li>
                 <p>
                     {move_tr!(
-                        "html-tag-dir-is", { "dir" => expect_i18n().language.read().dir.to_string() }
+                        "html-tag-dir-is", { "dir" => expect_i18n().language.get().dir.to_string() }
                     )}
                 </p>
             </li>
