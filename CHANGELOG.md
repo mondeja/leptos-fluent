@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## Unreleased - [0.2.12]
+
+### Enhancements
+
+- Performance improvements for translations checker.
+
+### Bug fixes
+
+- Fix typo in I18n context missing error message.
+
 ## 2025-05-29 - [0.2.11]
 
 ### New features
@@ -793,6 +803,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.2.12]: https://github.com/mondeja/leptos-fluent/compare/v0.2.11...master
 [0.2.11]: https://github.com/mondeja/leptos-fluent/compare/v0.2.10...v0.2.11
 [0.2.10]: https://github.com/mondeja/leptos-fluent/compare/v0.2.9...v0.2.10
 [0.2.9]: https://github.com/mondeja/leptos-fluent/compare/v0.2.8...v0.2.9

@@ -720,7 +720,7 @@ const EXPECT_I18N_ERROR_MESSAGE: &str = concat!(
     "  - `move_tr!(i18n, \"text-id\")` instead of `move_tr!(\"text-id\")`.\n",
     "  - `i18n.language.set(lang)` instead of `lang.activate()`.\n",
     "  - `lang == i18n.language.get()` instead of `lang.is_active()`.\n",
-    "  - Copy `i18n` context instead of getting it `expect_i18n()`.",
+    "  - Copy `i18n` context instead of getting it with `expect_i18n()`.",
 );
 
 /// Expect the current context for localization.
