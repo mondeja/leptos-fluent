@@ -10,32 +10,42 @@ pub(crate) fn gather_tr_macro_defs_from_rs_files(
     let mut errors = Vec::new();
     let mut tr_macros = Vec::new();
 
-    let glob_pattern = globstr.as_ref().to_string_lossy();
-
-    match globwalk::glob(&glob_pattern) {
-        Ok(paths) => {
-            for walker in paths {
-                match walker {
-                    Ok(entry) => {
-                        let path = entry.path();
-                        tr_macros_from_file_path(
-                            &mut tr_macros,
-                            &mut errors,
-                            &path.to_string_lossy(),
-                            #[cfg(not(test))]
-                            &workspace_path.as_ref().to_string_lossy(),
-                        );
-                    }
-                    Err(error) => {
-                        errors.push(format!("Error reading file: {error}"));
+    let globstr = globstr.as_ref();
+    if globstr.is_file() {
+        tr_macros_from_file_path(
+            &mut tr_macros,
+            &mut errors,
+            &globstr.to_string_lossy(),
+            #[cfg(not(test))]
+            &workspace_path.as_ref().to_string_lossy(),
+        );
+    } else {
+        let glob_pattern = globstr.to_string_lossy();
+        match globwalk::glob(&glob_pattern) {
+            Ok(paths) => {
+                for walker in paths {
+                    match walker {
+                        Ok(entry) => {
+                            let path = entry.path();
+                            tr_macros_from_file_path(
+                                &mut tr_macros,
+                                &mut errors,
+                                &path.to_string_lossy(),
+                                #[cfg(not(test))]
+                                &workspace_path.as_ref().to_string_lossy(),
+                            );
+                        }
+                        Err(error) => {
+                            errors.push(format!("Error reading file: {error}"));
+                        }
                     }
                 }
             }
-        }
-        Err(error) => {
-            errors.push(format!(
-                "Error reading glob pattern \"{glob_pattern}\": {error}"
-            ));
+            Err(error) => {
+                errors.push(format!(
+                    "Error reading glob pattern \"{glob_pattern}\": {error}"
+                ));
+            }
         }
     }
 
@@ -61,9 +71,9 @@ fn tr_macros_from_file_path(
                 );
                 visitor.visit_file(&ast);
             }
-            Err(error) => {
-                errors
-                    .push(format!("Error parsing file {file_path}\n  {error}"));
+            Err(_) => {
+                // This error is a syntax error. Let the Rust compiler handle it.
+                // See https://github.com/mondeja/leptos-fluent/issues/330
             }
         }
     } else {
