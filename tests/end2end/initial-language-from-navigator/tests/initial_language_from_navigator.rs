@@ -1,7 +1,7 @@
 use end2end_helpers::{element_text, input_by_id, mount};
 use leptos::prelude::*;
 use leptos_fluent::{cookie, leptos_fluent, localstorage};
-use leptos_fluent_csr_minimal_example::{LanguageSelector, TRANSLATIONS};
+use leptos_fluent_csr_minimal_example::LanguageSelector;
 use wasm_bindgen_test::*;
 
 wasm_bindgen_test_configure!(run_in_browser);
@@ -13,7 +13,6 @@ const COOKIE: &str = "ilfn";
 fn I18n(children: Children) -> impl IntoView {
     leptos_fluent! {
         children: children(),
-        translations: [TRANSLATIONS],
         locales: "../../../examples/csr-minimal/locales",
         initial_language_from_navigator: true,
         initial_language_from_navigator_to_localstorage: true,
