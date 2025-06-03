@@ -33,23 +33,15 @@ language-selected-is = El idioma seleccionado es { $lang }.
 
 ```rust
 // src/lib.rs
-use fluent_templates::static_loader;
 use leptos::prelude::*;
 use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, Language};
-
-static_loader! {
-    pub static TRANSLATIONS = {
-        locales: "./locales",
-        fallback_language: "en",
-    };
-}
 
 #[component]
 pub fn I18n(children: Children) -> impl IntoView {
     leptos_fluent! {
         children: children(),
-        translations: [TRANSLATIONS],
         locales: "./locales",
+        default_language: "en",
     }
 }
 
@@ -125,7 +117,6 @@ path = "src/lib.rs"
 [dependencies]
 leptos = { version = "0.8", features = ["csr"] }
 leptos-fluent = "0.2"
-fluent-templates = "0.13"
 console_error_panic_hook = "0.1"
 
 # Using cargo-leptos

@@ -1,9 +1,14 @@
 # CHANGELOG
 
-## Unreleased - [0.2.12]
+## 2025-06-03 - [0.2.12]
 
 ### Enhancements
 
+- The argument `translations` of `leptos_fluent!` macro is now optional. This
+  means that `fluent-templates` is not required as a direct dependency anymore.
+- Add `disable-unicode-isolating-marks` feature to disable Unicode isolating
+  marks in translations when not using `translations` argument in
+  `leptos_fluent!` macro.
 - Performance improvements for translations checker.
 
 ### Bug fixes
@@ -803,7 +808,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
-[0.2.12]: https://github.com/mondeja/leptos-fluent/compare/v0.2.11...master
+[0.2.12]: https://github.com/mondeja/leptos-fluent/compare/v0.2.11...v0.2.12
 [0.2.11]: https://github.com/mondeja/leptos-fluent/compare/v0.2.10...v0.2.11
 [0.2.10]: https://github.com/mondeja/leptos-fluent/compare/v0.2.9...v0.2.10
 [0.2.9]: https://github.com/mondeja/leptos-fluent/compare/v0.2.8...v0.2.9

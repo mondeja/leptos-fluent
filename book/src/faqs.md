@@ -32,14 +32,6 @@ leptos_fluent! {
 
 [cookie attributes]: https://developer.mozilla.org/docs/Web/API/Document/cookie#write_a_new_cookie
 
-### How to get the fallback language
-
-From fluent-templates `v0.10` onwards can be obtained from your translations.
-
-```rust
-let fallback_language = expect_i18n().translations.get()[0].fallback();
-```
-
 ### Why examples don't use [`<For/>`] component?
 
 ```admonish bug

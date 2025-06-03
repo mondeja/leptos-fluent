@@ -6,43 +6,22 @@
 
 ## CSR
 
-For client side rendering apps install **leptos-fluent** and [`fluent-templates`]:
+For client side rendering apps install **leptos-fluent**:
 
 ```toml
 [dependencies]
 leptos-fluent = "0.2"
-fluent-templates = "0.13"
 ```
-
-<details>
-<summary>Minimal (recommended)</summary>
-
-```toml
-[dependencies]
-leptos-fluent = "0.2"
-fluent-templates = { version = "0.13", default-features = false, features = [
-  "macros",
-  "walkdir"
-] }
-```
-
-Using `default-features = false` and `features = ["macros", "walkdir"]`
-for `fluent-templates` ensures that the dependency tree is the minimal
-possible because more dependencies are shared between `leptos-fluent`
-and `fluent-templates`.
-
-</details>
 
 ## SSR
 
-For server side rendering apps install **leptos-fluent**, [`fluent-templates`]
-and activate the `hydrate`, `ssr` and `actix`/`axum` features in their
-respective features set.
+For server side rendering apps install **leptos-fluent** and activate
+the `hydrate`, `ssr` and `actix`/`axum` features in their respective
+features set.
 
 ```toml
 [dependencies]
 leptos-fluent = "0.2"
-fluent-templates = "0.13"
 
 [features]
 hydrate = [
@@ -50,7 +29,7 @@ hydrate = [
 ]
 ssr = [
   "leptos-fluent/ssr",
-  "leptos-fluent/actix",  # actix and axum are supported
+  "leptos-fluent/axum",  # actix and axum are supported
 ]
 
 # Using cargo-leptos
@@ -67,7 +46,6 @@ and enable the `system` feature:
 ```toml
 [dependencies]
 leptos-fluent = { version = "0.2", features = ["system"] }
-fluent-templates = "0.13"
 ```
 
 ## Features
@@ -83,6 +61,7 @@ fluent-templates = "0.13"
 - **JSON5 languages file**: `json5`
 - **Tracing support**: `tracing`
 - **Debugging**: `debug`
+- **Disable Unicode isolating marks**: `disable-unicode-isolating-marks`
 
 ## Nightly toolchain
 
@@ -92,7 +71,6 @@ feature:
 ```toml
 [dependencies]
 leptos-fluent = { version = "0.2", features = ["nightly"] }
-fluent-templates = "0.13"
 ```
 
 ## Language files
@@ -105,8 +83,7 @@ enabled:
 
 ```toml
 [dependencies]
-fluent-templates = "0.13"
-leptos-fluent = { version = "0.2", features = ["json5"], default-features = false }
+leptos-fluent = { version = "0.2", features = ["json5"] }
 ```
 
 <!-- markdownlint-enable MD013 -->

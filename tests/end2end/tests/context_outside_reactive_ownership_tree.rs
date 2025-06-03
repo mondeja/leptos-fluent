@@ -4,7 +4,6 @@ use end2end_helpers::{input_by_id, mount};
 /// - https://github.com/mondeja/leptos-fluent/issues/231
 use leptos::{control_flow::Show, prelude::*};
 use leptos_fluent::{leptos_fluent, use_i18n};
-use leptos_fluent_csr_minimal_example::TRANSLATIONS;
 use wasm_bindgen_test::*;
 
 wasm_bindgen_test_configure!(run_in_browser);
@@ -22,7 +21,6 @@ fn App() -> impl IntoView {
 fn I18n(children: Children) -> impl IntoView {
     leptos_fluent! {
         children: children(),
-        translations: [TRANSLATIONS],
         locales: "../../examples/csr-minimal/locales",
     }
 }

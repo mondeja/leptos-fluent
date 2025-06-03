@@ -1885,6 +1885,11 @@ pub fn leptos_fluent(
                     };
                     let languages_quote =
                         maybe_some_litstr_param(&raw_languages_path);
+                    let translations_quote = if translations.is_some() {
+                        quote!(true)
+                    } else {
+                        quote!(false)
+                    };
                     let check_translations_quote =
                         maybe_some_litstr_param(&check_translations);
                     let fill_translations_quote =
@@ -2070,6 +2075,7 @@ pub fn leptos_fluent(
                             core_locales: #core_locales_quote,
                             languages: #languages_quote,
                             default_language: #default_language_quote,
+                            translations: #translations_quote,
                             check_translations: #check_translations_quote,
                             fill_translations: #fill_translations_quote,
                             sync_html_tag_lang: #sync_html_tag_lang_quote,
@@ -2150,6 +2156,41 @@ pub fn leptos_fluent(
         None => 0,
     };
 
+    let (fluent_templates_quote, translations_quote) = match translations {
+        Some(ref translations) => (quote!(), quote!(#translations)),
+        None => {
+            let fallback_language =
+                &languages[initial_language_index].0.to_string();
+
+            let core_locales_quote = match &core_locales_path {
+                Some(ref path) => quote!(core_locales: #path,),
+                None => quote!(),
+            };
+
+            #[cfg(feature = "disable-unicode-isolating-marks")]
+            let customise_quote = quote! {
+                customise: |bundle| bundle.set_use_isolating(false),
+            };
+            #[cfg(not(feature = "disable-unicode-isolating-marks"))]
+            let customise_quote = quote!();
+
+            (
+                quote! {
+                    use ::leptos_fluent::fluent_templates;
+                    ::leptos_fluent::fluent_templates::static_loader! {
+                        static TRS = {
+                            locales: #locales_path,
+                            fallback_language: #fallback_language,
+                            #core_locales_quote
+                            #customise_quote
+                        };
+                    }
+                },
+                quote!(vec![&TRS]),
+            )
+        }
+    };
+
     let init_quote = quote! {
         {
             let mut lang: Option<&'static ::leptos_fluent::Language> = None;
@@ -2161,10 +2202,12 @@ pub fn leptos_fluent(
                 LANGUAGES[#initial_language_index]
             };
 
+            #fluent_templates_quote;
+
             let i18n = ::leptos_fluent::I18n {
                 language: ::leptos::prelude::RwSignal::new(initial_lang),
                 languages: &LANGUAGES,
-                translations: ::leptos::prelude::Signal::derive(move || #translations),
+                translations: ::leptos::prelude::Signal::derive(move || #translations_quote),
             };
             ::leptos::context::provide_context::<::leptos_fluent::I18n>(i18n);
             i18n

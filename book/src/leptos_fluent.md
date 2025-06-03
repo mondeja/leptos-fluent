@@ -8,7 +8,6 @@ locale. It is used in the root component of the application.
 ```rust
 leptos_fluent! {
     locales: "./locales",
-    translations: [TRANSLATIONS],
 };
 ```
 
@@ -21,7 +20,6 @@ leptos_fluent! {
 ```rust
 leptos_fluent! {
     locales: "./locales",
-    translations: [TRANSLATIONS],
 
     set_language_to_localstorage: true,
     initial_language_from_localstorage: true,
@@ -38,7 +36,6 @@ leptos_fluent! {
 ```rust
 leptos_fluent! {
     locales: "./locales",
-    translations: [TRANSLATIONS],
 
     set_language_to_cookie: true,
     initial_language_from_cookie: true,
@@ -60,7 +57,6 @@ leptos_fluent! {
 ```rust
 leptos_fluent! {
     locales: "./locales",
-    translations: [TRANSLATIONS],
 
     initial_language_from_system: true,
     initial_language_from_system_to_data_file: true,
@@ -139,6 +135,9 @@ leptos_fluent! {
 Must be the same identifier used in the [`fluent_templates::static_loader!`]
 macro, which returns an [`std::sync::LazyLock`] variable.
 
+This parameter is optional. If not provided, the macro will internally
+create a static loader.
+
 ### `locales`
 
 Set the path to the locales directory which contain the Fluent
@@ -149,7 +148,6 @@ used in the [`fluent_templates::static_loader!`] macro.
 leptos_fluent! {
     locales: "./locales",
     // ^^^^^^^^^^^^^^^^^
-    translations: [TRANSLATIONS],
 }
 ```
 
@@ -198,7 +196,7 @@ leptos_fluent! {
     locales: "./locales",
     translations: [TRANSLATIONS],
     default_language: "en",
-    // ^^^^^^^^^^^^^^^^^^^^
+    // ^^^^^^^^^^^^^^^^^^^
 }
 ```
 
@@ -244,7 +242,6 @@ leptos_fluent! {
     locales: "./locales",
     languages: "./locales/languages.json",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    translations: [TRANSLATIONS],
 }
 ```
 
@@ -260,7 +257,6 @@ Must be a [glob] relative to the _Cargo.toml_ file.
   ```rust
   leptos_fluent! {
       locales: "./locales",
-      translations: [TRANSLATIONS],
       check_translations: "./src/**/*.rs",
       // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   }
@@ -271,7 +267,6 @@ Must be a [glob] relative to the _Cargo.toml_ file.
   ```rust
   leptos_fluent! {
       locales: "./locales",
-      translations: [TRANSLATIONS],
       check_translations: "../{app,components}/src/**/*.rs",
       // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   }
@@ -286,7 +281,6 @@ Add new messages found in `tr!` and `move_tr!` macros to translations files.
   ```rust
   leptos_fluent! {
       locales: "./locales",
-      translations: [TRANSLATIONS],
       fill_translations: "./src/**/*.rs",
       // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   }
@@ -297,7 +291,6 @@ Add new messages found in `tr!` and `move_tr!` macros to translations files.
   ```rust
   leptos_fluent! {
       locales: "./locales",
-      translations: [TRANSLATIONS],
       fill_translations: "../{app,components}/src/**/*.rs",
       // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   }

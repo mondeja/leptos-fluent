@@ -16,10 +16,6 @@ leptos_meta = "0.8"
 leptos_actix = { version = "0.8", optional = true }
 leptos_router = "0.8"
 leptos-fluent.workspace = true
-fluent-templates = { version = ">=0.13", default-features = false, features = [
-  "macros",
-  "walkdir",
-] }
 wasm-bindgen.workspace = true
 
 [features]
