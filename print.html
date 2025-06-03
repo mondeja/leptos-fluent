@@ -211,32 +211,16 @@ development environment and contribute to the project.</p>
 <li><a href="install.html#compatibility">Compatibility</a></li>
 </ul>
 <h2 id="csr"><a class="header" href="#csr">CSR</a></h2>
-<p>For client side rendering apps install <strong>leptos-fluent</strong> and <a href="https://github.com/XAMPPRocky/fluent-templates"><code>fluent-templates</code></a>:</p>
+<p>For client side rendering apps install <strong>leptos-fluent</strong>:</p>
 <pre><code class="language-toml">[dependencies]
 leptos-fluent = "0.2"
-fluent-templates = "0.13"
 </code></pre>
-<details>
-<summary>Minimal (recommended)</summary>
-<pre><code class="language-toml">[dependencies]
-leptos-fluent = "0.2"
-fluent-templates = { version = "0.13", default-features = false, features = [
-  "macros",
-  "walkdir"
-] }
-</code></pre>
-<p>Using <code>default-features = false</code> and <code>features = ["macros", "walkdir"]</code>
-for <code>fluent-templates</code> ensures that the dependency tree is the minimal
-possible because more dependencies are shared between <code>leptos-fluent</code>
-and <code>fluent-templates</code>.</p>
-</details>
 <h2 id="ssr"><a class="header" href="#ssr">SSR</a></h2>
-<p>For server side rendering apps install <strong>leptos-fluent</strong>, <a href="https://github.com/XAMPPRocky/fluent-templates"><code>fluent-templates</code></a>
-and activate the <code>hydrate</code>, <code>ssr</code> and <code>actix</code>/<code>axum</code> features in their
-respective features set.</p>
+<p>For server side rendering apps install <strong>leptos-fluent</strong> and activate
+the <code>hydrate</code>, <code>ssr</code> and <code>actix</code>/<code>axum</code> features in their respective
+features set.</p>
 <pre><code class="language-toml">[dependencies]
 leptos-fluent = "0.2"
-fluent-templates = "0.13"
 
 [features]
 hydrate = [
@@ -244,7 +228,7 @@ hydrate = [
 ]
 ssr = [
   "leptos-fluent/ssr",
-  "leptos-fluent/actix",  # actix and axum are supported
+  "leptos-fluent/axum",  # actix and axum are supported
 ]
 
 # Using cargo-leptos
@@ -257,7 +241,6 @@ applications. You need to install <code>leptos-fluent</code>, <a href="https://g
 and enable the <code>system</code> feature:</p>
 <pre><code class="language-toml">[dependencies]
 leptos-fluent = { version = "0.2", features = ["system"] }
-fluent-templates = "0.13"
 </code></pre>
 <h2 id="features"><a class="header" href="#features">Features</a></h2>
 <ul>
@@ -272,13 +255,13 @@ fluent-templates = "0.13"
 <li><strong>JSON5 languages file</strong>: <code>json5</code></li>
 <li><strong>Tracing support</strong>: <code>tracing</code></li>
 <li><strong>Debugging</strong>: <code>debug</code></li>
+<li><strong>Disable Unicode isolating marks</strong>: <code>disable-unicode-isolating-marks</code></li>
 </ul>
 <h2 id="nightly-toolchain"><a class="header" href="#nightly-toolchain">Nightly toolchain</a></h2>
 <p><strong>leptos-fluent</strong> builds nightly functionalities by enabling the <code>nightly</code>
 feature:</p>
 <pre><code class="language-toml">[dependencies]
 leptos-fluent = { version = "0.2", features = ["nightly"] }
-fluent-templates = "0.13"
 </code></pre>
 <h2 id="language-files"><a class="header" href="#language-files">Language files</a></h2>
 <p>By default, <strong>leptos-fluent</strong> supports JSON languages files. To use other
@@ -286,8 +269,7 @@ formats to load custom languages, the <code>json5</code> or <code>yaml</code> fe
 enabled:</p>
 <!-- markdownlint-disable MD013 -->
 <pre><code class="language-toml">[dependencies]
-fluent-templates = "0.13"
-leptos-fluent = { version = "0.2", features = ["json5"], default-features = false }
+leptos-fluent = { version = "0.2", features = ["json5"] }
 </code></pre>
 <!-- markdownlint-enable MD013 -->
 <div id="admonition-tip" class="admonition admonish-tip" role="note" aria-labelledby="admonition-tip-title">
@@ -360,23 +342,15 @@ select-a-language = Selecciona un idioma:
 language-selected-is = El idioma seleccionado es { $lang }.
 </code></pre>
 <pre><code class="language-rust">// src/lib.rs
-use fluent_templates::static_loader;
 use leptos::prelude::*;
 use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, Language};
-
-static_loader! {
-    pub static TRANSLATIONS = {
-        locales: "./locales",
-        fallback_language: "en",
-    };
-}
 
 #[component]
 pub fn I18n(children: Children) -&gt; impl IntoView {
     leptos_fluent! {
         children: children(),
-        translations: [TRANSLATIONS],
         locales: "./locales",
+        default_language: "en",
     }
 }
 
@@ -446,7 +420,6 @@ path = "src/lib.rs"
 [dependencies]
 leptos = { version = "0.8", features = ["csr"] }
 leptos-fluent = "0.2"
-fluent-templates = "0.13"
 console_error_panic_hook = "0.1"
 
 # Using cargo-leptos
@@ -932,7 +905,7 @@ pub fn Child() -&gt; impl IntoView {
 <p>With Leptos v0.7, whatever <code>tr!</code> macro used in the <code>on:</code> event will panic,
 but with Leptos v0.6, this outsiding of the ownership tree has been ignored
 from the majority of the cases as unintended behavior.</p>
-<p>To avoid that, pass the i18n context as first parameter to <code>tr!</code> or <code>move_tr!</code>:</p>
+<p>To avoid that, pass the i18n context as first parameter to <code>tr!</code> and <code>move_tr!</code>:</p>
 <pre><code class="language-rust">#[component]
 pub fn App() -&gt; impl IntoView {
     view! {
@@ -1071,7 +1044,6 @@ pub fn App() -&gt; impl IntoView {
 <ul>
 <li><a href="faqs.html#how-to-get-languageidentifier">How to get <code>LanguageIdentifier</code>?</a></li>
 <li><a href="faqs.html#custom-cookie-attributes-are-invalid">Custom cookie attributes are invalid</a></li>
-<li><a href="faqs.html#how-to-get-the-fallback-language">How to get the fallback language</a></li>
 <li><a href="faqs.html#why-examples-dont-use-for-component">Why examples don't use <code>&lt;For/&gt;</code> component?</a></li>
 <li><a href="faqs.html#how-to-manage-translations-on-server-actions">How to manage translations on server actions</a></li>
 <li><a href="faqs.html#how-to-get-values-of-leptos_fluent-macro-at-runtime">How to get values of <code>leptos_fluent!</code> macro at runtime?</a></li>
@@ -1098,9 +1070,6 @@ leptos_fluent! {
     cookie_attrs: attrs,
     // ...
 };</code></pre>
-<h3 id="how-to-get-the-fallback-language"><a class="header" href="#how-to-get-the-fallback-language">How to get the fallback language</a></h3>
-<p>From fluent-templates <code>v0.10</code> onwards can be obtained from your translations.</p>
-<pre><code class="language-rust">let fallback_language = expect_i18n().translations.get()[0].fallback();</code></pre>
 <h3 id="why-examples-dont-use-for-component"><a class="header" href="#why-examples-dont-use-for-component">Why examples don't use <a href="https://docs.rs/leptos/latest/leptos/control_flow/fn.For.html"><code>&lt;For/&gt;</code></a> component?</a></h3>
 <div id="admonition-bug" class="admonition admonish-bug" role="note" aria-labelledby="admonition-bug-title">
 <div class="admonition-title">
@@ -1194,7 +1163,6 @@ println!("Macro parameters: {:?}", expect_i18n().meta().unwrap());</code></pre>
 locale. It is used in the root component of the application.</p>
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
-    translations: [TRANSLATIONS],
 };</code></pre>
 <ul>
 <li><a href="leptos_fluent.html#common-configurations">Common configurations</a>
@@ -1279,7 +1247,6 @@ locale. It is used in the root component of the application.</p>
 <h3 id="csr---local-storage-from-navigator"><a class="header" href="#csr---local-storage-from-navigator"><span style="opacity:.5">CSR </span> | Local storage from navigator</a></h3>
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
-    translations: [TRANSLATIONS],
 
     set_language_to_localstorage: true,
     initial_language_from_localstorage: true,
@@ -1292,7 +1259,6 @@ locale. It is used in the root component of the application.</p>
 <h3 id="csr--ssr---cookie-from-navigator-and-header"><a class="header" href="#csr--ssr---cookie-from-navigator-and-header"><span style="opacity:.5">CSR + SSR </span> | Cookie from navigator and header</a></h3>
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
-    translations: [TRANSLATIONS],
 
     set_language_to_cookie: true,
     initial_language_from_cookie: true,
@@ -1308,7 +1274,6 @@ locale. It is used in the root component of the application.</p>
 <!-- markdownlint-enable MD013 -->
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
-    translations: [TRANSLATIONS],
 
     initial_language_from_system: true,
     initial_language_from_system_to_data_file: true,
@@ -1380,6 +1345,8 @@ leptos_fluent! {
 }</code></pre>
 <p>Must be the same identifier used in the <a href="https://docs.rs/fluent-templates/latest/fluent_templates/macro.static_loader.html"><code>fluent_templates::static_loader!</code></a>
 macro, which returns an <a href="https://doc.rust-lang.org/std/sync/struct.LazyLock.html"><code>std::sync::LazyLock</code></a> variable.</p>
+<p>This parameter is optional. If not provided, the macro will internally
+create a static loader.</p>
 <h3 id="locales"><a class="header" href="#locales"><code>locales</code></a></h3>
 <p>Set the path to the locales directory which contain the Fluent
 files for the translations. Must be relative to the <em>Cargo.toml</em> file, the same
@@ -1387,7 +1354,6 @@ used in the <a href="https://docs.rs/fluent-templates/latest/fluent_templates/ma
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
     // ^^^^^^^^^^^^^^^^^
-    translations: [TRANSLATIONS],
 }</code></pre>
 <h3 id="children"><a class="header" href="#children"><code>children</code></a></h3>
 <p>Set the children components of the root component. It is used to pass the
@@ -1425,7 +1391,7 @@ leptos_fluent! {
     locales: "./locales",
     translations: [TRANSLATIONS],
     default_language: "en",
-    // ^^^^^^^^^^^^^^^^^^^^
+    // ^^^^^^^^^^^^^^^^^^^
 }</code></pre>
 <p>Note that this is not the same as the <code>fallback_language</code> parameter
 of <a href="https://docs.rs/fluent-templates/latest/fluent_templates/macro.static_loader.html"><code>fluent_templates::static_loader!</code></a>, which is used to provide a fallback
@@ -1467,7 +1433,6 @@ See <a href="https://mondeja.github.io/leptos-fluent/languages.html"><strong>4. 
     locales: "./locales",
     languages: "./locales/languages.json",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    translations: [TRANSLATIONS],
 }</code></pre>
 <h3 id="check_translations"><a class="header" href="#check_translations"><code>check_translations</code></a></h3>
 <p>Check the translations at compile time. It is useful to ensure that all
@@ -1478,7 +1443,6 @@ translations are correct and that there are no missing translations.</p>
 <p>For single crate projects:</p>
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
-    translations: [TRANSLATIONS],
     check_translations: "./src/**/*.rs",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 }</code></pre>
@@ -1487,7 +1451,6 @@ translations are correct and that there are no missing translations.</p>
 <p>For workspace projects:</p>
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
-    translations: [TRANSLATIONS],
     check_translations: "../{app,components}/src/**/*.rs",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 }</code></pre>
@@ -1500,7 +1463,6 @@ translations are correct and that there are no missing translations.</p>
 <p>For single crate projects:</p>
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
-    translations: [TRANSLATIONS],
     fill_translations: "./src/**/*.rs",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 }</code></pre>
@@ -1509,7 +1471,6 @@ translations are correct and that there are no missing translations.</p>
 <p>For workspace projects:</p>
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
-    translations: [TRANSLATIONS],
     fill_translations: "../{app,components}/src/**/*.rs",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 }</code></pre>

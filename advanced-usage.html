@@ -228,7 +228,7 @@ pub fn Child() -&gt; impl IntoView {
 <p>With Leptos v0.7, whatever <code>tr!</code> macro used in the <code>on:</code> event will panic,
 but with Leptos v0.6, this outsiding of the ownership tree has been ignored
 from the majority of the cases as unintended behavior.</p>
-<p>To avoid that, pass the i18n context as first parameter to <code>tr!</code> or <code>move_tr!</code>:</p>
+<p>To avoid that, pass the i18n context as first parameter to <code>tr!</code> and <code>move_tr!</code>:</p>
 <pre><code class="language-rust">#[component]
 pub fn App() -&gt; impl IntoView {
     view! {

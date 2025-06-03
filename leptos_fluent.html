@@ -179,7 +179,6 @@
 locale. It is used in the root component of the application.</p>
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
-    translations: [TRANSLATIONS],
 };</code></pre>
 <ul>
 <li><a href="#common-configurations">Common configurations</a>
@@ -264,7 +263,6 @@ locale. It is used in the root component of the application.</p>
 <h3 id="csr---local-storage-from-navigator"><a class="header" href="#csr---local-storage-from-navigator"><span style="opacity:.5">CSR </span> | Local storage from navigator</a></h3>
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
-    translations: [TRANSLATIONS],
 
     set_language_to_localstorage: true,
     initial_language_from_localstorage: true,
@@ -277,7 +275,6 @@ locale. It is used in the root component of the application.</p>
 <h3 id="csr--ssr---cookie-from-navigator-and-header"><a class="header" href="#csr--ssr---cookie-from-navigator-and-header"><span style="opacity:.5">CSR + SSR </span> | Cookie from navigator and header</a></h3>
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
-    translations: [TRANSLATIONS],
 
     set_language_to_cookie: true,
     initial_language_from_cookie: true,
@@ -293,7 +290,6 @@ locale. It is used in the root component of the application.</p>
 <!-- markdownlint-enable MD013 -->
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
-    translations: [TRANSLATIONS],
 
     initial_language_from_system: true,
     initial_language_from_system_to_data_file: true,
@@ -365,6 +361,8 @@ leptos_fluent! {
 }</code></pre>
 <p>Must be the same identifier used in the <a href="https://docs.rs/fluent-templates/latest/fluent_templates/macro.static_loader.html"><code>fluent_templates::static_loader!</code></a>
 macro, which returns an <a href="https://doc.rust-lang.org/std/sync/struct.LazyLock.html"><code>std::sync::LazyLock</code></a> variable.</p>
+<p>This parameter is optional. If not provided, the macro will internally
+create a static loader.</p>
 <h3 id="locales"><a class="header" href="#locales"><code>locales</code></a></h3>
 <p>Set the path to the locales directory which contain the Fluent
 files for the translations. Must be relative to the <em>Cargo.toml</em> file, the same
@@ -372,7 +370,6 @@ used in the <a href="https://docs.rs/fluent-templates/latest/fluent_templates/ma
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
     // ^^^^^^^^^^^^^^^^^
-    translations: [TRANSLATIONS],
 }</code></pre>
 <h3 id="children"><a class="header" href="#children"><code>children</code></a></h3>
 <p>Set the children components of the root component. It is used to pass the
@@ -410,7 +407,7 @@ leptos_fluent! {
     locales: "./locales",
     translations: [TRANSLATIONS],
     default_language: "en",
-    // ^^^^^^^^^^^^^^^^^^^^
+    // ^^^^^^^^^^^^^^^^^^^
 }</code></pre>
 <p>Note that this is not the same as the <code>fallback_language</code> parameter
 of <a href="https://docs.rs/fluent-templates/latest/fluent_templates/macro.static_loader.html"><code>fluent_templates::static_loader!</code></a>, which is used to provide a fallback
@@ -452,7 +449,6 @@ See <a href="https://mondeja.github.io/leptos-fluent/languages.html"><strong>4. 
     locales: "./locales",
     languages: "./locales/languages.json",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    translations: [TRANSLATIONS],
 }</code></pre>
 <h3 id="check_translations"><a class="header" href="#check_translations"><code>check_translations</code></a></h3>
 <p>Check the translations at compile time. It is useful to ensure that all
@@ -463,7 +459,6 @@ translations are correct and that there are no missing translations.</p>
 <p>For single crate projects:</p>
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
-    translations: [TRANSLATIONS],
     check_translations: "./src/**/*.rs",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 }</code></pre>
@@ -472,7 +467,6 @@ translations are correct and that there are no missing translations.</p>
 <p>For workspace projects:</p>
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
-    translations: [TRANSLATIONS],
     check_translations: "../{app,components}/src/**/*.rs",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 }</code></pre>
@@ -485,7 +479,6 @@ translations are correct and that there are no missing translations.</p>
 <p>For single crate projects:</p>
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
-    translations: [TRANSLATIONS],
     fill_translations: "./src/**/*.rs",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 }</code></pre>
@@ -494,7 +487,6 @@ translations are correct and that there are no missing translations.</p>
 <p>For workspace projects:</p>
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
-    translations: [TRANSLATIONS],
     fill_translations: "../{app,components}/src/**/*.rs",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 }</code></pre>

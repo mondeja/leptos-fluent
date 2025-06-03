@@ -178,7 +178,6 @@
 <ul>
 <li><a href="#how-to-get-languageidentifier">How to get <code>LanguageIdentifier</code>?</a></li>
 <li><a href="#custom-cookie-attributes-are-invalid">Custom cookie attributes are invalid</a></li>
-<li><a href="#how-to-get-the-fallback-language">How to get the fallback language</a></li>
 <li><a href="#why-examples-dont-use-for-component">Why examples don't use <code>&lt;For/&gt;</code> component?</a></li>
 <li><a href="#how-to-manage-translations-on-server-actions">How to manage translations on server actions</a></li>
 <li><a href="#how-to-get-values-of-leptos_fluent-macro-at-runtime">How to get values of <code>leptos_fluent!</code> macro at runtime?</a></li>
@@ -205,9 +204,6 @@ leptos_fluent! {
     cookie_attrs: attrs,
     // ...
 };</code></pre>
-<h3 id="how-to-get-the-fallback-language"><a class="header" href="#how-to-get-the-fallback-language">How to get the fallback language</a></h3>
-<p>From fluent-templates <code>v0.10</code> onwards can be obtained from your translations.</p>
-<pre><code class="language-rust">let fallback_language = expect_i18n().translations.get()[0].fallback();</code></pre>
 <h3 id="why-examples-dont-use-for-component"><a class="header" href="#why-examples-dont-use-for-component">Why examples don't use <a href="https://docs.rs/leptos/latest/leptos/control_flow/fn.For.html"><code>&lt;For/&gt;</code></a> component?</a></h3>
 <div id="admonition-bug" class="admonition admonish-bug" role="note" aria-labelledby="admonition-bug-title">
 <div class="admonition-title">
