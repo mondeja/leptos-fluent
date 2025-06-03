@@ -429,7 +429,7 @@ impl LitBool {
 pub(crate) struct I18nLoader {
     pub fluent_file_paths: FluentFilePaths,
     pub children: Vec<LitBoolExprOrIdent>,
-    pub translations: Translations,
+    pub translations: Option<Translations>,
     pub languages: Vec<ParsedLanguage>,
     pub languages_path: Option<String>,
     pub default_language: Option<(String, usize)>,
@@ -1644,11 +1644,6 @@ impl Parse for I18nLoader {
             }
             input.parse::<token::Comma>()?;
         }
-
-        // translations
-        let translations = translations.ok_or_else(|| {
-            syn::Error::new(input.span(), "Missing `translations` parameter")
-        })?;
 
         // languages
         if locales_path.is_none() {

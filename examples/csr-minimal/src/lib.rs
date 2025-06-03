@@ -1,19 +1,10 @@
-use fluent_templates::static_loader;
 use leptos::prelude::*;
 use leptos_fluent::{expect_i18n, leptos_fluent, move_tr};
-
-static_loader! {
-    pub static TRANSLATIONS = {
-        locales: "./locales",
-        fallback_language: "en",
-    };
-}
 
 #[component]
 pub fn I18n(children: Children) -> impl IntoView {
     leptos_fluent! {
         children: children(),
-        translations: [TRANSLATIONS],
         locales: "./locales",
         check_translations: "./src/**/*.rs",
         default_language: "en",

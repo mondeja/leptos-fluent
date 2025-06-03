@@ -1,4 +1,3 @@
-use fluent_templates::static_loader;
 use leptos::{prelude::*, task::spawn};
 use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, tr, Language};
 use leptos_meta::{provide_meta_context, Title};
@@ -7,18 +6,10 @@ use leptos_router::{
     StaticSegment,
 };
 
-static_loader! {
-    static TRANSLATIONS = {
-        locales: "./locales",
-        fallback_language: "en",
-    };
-}
-
 #[component]
 fn I18n(children: Children) -> impl IntoView {
     leptos_fluent! {
         children: children(),
-        translations: [TRANSLATIONS],
         locales: "./locales",
         default_language: "en",
         #[cfg(debug_assertions)] check_translations: "./src/**/*.rs",

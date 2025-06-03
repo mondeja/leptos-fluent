@@ -21,7 +21,6 @@
 //! ```toml
 //! [dependencies]
 //! leptos-fluent = "0.2"
-//! fluent-templates = "0.13"
 //!
 //! [features]
 //! hydrate = [
@@ -73,16 +72,8 @@
 //! You can use `leptos-fluent` as follows:
 //!
 //! ```rust,ignore
-//! use fluent_templates::static_loader;
 //! use leptos::prelude::*;
 //! use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, tr};
-//!
-//! static_loader! {
-//!     static TRANSLATIONS = {
-//!         locales: "./locales",
-//!         fallback_language: "en",
-//!     };
-//! }
 //!
 //! #[component]
 //! fn I18n(children: Children) -> impl IntoView {
@@ -95,14 +86,9 @@
 //!         // Initial language when the user don't load any with
 //!         // the provided configuration.
 //!         default_language: "en",
-//!         // Static translations struct provided by fluent-templates.
-//!         translations: [TRANSLATIONS],
 //!         // Check translations correctness in the specified files.
 //!         #[cfg(debug_assertions)]
 //!         check_translations: "./src/**/*.rs",
-//!
-//!         // Next options are all opt-in and can be enabled
-//!         // separately as needed.
 //!
 //!         // Client side options
 //!         // -------------------
@@ -220,7 +206,7 @@
 //!     view! {
 //!         <fieldset>
 //!             {
-//!                 move || expect_i18n().languages.iter().map(|lang| {
+//!                 move || i18n.languages.iter().map(|lang| {
 //!                     view! {
 //!                         <div>
 //!                             <input
@@ -254,6 +240,7 @@
 //! - **JSON5 languages file**: `json5`
 //! - **Tracing support**: `tracing`
 //! - **Debugging**: `debug`
+//! - **Disable Unicode isolating marks**: `disable-unicode-isolating-marks`
 //!
 //! # Resources
 //!
@@ -286,6 +273,8 @@ pub mod url;
 #[doc(hidden)]
 #[cfg(feature = "system")]
 pub extern crate current_locale;
+#[doc(hidden)]
+pub extern crate fluent_templates;
 #[doc(hidden)]
 pub extern crate leptos_meta;
 #[doc(hidden)]
@@ -1386,6 +1375,7 @@ pub struct LeptosFluentMeta {
     pub core_locales: Option<&'static str>,
     pub languages: Option<&'static str>,
     pub default_language: Option<&'static str>,
+    pub translations: bool, // *
     pub check_translations: Option<&'static str>,
     pub fill_translations: Option<&'static str>,
     pub provide_meta_context: bool,

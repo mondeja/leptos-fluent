@@ -355,7 +355,7 @@ fn generate_code_for_static_language(
     format!(
         concat!(
             "&::leptos_fluent::Language{{",
-            "id:&::fluent_templates::loader::langid!(\"{}\"),",
+            "id:&::leptos_fluent::fluent_templates::loader::langid!(\"{}\"),",
             "name:\"{}\",",
             "dir:{},",
             "flag:{}",

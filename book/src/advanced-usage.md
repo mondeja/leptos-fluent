@@ -49,7 +49,7 @@ With Leptos v0.7, whatever `tr!` macro used in the `on:` event will panic,
 but with Leptos v0.6, this outsiding of the ownership tree has been ignored
 from the majority of the cases as unintended behavior.
 
-To avoid that, pass the i18n context as first parameter to `tr!` or `move_tr!`:
+To avoid that, pass the i18n context as first parameter to `tr!` and `move_tr!`:
 
 ```rust
 #[component]

@@ -22,7 +22,6 @@ Add the following to your `Cargo.toml` file:
 ```toml
 [dependencies]
 leptos-fluent = "0.2"
-fluent-templates = "0.13"
 
 [features]
 hydrate = [
@@ -74,16 +73,8 @@ hello-args = ¡Hola, { $arg1 } y { $arg2 }!
 You can use `leptos-fluent` as follows:
 
 ```rust
-use fluent_templates::static_loader;
 use leptos::prelude::*;
 use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, tr};
-
-static_loader! {
-    static TRANSLATIONS = {
-        locales: "./locales",
-        fallback_language: "en",
-    };
-}
 
 #[component]
 fn I18n(children: Children) -> impl IntoView {
@@ -96,14 +87,9 @@ fn I18n(children: Children) -> impl IntoView {
         // Initial language when the user don't load any with
         // the provided configuration.
         default_language: "en",
-        // Static translations struct provided by fluent-templates.
-        translations: [TRANSLATIONS],
         // Check translations correctness in the specified files.
         #[cfg(debug_assertions)]
         check_translations: "./src/**/*.rs",
-
-        // Next options are all opt-in and can be enabled
-        // separately as needed.
 
         // Client side options
         // -------------------
@@ -221,7 +207,7 @@ fn LanguageSelector() -> impl IntoView {
     view! {
         <fieldset>
             {
-                move || expect_i18n().languages.iter().map(|lang| {
+                move || i18n.languages.iter().map(|lang| {
                     view! {
                         <div>
                             <input
@@ -255,6 +241,7 @@ fn LanguageSelector() -> impl IntoView {
 - **JSON5 languages file**: `json5`
 - **Tracing support**: `tracing`
 - **Debugging**: `debug`
+- **Disable Unicode isolating marks**: `disable-unicode-isolating-marks`
 
 ## Resources
 
