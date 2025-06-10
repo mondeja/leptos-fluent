@@ -25,22 +25,22 @@ fn parse_litstr_or_expr_param(
         return Ok(());
     }
 
+    let span = input.span();
+
     if input.peek(syn::LitBool) {
         let value = input.parse::<syn::LitBool>()?.value.to_string();
         return Err(syn::Error::new(
-            input.span(),
+            span,
             format!(
                 concat!(
                     "Invalid value for '{}' of leptos_fluent! macro.",
-                    " Must be a literal string or a valid expression.",
-                    " Found a literal boolean '{}'.",
+                    " Expected literal string or valid expression.",
+                    " Found a literal boolean `{}`.",
                 ),
                 param_name, &value,
             ),
         ));
     }
-
-    let mut found = input.to_string();
 
     match input.parse::<syn::Expr>() {
         Ok(e) => {
@@ -49,31 +49,16 @@ fn parse_litstr_or_expr_param(
             ));
             Ok(())
         }
-        Err(_) => {
-            if found.contains('\n') && found.contains(',') {
-                found = found
-                    .split('\n')
-                    .next()
-                    .unwrap()
-                    .split(": ")
-                    .last()
-                    .unwrap()
-                    .strip_suffix(',')
-                    .unwrap()
-                    .to_string();
-            }
-            Err(syn::Error::new(
-                input.span(),
-                format!(
-                    concat!(
-                        "Invalid value for '{}' of leptos_fluent! macro.",
-                        " Must be a literal string or a valid expression.",
-                        " Found '{}'.",
-                    ),
-                    param_name, &found,
+        Err(_) => Err(syn::Error::new(
+            span,
+            format!(
+                concat!(
+                    "Invalid value for '{}' of leptos_fluent! macro.",
+                    " Expected literal string or valid expression.",
                 ),
-            ))
-        }
+                param_name,
+            ),
+        )),
     }
 }
 
@@ -122,7 +107,7 @@ fn parse_litbool_or_expr_param(
     expr: &mut Option<TokenStreamStr>,
     param_name: &'static str,
 ) -> Result<()> {
-    let input_str = input.to_string();
+    let span = input.span();
     match input.parse::<syn::LitBool>() {
         Ok(lit) => {
             *expr = Some(TokenStreamStr::from(lit.value.to_string().as_str()));
@@ -136,18 +121,13 @@ fn parse_litbool_or_expr_param(
                 Ok(())
             }
             Err(_) => Err(syn::Error::new(
-                input.span(),
+                span,
                 format!(
                     concat!(
                         "Invalid value for '{}' of leptos_fluent! macro.",
-                        " Must be a literal boolean or a valid expression.",
-                        " Found {}",
+                        " Expected literal boolean or valid expression.",
                     ),
                     param_name,
-                    match input_str.is_empty() {
-                        true => "(empty)",
-                        false => &input_str,
-                    },
                 ),
             )),
         },
@@ -668,22 +648,21 @@ impl Parse for I18nLoader {
                         input.span(),
                         format!(
                             concat!(
-                                "Expected an expression with",
-                                " 'key: value', '#[...] key: value', 'key,' or `#[...] key,` format.",
+                                "Expected expression with",
+                                " `key: value`, `#[...] key: value`, `key,` or `#[...] key,` format.",
                                 " Found:{}"
                             ),
-                            &match input.to_string().len() {
-                                0 => concat!(
+                            if input.to_string().is_empty() {
+                                concat!(
                                     " (empty).\n",
                                     "If you're using double curly braces syntax",
                                     " (`leptos_fluent! {{ ... }}`) make sure to",
                                     " use single curly braces syntax",
                                     " (`leptos_fluent! { ... }`)."
-                                ).to_string(),
-                                _ => format!(
-                                    "\n{}", &input.to_string()
-                                ),
-                            },
+                                ).to_string()
+                            } else {
+                                format!("\n{}", &input.to_string())
+                            }
                         ),
                     ));
                 }
