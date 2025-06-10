@@ -86,7 +86,7 @@ fn render_language(lang: &'static Language) -> impl IntoView {
                 id=lang
                 value=lang
                 name="language"
-                checked=lang.is_active()
+                checked=i18n.language.get() == lang
                 on:click=move |_| i18n.language.set(lang)
                 type="radio"
             />
@@ -169,7 +169,7 @@ Signal::derive(move || tr!("select-a-language"))
 ## Retrieving the [`I18n`] context
 
 ```rust
-use leptos::prelude::*;
+use leptos::prelude::expect_context;
 use leptos_fluent::I18n;
 ```
 
@@ -192,10 +192,11 @@ The i18n context has the following fields:
 
 ### Update language
 
-To update the language, use [`lang.activate`] or the `set` method of [`language`]:
+To update the language, use the `set` method of [`language`]:
 
 ```rust
-lang.activate();
+use leptos::prelude::expect_context;
+use leptos_fluent::I18n;
 
 let i18n = expect_context::<I18n>();
 i18n.language.set(lang);
@@ -246,11 +247,11 @@ i18n.languages.iter()
 
 ### Check if a language is active
 
-To check if a language is the active one, use [`is_active`] method of a
-[`leptos_fluent::Language`] struct:
+To check if a language is the active one, use:
 
 ```rust
-lang.is_active()
+use leptos::prelude::*;
+use leptos_fluent::I18n;
 
 let i18n = expect_context::<I18n>();
 lang == i18n.language.get()
@@ -259,11 +260,8 @@ lang == i18n.language.get()
 [`tr!`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.tr.html
 [`move_tr!`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.move_tr.html
 [`I18n`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html
-[`leptos_fluent::Language`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html
-[`lang.activate`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html#method.activate
 [`language`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.language
 [`languages`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.languages
 [`translations`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.translations
 [fluent-templates]: https://docs.rs/fluent-templates/latest/fluent_templates
 [`leptos::Signal`]: https://docs.rs/reactive_graph/0.1.0/reactive_graph/wrappers/read/struct.Signal.html
-[`is_active`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html#method.is_active

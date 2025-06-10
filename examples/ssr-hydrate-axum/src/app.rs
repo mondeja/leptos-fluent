@@ -100,7 +100,7 @@ fn Home() -> impl IntoView {
                                     id=lang
                                     name="language"
                                     value=lang
-                                    checked=lang.is_active()
+                                    checked=&i18n.language.get() == lang
                                     on:click=move |_| i18n.language.set(lang)
                                 />
                                 <label for=lang>{lang.name}</label>

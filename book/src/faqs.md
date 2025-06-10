@@ -103,7 +103,7 @@ fn render_language(lang: &'static Language) -> impl IntoView {
                 id=lang
                 name="language"
                 value=lang
-                checked=lang.is_active()
+                checked=i18n.language.get() == lang
                 on:click=on_click
                 type="radio"
             />

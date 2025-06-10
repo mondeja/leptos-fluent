@@ -10,6 +10,10 @@
   Use `expect_context::<leptos_fluent::I18n>()` instead.
 - The function `expect_i18n()` has been deprecated and will be removed in v0.3.0.
   Use `expect_context::<leptos_fluent::I18n>()` instead.
+- The method `Language.is_active()` has been deprecated and will be removed in
+  v0.3.0. Use `i18n.language.get() == lang` instead.
+- The method `Language.activate()` has been deprecated and will be
+  removed in v0.3.0. Use `i18n.language.set(lang)` instead.
 - Allow to pass a single file path to `check_translations` parameter of
   `leptos_fluent!` macro.
 - Don't report syntax errors in translations checker. The Rust compiler should

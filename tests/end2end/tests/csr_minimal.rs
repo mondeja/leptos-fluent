@@ -14,7 +14,7 @@ pub async fn csr_minimal_example() {
     let es = move || input_by_id("es");
     let en = move || input_by_id("en");
 
-    // localstorage not activated
+    // localstorage not active
     localstorage::set("language", "es");
 
     // translations working
@@ -27,7 +27,7 @@ pub async fn csr_minimal_example() {
     assert!(!en().checked());
     assert_eq!(element_text("p"), "Selecciona un idioma:");
 
-    // set_language_to_localstorage not activated
+    // set_language_to_localstorage not active
     localstorage::delete("language");
     assert_eq!(localstorage::get("language"), None);
     en().click();
@@ -41,7 +41,7 @@ pub async fn csr_minimal_example() {
         .await;
     assert_eq!(localstorage::get("language"), None);
 
-    // sync_html_tag_lang not activated
+    // sync_html_tag_lang not active
     document_element().remove_attribute("lang").unwrap();
     assert_eq!(document_element().get_attribute("lang"), None);
     es().click();

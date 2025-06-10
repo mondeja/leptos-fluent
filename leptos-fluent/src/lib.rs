@@ -346,17 +346,23 @@ pub struct Language {
 
 impl Language {
     /// Get if the language is the active language.
+    #[deprecated(
+        since = "0.2.13",
+        note = "will be removed in v0.3.0. Use `&i18n.language.get() == lang` instead of `lang.is_active()`."
+    )]
     #[inline(always)]
     pub fn is_active(&'static self) -> bool {
         self == leptos::prelude::expect_context::<I18n>().language.read()
     }
 
     /// Set the language as the active language.
+    #[deprecated(
+        since = "0.2.13",
+        note = "will be removed in v0.3.0. Use `&i18n.language.set(lang)` instead of `lang.activate()`."
+    )]
     #[inline(always)]
     pub fn activate(&'static self) {
-        ::leptos::logging::log!("Activating language: {:?}", self);
         leptos::prelude::expect_context::<I18n>().language.set(self);
-        ::leptos::logging::log!("Activated language: {:?}", self);
     }
 }
 

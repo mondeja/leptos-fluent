@@ -17,12 +17,6 @@ let i18n = expect_context::<I18n>();
 let translated_signal = move_tr!(i18n, "my-translation");
 ```
 
-And some shortcuts cannot be used. Rewrite all the code that calls `expect_context`
-internally:
-
-- Use `i18n.language.set(lang)` instead of `lang.activate()`.
-- Use `lang == i18n.language.get()` instead of `lang.is_active()`.
-
 ### On events, panics
 
 For example, the next code panics when the `<div>` container is clicked:
