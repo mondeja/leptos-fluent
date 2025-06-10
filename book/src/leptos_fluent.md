@@ -812,11 +812,15 @@ Provide the macro meta information at runtime as a context.
 Get it using `I18n::meta`:
 
 ```rust
-let i18n = leptos_fluent! {
+use leptos::prelude::*;
+use leptos_fluent::{I18n, leptos_fluent};
+
+leptos_fluent! {
     // ...
     provide_meta_context: true,
-};
+}
 
+let i18n = leptos::prelude::expect_context::<I18n>();
 println!("Macro parameters: {:?}", i18n.meta().unwrap());
 ```
 

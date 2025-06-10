@@ -189,22 +189,22 @@ pub fn leptos_fluent(
     // Less code possible on nightly
     #[cfg(feature = "nightly")]
     let get_language_quote = quote! {
-        (::leptos_fluent::i18n())()
+        (::leptos::prelude::expect_context::<::leptos_fluent::I18n>())()
     };
 
     #[cfg(all(feature = "nightly", not(feature = "ssr")))]
     let set_language_quote = quote! {
-        (::leptos_fluent::i18n())(l)
+        (::leptos::prelude::expect_context::<::leptos_fluent::I18n>())(l)
     };
 
     #[cfg(not(feature = "nightly"))]
     let get_language_quote = quote! {
-        ::leptos_fluent::i18n().language.get()
+        ::leptos::prelude::expect_context::<::leptos_fluent::I18n>().language.get()
     };
 
     #[cfg(all(not(feature = "nightly"), not(feature = "ssr")))]
     let set_language_quote = quote! {
-        ::leptos_fluent::i18n().language.set(l)
+        ::leptos::prelude::expect_context::<::leptos_fluent::I18n>().language.set(l)
     };
 
     let cookie_name_quote = match cookie_name.lit {
@@ -731,17 +731,18 @@ pub fn leptos_fluent(
             }
         };
 
-        let attr_lang_quote = match sync_html_tag_lang_bool_quote.to_string()
-            == "false"
-        {
-            true => quote! {},
-            false => quote! { attr:lang=|| #get_language_quote.id.to_string() },
-        };
+        let attr_lang_quote =
+            match sync_html_tag_lang_bool_quote.to_string() == "false" {
+                true => quote! {},
+                false => {
+                    quote! { attr:lang=|| {#get_language_quote.id.to_string()} }
+                }
+            };
         let attr_dir_quote = match sync_html_tag_dir_bool_quote.to_string()
             == "false"
         {
             true => quote! {},
-            false => quote! { attr:dir=|| #get_language_quote.dir.as_str() },
+            false => quote! { attr:dir=|| {#get_language_quote.dir.as_str()} },
         };
 
         match attr_lang_quote.is_empty() && attr_dir_quote.is_empty() {

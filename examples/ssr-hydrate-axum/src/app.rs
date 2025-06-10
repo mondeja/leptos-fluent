@@ -1,6 +1,6 @@
 use fluent_templates::{static_loader, StaticLoader};
 use leptos::prelude::*;
-use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, tr};
+use leptos_fluent::{leptos_fluent, move_tr, tr, I18n};
 use leptos_meta::{MetaTags, Title};
 use leptos_router::{
     components::{Route, Router, Routes},
@@ -37,7 +37,7 @@ pub static COMPOUND: &[&LazyLock<StaticLoader>] =
     &[&TRANSLATIONS, &TRANSLATIONS];
 
 #[component]
-fn I18n(children: Children) -> impl IntoView {
+fn I18nProvider(children: Children) -> impl IntoView {
     leptos_fluent! {
         children: children(),
         translations: [TRANSLATIONS, TRANSLATIONS] + COMPOUND,
@@ -69,7 +69,7 @@ fn I18n(children: Children) -> impl IntoView {
 #[component]
 pub fn App() -> impl IntoView {
     view! {
-        <I18n>
+        <I18nProvider>
             <Title text=move || tr!("welcome-to-leptos") />
             <Router>
                 <main>
@@ -78,13 +78,13 @@ pub fn App() -> impl IntoView {
                     </Routes>
                 </main>
             </Router>
-        </I18n>
+        </I18nProvider>
     }
 }
 
 #[component]
 fn Home() -> impl IntoView {
-    let i18n = expect_i18n();
+    let i18n = expect_context::<I18n>();
 
     view! {
         <h1>{move_tr!("select-a-language")}</h1>
@@ -101,7 +101,7 @@ fn Home() -> impl IntoView {
                                     name="language"
                                     value=lang
                                     checked=lang.is_active()
-                                    on:click=move |_| lang.activate()
+                                    on:click=move |_| i18n.language.set(lang)
                                 />
                                 <label for=lang>{lang.name}</label>
                             </div>

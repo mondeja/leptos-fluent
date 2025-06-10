@@ -69,7 +69,7 @@ if the bandwidth is not a problem or use your own statics on server side.
 
 ```rust
 use leptos::prelude::*;
-use leptos_fluent::{tr, Language};
+use leptos_fluent::{tr, Language, I18n};
 
 /// Server action showing client-side translated message on console
 #[server(ShowHelloWorld, "/api")]
@@ -82,7 +82,7 @@ pub async fn show_hello_world(
 }
 
 fn render_language(lang: &'static Language) -> impl IntoView {
-    let i18n = expect_i18n();
+    let i18n = expect_context::<I18n>();
 
     // Call on click to server action with a client-side translated
     // "hello-world" message
@@ -124,7 +124,8 @@ leptos_fluent! {
 };
 
 // ... later
-println!("Macro parameters: {:?}", expect_i18n().meta().unwrap());
+let i18n = expect_context::<I18n>();
+println!("Macro parameters: {:?}", i18n.meta().unwrap());
 ```
 
 [`<For/>`]: https://docs.rs/leptos/latest/leptos/control_flow/fn.For.html

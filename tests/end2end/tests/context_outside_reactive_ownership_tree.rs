@@ -3,7 +3,7 @@ use end2end_helpers::{input_by_id, mount};
 /// - https://github.com/leptos-rs/leptos/issues/2852
 /// - https://github.com/mondeja/leptos-fluent/issues/231
 use leptos::{control_flow::Show, prelude::*};
-use leptos_fluent::{leptos_fluent, use_i18n};
+use leptos_fluent::{leptos_fluent, I18n};
 use wasm_bindgen_test::*;
 
 wasm_bindgen_test_configure!(run_in_browser);
@@ -33,7 +33,7 @@ fn Child() -> impl IntoView {
             <div
                 id="fails"
                 on:click=|ev| {
-                    if use_i18n().is_some() {
+                    if use_context::<I18n>().is_some() {
                         ev.target()
                             .unwrap()
                             .unchecked_into::<web_sys::HtmlElement>()

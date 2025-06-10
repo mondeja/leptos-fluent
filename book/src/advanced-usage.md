@@ -6,12 +6,14 @@
 
 Outside the reactive ownership tree, mainly known as the _reactive graph_,
 we can't obtain the context of `I18n` using `expect_context::<leptos_fluent::I18n>()`,
-which is what `tr!` and `move_tr!` do internally. Instead, we can pass the context
+which is what `tr!` and `move_tr!` do internally. Instead, pass the context
 as first parameter to the macros:
 
 ```rust
-let i18n = expect_i18n();
+use leptos::prelude::expect_context;
+use leptos_fluent::{I18n, move_tr};
 
+let i18n = expect_context::<I18n>();
 let translated_signal = move_tr!(i18n, "my-translation");
 ```
 
@@ -26,6 +28,9 @@ internally:
 For example, the next code panics when the `<div>` container is clicked:
 
 ```rust
+use leptos::prelude::*;
+use leptos_fluent::tr;
+
 #[component]
 pub fn App() -> impl IntoView {
     view! {
@@ -52,6 +57,9 @@ from the majority of the cases as unintended behavior.
 To avoid that, pass the i18n context as first parameter to `tr!` and `move_tr!`:
 
 ```rust
+use leptos::prelude::*;
+use leptos_fluent::{I18n, tr};
+
 #[component]
 pub fn App() -> impl IntoView {
     view! {
@@ -63,7 +71,7 @@ pub fn App() -> impl IntoView {
 
 #[component]
 pub fn Child() -> impl IntoView {
-    let i18n = expect_i18n();
+    let i18n = expect_context::<I18n>();
     view! {
         <div on:click=|_| {
             tr!(i18n, "my-translation");
@@ -96,20 +104,25 @@ error: argument must be a string literal
 Instead, you can use the next `i18n.tr` and `i18n.tr_with_args` methods:
 
 ```rust
-use leptos_fluent::expect_i18n;
+use leptos::prelude::expect_context;
+use leptos_fluent::I18n;
 
 let text_id = "my-translation";
-expect_i18n().tr(text_id);
+let i18n = expect_context::<I18n>();
+i18n.tr(text_id);
 ```
 
 ```rust
 use std::collections::HashMap;
-use leptos_fluent::expect_i18n;
+use leptos::prelude::expect_context;
+use leptos_fluent::I18n;
 
 let text_id = "hello-args";
 let mut args = HashMap::new();
 args.insert("name", "World");
-expect_i18n().tr_with_args(text_id, args);
+
+let i18n = expect_context::<I18n>();
+i18n.tr_with_args(text_id, args);
 ```
 
 Note that `i18n.tr` and `i18n.tr_with_args` methods are not reactive,
