@@ -2,15 +2,6 @@
 
 # `leptos_fluent!`
 
-The `leptos_fluent!` macro is used to load the translations and set the current
-locale. It is used in the root component of the application.
-
-```rust
-leptos_fluent! {
-    locales: "./locales",
-};
-```
-
 <!-- toc -->
 
 ## Common configurations
@@ -50,7 +41,7 @@ leptos_fluent! {
 
 <!-- markdownlint-disable MD013 -->
 
-### <a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Data files on Desktop applications
+### <a href="https://mondeja.github.io/leptos-fluent/latest/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Data files on Desktop applications
 
 <!-- markdownlint-enable MD013 -->
 
@@ -234,7 +225,7 @@ Must be relative to the _Cargo.toml_ file.
 
 ```admonish tip
 In order to use this parameter a languages file feature must be enabled.
-See [**4. Languages**](https://mondeja.github.io/leptos-fluent/languages.html)
+See [**4. Languages**](https://mondeja.github.io/leptos-fluent/latest/languages.html)
 ```
 
 ```rust
@@ -741,7 +732,7 @@ leptos_fluent! {
 
 <!-- markdownlint-disable MD013 -->
 
-### <a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | `initial_language_from_system`
+### <a href="https://mondeja.github.io/leptos-fluent/latest/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | `initial_language_from_system`
 
 <!-- markdownlint-enable MD013 -->
 
@@ -756,7 +747,7 @@ leptos_fluent! {
 
 <!-- markdownlint-disable MD013 -->
 
-### <a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | `initial_language_from_data_file`
+### <a href="https://mondeja.github.io/leptos-fluent/latest/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | `initial_language_from_data_file`
 
 <!-- markdownlint-enable MD013 -->
 
@@ -771,7 +762,7 @@ leptos_fluent! {
 
 <!-- markdownlint-disable MD013 -->
 
-### <a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | `initial_language_from_system_to_data_file`
+### <a href="https://mondeja.github.io/leptos-fluent/latest/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | `initial_language_from_system_to_data_file`
 
 <!-- markdownlint-enable MD013 -->
 
@@ -786,7 +777,7 @@ leptos_fluent! {
 
 <!-- markdownlint-disable MD013 -->
 
-### <a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | `set_language_to_data_file`
+### <a href="https://mondeja.github.io/leptos-fluent/latest/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | `set_language_to_data_file`
 
 <!-- markdownlint-enable MD013 -->
 
@@ -801,7 +792,7 @@ leptos_fluent! {
 
 <!-- markdownlint-disable MD013 -->
 
-### <a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | `data_file_key: `<span style="color: #b5bd68;font-size: 16px; opacity:.9;">"leptos-fluent"</span>
+### <a href="https://mondeja.github.io/leptos-fluent/latest/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | `data_file_key: `<span style="color: #b5bd68;font-size: 16px; opacity:.9;">"leptos-fluent"</span>
 
 <!-- markdownlint-enable MD013 -->
 
