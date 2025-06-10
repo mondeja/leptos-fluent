@@ -280,7 +280,7 @@ leptos-fluent = { version = "0.2", features = ["json5"] }
 <a class="admonition-anchor-link" href="install.html#admonition-tip"></a>
 </div>
 <div>
-<p>See <a href="https://mondeja.github.io/leptos-fluent/languages.html"><strong>4. Languages</strong></a>.</p>
+<p>See <a href="https://mondeja.github.io/leptos-fluent/latest/languages.html"><strong>4. Languages</strong></a>.</p>
 </div>
 </div>
 <h2 id="tracking-locales-files-with-cargo-leptos"><a class="header" href="#tracking-locales-files-with-cargo-leptos">Tracking locales files with <a href="https://github.com/leptos-rs/cargo-leptos"><code>cargo leptos</code></a></a></h2>
@@ -545,7 +545,7 @@ lang == expect_i18n().language.get()</code></pre>
 </ul>
 <h2 id="loading-the-initial-language-of-the-user"><a class="header" href="#loading-the-initial-language-of-the-user">Loading the initial language of the user</a></h2>
 <p>The initial language of the user can be set in different ways:</p>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: center">CSR</th><th style="text-align: center">SSR</th><th style="text-align: center">Desktop</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a></th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: center">CSR</th><th style="text-align: center">SSR</th><th style="text-align: center">Desktop</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/latest/leptos_fluent.html"><code>leptos_fluent!</code></a></th></tr></thead><tbody>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/URLSearchParams">URL parameter</a></td><td style="text-align: center">✅</td><td style="text-align: center">✅</td><td style="text-align: center">❌</td><td style="text-align: left"><code>initial_language_from_url_param</code></td></tr>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/URL/pathname">URL path</a></td><td style="text-align: center">✅</td><td style="text-align: center">✅</td><td style="text-align: center">❌</td><td style="text-align: left"><code>initial_language_from_url_path</code></td></tr>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/Document/cookie">Cookie</a></td><td style="text-align: center">✅</td><td style="text-align: center">✅</td><td style="text-align: center">❌</td><td style="text-align: left"><code>initial_language_from_cookie</code></td></tr>
@@ -582,7 +582,7 @@ The order of precedence is:</p>
 <li>Browser <a href="https://developer.mozilla.org/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a></li>
 </ol>
 </li>
-<li><strong>Desktop</strong> (<a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><code>system</code> feature</a>)
+<li><strong>Desktop</strong> (<a href="https://mondeja.github.io/leptos-fluent/latest/install.html#desktop-applications"><code>system</code> feature</a>)
 <ol>
 <li>Data file</li>
 <li><a href="https://github.com/i509VCB/current_locale">System language</a></li>
@@ -593,7 +593,7 @@ The order of precedence is:</p>
 <p>When the user changes the language and <code>I18n::language.set</code> is called, the
 framework can perform a side effect to update the language in the client. The
 following strategies are available:</p>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a></th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/latest/leptos_fluent.html"><code>leptos_fluent!</code></a></th></tr></thead><tbody>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/URLSearchParams">URL parameter</a></td><td style="text-align: left"><code>set_language_to_url_param</code></td></tr>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/Document/cookie">Cookie</a></td><td style="text-align: left"><code>set_language_to_cookie</code></td></tr>
 <tr><td style="text-align: left">Browser <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a></td><td style="text-align: left"><code>set_language_to_localstorage</code></td></tr>
@@ -604,12 +604,12 @@ following strategies are available:</p>
 <p>When the user changes the language in the browser settings, the framework can
 perform a side effect to reflect the language change in the client.
 The following strategies are available:</p>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a></th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/latest/leptos_fluent.html"><code>leptos_fluent!</code></a></th></tr></thead><tbody>
 <tr><td style="text-align: left">Browser <a href="https://developer.mozilla.org/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a></td><td style="text-align: left"><code>set_language_from_navigator</code></td></tr>
 </tbody></table>
 </div>
-<h3 id="system--desktop-applications"><a class="header" href="#system--desktop-applications"><a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Desktop applications</a></h3>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a></th></tr></thead><tbody>
+<h3 id="system--desktop-applications"><a class="header" href="#system--desktop-applications"><a href="https://mondeja.github.io/leptos-fluent/latest/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Desktop applications</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/latest/leptos_fluent.html"><code>leptos_fluent!</code></a></th></tr></thead><tbody>
 <tr><td style="text-align: left">Data file</td><td style="text-align: left"><code>set_language_to_data_file</code></td></tr>
 </tbody></table>
 </div>
@@ -617,7 +617,7 @@ The following strategies are available:</p>
 <p>When a language is loaded from initialization, the framework can perform a side
 effect to persistently storage the language in the client. The following strategies
 are available:</p>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a></th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/latest/leptos_fluent.html"><code>leptos_fluent!</code></a></th></tr></thead><tbody>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/URLSearchParams">URL parameter</a> to <a href="https://developer.mozilla.org/docs/Web/API/Document/cookie">cookie</a></td><td style="text-align: left"><code>initial_language_from_url_param_to_cookie</code></td></tr>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/URLSearchParams">URL parameter</a> to <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a></td><td style="text-align: left"><code>initial_language_from_url_param_to_localstorage</code></td></tr>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/URLSearchParams">URL parameter</a> to <a href="https://developer.mozilla.org/docs/Web/API/Window/sessionStorage">session storage</a></td><td style="text-align: left"><code>initial_language_from_url_param_to_sessionstorage</code></td></tr>
@@ -640,29 +640,29 @@ are available:</p>
 </tbody></table>
 </div>
 <h3 id="csr--ssr"><a class="header" href="#csr--ssr"><span style="opacity:.5">CSR + SSR</span></a></h3>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a></th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/latest/leptos_fluent.html"><code>leptos_fluent!</code></a></th></tr></thead><tbody>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/URLSearchParams">URL parameter</a> to <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a></td><td style="text-align: left"><code>initial_language_from_url_param_to_server_function</code></td></tr>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/URL/pathname">URL path</a> to <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a></td><td style="text-align: left"><code>initial_language_from_url_path_to_server_function</code></td></tr>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/Document/cookie">Cookie</a> to <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a></td><td style="text-align: left"><code>initial_language_from_cookie_to_server_function</code></td></tr>
 <tr><td style="text-align: left"><a href="https://book.leptos.dev/server/25_server_functions.html">Server function</a> to <a href="https://developer.mozilla.org/docs/Web/API/Document/cookie">cookie</a></td><td style="text-align: left"><code>initial_language_from_server_function_to_cookie</code></td></tr>
 </tbody></table>
 </div>
-<h3 id="system--desktop-applications-1"><a class="header" href="#system--desktop-applications-1"><a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Desktop applications</a></h3>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a></th></tr></thead><tbody>
+<h3 id="system--desktop-applications-1"><a class="header" href="#system--desktop-applications-1"><a href="https://mondeja.github.io/leptos-fluent/latest/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Desktop applications</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/latest/leptos_fluent.html"><code>leptos_fluent!</code></a></th></tr></thead><tbody>
 <tr><td style="text-align: left"><a href="https://github.com/i509VCB/current_locale">System language</a> to data file</td><td style="text-align: left"><code>initial_language_from_system_to_data_file</code></td></tr>
 </tbody></table>
 </div>
 <h2 id="csr---client-side-effects"><a class="header" href="#csr---client-side-effects"><span style="opacity:.5">CSR </span> | Client side effects</a></h2>
 <p>When the user updates the language, the framework can perform side effects to
 update the language in the client. The following side effects are available:</p>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: left">Side effect</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a></th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">Side effect</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/latest/leptos_fluent.html"><code>leptos_fluent!</code></a></th></tr></thead><tbody>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/HTML/Global_attributes/lang"><code>&lt;html lang="..."&gt;</code></a> attribute</td><td style="text-align: left"><code>sync_html_tag_lang</code></td></tr>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/HTML/Global_attributes/dir"><code>&lt;html dir="..."&gt;</code></a> attribute</td><td style="text-align: left"><code>sync_html_tag_dir</code></td></tr>
 </tbody></table>
 </div>
 <h2 id="csr--ssr---names"><a class="header" href="#csr--ssr---names"><span style="opacity:.5">CSR + SSR </span> | Names</a></h2>
 <p>The names of the settings can be configured using the following parameters:</p>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a></th><th style="text-align: center">Default value</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/latest/leptos_fluent.html"><code>leptos_fluent!</code></a></th><th style="text-align: center">Default value</th></tr></thead><tbody>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/Document/cookie">Cookie</a></td><td style="text-align: left"><code>cookie_name</code></td><td style="text-align: center"><code>"lf-lang"</code></td></tr>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/Document/cookie#write_a_new_cookie">Cookie attributes</a></td><td style="text-align: left"><code>cookie_attrs</code></td><td style="text-align: center"><code>""</code></td></tr>
 <tr><td style="text-align: left">Browser <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a></td><td style="text-align: left"><code>localstorage_key</code></td><td style="text-align: center"><code>"lang"</code></td></tr>
@@ -671,8 +671,8 @@ update the language in the client. The following side effects are available:</p>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/URL/pathname">URL path</a> extractor <code>fn</code></td><td style="text-align: left"><code>url_path</code></td><td style="text-align: center">❌</td></tr>
 </tbody></table>
 </div>
-<h3 id="system--desktop-applications-2"><a class="header" href="#system--desktop-applications-2"><a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Desktop applications</a></h3>
-<div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a></th><th style="text-align: left">Default value</th></tr></thead><tbody>
+<h3 id="system--desktop-applications-2"><a class="header" href="#system--desktop-applications-2"><a href="https://mondeja.github.io/leptos-fluent/latest/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Desktop applications</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/latest/leptos_fluent.html"><code>leptos_fluent!</code></a></th><th style="text-align: left">Default value</th></tr></thead><tbody>
 <tr><td style="text-align: left">Data file</td><td style="text-align: left"><code>data_file_key</code></td><td style="text-align: left"><code>"leptos-fluent"</code></td></tr>
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="languages"><a class="header" href="#languages">Languages</a></h1>
@@ -721,7 +721,7 @@ use "Language name (region name)" (see <a href="https://github.com/mondeja/lepto
 </ol>
 <h2 id="the-languages-file"><a class="header" href="#the-languages-file">The languages file</a></h2>
 <p>The languages array can be fully customized by defining a <code>languages</code> parameter
-in the <a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a> macro pointing to a languages file. This file must
+in the <a href="https://mondeja.github.io/leptos-fluent/latest/leptos_fluent.html"><code>leptos_fluent!</code></a> macro pointing to a languages file. This file must
 be relative to the <em>Cargo.toml</em> file.</p>
 <pre><code class="language-rust">leptos_fluent! {
     languages: "./locales/languages.json",
@@ -792,7 +792,7 @@ pub fn App() -&gt; impl IntoView {
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="checking-translations"><a class="header" href="#checking-translations">Checking translations</a></h1>
 <p>To check that the translations of the app are correct at compile time,
-set the <code>check_translations</code> parameter in the <a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a> macro to
+set the <code>check_translations</code> parameter in the <a href="https://mondeja.github.io/leptos-fluent/latest/leptos_fluent.html"><code>leptos_fluent!</code></a> macro to
 a glob pattern that matches the Rust files that you want to check.</p>
 <p>The pattern must be relative to the location of the <em>Cargo.toml</em> file.</p>
 <p>For single crate projects, it would be something like:</p>
@@ -826,7 +826,7 @@ a glob pattern that matches the Rust files that you want to check.</p>
 <!-- markdownlint-enable MD013 -->
 <h2 id="why-glob-patterns-to-rust-files"><a class="header" href="#why-glob-patterns-to-rust-files">Why glob patterns to Rust files?</a></h2>
 <p><strong>leptos-fluent</strong> provides a <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html"><code>I18n</code></a> context to Leptos when
-the macro <a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a> is called. So multiple instances of a context
+the macro <a href="https://mondeja.github.io/leptos-fluent/latest/leptos_fluent.html"><code>leptos_fluent!</code></a> is called. So multiple instances of a context
 with different localization files and strategies can be initialized in
 different component trees. This is useful, for example, in a multi page app.</p>
 <p>The mechanism of translations checking needs to know where reside the calls to
@@ -1159,11 +1159,6 @@ with the method <code>I18n::meta</code>:</p>
 println!("Macro parameters: {:?}", expect_i18n().meta().unwrap());</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><!-- markdownlint-disable MD033 MD038 -->
 <h1 id="leptos_fluent"><a class="header" href="#leptos_fluent"><code>leptos_fluent!</code></a></h1>
-<p>The <code>leptos_fluent!</code> macro is used to load the translations and set the current
-locale. It is used in the root component of the application.</p>
-<pre><code class="language-rust">leptos_fluent! {
-    locales: "./locales",
-};</code></pre>
 <ul>
 <li><a href="leptos_fluent.html#common-configurations">Common configurations</a>
 <ul>
@@ -1270,7 +1265,7 @@ locale. It is used in the root component of the application.</p>
     cookie_name: "lf-lang",
 }</code></pre>
 <!-- markdownlint-disable MD013 -->
-<h3 id="system--data-files-on-desktop-applications"><a class="header" href="#system--data-files-on-desktop-applications"><a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Data files on Desktop applications</a></h3>
+<h3 id="system--data-files-on-desktop-applications"><a class="header" href="#system--data-files-on-desktop-applications"><a href="https://mondeja.github.io/leptos-fluent/latest/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Data files on Desktop applications</a></h3>
 <!-- markdownlint-enable MD013 -->
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
@@ -1426,7 +1421,7 @@ Must be relative to the <em>Cargo.toml</em> file.</p>
 </div>
 <div>
 <p>In order to use this parameter a languages file feature must be enabled.
-See <a href="https://mondeja.github.io/leptos-fluent/languages.html"><strong>4. Languages</strong></a></p>
+See <a href="https://mondeja.github.io/leptos-fluent/latest/languages.html"><strong>4. Languages</strong></a></p>
 </div>
 </div>
 <pre><code class="language-rust">leptos_fluent! {
@@ -1738,7 +1733,7 @@ leptos_fluent! {
     set_language_to_cookie: true,
 }</code></pre>
 <!-- markdownlint-disable MD013 -->
-<h3 id="system--initial_language_from_system"><a class="header" href="#system--initial_language_from_system"><a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | <code>initial_language_from_system</code></a></h3>
+<h3 id="system--initial_language_from_system"><a class="header" href="#system--initial_language_from_system"><a href="https://mondeja.github.io/leptos-fluent/latest/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | <code>initial_language_from_system</code></a></h3>
 <!-- markdownlint-enable MD013 -->
 <p>Get the initial language from the system.</p>
 <pre><code class="language-rust">leptos_fluent! {
@@ -1746,7 +1741,7 @@ leptos_fluent! {
     initial_language_from_system: true,
 }</code></pre>
 <!-- markdownlint-disable MD013 -->
-<h3 id="system--initial_language_from_data_file"><a class="header" href="#system--initial_language_from_data_file"><a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | <code>initial_language_from_data_file</code></a></h3>
+<h3 id="system--initial_language_from_data_file"><a class="header" href="#system--initial_language_from_data_file"><a href="https://mondeja.github.io/leptos-fluent/latest/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | <code>initial_language_from_data_file</code></a></h3>
 <!-- markdownlint-enable MD013 -->
 <p>Get the initial language from a data file.</p>
 <pre><code class="language-rust">leptos_fluent! {
@@ -1754,7 +1749,7 @@ leptos_fluent! {
     initial_language_from_data_file: true,
 }</code></pre>
 <!-- markdownlint-disable MD013 -->
-<h3 id="system--initial_language_from_system_to_data_file"><a class="header" href="#system--initial_language_from_system_to_data_file"><a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | <code>initial_language_from_system_to_data_file</code></a></h3>
+<h3 id="system--initial_language_from_system_to_data_file"><a class="header" href="#system--initial_language_from_system_to_data_file"><a href="https://mondeja.github.io/leptos-fluent/latest/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | <code>initial_language_from_system_to_data_file</code></a></h3>
 <!-- markdownlint-enable MD013 -->
 <p>Get the initial language from the system and save it in a data file.</p>
 <pre><code class="language-rust">leptos_fluent! {
@@ -1762,7 +1757,7 @@ leptos_fluent! {
     initial_language_from_system_to_data_file: true,
 }</code></pre>
 <!-- markdownlint-disable MD013 -->
-<h3 id="system--set_language_to_data_file"><a class="header" href="#system--set_language_to_data_file"><a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | <code>set_language_to_data_file</code></a></h3>
+<h3 id="system--set_language_to_data_file"><a class="header" href="#system--set_language_to_data_file"><a href="https://mondeja.github.io/leptos-fluent/latest/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | <code>set_language_to_data_file</code></a></h3>
 <!-- markdownlint-enable MD013 -->
 <p>Set the current language to a data file.</p>
 <pre><code class="language-rust">leptos_fluent! {
@@ -1770,7 +1765,7 @@ leptos_fluent! {
     set_language_to_data_file: true,
 }</code></pre>
 <!-- markdownlint-disable MD013 -->
-<h3 id="system--data_file_key-leptos-fluent"><a class="header" href="#system--data_file_key-leptos-fluent"><a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | <code>data_file_key: </code><span style="color: #b5bd68;font-size: 16px; opacity:.9;">"leptos-fluent"</span></a></h3>
+<h3 id="system--data_file_key-leptos-fluent"><a class="header" href="#system--data_file_key-leptos-fluent"><a href="https://mondeja.github.io/leptos-fluent/latest/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | <code>data_file_key: </code><span style="color: #b5bd68;font-size: 16px; opacity:.9;">"leptos-fluent"</span></a></h3>
 <!-- markdownlint-enable MD013 -->
 <p>Key to manage the current language in the data file. It should be unique
 per application.</p>
