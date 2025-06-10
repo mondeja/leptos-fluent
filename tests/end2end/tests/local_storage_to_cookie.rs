@@ -7,7 +7,7 @@ use wasm_bindgen_test::*;
 wasm_bindgen_test_configure!(run_in_browser);
 
 const COOKIE_NAME: &str = "my-weird-cookie-name";
-const LOCALSTORAGE_KEY: &str = "my-weird-local-storage-key";
+const LOCAL_STORAGE_KEY: &str = "my-weird-local-storage-key";
 
 #[component]
 fn I18n(children: Children) -> impl IntoView {
@@ -15,7 +15,7 @@ fn I18n(children: Children) -> impl IntoView {
         children: children(),
         locales: "../../examples/csr-minimal/locales",
         initial_language_from_local_storage: true,
-        local_storage_key: LOCALSTORAGE_KEY,
+        local_storage_key: LOCAL_STORAGE_KEY,
         initial_language_from_local_storage_to_cookie: true,
         cookie_name: COOKIE_NAME,
     }
@@ -37,14 +37,14 @@ pub async fn test_local_storage_to_cookie() {
 
     // initial_language_from_local_storage_to_cookie
     cookie::delete(COOKIE_NAME);
-    local_storage::delete(LOCALSTORAGE_KEY);
+    local_storage::delete(LOCAL_STORAGE_KEY);
     {
         mount!(App);
         assert!(en().checked());
         assert_eq!(element_text("p"), "Select a language:");
     }
 
-    local_storage::set(LOCALSTORAGE_KEY, "es");
+    local_storage::set(LOCAL_STORAGE_KEY, "es");
     cookie::delete(COOKIE_NAME);
     {
         mount!(App);
@@ -53,7 +53,7 @@ pub async fn test_local_storage_to_cookie() {
         assert_eq!(cookie::get(COOKIE_NAME), Some("es".to_string()));
     }
 
-    local_storage::set(LOCALSTORAGE_KEY, "en");
+    local_storage::set(LOCAL_STORAGE_KEY, "en");
     cookie::delete(COOKIE_NAME);
     {
         mount!(App);

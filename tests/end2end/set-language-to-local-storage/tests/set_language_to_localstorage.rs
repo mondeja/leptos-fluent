@@ -7,7 +7,7 @@ use web_sys_ec::{Ec, Wait};
 
 wasm_bindgen_test_configure!(run_in_browser);
 
-const LOCALSTORAGE_KEY: &str = "sltc";
+const LOCAL_STORAGE_KEY: &str = "sltc";
 
 #[component]
 fn I18n(children: Children) -> impl IntoView {
@@ -15,7 +15,7 @@ fn I18n(children: Children) -> impl IntoView {
         children: children(),
         locales: "../../../examples/csr-minimal/locales",
         initial_language_from_navigator: true,
-        local_storage_key: LOCALSTORAGE_KEY,
+        local_storage_key: LOCAL_STORAGE_KEY,
         set_language_to_local_storage: true,
     }
 }
@@ -35,7 +35,7 @@ pub async fn test_set_language_to_local_storage() {
     let es = move || input_by_id("es");
 
     mount!(App);
-    local_storage::delete(LOCALSTORAGE_KEY);
+    local_storage::delete(LOCAL_STORAGE_KEY);
     assert!(en().checked());
     assert_eq!(element_text("p"), "Select a language:");
 
@@ -44,5 +44,8 @@ pub async fn test_set_language_to_local_storage() {
         .until(("p", Ec::InnerTextContains("Selecciona un idioma:")))
         .await;
     assert!(es().checked());
-    assert_eq!(local_storage::get(LOCALSTORAGE_KEY), Some("es".to_string()));
+    assert_eq!(
+        local_storage::get(LOCAL_STORAGE_KEY),
+        Some("es".to_string())
+    );
 }

@@ -6,7 +6,7 @@ use wasm_bindgen_test::*;
 
 wasm_bindgen_test_configure!(run_in_browser);
 
-const LOCALSTORAGE_KEY: &str = "foobarbaz";
+const LOCAL_STORAGE_KEY: &str = "foobarbaz";
 
 #[component]
 fn I18n(children: Children) -> impl IntoView {
@@ -14,7 +14,7 @@ fn I18n(children: Children) -> impl IntoView {
         children: children(),
         locales: "../../examples/csr-minimal/locales",
         initial_language_from_local_storage: true,
-        local_storage_key: LOCALSTORAGE_KEY,
+        local_storage_key: LOCAL_STORAGE_KEY,
         set_language_to_local_storage: true,
     }
 }
@@ -33,14 +33,14 @@ pub async fn initial_language_from_local_storage() {
     let es = move || input_by_id("es");
     let en = move || input_by_id("en");
 
-    local_storage::set(LOCALSTORAGE_KEY, "es");
+    local_storage::set(LOCAL_STORAGE_KEY, "es");
     {
         mount!(App);
         assert!(es().checked());
         assert_eq!(element_text("p"), "Selecciona un idioma:");
     }
 
-    local_storage::set(LOCALSTORAGE_KEY, "en");
+    local_storage::set(LOCAL_STORAGE_KEY, "en");
     {
         mount!(App);
         assert!(en().checked());

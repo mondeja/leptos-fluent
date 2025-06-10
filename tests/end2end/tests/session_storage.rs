@@ -6,7 +6,7 @@ use wasm_bindgen_test::*;
 
 wasm_bindgen_test_configure!(run_in_browser);
 
-const SESSIONSTORAGE_KEY: &str = "foobarbaz";
+const SESSION_STORAGE_KEY: &str = "foobarbaz";
 
 #[component]
 fn I18n(children: Children) -> impl IntoView {
@@ -14,7 +14,7 @@ fn I18n(children: Children) -> impl IntoView {
         children: children(),
         locales: "../../examples/csr-minimal/locales",
         initial_language_from_session_storage: true,
-        session_storage_key: SESSIONSTORAGE_KEY,
+        session_storage_key: SESSION_STORAGE_KEY,
         set_language_to_session_storage: true,
     }
 }
@@ -33,14 +33,14 @@ pub async fn initial_language_from_session_storage() {
     let es = move || input_by_id("es");
     let en = move || input_by_id("en");
 
-    session_storage::set(SESSIONSTORAGE_KEY, "es");
+    session_storage::set(SESSION_STORAGE_KEY, "es");
     {
         mount!(App);
         assert!(es().checked());
         assert_eq!(element_text("p"), "Selecciona un idioma:");
     }
 
-    session_storage::set(SESSIONSTORAGE_KEY, "en");
+    session_storage::set(SESSION_STORAGE_KEY, "en");
     {
         mount!(App);
         assert!(en().checked());

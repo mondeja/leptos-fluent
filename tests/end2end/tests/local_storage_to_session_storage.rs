@@ -6,8 +6,8 @@ use wasm_bindgen_test::*;
 
 wasm_bindgen_test_configure!(run_in_browser);
 
-const SESSIONSTORAGE_KEY: &str = "my-weird-session-storage-key";
-const LOCALSTORAGE_KEY: &str = "my-weird-local-storage-key";
+const SESSION_STORAGE_KEY: &str = "my-weird-session-storage-key";
+const LOCAL_STORAGE_KEY: &str = "my-weird-local-storage-key";
 
 #[component]
 fn I18n(children: Children) -> impl IntoView {
@@ -15,9 +15,9 @@ fn I18n(children: Children) -> impl IntoView {
         children: children(),
         locales: "../../examples/csr-minimal/locales",
         initial_language_from_local_storage: true,
-        local_storage_key: LOCALSTORAGE_KEY,
+        local_storage_key: LOCAL_STORAGE_KEY,
         initial_language_from_local_storage_to_session_storage: true,
-        session_storage_key: SESSIONSTORAGE_KEY,
+        session_storage_key: SESSION_STORAGE_KEY,
     }
 }
 
@@ -36,34 +36,34 @@ pub async fn test_local_storage_to_session_storage() {
     let en = move || input_by_id("en");
 
     // initial_language_from_local_storage_to_session_storage
-    session_storage::delete(SESSIONSTORAGE_KEY);
-    local_storage::delete(LOCALSTORAGE_KEY);
+    session_storage::delete(SESSION_STORAGE_KEY);
+    local_storage::delete(LOCAL_STORAGE_KEY);
     {
         mount!(App);
         assert!(en().checked());
         assert_eq!(element_text("p"), "Select a language:");
     }
 
-    local_storage::set(LOCALSTORAGE_KEY, "es");
-    session_storage::delete(SESSIONSTORAGE_KEY);
+    local_storage::set(LOCAL_STORAGE_KEY, "es");
+    session_storage::delete(SESSION_STORAGE_KEY);
     {
         mount!(App);
         assert!(es().checked());
         assert_eq!(element_text("p"), "Selecciona un idioma:");
         assert_eq!(
-            session_storage::get(SESSIONSTORAGE_KEY),
+            session_storage::get(SESSION_STORAGE_KEY),
             Some("es".to_string())
         );
     }
 
-    local_storage::set(LOCALSTORAGE_KEY, "en");
-    session_storage::delete(SESSIONSTORAGE_KEY);
+    local_storage::set(LOCAL_STORAGE_KEY, "en");
+    session_storage::delete(SESSION_STORAGE_KEY);
     {
         mount!(App);
         assert!(en().checked());
         assert_eq!(element_text("p"), "Select a language:");
         assert_eq!(
-            session_storage::get(SESSIONSTORAGE_KEY),
+            session_storage::get(SESSION_STORAGE_KEY),
             Some("en".to_string())
         );
     }

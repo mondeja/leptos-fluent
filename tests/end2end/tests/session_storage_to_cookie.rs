@@ -7,7 +7,7 @@ use wasm_bindgen_test::*;
 wasm_bindgen_test_configure!(run_in_browser);
 
 const COOKIE_NAME: &str = "my-weird-cookie-name";
-const SESSIONSTORAGE_KEY: &str = "my-weird-session-storage-key";
+const SESSION_STORAGE_KEY: &str = "my-weird-session-storage-key";
 
 #[component]
 fn I18n(children: Children) -> impl IntoView {
@@ -15,7 +15,7 @@ fn I18n(children: Children) -> impl IntoView {
         children: children(),
         locales: "../../examples/csr-minimal/locales",
         initial_language_from_session_storage: true,
-        session_storage_key: SESSIONSTORAGE_KEY,
+        session_storage_key: SESSION_STORAGE_KEY,
         initial_language_from_session_storage_to_cookie: true,
         cookie_name: COOKIE_NAME,
     }
@@ -37,14 +37,14 @@ pub async fn test_session_storage_to_cookie() {
 
     // initial_language_from_session_storage_to_cookie
     cookie::delete(COOKIE_NAME);
-    session_storage::delete(SESSIONSTORAGE_KEY);
+    session_storage::delete(SESSION_STORAGE_KEY);
     {
         mount!(App);
         assert!(en().checked());
         assert_eq!(element_text("p"), "Select a language:");
     }
 
-    session_storage::set(SESSIONSTORAGE_KEY, "es");
+    session_storage::set(SESSION_STORAGE_KEY, "es");
     cookie::delete(COOKIE_NAME);
     {
         mount!(App);
@@ -53,7 +53,7 @@ pub async fn test_session_storage_to_cookie() {
         assert_eq!(cookie::get(COOKIE_NAME), Some("es".to_string()));
     }
 
-    session_storage::set(SESSIONSTORAGE_KEY, "en");
+    session_storage::set(SESSION_STORAGE_KEY, "en");
     cookie::delete(COOKIE_NAME);
     {
         mount!(App);
