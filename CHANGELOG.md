@@ -4,6 +4,12 @@
 
 ### Enhancements
 
+- The function `use_i18n()` has been deprecated and will be removed in v0.3.0.
+  Use `use_context::<leptos_fluent::I18n>()` instead.
+- The function `i18n()` has been deprecated and will be removed in v0.3.0.
+  Use `expect_context::<leptos_fluent::I18n>()` instead.
+- The function `expect_i18n()` has been deprecated and will be removed in v0.3.0.
+  Use `expect_context::<leptos_fluent::I18n>()` instead.
 - Allow to pass a single file path to `check_translations` parameter of
   `leptos_fluent!` macro.
 - Don't report syntax errors in translations checker. The Rust compiler should
@@ -95,7 +101,7 @@ _ = move_tr!(if foo { "foo" } else if bar { "bar" } else { "baz" });
 
 See the [Advanced usage] section of the book for more information.
 
-[Advanced usage]: https://mondeja.github.io/leptos-fluent/advanced-usage.html
+[Advanced usage]: https://mondeja.github.io/leptos-fluent/latest/advanced-usage.html
 
 ### Bug fixes
 

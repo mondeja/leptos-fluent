@@ -1,5 +1,5 @@
 use leptos::{prelude::*, task::spawn};
-use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, tr, Language};
+use leptos_fluent::{leptos_fluent, move_tr, tr, I18n, Language};
 use leptos_meta::{provide_meta_context, Title};
 use leptos_router::{
     components::{FlatRoutes, Route, Router},
@@ -7,7 +7,7 @@ use leptos_router::{
 };
 
 #[component]
-fn I18n(children: Children) -> impl IntoView {
+fn I18nProvider(children: Children) -> impl IntoView {
     leptos_fluent! {
         children: children(),
         locales: "./locales",
@@ -52,7 +52,7 @@ pub fn App() -> impl IntoView {
     provide_meta_context();
 
     view! {
-        <I18n>
+        <I18nProvider>
             <Title text=move || tr!("welcome-to-leptos") />
             <Router>
                 <main>
@@ -61,14 +61,14 @@ pub fn App() -> impl IntoView {
                     </FlatRoutes>
                 </main>
             </Router>
-        </I18n>
+        </I18nProvider>
     }
 }
 
 /// Renders the home page of your application.
 #[component]
 fn Home() -> impl IntoView {
-    let i18n = expect_i18n();
+    let i18n = expect_context::<I18n>();
 
     view! {
         <h1>{move_tr!("welcome-to-leptos")}</h1>
@@ -81,8 +81,7 @@ fn Home() -> impl IntoView {
 }
 
 fn render_language(lang: &'static Language) -> impl IntoView {
-    // Passed as atrribute, `Language` is converted to their code,
-    // so `<input id=lang` becomes `<input id=lang.id.to_string()`
+    let i18n = expect_context::<I18n>();
 
     // Call on click to server action with a client-side translated
     // "hello-world" message
@@ -95,7 +94,7 @@ fn render_language(lang: &'static Language) -> impl IntoView {
                 value=lang
                 checked=lang.is_active()
                 on:click=move |_| {
-                    lang.activate();
+                    i18n.language.set(lang);
                     spawn(async {
                         _ = show_hello_world(
                                 tr!("hello-world"),

@@ -1283,10 +1283,11 @@ mod tests {
     #[test]
     fn tr_macros_pass() {
         let content = quote! {
-            use leptos_fluent::{expect_i18n, move_tr, tr};
+            use leptos::prelude::*;
+            use leptos_fluent::{I18n, move_tr, tr};
 
             fn App() -> impl IntoView {
-                let i18n = expect_i18n();
+                let i18n = expect_context::<I18n>();
                 _ = move_tr!("foo");
 
                 let (foo, bar) = (false, true);
@@ -1481,11 +1482,12 @@ mod tests {
     #[test]
     fn tr_macros_attributes() {
         let content = quote! {
-            use leptos_fluent::{tr, move_tr, expect_i18n};
+            use leptos::prelude::*;
+            use leptos_fluent::{I18n, tr, move_tr};
 
             #[component]
             fn App() -> impl IntoView {
-                let i18n = expect_i18n();
+                let i18n = expect_context::<I18n>();
                 let (foo, bar) = (true, false);
 
                 _ = tr!(

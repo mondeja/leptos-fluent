@@ -1,6 +1,6 @@
 use fluent_templates::static_loader;
 use leptos::prelude::*;
-use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, Language};
+use leptos_fluent::{leptos_fluent, move_tr, I18n, Language};
 
 static_loader! {
     static TRANSLATIONS = {
@@ -10,7 +10,7 @@ static_loader! {
 }
 
 #[component]
-fn I18n(children: Children) -> impl IntoView {
+fn I18nProvider(children: Children) -> impl IntoView {
     leptos_fluent! {
         children: children(),
         translations: [TRANSLATIONS],
@@ -51,19 +51,20 @@ fn I18n(children: Children) -> impl IntoView {
 #[component]
 pub fn App() -> impl IntoView {
     view! {
-        <I18n>
+        <I18nProvider>
             <LanguageSelector />
-        </I18n>
+        </I18nProvider>
     }
 }
 
 #[component]
 fn LanguageSelector() -> impl IntoView {
+    let i18n = expect_context::<I18n>();
     view! {
         <p>{move_tr!("select-a-language")}</p>
         <fieldset>
             {move || {
-                expect_i18n().languages.iter().map(|lang| render_language(lang)).collect::<Vec<_>>()
+                i18n.languages.iter().map(|lang| render_language(lang)).collect::<Vec<_>>()
             }}
         </fieldset>
 
@@ -71,7 +72,7 @@ fn LanguageSelector() -> impl IntoView {
             <li>
                 <p>
                     {move_tr!(
-                        "html-tag-lang-is", { "lang" => expect_i18n().language.read_untracked().id.to_string() }
+                        "html-tag-lang-is", { "lang" => i18n.language.read_untracked().id.to_string() }
                     )}
                 </p>
                 <p>{move_tr!("add-es-en-url-param")}</p>
@@ -79,7 +80,7 @@ fn LanguageSelector() -> impl IntoView {
             <li>
                 <p>
                     {move_tr!(
-                        "html-tag-dir-is", { "dir" => expect_i18n().language.read_untracked().dir.to_string() }
+                        "html-tag-dir-is", { "dir" => i18n.language.read_untracked().dir.to_string() }
                     )}
                 </p>
             </li>
@@ -90,7 +91,7 @@ fn LanguageSelector() -> impl IntoView {
 fn render_language(lang: &'static Language) -> impl IntoView {
     // Passed as atrribute, `Language` is converted to their code,
     // so `<input id=lang` becomes `<input id=lang.id.to_string()`
-    let i18n = expect_i18n();
+    let i18n = expect_context::<I18n>();
     view! {
         <div>
             <input

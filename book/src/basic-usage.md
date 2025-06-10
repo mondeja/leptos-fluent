@@ -34,10 +34,10 @@ language-selected-is = El idioma seleccionado es { $lang }.
 ```rust
 // src/lib.rs
 use leptos::prelude::*;
-use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, Language};
+use leptos_fluent::{I18n, leptos_fluent, move_tr, Language};
 
 #[component]
-pub fn I18n(children: Children) -> impl IntoView {
+pub fn I18nProvider(children: Children) -> impl IntoView {
     leptos_fluent! {
         children: children(),
         locales: "./locales",
@@ -48,16 +48,15 @@ pub fn I18n(children: Children) -> impl IntoView {
 #[component]
 pub fn App() -> impl IntoView {
     view! {
-        <I18n>
+        <I18nProvider>
             <LanguageSelector/>
-        </I18n>
+        </I18nProvider>
     }
 }
 
 #[component]
 fn LanguageSelector() -> impl IntoView {
-    // Use `expect_i18n()` to get the current i18n context:
-    let i18n = expect_i18n();
+    let i18n = expect_context::<I18n>();
 
     view! {
         <p>{move_tr!("select-a-language")}</p>
@@ -76,9 +75,10 @@ fn LanguageSelector() -> impl IntoView {
 }
 
 fn render_language(lang: &'static Language) -> impl IntoView {
+    let i18n = expect_context::<I18n>();
+
     // Passed as atrribute, `Language` is converted to their code,
     // so `<input id=lang` becomes `<input id=lang.id.to_string()`
-    let i18n = expect_i18n();
     view! {
         <div>
             <label for=lang>{lang.name}</label>
@@ -168,22 +168,17 @@ Signal::derive(move || tr!("select-a-language"))
 
 ## Retrieving the [`I18n`] context
 
-Use the [`expect_i18n`] function to get the current i18n context:
-
 ```rust
-let i18n = leptos_fluent::expect_i18n();
+use leptos::prelude::*;
+use leptos_fluent::I18n;
 ```
 
-It is exported as [`i18n`][`i18n`-f] too:
-
 ```rust
-let i18n = leptos_fluent::i18n();
+let i18n = expect_context::<I18n>();
 ```
 
-The function [`use_i18n`] returns an `Option` with the current i18n context:
-
 ```rust
-let i18n = leptos_fluent::use_i18n().expect("No `I18n` context found");
+let i18n = use_context::<I18n>().expect("No `I18n` context found");
 ```
 
 ## Using the [`I18n`] context
@@ -202,7 +197,8 @@ To update the language, use [`lang.activate`] or the `set` method of [`language`
 ```rust
 lang.activate();
 
-expect_i18n().language.set(lang);
+let i18n = expect_context::<I18n>();
+i18n.language.set(lang);
 ```
 
 ````admonish tip title='Nightly'
@@ -210,7 +206,7 @@ When `nightly` feature is enabled, can be updated passing a new language to the
 context as a function with:
 
 ```rust
-let i18n = leptos_fluent::i18n();
+let i18n = expect_context::<I18n>();
 i18n(lang);
 ```
 ````
@@ -220,15 +216,22 @@ i18n(lang);
 To get the current active language, use `get` method of [`language`] field:
 
 ```rust
-let i18n = leptos_fluent::i18n();
+use leptos::prelude::*;
+use leptos_fluent::I18n;
+
+let i18n = expect_context::<I18n>();
 let lang = i18n.language.get();
 ```
 
 ````admonish tip title='Nightly'
-When `nightly` enabled, can get the active language with:
+With `nightly` feature enabled, can get the active language calling the context
+as a function:
 
 ```rust
-let i18n = leptos_fluent::i18n();
+use leptos::prelude::*;
+use leptos_fluent::I18n;
+
+let i18n = expect_context::<I18n>();
 let lang = i18n();
 ```
 ````
@@ -249,7 +252,8 @@ To check if a language is the active one, use [`is_active`] method of a
 ```rust
 lang.is_active()
 
-lang == expect_i18n().language.get()
+let i18n = expect_context::<I18n>();
+lang == i18n.language.get()
 ```
 
 [`tr!`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.tr.html
@@ -262,7 +266,4 @@ lang == expect_i18n().language.get()
 [`translations`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.translations
 [fluent-templates]: https://docs.rs/fluent-templates/latest/fluent_templates
 [`leptos::Signal`]: https://docs.rs/reactive_graph/0.1.0/reactive_graph/wrappers/read/struct.Signal.html
-[`expect_i18n`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.expect_i18n.html
-[`i18n`-f]: https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.i18n.html
-[`use_i18n`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.use_i18n.html
 [`is_active`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html#method.is_active

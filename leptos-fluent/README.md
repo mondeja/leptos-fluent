@@ -74,10 +74,10 @@ You can use `leptos-fluent` as follows:
 
 ```rust
 use leptos::prelude::*;
-use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, tr};
+use leptos_fluent::{I18n, leptos_fluent, move_tr, tr};
 
 #[component]
-fn I18n(children: Children) -> impl IntoView {
+fn I18nProvider(children: Children) -> impl IntoView {
     // See all options in the reference at
     // https://mondeja.github.io/leptos-fluent/leptos_fluent.html
     leptos_fluent! {
@@ -170,10 +170,10 @@ fn I18n(children: Children) -> impl IntoView {
 #[component]
 pub fn App() -> impl IntoView {
     view! {
-        <I18n>
+        <I18nProvider>
             <TranslatableComponent/>
             <LanguageSelector/>
-        </I18n>
+        </I18nProvider>
     }
 }
 
@@ -196,13 +196,12 @@ fn TranslatableComponent() -> impl IntoView {
 
 #[component]
 fn LanguageSelector() -> impl IntoView {
-    // `expect_i18n()` to get the i18n context
+    // `expect_context::<leptos_fluent::I18n>()` to get the i18n context
     // `i18n.languages` exposes a static array with the available languages
-    // `i18n.language.get()` to get the current language
-    // `lang.activate()` or `i18n.language.set(lang)` to set the current language
-    // `lang.is_active()` to check if a language is the current selected one
+    // `i18n.language.get()` to get the active language
+    // `i18n.language.set(lang)` to set the active language
 
-    let i18n = expect_i18n();
+    let i18n = expect_context::<I18n>();
 
     view! {
         <fieldset>
@@ -215,7 +214,7 @@ fn LanguageSelector() -> impl IntoView {
                                 id=lang
                                 name="language"
                                 value=lang
-                                checked=lang.is_active()
+                                checked=&i18n.language.get() == lang
                                 on:click=move |_| i18n.language.set(lang)
                             />
                             <label for=lang>{lang.name}</label>

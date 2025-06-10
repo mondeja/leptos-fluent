@@ -1,8 +1,8 @@
 use leptos::prelude::*;
-use leptos_fluent::{expect_i18n, leptos_fluent, move_tr};
+use leptos_fluent::{leptos_fluent, move_tr, I18n};
 
 #[component]
-pub fn I18n(children: Children) -> impl IntoView {
+pub fn I18nProvider(children: Children) -> impl IntoView {
     leptos_fluent! {
         children: children(),
         locales: "./locales",
@@ -14,15 +14,15 @@ pub fn I18n(children: Children) -> impl IntoView {
 #[component]
 pub fn App() -> impl IntoView {
     view! {
-        <I18n>
+        <I18nProvider>
             <LanguageSelector />
-        </I18n>
+        </I18nProvider>
     }
 }
 
 #[component]
 pub fn LanguageSelector() -> impl IntoView {
-    let i18n = expect_i18n();
+    let i18n = expect_context::<I18n>();
 
     view! {
         <p>{move_tr!("select-a-language")}</p>
@@ -38,7 +38,7 @@ pub fn LanguageSelector() -> impl IntoView {
                                     id=lang
                                     name="language"
                                     value=lang
-                                    checked=lang.is_active()
+                                    checked=&i18n.language.get() == lang
                                     on:click=move |_| i18n.language.set(lang)
                                 />
                                 <label for=lang>{lang.name}</label>

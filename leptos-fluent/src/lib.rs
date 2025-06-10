@@ -73,10 +73,10 @@
 //!
 //! ```rust,ignore
 //! use leptos::prelude::*;
-//! use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, tr};
+//! use leptos_fluent::{I18n, leptos_fluent, move_tr, tr};
 //!
 //! #[component]
-//! fn I18n(children: Children) -> impl IntoView {
+//! fn I18nProvider(children: Children) -> impl IntoView {
 //!     // See all options in the reference at
 //!     // https://mondeja.github.io/leptos-fluent/leptos_fluent.html
 //!     leptos_fluent! {
@@ -169,10 +169,10 @@
 //! #[component]
 //! pub fn App() -> impl IntoView {
 //!     view! {
-//!         <I18n>
+//!         <I18nProvider>
 //!             <TranslatableComponent/>
 //!             <LanguageSelector/>
-//!         </I18n>
+//!         </I18nProvider>
 //!     }
 //! }
 //!
@@ -195,13 +195,12 @@
 //!
 //! #[component]
 //! fn LanguageSelector() -> impl IntoView {
-//!     // `expect_i18n()` to get the i18n context
+//!     // `expect_context::<leptos_fluent::I18n>()` to get the i18n context
 //!     // `i18n.languages` exposes a static array with the available languages
-//!     // `i18n.language.get()` to get the current language
-//!     // `lang.activate()` or `i18n.language.set(lang)` to set the current language
-//!     // `lang.is_active()` to check if a language is the current selected one
+//!     // `i18n.language.get()` to get the active language
+//!     // `i18n.language.set(lang)` to set the active language
 //!
-//!     let i18n = expect_i18n();
+//!     let i18n = expect_context::<I18n>();
 //!
 //!     view! {
 //!         <fieldset>
@@ -214,7 +213,7 @@
 //!                                 id=lang
 //!                                 name="language"
 //!                                 value=lang
-//!                                 checked=lang.is_active()
+//!                                 checked=&i18n.language.get() == lang
 //!                                 on:click=move |_| i18n.language.set(lang)
 //!                             />
 //!                             <label for=lang>{lang.name}</label>
@@ -349,14 +348,14 @@ impl Language {
     /// Get if the language is the active language.
     #[inline(always)]
     pub fn is_active(&'static self) -> bool {
-        self == expect_i18n().language.read()
+        self == leptos::prelude::expect_context::<I18n>().language.read()
     }
 
     /// Set the language as the active language.
     #[inline(always)]
     pub fn activate(&'static self) {
         ::leptos::logging::log!("Activating language: {:?}", self);
-        expect_i18n().language.set(self);
+        leptos::prelude::expect_context::<I18n>().language.set(self);
         ::leptos::logging::log!("Activated language: {:?}", self);
     }
 }
@@ -391,7 +390,8 @@ impl Hash for Language {
         // between different hydrate and SSR contexts, so implement `Language`s
         // is currently discouraged. This needs to be fully debugged and open
         // an issue in the `leptos` repository if necessary.
-        let current_lang = expect_i18n().language.read();
+        let current_lang =
+            leptos::prelude::expect_context::<I18n>().language.read();
         let key = format!(
             "{}{}",
             self.id,
@@ -405,9 +405,12 @@ impl FromStr for Language {
     type Err = ();
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        language_from_str_between_languages(s, expect_i18n().languages)
-            .ok_or(())
-            .cloned()
+        language_from_str_between_languages(
+            s,
+            leptos::prelude::expect_context::<I18n>().languages,
+        )
+        .ok_or(())
+        .cloned()
     }
 }
 
@@ -496,7 +499,7 @@ pub struct I18n {
 }
 
 impl I18n {
-    /// Returns a context with meta information about the i18n context.
+    /// Get meta information about the i18n context.
     ///
     /// Useful to get at runtime the parameters that created the context
     /// when invoking the `leptos_fluent!` macro. The context needs to be
@@ -504,7 +507,8 @@ impl I18n {
     /// raise an error message.
     ///
     /// ```rust,ignore
-    /// use leptos_fluent::{leptos_fluent, expect_i18n};
+    /// use leptos::prelude::*;
+    /// use leptos_fluent::{leptos_fluent, I18n};
     ///
     /// leptos_fluent! {
     ///     // ...
@@ -512,7 +516,7 @@ impl I18n {
     /// };
     ///
     /// // ... later in the code
-    /// leptos::logging::log!("Macro parameters: {:?}", expect_i18n().meta().unwrap());
+    /// leptos::logging::log!("Macro parameters: {:?}", expect_context::<I18n>().meta().unwrap());
     /// ```
     #[cfg_attr(
         feature = "tracing",
@@ -529,10 +533,11 @@ impl I18n {
     /// Get the translation of a text identifier to the current language.
     ///
     /// ```rust,ignore
-    /// use leptos_fluent::expect_i18n;
+    /// use leptos::prelude::expect_context;
+    /// use leptos_fluent::I18n;
     ///
     /// let text_id = "hello-world";
-    /// expect_i18n().tr(text_id);
+    /// expect_context::<I18n>().tr(text_id);
     /// ```
     ///
     /// Calls to this function will not be checked by the `check_translations` option
@@ -578,10 +583,11 @@ impl I18n {
     /// Get the translation of a text identifier to the current language with arguments.
     ///
     /// ```rust,ignore
+    /// use leptos::prelude::expect_context;
     /// use std::collections::HashMap;
-    /// use leptos_fluent::expect_i18n;
+    /// use leptos_fluent::I18n;
     ///
-    /// let i18n = expect_i18n();
+    /// let i18n = expect_context::<I18n>();
     /// let mut args = HashMap::new();
     /// args.insert("name".into(), "John".into());
     /// i18n.tr_with_args("hello-args", &args);
@@ -694,6 +700,10 @@ impl Fn<(&'static Language,)> for I18n {
 }
 
 /// Get the current context for localization.
+#[deprecated(
+    since = "0.2.13",
+    note = "will be removed in v0.3.0. Use `use_context::<leptos_fluent::I18n>()` instead of `use_i18n()`."
+)]
 #[cfg_attr(feature = "tracing", tracing::instrument(level = "trace"))]
 #[inline(always)]
 pub fn use_i18n() -> Option<I18n> {
@@ -709,14 +719,18 @@ const EXPECT_I18N_ERROR_MESSAGE: &str = concat!(
     "  - `move_tr!(i18n, \"text-id\")` instead of `move_tr!(\"text-id\")`.\n",
     "  - `i18n.language.set(lang)` instead of `lang.activate()`.\n",
     "  - `lang == i18n.language.get()` instead of `lang.is_active()`.\n",
-    "  - Copy `i18n` context instead of getting it with `expect_i18n()`.",
+    "  - Copy `i18n` context instead of getting it with `expect_context::<leptos_fluent::I18n>()`.",
 );
 
 /// Expect the current context for localization.
+#[deprecated(
+    since = "0.2.13",
+    note = "will be removed in v0.3.0. Use `expect_context::<leptos_fluent::I18n>()` instead of `expect_i18n()`."
+)]
 #[cfg_attr(feature = "tracing", tracing::instrument(level = "trace"))]
 #[inline]
 pub fn expect_i18n() -> I18n {
-    if let Some(i18n) = use_i18n() {
+    if let Some(i18n) = use_context::<I18n>() {
         i18n
     } else {
         #[cfg(feature = "tracing")]
@@ -726,9 +740,14 @@ pub fn expect_i18n() -> I18n {
 }
 
 /// Expect the current context for localization.
+#[deprecated(
+    since = "0.2.13",
+    note = "will be removed in v0.3.0. Use `expect_context::<leptos_fluent::I18n>()` instead of `i18n()`."
+)]
 #[cfg_attr(feature = "tracing", tracing::instrument(level = "trace"))]
 #[inline(always)]
 pub fn i18n() -> I18n {
+    #[allow(deprecated)]
     expect_i18n()
 }
 
@@ -786,14 +805,14 @@ pub fn tr_with_args_impl(
 /// or `i18n.tr_with_args` methods directly.
 #[macro_export]
 macro_rules! tr {
-    ($text_id:literal$(,)?) => {$crate::i18n().tr($text_id)};
+    ($text_id:literal$(,)?) => {::leptos::prelude::expect_context::<$crate::I18n>().tr($text_id)};
     (
         $text_id:literal,
         $( #[$args_cfgs:meta] )*
         {$($key:literal => $value:expr),*$(,)?}
         $(,)?
     ) => {{
-        $crate::i18n().tr_with_args(
+        ::leptos::prelude::expect_context::<$crate::I18n>().tr_with_args(
             $text_id,
             $( #[$args_cfgs] )*
             &{
@@ -896,11 +915,11 @@ macro_rules! tr {
             };
             $( #[$if_cfgs] )*
             if $condition {
-                $crate::i18n().tr_with_args($text_id, &map)
+                ::leptos::prelude::expect_context::<$crate::I18n>().tr_with_args($text_id, &map)
             } $(else if $else_if_condition {
-                $crate::i18n().tr_with_args($else_if_text_id, &map)
+                ::leptos::prelude::expect_context::<$crate::I18n>().tr_with_args($else_if_text_id, &map)
             })* else {
-                $crate::i18n().tr_with_args($else_text_id, &map)
+                ::leptos::prelude::expect_context::<$crate::I18n>().tr_with_args($else_text_id, &map)
             }
         }
     };
@@ -1163,11 +1182,11 @@ macro_rules! move_tr {
             };
             $( #[$if_cfgs] )*
             if $condition {
-                $crate::i18n().tr_with_args($text_id, &map)
+                ::leptos::prelude::expect_context::<$crate::I18n>().tr_with_args($text_id, &map)
             } $(else if $else_if_condition {
-                $crate::i18n().tr_with_args($else_if_text_id, &map)
+                ::leptos::prelude::expect_context::<$crate::I18n>().tr_with_args($else_if_text_id, &map)
             })* else {
-                $crate::i18n().tr_with_args($else_text_id, &map)
+                ::leptos::prelude::expect_context::<$crate::I18n>().tr_with_args($else_text_id, &map)
             }
         })
     };
