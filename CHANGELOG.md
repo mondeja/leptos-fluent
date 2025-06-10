@@ -9,6 +9,10 @@
   use `local_storage` and `session_storage` respectively. These deprecated
   parameters will be removed in v0.3.0.
 
+### Enhancements
+
+- Canonicalize generated paths on stable.
+
 ## 2025-06-10 - [0.2.13]
 
 ### Deprecations
