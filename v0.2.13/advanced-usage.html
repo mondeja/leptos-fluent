@@ -202,12 +202,6 @@ use leptos_fluent::{I18n, move_tr};
 
 let i18n = expect_context::&lt;I18n&gt;();
 let translated_signal = move_tr!(i18n, "my-translation");</code></pre>
-<p>And some shortcuts cannot be used. Rewrite all the code that calls <code>expect_context</code>
-internally:</p>
-<ul>
-<li>Use <code>i18n.language.set(lang)</code> instead of <code>lang.activate()</code>.</li>
-<li>Use <code>lang == i18n.language.get()</code> instead of <code>lang.is_active()</code>.</li>
-</ul>
 <h3 id="on-events-panics"><a class="header" href="#on-events-panics">On events, panics</a></h3>
 <p>For example, the next code panics when the <code>&lt;div&gt;</code> container is clicked:</p>
 <pre><code class="language-rust">use leptos::prelude::*;
