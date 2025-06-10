@@ -89,7 +89,7 @@ leptos-fluent = { version = "0.2", features = ["json5"] }
 <!-- markdownlint-enable MD013 -->
 
 ```admonish tip
-See [**4. Languages**](https://mondeja.github.io/leptos-fluent/languages.html).
+See [**4. Languages**](https://mondeja.github.io/leptos-fluent/latest/languages.html).
 ```
 
 ## Tracking locales files with [`cargo leptos`]

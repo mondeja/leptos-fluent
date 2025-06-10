@@ -142,4 +142,4 @@ pub fn App() -> impl IntoView {
 
 [ISO 639 language code]: https://en.wikipedia.org/wiki/ISO_639
 [ISO 3166 region code]: https://en.wikipedia.org/wiki/ISO_3166-1
-[`leptos_fluent!`]: https://mondeja.github.io/leptos-fluent/leptos_fluent.html
+[`leptos_fluent!`]: https://mondeja.github.io/leptos-fluent/latest/leptos_fluent.html

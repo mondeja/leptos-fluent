@@ -68,7 +68,7 @@ The following strategies are available:
 | :------------------------------ | :---------------------------- |
 | Browser [`navigator.languages`] | `set_language_from_navigator` |
 
-### <a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Desktop applications
+### <a href="https://mondeja.github.io/leptos-fluent/latest/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Desktop applications
 
 | Strategy  | [`leptos_fluent!`]          |
 | :-------- | :-------------------------- |
@@ -111,7 +111,7 @@ are available:
 | [Cookie] to [server function]        | `initial_language_from_cookie_to_server_function`    |
 | [Server function] to [cookie]        | `initial_language_from_server_function_to_cookie`    |
 
-### <a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Desktop applications
+### <a href="https://mondeja.github.io/leptos-fluent/latest/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Desktop applications
 
 | Strategy                       | [`leptos_fluent!`]                          |
 | :----------------------------- | :------------------------------------------ |
@@ -143,13 +143,13 @@ The names of the settings can be configured using the following parameters:
 | [URL parameter]           | `url_param`          |   `"lang"`    |
 | [URL path] extractor `fn` | `url_path`           |      ❌       |
 
-### <a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Desktop applications
+### <a href="https://mondeja.github.io/leptos-fluent/latest/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Desktop applications
 
 | Strategy  | [`leptos_fluent!`] | Default value     |
 | :-------- | :----------------- | :---------------- |
 | Data file | `data_file_key`    | `"leptos-fluent"` |
 
-[`leptos_fluent!`]: https://mondeja.github.io/leptos-fluent/leptos_fluent.html
+[`leptos_fluent!`]: https://mondeja.github.io/leptos-fluent/latest/leptos_fluent.html
 [local storage]: https://developer.mozilla.org/docs/Web/API/Window/localStorage
 [session storage]: https://developer.mozilla.org/docs/Web/API/Window/sessionStorage
 [`navigator.languages`]: https://developer.mozilla.org/docs/Web/API/Navigator/languages
@@ -158,6 +158,6 @@ The names of the settings can be configured using the following parameters:
 [Cookie attributes]: https://developer.mozilla.org/docs/Web/API/Document/cookie#write_a_new_cookie
 [URL parameter]: https://developer.mozilla.org/docs/Web/API/URLSearchParams
 [URL path]: https://developer.mozilla.org/docs/Web/API/URL/pathname
-[desktop-applications]: https://mondeja.github.io/leptos-fluent/install.html#desktop-applications
+[desktop-applications]: https://mondeja.github.io/leptos-fluent/latest/install.html#desktop-applications
 [System language]: https://github.com/i509VCB/current_locale
 [Server function]: https://book.leptos.dev/server/25_server_functions.html
