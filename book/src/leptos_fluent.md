@@ -12,13 +12,13 @@
 leptos_fluent! {
     locales: "./locales",
 
-    set_language_to_localstorage: true,
-    initial_language_from_localstorage: true,
+    set_language_to_local_storage: true,
+    initial_language_from_local_storage: true,
     initial_language_from_navigator: true,
-    initial_language_from_navigator_to_localstorage: true,
+    initial_language_from_navigator_to_local_storage: true,
     initial_language_from_url_param: true,
-    initial_language_from_url_param_to_localstorage: true,
-    localstorage_key: "lang",
+    initial_language_from_url_param_to_local_storage: true,
+    local_storage_key: "lang",
 }
 ```
 
@@ -68,14 +68,14 @@ executed in the next order:
 2. Obtain the initial language and set to a target: `initial_language_from_*_to_*`
 3. Synchronize the current language with a target: `set_language_to_*`
 
-- The name of a source or a target: `cookie_name`, `localstorage_key`, `navigator`...
+- The name of a source or a target: `cookie_name`, `local_storage_key`, `navigator`...
 
 ### Sources and targets
 
 Sources are read-only and targets are read-write.
 
 - Sources: `navigator`, `system`, `accept_language_header`
-- Targets: `cookie_name`, `localstorage_key`, `url_param`, `data_file`...
+- Targets: `cookie_name`, `local_storage_key`, `url_param`, `data_file`...
 
 ### Commented example
 
@@ -351,25 +351,25 @@ leptos_fluent! {
 }
 ```
 
-### <span style="opacity:.5">CSR </span> | `initial_language_from_url_param_to_localstorage`
+### <span style="opacity:.5">CSR </span> | `initial_language_from_url_param_to_local_storage`
 
 Get initial language from [URL parameter] and save it to [local storage].
 
 ```rust
 leptos_fluent! {
     // ...
-    initial_language_from_url_param_to_localstorage: true,
+    initial_language_from_url_param_to_local_storage: true,
 }
 ```
 
-### <span style="opacity:.5">CSR </span> | `initial_language_from_url_param_to_sessionstorage`
+### <span style="opacity:.5">CSR </span> | `initial_language_from_url_param_to_session_storage`
 
 Get initial language from [URL parameter] and save it to [session storage].
 
 ```rust
 leptos_fluent! {
     // ...
-    initial_language_from_url_param_to_sessionstorage: true,
+    initial_language_from_url_param_to_session_storage: true,
 }
 ```
 
@@ -438,31 +438,31 @@ leptos_fluent! {
 }
 ```
 
-### <span style="opacity:.5">CSR </span> | `initial_language_from_url_path_to_localstorage`
+### <span style="opacity:.5">CSR </span> | `initial_language_from_url_path_to_local_storage`
 
 Set initial language from [URL path] to [local storage].
 
 ```rust
 leptos_fluent! {
     // ...
-    initial_language_from_url_path_to_localstorage: true,
+    initial_language_from_url_path_to_local_storage: true,
 }
 ```
 
-### <span style="opacity:.5">CSR </span> | `initial_language_from_url_path_to_sessionstorage`
+### <span style="opacity:.5">CSR </span> | `initial_language_from_url_path_to_session_storage`
 
 Set initial language from [URL path] to [session storage].
 
 ```rust
 leptos_fluent! {
     // ...
-    initial_language_from_url_path_to_sessionstorage: true,
+    initial_language_from_url_path_to_session_storage: true,
 }
 ```
 
 <!-- markdownlint-disable MD013 -->
 
-### <span style="opacity:.5">CSR </span> | `localstorage_key: `<span style="color: #b5bd68;font-size: 16px; opacity:.9;">"lang"</span>
+### <span style="opacity:.5">CSR </span> | `local_storage_key: `<span style="color: #b5bd68;font-size: 16px; opacity:.9;">"lang"</span>
 
 <!-- markdownlint-enable MD013 -->
 
@@ -471,57 +471,57 @@ leptos_fluent! {
 ```rust
 leptos_fluent! {
     // ...
-    localstorage_key: "lang",
+    local_storage_key: "lang",
 }
 ```
 
-### <span style="opacity:.5">CSR </span> | `initial_language_from_localstorage`
+### <span style="opacity:.5">CSR </span> | `initial_language_from_local_storage`
 
 Get initial language from [local storage].
 
 ```rust
 leptos_fluent! {
     // ...
-    initial_language_from_localstorage: true,
+    initial_language_from_local_storage: true,
 }
 ```
 
-### <span style="opacity:.5">CSR </span> | `initial_language_from_localstorage_to_cookie`
+### <span style="opacity:.5">CSR </span> | `initial_language_from_local_storage_to_cookie`
 
 Get initial language from [local storage] and save it to a [cookie].
 
 ```rust
 leptos_fluent! {
     // ...
-    initial_language_from_localstorage_to_cookie: true,
+    initial_language_from_local_storage_to_cookie: true,
 }
 ```
 
-### <span style="opacity:.5">CSR </span> | `initial_language_from_localstorage_to_sessionstorage`
+### <span style="opacity:.5">CSR </span> | `initial_language_from_local_storage_to_session_storage`
 
 Get initial language from [local storage] and save it to [session storage].
 
 ```rust
 leptos_fluent! {
     // ...
-    initial_language_from_localstorage_to_sessionstorage: true,
+    initial_language_from_local_storage_to_session_storage: true,
 }
 ```
 
-### <span style="opacity:.5">CSR </span> | `set_language_to_localstorage`
+### <span style="opacity:.5">CSR </span> | `set_language_to_local_storage`
 
 Set the current language to [local storage].
 
 ```rust
 leptos_fluent! {
     // ...
-    set_language_to_localstorage: true,
+    set_language_to_local_storage: true,
 }
 ```
 
 <!-- markdownlint-disable MD013 -->
 
-### <span style="opacity:.5">CSR </span> | `sessionstorage_key: `<span style="color: #b5bd68;font-size: 16px; opacity:.9;">"lang"</span>
+### <span style="opacity:.5">CSR </span> | `session_storage_key: `<span style="color: #b5bd68;font-size: 16px; opacity:.9;">"lang"</span>
 
 <!-- markdownlint-enable MD013 -->
 
@@ -530,51 +530,51 @@ leptos_fluent! {
 ```rust
 leptos_fluent! {
     // ...
-    sessionstorage_key: "lang",
+    session_storage_key: "lang",
 }
 ```
 
-### <span style="opacity:.5">CSR </span> | `initial_language_from_sessionstorage`
+### <span style="opacity:.5">CSR </span> | `initial_language_from_session_storage`
 
 Get initial language from [session storage].
 
 ```rust
 leptos_fluent! {
     // ...
-    initial_language_from_sessionstorage: true,
+    initial_language_from_session_storage: true,
 }
 ```
 
-### <span style="opacity:.5">CSR </span> | `initial_language_from_sessionstorage_to_cookie`
+### <span style="opacity:.5">CSR </span> | `initial_language_from_session_storage_to_cookie`
 
 Get initial language from [session storage] and save it to a [cookie].
 
 ```rust
 leptos_fluent! {
     // ...
-    initial_language_from_sessionstorage_to_cookie: true,
+    initial_language_from_session_storage_to_cookie: true,
 }
 ```
 
-### <span style="opacity:.5">CSR </span> | `initial_language_from_sessionstorage_to_localstorage`
+### <span style="opacity:.5">CSR </span> | `initial_language_from_session_storage_to_local_storage`
 
 Get initial language from [session storage] and save it to [local storage].
 
 ```rust
 leptos_fluent! {
     // ...
-    initial_language_from_sessionstorage_to_localstorage: true,
+    initial_language_from_session_storage_to_local_storage: true,
 }
 ```
 
-### <span style="opacity:.5">CSR </span> | `set_language_to_sessionstorage`
+### <span style="opacity:.5">CSR </span> | `set_language_to_session_storage`
 
 Set the current language to [session storage].
 
 ```rust
 leptos_fluent! {
     // ...
-    set_language_to_sessionstorage: true,
+    set_language_to_session_storage: true,
 }
 ```
 
@@ -589,25 +589,25 @@ leptos_fluent! {
 }
 ```
 
-### <span style="opacity:.5">CSR </span> | `initial_language_from_navigator_to_localstorage`
+### <span style="opacity:.5">CSR </span> | `initial_language_from_navigator_to_local_storage`
 
 Get the initial language from [`navigator.languages`] and save it in [local storage].
 
 ```rust
 leptos_fluent! {
     // ...
-    initial_language_from_navigator_to_localstorage: true,
+    initial_language_from_navigator_to_local_storage: true,
 }
 ```
 
-### <span style="opacity:.5">CSR </span> | `initial_language_from_navigator_to_sessionstorage`
+### <span style="opacity:.5">CSR </span> | `initial_language_from_navigator_to_session_storage`
 
 Get the initial language from [`navigator.languages`] and save it in [session storage].
 
 ```rust
 leptos_fluent! {
     // ...
-    initial_language_from_navigator_to_sessionstorage: true,
+    initial_language_from_navigator_to_session_storage: true,
 }
 ```
 
@@ -697,25 +697,25 @@ leptos_fluent! {
 }
 ```
 
-### <span style="opacity:.5">CSR </span> | `initial_language_from_cookie_to_localstorage`
+### <span style="opacity:.5">CSR </span> | `initial_language_from_cookie_to_local_storage`
 
 Get the initial language from the cookie and save it in [local storage].
 
 ```rust
 leptos_fluent! {
     // ...
-    initial_language_from_cookie_to_localstorage: true,
+    initial_language_from_cookie_to_local_storage: true,
 }
 ```
 
-### <span style="opacity:.5">CSR </span> | `initial_language_from_cookie_to_sessionstorage`
+### <span style="opacity:.5">CSR </span> | `initial_language_from_cookie_to_session_storage`
 
 Get the initial language from the cookie and save it in [session storage].
 
 ```rust
 leptos_fluent! {
     // ...
-    initial_language_from_cookie_to_sessionstorage: true,
+    initial_language_from_cookie_to_session_storage: true,
 }
 ```
 
@@ -875,7 +875,7 @@ the current language.
 
 The function must return a `Result<(), ServerFnError>`.
 
-### `initial_language_from_localstorage_to_server_function`
+### `initial_language_from_local_storage_to_server_function`
 
 Get the initial language from [local storage] and set it to a
 [server function].
@@ -883,7 +883,7 @@ Get the initial language from [local storage] and set it to a
 ```rust
 leptos_fluent! {
     // ...
-    initial_language_from_localstorage_to_server_function: set_language_server_function,
+    initial_language_from_local_storage_to_server_function: set_language_server_function,
 }
 
 #[server(SetLanguage, "/api")]
@@ -895,7 +895,7 @@ pub async fn set_language_server_function(
 }
 ```
 
-### `initial_language_from_sessionstorage_to_server_function`
+### `initial_language_from_session_storage_to_server_function`
 
 Get the initial language from [session storage] and set it to a
 [server function].
@@ -903,7 +903,7 @@ Get the initial language from [session storage] and set it to a
 ```rust
 leptos_fluent! {
     // ...
-    initial_language_from_sessionstorage_to_server_function: set_language_server_function,
+    initial_language_from_session_storage_to_server_function: set_language_server_function,
 }
 
 #[server(SetLanguage, "/api")]
@@ -1006,7 +1006,7 @@ leptos_fluent! {
 }
 ```
 
-### `initial_language_from_server_function_to_localstorage`
+### `initial_language_from_server_function_to_local_storage`
 
 Get the initial language from a [server function] and set it to
 [local storage].
@@ -1014,7 +1014,7 @@ Get the initial language from a [server function] and set it to
 ```rust
 leptos_fluent! {
     // ...
-    initial_language_from_server_function_to_localstorage: true,
+    initial_language_from_server_function_to_local_storage: true,
 }
 ```
 

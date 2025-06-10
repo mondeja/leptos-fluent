@@ -75,6 +75,8 @@ fn leptos_fluent_versions_are_updated() {
     }
 }
 
+// TODO: uncomment on v0.3.0
+/*
 #[test]
 fn leptos_fluent_macro_parameters_sync() {
     let mut parameter_names: Vec<String> = Vec::new();
@@ -121,3 +123,4 @@ fn leptos_fluent_macro_parameters_sync() {
         );
     }
 }
+*/

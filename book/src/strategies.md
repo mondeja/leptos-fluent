@@ -17,8 +17,8 @@ The initial language of the user can be set in different ways:
 | [URL path]                      | ✅  | ✅  |   ❌    | `initial_language_from_url_path`               |
 | [Cookie]                        | ✅  | ✅  |   ❌    | `initial_language_from_cookie`                 |
 | [Server function]               | ✅  | ✅  |   ❌    | `initial_language_from_server_function`        |
-| Browser [local storage]         | ✅  | ❌  |   ❌    | `initial_language_from_localstorage`           |
-| Browser [session storage]       | ✅  | ❌  |   ❌    | `initial_language_from_sessionstorage`         |
+| Browser [local storage]         | ✅  | ❌  |   ❌    | `initial_language_from_local_storage`          |
+| Browser [session storage]       | ✅  | ❌  |   ❌    | `initial_language_from_session_storage`        |
 | Browser [`navigator.languages`] | ✅  | ❌  |   ❌    | `initial_language_from_navigator`              |
 | [`Accept-Language`] header      | ❌  | ✅  |   ❌    | `initial_language_from_accept_language_header` |
 | [System language]               | ❌  | ❌  |   ✅    | `initial_language_from_system`                 |
@@ -56,8 +56,8 @@ following strategies are available:
 | :------------------------ | :-------------------------------- |
 | [URL parameter]           | `set_language_to_url_param`       |
 | [Cookie]                  | `set_language_to_cookie`          |
-| Browser [local storage]   | `set_language_to_localstorage`    |
-| Browser [session storage] | `set_language_to_sessionstorage`  |
+| Browser [local storage]   | `set_language_to_local_storage`   |
+| Browser [session storage] | `set_language_to_session_storage` |
 | [Server function]         | `set_language_to_server_function` |
 
 When the user changes the language in the browser settings, the framework can
@@ -80,27 +80,27 @@ When a language is loaded from initialization, the framework can perform a side
 effect to persistently storage the language in the client. The following strategies
 are available:
 
-| Strategy                                     | [`leptos_fluent!`]                                        |
-| :------------------------------------------- | :-------------------------------------------------------- |
-| [URL parameter] to [cookie]                  | `initial_language_from_url_param_to_cookie`               |
-| [URL parameter] to [local storage]           | `initial_language_from_url_param_to_localstorage`         |
-| [URL parameter] to [session storage]         | `initial_language_from_url_param_to_sessionstorage`       |
-| [URL path] to [cookie]                       | `initial_language_from_url_path_to_cookie`                |
-| [URL path] to [local storage]                | `initial_language_from_url_path_to_localstorage`          |
-| [URL path] to [session storage]              | `initial_language_from_url_path_to_sessionstorage`        |
-| [Cookie] to [local storage]                  | `initial_language_from_cookie_to_localstorage`            |
-| [Cookie] to [session storage]                | `initial_language_from_cookie_to_sessionstorage`          |
-| [Local storage] to [cookie]                  | `initial_language_from_localstorage_to_cookie`            |
-| [Local storage] to [session storage]         | `initial_language_from_localstorage_to_sessionstorage`    |
-| [Local storage] to [server function]         | `initial_language_from_localstorage_to_server_function`   |
-| [Session storage] to [cookie]                | `initial_language_from_sessionstorage_to_cookie`          |
-| [Session storage] to [local storage]         | `initial_language_from_sessionstorage_to_localstorage`    |
-| [Session storage] to [server function]       | `initial_language_from_sessionstorage_to_server_function` |
-| [`navigator.languages`] to [cookie]          | `initial_language_from_navigator_to_cookie`               |
-| [`navigator.languages`] to [local storage]   | `initial_language_from_navigator_to_localstorage`         |
-| [`navigator.languages`] to [session storage] | `initial_language_from_navigator_to_sessionstorage`       |
-| [`navigator.languages`] to [server function] | `initial_language_from_navigator_to_server_function`      |
-| [Server function] to [local storage]         | `initial_language_from_server_function_to_localstorage`   |
+| Strategy                                     | [`leptos_fluent!`]                                         |
+| :------------------------------------------- | :--------------------------------------------------------- |
+| [URL parameter] to [cookie]                  | `initial_language_from_url_param_to_cookie`                |
+| [URL parameter] to [local storage]           | `initial_language_from_url_param_to_local_storage`         |
+| [URL parameter] to [session storage]         | `initial_language_from_url_param_to_session_storage`       |
+| [URL path] to [cookie]                       | `initial_language_from_url_path_to_cookie`                 |
+| [URL path] to [local storage]                | `initial_language_from_url_path_to_local_storage`          |
+| [URL path] to [session storage]              | `initial_language_from_url_path_to_session_storage`        |
+| [Cookie] to [local storage]                  | `initial_language_from_cookie_to_local_storage`            |
+| [Cookie] to [session storage]                | `initial_language_from_cookie_to_session_storage`          |
+| [Local storage] to [cookie]                  | `initial_language_from_local_storage_to_cookie`            |
+| [Local storage] to [session storage]         | `initial_language_from_local_storage_to_session_storage`   |
+| [Local storage] to [server function]         | `initial_language_from_local_storage_to_server_function`   |
+| [Session storage] to [cookie]                | `initial_language_from_session_storage_to_cookie`          |
+| [Session storage] to [local storage]         | `initial_language_from_session_storage_to_local_storage`   |
+| [Session storage] to [server function]       | `initial_language_from_session_storage_to_server_function` |
+| [`navigator.languages`] to [cookie]          | `initial_language_from_navigator_to_cookie`                |
+| [`navigator.languages`] to [local storage]   | `initial_language_from_navigator_to_local_storage`         |
+| [`navigator.languages`] to [session storage] | `initial_language_from_navigator_to_session_storage`       |
+| [`navigator.languages`] to [server function] | `initial_language_from_navigator_to_server_function`       |
+| [Server function] to [local storage]         | `initial_language_from_server_function_to_local_storage`   |
 
 ### <span style="opacity:.5">CSR + SSR</span>
 
@@ -134,14 +134,14 @@ update the language in the client. The following side effects are available:
 
 The names of the settings can be configured using the following parameters:
 
-| Strategy                  | [`leptos_fluent!`]   | Default value |
-| :------------------------ | :------------------- | :-----------: |
-| [Cookie]                  | `cookie_name`        |  `"lf-lang"`  |
-| [Cookie attributes]       | `cookie_attrs`       |     `""`      |
-| Browser [local storage]   | `localstorage_key`   |   `"lang"`    |
-| Browser [session storage] | `sessionstorage_key` |   `"lang"`    |
-| [URL parameter]           | `url_param`          |   `"lang"`    |
-| [URL path] extractor `fn` | `url_path`           |      ❌       |
+| Strategy                  | [`leptos_fluent!`]    | Default value |
+| :------------------------ | :-------------------- | :-----------: |
+| [Cookie]                  | `cookie_name`         |  `"lf-lang"`  |
+| [Cookie attributes]       | `cookie_attrs`        |     `""`      |
+| Browser [local storage]   | `local_storage_key`   |   `"lang"`    |
+| Browser [session storage] | `session_storage_key` |   `"lang"`    |
+| [URL parameter]           | `url_param`           |   `"lang"`    |
+| [URL path] extractor `fn` | `url_path`            |      ❌       |
 
 ### <a href="https://mondeja.github.io/leptos-fluent/latest/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Desktop applications
 

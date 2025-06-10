@@ -1,21 +1,21 @@
 use end2end_helpers::{element_text, input_by_id, mount};
 use leptos::prelude::*;
-use leptos_fluent::{leptos_fluent, sessionstorage};
+use leptos_fluent::{leptos_fluent, local_storage};
 use leptos_fluent_csr_minimal_example::LanguageSelector;
 use wasm_bindgen_test::*;
 
 wasm_bindgen_test_configure!(run_in_browser);
 
-const SESSIONSTORAGE_KEY: &str = "foobarbaz";
+const LOCAL_STORAGE_KEY: &str = "foobarbaz";
 
 #[component]
 fn I18n(children: Children) -> impl IntoView {
     leptos_fluent! {
         children: children(),
         locales: "../../examples/csr-minimal/locales",
-        initial_language_from_sessionstorage: true,
-        sessionstorage_key: SESSIONSTORAGE_KEY,
-        set_language_to_sessionstorage: true,
+        initial_language_from_local_storage: true,
+        local_storage_key: LOCAL_STORAGE_KEY,
+        set_language_to_local_storage: true,
     }
 }
 
@@ -29,18 +29,18 @@ fn App() -> impl IntoView {
 }
 
 #[wasm_bindgen_test]
-pub async fn initial_language_from_sessionstorage() {
+pub async fn initial_language_from_local_storage() {
     let es = move || input_by_id("es");
     let en = move || input_by_id("en");
 
-    sessionstorage::set(SESSIONSTORAGE_KEY, "es");
+    local_storage::set(LOCAL_STORAGE_KEY, "es");
     {
         mount!(App);
         assert!(es().checked());
         assert_eq!(element_text("p"), "Selecciona un idioma:");
     }
 
-    sessionstorage::set(SESSIONSTORAGE_KEY, "en");
+    local_storage::set(LOCAL_STORAGE_KEY, "en");
     {
         mount!(App);
         assert!(en().checked());

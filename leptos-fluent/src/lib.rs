@@ -101,25 +101,25 @@
 //!         // Update language on URL parameter when changes.
 //!         set_language_to_url_param: true,
 //!         // Set initial language of user from URL in local storage.
-//!         initial_language_from_url_param_to_localstorage: true,
+//!         initial_language_from_url_param_to_local_storage: true,
 //!         // Set initial language of user from URL in a cookie.
 //!         initial_language_from_url_param_to_cookie: true,
 //!         // Key used to get and set the current language of the
 //!         // user on local storage. By default is `"lang"`.
-//!         localstorage_key: "language",
+//!         local_storage_key: "language",
 //!         // Get initial language from local storage if not found
 //!         // in an URL param.
-//!         initial_language_from_localstorage: true,
+//!         initial_language_from_local_storage: true,
 //!         // Set the initial language of the user from
 //!         // local storage to a cookie.
-//!         initial_language_from_localstorage_to_cookie: true,
+//!         initial_language_from_local_storage_to_cookie: true,
 //!         // Update language on local storage when changes.
-//!         set_language_to_localstorage: true,
+//!         set_language_to_local_storage: true,
 //!         // Get initial language from `navigator.languages`
 //!         // if not found in local storage.
 //!         initial_language_from_navigator: true,
 //!         // Set initial language of user from navigator to local storage.
-//!         initial_language_from_navigator_to_localstorage: true,
+//!         initial_language_from_navigator_to_local_storage: true,
 //!         // Set initial language of user from navigator to a cookie.
 //!         initial_language_from_navigator_to_cookie: true,
 //!         // Attributes to set for language cookie.
@@ -128,7 +128,7 @@
 //!         // Update language on cookie when the language changes.
 //!         set_language_to_cookie: true,
 //!         // Set initial language from a cookie to local storage.
-//!         initial_language_from_cookie_to_localstorage: true,
+//!         initial_language_from_cookie_to_local_storage: true,
 //!
 //!         // Server side options
 //!         // -------------------
@@ -263,9 +263,9 @@ pub mod data_file;
 #[doc(hidden)]
 pub mod http_header;
 #[doc(hidden)]
-pub mod localstorage;
+pub mod local_storage;
 #[doc(hidden)]
-pub mod sessionstorage;
+pub mod session_storage;
 #[doc(hidden)]
 pub mod url;
 
@@ -1408,26 +1408,26 @@ pub struct LeptosFluentMeta {
     pub sync_html_tag_dir: bool,
     pub url_param: &'static str,
     pub initial_language_from_url_param: bool,
-    pub initial_language_from_url_param_to_localstorage: bool,
-    pub initial_language_from_url_param_to_sessionstorage: bool,
+    pub initial_language_from_url_param_to_local_storage: bool,
+    pub initial_language_from_url_param_to_session_storage: bool,
     pub initial_language_from_url_param_to_cookie: bool,
     pub initial_language_from_url_param_to_server_function: bool, // *
     pub set_language_to_url_param: bool,
-    pub localstorage_key: &'static str,
-    pub initial_language_from_localstorage: bool,
-    pub initial_language_from_localstorage_to_cookie: bool,
-    pub initial_language_from_localstorage_to_sessionstorage: bool,
-    pub initial_language_from_localstorage_to_server_function: bool, // *
-    pub set_language_to_localstorage: bool,
-    pub sessionstorage_key: &'static str,
-    pub initial_language_from_sessionstorage: bool,
-    pub initial_language_from_sessionstorage_to_cookie: bool,
-    pub initial_language_from_sessionstorage_to_localstorage: bool,
-    pub initial_language_from_sessionstorage_to_server_function: bool, // *
-    pub set_language_to_sessionstorage: bool,
+    pub local_storage_key: &'static str,
+    pub initial_language_from_local_storage: bool,
+    pub initial_language_from_local_storage_to_cookie: bool,
+    pub initial_language_from_local_storage_to_session_storage: bool,
+    pub initial_language_from_local_storage_to_server_function: bool, // *
+    pub set_language_to_local_storage: bool,
+    pub session_storage_key: &'static str,
+    pub initial_language_from_session_storage: bool,
+    pub initial_language_from_session_storage_to_cookie: bool,
+    pub initial_language_from_session_storage_to_local_storage: bool,
+    pub initial_language_from_session_storage_to_server_function: bool, // *
+    pub set_language_to_session_storage: bool,
     pub initial_language_from_navigator: bool,
-    pub initial_language_from_navigator_to_localstorage: bool,
-    pub initial_language_from_navigator_to_sessionstorage: bool,
+    pub initial_language_from_navigator_to_local_storage: bool,
+    pub initial_language_from_navigator_to_session_storage: bool,
     pub initial_language_from_navigator_to_cookie: bool,
     pub initial_language_from_navigator_to_server_function: bool, // *
     pub set_language_from_navigator: bool,
@@ -1435,19 +1435,19 @@ pub struct LeptosFluentMeta {
     pub cookie_name: &'static str,
     pub cookie_attrs: &'static str,
     pub initial_language_from_cookie: bool,
-    pub initial_language_from_cookie_to_localstorage: bool,
-    pub initial_language_from_cookie_to_sessionstorage: bool,
+    pub initial_language_from_cookie_to_local_storage: bool,
+    pub initial_language_from_cookie_to_session_storage: bool,
     pub initial_language_from_cookie_to_server_function: bool, // *
     pub set_language_to_cookie: bool,
     pub initial_language_from_server_function: bool, // *
     pub initial_language_from_server_function_to_cookie: bool,
-    pub initial_language_from_server_function_to_localstorage: bool,
+    pub initial_language_from_server_function_to_local_storage: bool,
     pub set_language_to_server_function: bool, // *
     pub url_path: bool,                        // *
     pub initial_language_from_url_path: bool,
     pub initial_language_from_url_path_to_cookie: bool,
-    pub initial_language_from_url_path_to_localstorage: bool,
-    pub initial_language_from_url_path_to_sessionstorage: bool,
+    pub initial_language_from_url_path_to_local_storage: bool,
+    pub initial_language_from_url_path_to_session_storage: bool,
     pub initial_language_from_url_path_to_server_function: bool, // *
     #[cfg(feature = "system")]
     pub initial_language_from_system: bool,

@@ -11,8 +11,8 @@ members = [
   "tests/end2end/helpers",
   "tests/end2end/initial-language-from-navigator",
   "tests/end2end/set-language-to-cookie",
-  "tests/end2end/set-language-to-localstorage",
-  "tests/end2end/set-language-to-sessionstorage",
+  "tests/end2end/set-language-to-local-storage",
+  "tests/end2end/set-language-to-session-storage",
 ]
 resolver = "2"
 
