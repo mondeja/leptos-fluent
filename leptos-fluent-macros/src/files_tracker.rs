@@ -30,24 +30,20 @@ pub(crate) fn build_files_tracker_quote(
         let mut files_tracker_str = "{".to_string();
         for (lang, paths) in fluent_resources {
             for (i, path) in paths.iter().enumerate() {
+                let lang_ident = lang.replace('-', "_");
                 files_tracker_str.push_str(&format!(
-                    "let s{}{} = include_bytes!(\"{}\");",
-                    lang.replace('-', "_"),
-                    i,
-                    &escape_string(path)
+                    "let _s{lang_ident}{i} = include_bytes!({path:?});",
                 ));
             }
         }
         if let Some(languages_file_path) = &languages_path {
             files_tracker_str.push_str(&format!(
-                "let l = include_bytes!(\"{}\");",
-                &escape_string(languages_file_path)
+                "let _l = include_bytes!({languages_file_path:?});",
             ));
         }
         if let Some(core_locales_file_path) = &core_locales_path {
             files_tracker_str.push_str(&format!(
-                "let c = include_bytes!(\"{}\");",
-                &escape_string(core_locales_file_path)
+                "let _c = include_bytes!({core_locales_file_path:?});"
             ));
         }
         files_tracker_str.push_str("};");
@@ -60,11 +56,4 @@ pub(crate) fn build_files_tracker_quote(
 
         result
     }
-}
-
-#[cfg(not(feature = "nightly"))]
-fn escape_string(s: &str) -> String {
-    s.replace('"', "\\\"")
-        // Windows path separator
-        .replace('\\', "\\\\")
 }

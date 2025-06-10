@@ -10,7 +10,7 @@ path = "src/lib.rs"
 
 [dependencies]
 leptos = { version = "0.8", features = ["csr"] }
-leptos-fluent.workspace = true
+leptos-fluent = { workspace = true }
 console_error_panic_hook = "0.1"
 
 [[bin]]

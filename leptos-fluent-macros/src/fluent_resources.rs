@@ -12,7 +12,9 @@ pub(crate) fn build_fluent_resources_and_file_paths(
     let mut paths = HashMap::new();
     let mut errors = Vec::new();
 
-    for entry in std::fs::read_dir(dir)
+    // unwrap() here because previosuly we checked that the path exists
+    let dir = std::path::absolute(&dir).unwrap();
+    for entry in std::fs::read_dir(&dir)
         .unwrap()
         .filter_map(|rs| rs.ok())
         .filter(|entry| entry.file_type().unwrap().is_dir())
@@ -33,6 +35,7 @@ pub(crate) fn build_fluent_resources_and_file_paths(
             ));
         }
     }
+
     ((resources, paths), errors)
 }
 
