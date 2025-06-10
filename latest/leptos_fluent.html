@@ -792,11 +792,15 @@ per application.</p>
 <h3 id="provide_meta_context"><a class="header" href="#provide_meta_context"><code>provide_meta_context</code></a></h3>
 <p>Provide the macro meta information at runtime as a context.
 Get it using <code>I18n::meta</code>:</p>
-<pre><code class="language-rust">let i18n = leptos_fluent! {
+<pre><code class="language-rust">use leptos::prelude::*;
+use leptos_fluent::{I18n, leptos_fluent};
+
+leptos_fluent! {
     // ...
     provide_meta_context: true,
-};
+}
 
+let i18n = leptos::prelude::expect_context::&lt;I18n&gt;();
 println!("Macro parameters: {:?}", i18n.meta().unwrap());</code></pre>
 <h3 id="initial_language_from_server_function"><a class="header" href="#initial_language_from_server_function"><code>initial_language_from_server_function</code></a></h3>
 <p>Get the initial language from a <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a>.</p>

@@ -343,10 +343,10 @@ language-selected-is = El idioma seleccionado es { $lang }.
 </code></pre>
 <pre><code class="language-rust">// src/lib.rs
 use leptos::prelude::*;
-use leptos_fluent::{expect_i18n, leptos_fluent, move_tr, Language};
+use leptos_fluent::{I18n, leptos_fluent, move_tr, Language};
 
 #[component]
-pub fn I18n(children: Children) -&gt; impl IntoView {
+pub fn I18nProvider(children: Children) -&gt; impl IntoView {
     leptos_fluent! {
         children: children(),
         locales: "./locales",
@@ -357,16 +357,15 @@ pub fn I18n(children: Children) -&gt; impl IntoView {
 #[component]
 pub fn App() -&gt; impl IntoView {
     view! {
-        &lt;I18n&gt;
+        &lt;I18nProvider&gt;
             &lt;LanguageSelector/&gt;
-        &lt;/I18n&gt;
+        &lt;/I18nProvider&gt;
     }
 }
 
 #[component]
 fn LanguageSelector() -&gt; impl IntoView {
-    // Use `expect_i18n()` to get the current i18n context:
-    let i18n = expect_i18n();
+    let i18n = expect_context::&lt;I18n&gt;();
 
     view! {
         &lt;p&gt;{move_tr!("select-a-language")}&lt;/p&gt;
@@ -385,9 +384,10 @@ fn LanguageSelector() -&gt; impl IntoView {
 }
 
 fn render_language(lang: &amp;'static Language) -&gt; impl IntoView {
+    let i18n = expect_context::&lt;I18n&gt;();
+
     // Passed as atrribute, `Language` is converted to their code,
     // so `&lt;input id=lang` becomes `&lt;input id=lang.id.to_string()`
-    let i18n = expect_i18n();
     view! {
         &lt;div&gt;
             &lt;label for=lang&gt;{lang.name}&lt;/label&gt;
@@ -460,12 +460,10 @@ move || tr!("language-selected-is", { "lang" =&gt; i18n.language.get().name })</
 <a href="https://docs.rs/reactive_graph/0.1.0/reactive_graph/wrappers/read/struct.Signal.html"><code>leptos::Signal</code></a>, strictly would be rewritten as:</p>
 <pre><code class="language-rust">Signal::derive(move || tr!("select-a-language"))</code></pre>
 <h2 id="retrieving-the-i18n-context"><a class="header" href="#retrieving-the-i18n-context">Retrieving the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html"><code>I18n</code></a> context</a></h2>
-<p>Use the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.expect_i18n.html"><code>expect_i18n</code></a> function to get the current i18n context:</p>
-<pre><code class="language-rust">let i18n = leptos_fluent::expect_i18n();</code></pre>
-<p>It is exported as <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.i18n.html"><code>i18n</code></a> too:</p>
-<pre><code class="language-rust">let i18n = leptos_fluent::i18n();</code></pre>
-<p>The function <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/fn.use_i18n.html"><code>use_i18n</code></a> returns an <code>Option</code> with the current i18n context:</p>
-<pre><code class="language-rust">let i18n = leptos_fluent::use_i18n().expect("No `I18n` context found");</code></pre>
+<pre><code class="language-rust">use leptos::prelude::*;
+use leptos_fluent::I18n;</code></pre>
+<pre><code class="language-rust">let i18n = expect_context::&lt;I18n&gt;();</code></pre>
+<pre><code class="language-rust">let i18n = use_context::&lt;I18n&gt;().expect("No `I18n` context found");</code></pre>
 <h2 id="using-the-i18n-context"><a class="header" href="#using-the-i18n-context">Using the <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html"><code>I18n</code></a> context</a></h2>
 <p>The i18n context has the following fields:</p>
 <ul>
@@ -478,7 +476,8 @@ the translations.</li>
 <p>To update the language, use <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html#method.activate"><code>lang.activate</code></a> or the <code>set</code> method of <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.language"><code>language</code></a>:</p>
 <pre><code class="language-rust">lang.activate();
 
-expect_i18n().language.set(lang);</code></pre>
+let i18n = expect_context::&lt;I18n&gt;();
+i18n.language.set(lang);</code></pre>
 <div id="admonition-nightly" class="admonition admonish-tip" role="note" aria-labelledby="admonition-nightly-title">
 <div class="admonition-title">
 <div id="admonition-nightly-title">
@@ -489,13 +488,16 @@ expect_i18n().language.set(lang);</code></pre>
 <div>
 <p>When <code>nightly</code> feature is enabled, can be updated passing a new language to the
 context as a function with:</p>
-<pre><code class="language-rust">let i18n = leptos_fluent::i18n();
+<pre><code class="language-rust">let i18n = expect_context::&lt;I18n&gt;();
 i18n(lang);</code></pre>
 </div>
 </div>
 <h3 id="get-active-language"><a class="header" href="#get-active-language">Get active language</a></h3>
 <p>To get the current active language, use <code>get</code> method of <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html#structfield.language"><code>language</code></a> field:</p>
-<pre><code class="language-rust">let i18n = leptos_fluent::i18n();
+<pre><code class="language-rust">use leptos::prelude::*;
+use leptos_fluent::I18n;
+
+let i18n = expect_context::&lt;I18n&gt;();
 let lang = i18n.language.get();</code></pre>
 <div id="admonition-nightly-1" class="admonition admonish-tip" role="note" aria-labelledby="admonition-nightly-1-title">
 <div class="admonition-title">
@@ -505,8 +507,12 @@ let lang = i18n.language.get();</code></pre>
 <a class="admonition-anchor-link" href="basic-usage.html#admonition-nightly-1"></a>
 </div>
 <div>
-<p>When <code>nightly</code> enabled, can get the active language with:</p>
-<pre><code class="language-rust">let i18n = leptos_fluent::i18n();
+<p>With <code>nightly</code> feature enabled, can get the active language calling the context
+as a function:</p>
+<pre><code class="language-rust">use leptos::prelude::*;
+use leptos_fluent::I18n;
+
+let i18n = expect_context::&lt;I18n&gt;();
 let lang = i18n();</code></pre>
 </div>
 </div>
@@ -518,7 +524,8 @@ let lang = i18n();</code></pre>
 <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.Language.html"><code>leptos_fluent::Language</code></a> struct:</p>
 <pre><code class="language-rust">lang.is_active()
 
-lang == expect_i18n().language.get()</code></pre>
+let i18n = expect_context::&lt;I18n&gt;();
+lang == i18n.language.get()</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><!-- markdownlint-disable MD013 MD033 MD055 MD056 -->
 <h1 id="strategies"><a class="header" href="#strategies">Strategies</a></h1>
 <p>All the features of the framework are optional, following a declarative
@@ -872,10 +879,12 @@ separation of contexts in the codebase.</p>
 <h2 id="tr-and-move_tr-outside-reactive-graph"><a class="header" href="#tr-and-move_tr-outside-reactive-graph"><code>tr!</code> and <code>move_tr!</code> outside reactive graph</a></h2>
 <p>Outside the reactive ownership tree, mainly known as the <em>reactive graph</em>,
 we can't obtain the context of <code>I18n</code> using <code>expect_context::&lt;leptos_fluent::I18n&gt;()</code>,
-which is what <code>tr!</code> and <code>move_tr!</code> do internally. Instead, we can pass the context
+which is what <code>tr!</code> and <code>move_tr!</code> do internally. Instead, pass the context
 as first parameter to the macros:</p>
-<pre><code class="language-rust">let i18n = expect_i18n();
+<pre><code class="language-rust">use leptos::prelude::expect_context;
+use leptos_fluent::{I18n, move_tr};
 
+let i18n = expect_context::&lt;I18n&gt;();
 let translated_signal = move_tr!(i18n, "my-translation");</code></pre>
 <p>And some shortcuts cannot be used. Rewrite all the code that calls <code>expect_context</code>
 internally:</p>
@@ -885,7 +894,10 @@ internally:</p>
 </ul>
 <h3 id="on-events-panics"><a class="header" href="#on-events-panics">On events, panics</a></h3>
 <p>For example, the next code panics when the <code>&lt;div&gt;</code> container is clicked:</p>
-<pre><code class="language-rust">#[component]
+<pre><code class="language-rust">use leptos::prelude::*;
+use leptos_fluent::tr;
+
+#[component]
 pub fn App() -&gt; impl IntoView {
     view! {
         &lt;Show when=|| true&gt;
@@ -906,7 +918,10 @@ pub fn Child() -&gt; impl IntoView {
 but with Leptos v0.6, this outsiding of the ownership tree has been ignored
 from the majority of the cases as unintended behavior.</p>
 <p>To avoid that, pass the i18n context as first parameter to <code>tr!</code> and <code>move_tr!</code>:</p>
-<pre><code class="language-rust">#[component]
+<pre><code class="language-rust">use leptos::prelude::*;
+use leptos_fluent::{I18n, tr};
+
+#[component]
 pub fn App() -&gt; impl IntoView {
     view! {
         &lt;Show when=|| true&gt;
@@ -917,7 +932,7 @@ pub fn App() -&gt; impl IntoView {
 
 #[component]
 pub fn Child() -&gt; impl IntoView {
-    let i18n = expect_i18n();
+    let i18n = expect_context::&lt;I18n&gt;();
     view! {
         &lt;div on:click=|_| {
             tr!(i18n, "my-translation");
@@ -941,17 +956,22 @@ error: argument must be a string literal
    |     ^^^^^^^^^^^^
 */</code></pre>
 <p>Instead, you can use the next <code>i18n.tr</code> and <code>i18n.tr_with_args</code> methods:</p>
-<pre><code class="language-rust">use leptos_fluent::expect_i18n;
+<pre><code class="language-rust">use leptos::prelude::expect_context;
+use leptos_fluent::I18n;
 
 let text_id = "my-translation";
-expect_i18n().tr(text_id);</code></pre>
+let i18n = expect_context::&lt;I18n&gt;();
+i18n.tr(text_id);</code></pre>
 <pre><code class="language-rust">use std::collections::HashMap;
-use leptos_fluent::expect_i18n;
+use leptos::prelude::expect_context;
+use leptos_fluent::I18n;
 
 let text_id = "hello-args";
 let mut args = HashMap::new();
 args.insert("name", "World");
-expect_i18n().tr_with_args(text_id, args);</code></pre>
+
+let i18n = expect_context::&lt;I18n&gt;();
+i18n.tr_with_args(text_id, args);</code></pre>
 <p>Note that <code>i18n.tr</code> and <code>i18n.tr_with_args</code> methods are not reactive,
 so you need to enclose their calls in a reactive context like a function to
 update the view on the fly when the language changes, and that the translations
@@ -1106,7 +1126,7 @@ fn render_language(lang: &amp;'static Language) -&gt; impl IntoView { ... }</cod
 accessed as context on server actions. Pass the translations as values
 if the bandwidth is not a problem or use your own statics on server side.</p>
 <pre><code class="language-rust">use leptos::prelude::*;
-use leptos_fluent::{tr, Language};
+use leptos_fluent::{tr, Language, I18n};
 
 /// Server action showing client-side translated message on console
 #[server(ShowHelloWorld, "/api")]
@@ -1119,7 +1139,7 @@ pub async fn show_hello_world(
 }
 
 fn render_language(lang: &amp;'static Language) -&gt; impl IntoView {
-    let i18n = expect_i18n();
+    let i18n = expect_context::&lt;I18n&gt;();
 
     // Call on click to server action with a client-side translated
     // "hello-world" message
@@ -1156,7 +1176,8 @@ with the method <code>I18n::meta</code>:</p>
 };
 
 // ... later
-println!("Macro parameters: {:?}", expect_i18n().meta().unwrap());</code></pre>
+let i18n = expect_context::&lt;I18n&gt;();
+println!("Macro parameters: {:?}", i18n.meta().unwrap());</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><!-- markdownlint-disable MD033 MD038 -->
 <h1 id="leptos_fluent"><a class="header" href="#leptos_fluent"><code>leptos_fluent!</code></a></h1>
 <ul>
@@ -1776,11 +1797,15 @@ per application.</p>
 <h3 id="provide_meta_context"><a class="header" href="#provide_meta_context"><code>provide_meta_context</code></a></h3>
 <p>Provide the macro meta information at runtime as a context.
 Get it using <code>I18n::meta</code>:</p>
-<pre><code class="language-rust">let i18n = leptos_fluent! {
+<pre><code class="language-rust">use leptos::prelude::*;
+use leptos_fluent::{I18n, leptos_fluent};
+
+leptos_fluent! {
     // ...
     provide_meta_context: true,
-};
+}
 
+let i18n = leptos::prelude::expect_context::&lt;I18n&gt;();
 println!("Macro parameters: {:?}", i18n.meta().unwrap());</code></pre>
 <h3 id="initial_language_from_server_function"><a class="header" href="#initial_language_from_server_function"><code>initial_language_from_server_function</code></a></h3>
 <p>Get the initial language from a <a href="https://book.leptos.dev/server/25_server_functions.html">server function</a>.</p>
