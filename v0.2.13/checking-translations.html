@@ -175,7 +175,7 @@
                     <main>
                         <h1 id="checking-translations"><a class="header" href="#checking-translations">Checking translations</a></h1>
 <p>To check that the translations of the app are correct at compile time,
-set the <code>check_translations</code> parameter in the <a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a> macro to
+set the <code>check_translations</code> parameter in the <a href="https://mondeja.github.io/leptos-fluent/latest/leptos_fluent.html"><code>leptos_fluent!</code></a> macro to
 a glob pattern that matches the Rust files that you want to check.</p>
 <p>The pattern must be relative to the location of the <em>Cargo.toml</em> file.</p>
 <p>For single crate projects, it would be something like:</p>
@@ -209,7 +209,7 @@ a glob pattern that matches the Rust files that you want to check.</p>
 <!-- markdownlint-enable MD013 -->
 <h2 id="why-glob-patterns-to-rust-files"><a class="header" href="#why-glob-patterns-to-rust-files">Why glob patterns to Rust files?</a></h2>
 <p><strong>leptos-fluent</strong> provides a <a href="https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html"><code>I18n</code></a> context to Leptos when
-the macro <a href="https://mondeja.github.io/leptos-fluent/leptos_fluent.html"><code>leptos_fluent!</code></a> is called. So multiple instances of a context
+the macro <a href="https://mondeja.github.io/leptos-fluent/latest/leptos_fluent.html"><code>leptos_fluent!</code></a> is called. So multiple instances of a context
 with different localization files and strategies can be initialized in
 different component trees. This is useful, for example, in a multi page app.</p>
 <p>The mechanism of translations checking needs to know where reside the calls to

@@ -175,11 +175,6 @@
                     <main>
                         <!-- markdownlint-disable MD033 MD038 -->
 <h1 id="leptos_fluent"><a class="header" href="#leptos_fluent"><code>leptos_fluent!</code></a></h1>
-<p>The <code>leptos_fluent!</code> macro is used to load the translations and set the current
-locale. It is used in the root component of the application.</p>
-<pre><code class="language-rust">leptos_fluent! {
-    locales: "./locales",
-};</code></pre>
 <ul>
 <li><a href="#common-configurations">Common configurations</a>
 <ul>
@@ -286,7 +281,7 @@ locale. It is used in the root component of the application.</p>
     cookie_name: "lf-lang",
 }</code></pre>
 <!-- markdownlint-disable MD013 -->
-<h3 id="system--data-files-on-desktop-applications"><a class="header" href="#system--data-files-on-desktop-applications"><a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Data files on Desktop applications</a></h3>
+<h3 id="system--data-files-on-desktop-applications"><a class="header" href="#system--data-files-on-desktop-applications"><a href="https://mondeja.github.io/leptos-fluent/latest/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | Data files on Desktop applications</a></h3>
 <!-- markdownlint-enable MD013 -->
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
@@ -442,7 +437,7 @@ Must be relative to the <em>Cargo.toml</em> file.</p>
 </div>
 <div>
 <p>In order to use this parameter a languages file feature must be enabled.
-See <a href="https://mondeja.github.io/leptos-fluent/languages.html"><strong>4. Languages</strong></a></p>
+See <a href="https://mondeja.github.io/leptos-fluent/latest/languages.html"><strong>4. Languages</strong></a></p>
 </div>
 </div>
 <pre><code class="language-rust">leptos_fluent! {
@@ -754,7 +749,7 @@ leptos_fluent! {
     set_language_to_cookie: true,
 }</code></pre>
 <!-- markdownlint-disable MD013 -->
-<h3 id="system--initial_language_from_system"><a class="header" href="#system--initial_language_from_system"><a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | <code>initial_language_from_system</code></a></h3>
+<h3 id="system--initial_language_from_system"><a class="header" href="#system--initial_language_from_system"><a href="https://mondeja.github.io/leptos-fluent/latest/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | <code>initial_language_from_system</code></a></h3>
 <!-- markdownlint-enable MD013 -->
 <p>Get the initial language from the system.</p>
 <pre><code class="language-rust">leptos_fluent! {
@@ -762,7 +757,7 @@ leptos_fluent! {
     initial_language_from_system: true,
 }</code></pre>
 <!-- markdownlint-disable MD013 -->
-<h3 id="system--initial_language_from_data_file"><a class="header" href="#system--initial_language_from_data_file"><a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | <code>initial_language_from_data_file</code></a></h3>
+<h3 id="system--initial_language_from_data_file"><a class="header" href="#system--initial_language_from_data_file"><a href="https://mondeja.github.io/leptos-fluent/latest/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | <code>initial_language_from_data_file</code></a></h3>
 <!-- markdownlint-enable MD013 -->
 <p>Get the initial language from a data file.</p>
 <pre><code class="language-rust">leptos_fluent! {
@@ -770,7 +765,7 @@ leptos_fluent! {
     initial_language_from_data_file: true,
 }</code></pre>
 <!-- markdownlint-disable MD013 -->
-<h3 id="system--initial_language_from_system_to_data_file"><a class="header" href="#system--initial_language_from_system_to_data_file"><a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | <code>initial_language_from_system_to_data_file</code></a></h3>
+<h3 id="system--initial_language_from_system_to_data_file"><a class="header" href="#system--initial_language_from_system_to_data_file"><a href="https://mondeja.github.io/leptos-fluent/latest/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | <code>initial_language_from_system_to_data_file</code></a></h3>
 <!-- markdownlint-enable MD013 -->
 <p>Get the initial language from the system and save it in a data file.</p>
 <pre><code class="language-rust">leptos_fluent! {
@@ -778,7 +773,7 @@ leptos_fluent! {
     initial_language_from_system_to_data_file: true,
 }</code></pre>
 <!-- markdownlint-disable MD013 -->
-<h3 id="system--set_language_to_data_file"><a class="header" href="#system--set_language_to_data_file"><a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | <code>set_language_to_data_file</code></a></h3>
+<h3 id="system--set_language_to_data_file"><a class="header" href="#system--set_language_to_data_file"><a href="https://mondeja.github.io/leptos-fluent/latest/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | <code>set_language_to_data_file</code></a></h3>
 <!-- markdownlint-enable MD013 -->
 <p>Set the current language to a data file.</p>
 <pre><code class="language-rust">leptos_fluent! {
@@ -786,7 +781,7 @@ leptos_fluent! {
     set_language_to_data_file: true,
 }</code></pre>
 <!-- markdownlint-disable MD013 -->
-<h3 id="system--data_file_key-leptos-fluent"><a class="header" href="#system--data_file_key-leptos-fluent"><a href="https://mondeja.github.io/leptos-fluent/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | <code>data_file_key: </code><span style="color: #b5bd68;font-size: 16px; opacity:.9;">"leptos-fluent"</span></a></h3>
+<h3 id="system--data_file_key-leptos-fluent"><a class="header" href="#system--data_file_key-leptos-fluent"><a href="https://mondeja.github.io/leptos-fluent/latest/install.html#desktop-applications"><img src="feat.png" width="23px" style="position:relative; bottom: 5px; left: 2px" alt="feat"></img></a><span style="opacity:.5;padding-right: -10px">system</span> | <code>data_file_key: </code><span style="color: #b5bd68;font-size: 16px; opacity:.9;">"leptos-fluent"</span></a></h3>
 <!-- markdownlint-enable MD013 -->
 <p>Key to manage the current language in the data file. It should be unique
 per application.</p>
