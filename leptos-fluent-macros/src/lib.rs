@@ -46,7 +46,7 @@ pub(crate) fn debug(msg: &str) {
 
 /// Create the i18n context for internationalization.
 ///
-/// [Reference](https://mondeja.github.io/leptos-fluent/leptos_fluent.html)
+/// [Reference](https://mondeja.github.io/leptos-fluent/latest/leptos_fluent.html)
 ///
 /// # Example
 ///
@@ -100,7 +100,7 @@ pub(crate) fn debug(msg: &str) {
 /// ```
 ///
 /// See the reference with all the parameters explained in detail at
-/// <https://mondeja.github.io/leptos-fluent/leptos_fluent.html>
+/// <https://mondeja.github.io/leptos-fluent/latest/leptos_fluent.html>
 #[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
 #[proc_macro]
 pub fn leptos_fluent(

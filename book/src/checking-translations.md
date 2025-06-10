@@ -78,4 +78,4 @@ separation of contexts in the codebase.
 [`tr!`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.tr.html
 [`move_tr!`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/macro.move_tr.html
 [`I18n`]: https://docs.rs/leptos-fluent/latest/leptos_fluent/struct.I18n.html
-[`leptos_fluent!`]: https://mondeja.github.io/leptos-fluent/leptos_fluent.html
+[`leptos_fluent!`]: https://mondeja.github.io/leptos-fluent/latest/leptos_fluent.html

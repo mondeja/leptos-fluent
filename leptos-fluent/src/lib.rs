@@ -7,7 +7,7 @@
 //! [![Crates.io](https://img.shields.io/crates/v/leptos-fluent?logo=rust)](https://crates.io/crates/leptos-fluent)
 //! [![License](https://img.shields.io/crates/l/leptos-fluent?logo=mit)](https://github.com/mondeja/leptos-fluent/blob/master/LICENSE)
 //! [![Tests](https://img.shields.io/github/actions/workflow/status/mondeja/leptos-fluent/ci.yml?label=tests&logo=github)](https://github.com/mondeja/leptos-fluent/actions)
-//! [![Book](https://img.shields.io/github/actions/workflow/status/mondeja/leptos-fluent/.github%2Fworkflows%2Fci.yml?logo=github&label=book)](https://mondeja.github.io/leptos-fluent/)
+//! [![Book](https://img.shields.io/github/actions/workflow/status/mondeja/leptos-fluent/.github%2Fworkflows%2Fci.yml?logo=github&label=book)][book]
 //! [![docs.rs](https://img.shields.io/docsrs/leptos-fluent?logo=docs.rs)](https://docs.rs/leptos-fluent)
 //! [![Crates.io downloads](https://img.shields.io/crates/d/leptos-fluent)](https://crates.io/crates/leptos-fluent)
 //! [![Discord channel](https://img.shields.io/badge/discord-grey?logo=discord&logoColor=white)](https://discord.com/channels/1031524867910148188/1251579884371705927)
@@ -78,7 +78,7 @@
 //! #[component]
 //! fn I18nProvider(children: Children) -> impl IntoView {
 //!     // See all options in the reference at
-//!     // https://mondeja.github.io/leptos-fluent/leptos_fluent.html
+//!     // https://mondeja.github.io/leptos-fluent/latest/leptos_fluent.html
 //!     leptos_fluent! {
 //!         children: children(),
 //!         // Path to the locales directory, relative to Cargo.toml.
@@ -250,9 +250,9 @@
 //!
 //! [leptos]: https://leptos.dev/
 //! [fluent-templates]: https://github.com/XAMPPRocky/fluent-templates
-//! [quickstart]: https://mondeja.github.io/leptos-fluent/leptos_fluent.html
+//! [quickstart]: https://mondeja.github.io/leptos-fluent/latest/leptos_fluent.html
 //! [examples]: https://github.com/mondeja/leptos-fluent/tree/master/examples
-//! [book]: https://mondeja.github.io/leptos-fluent/
+//! [book]: https://mondeja.github.io/leptos-fluent/latest/
 //! [documentation]: https://docs.rs/leptos-fluent
 
 #[doc(hidden)]
