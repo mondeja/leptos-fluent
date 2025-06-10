@@ -195,10 +195,12 @@
 <h2 id="tr-and-move_tr-outside-reactive-graph"><a class="header" href="#tr-and-move_tr-outside-reactive-graph"><code>tr!</code> and <code>move_tr!</code> outside reactive graph</a></h2>
 <p>Outside the reactive ownership tree, mainly known as the <em>reactive graph</em>,
 we can't obtain the context of <code>I18n</code> using <code>expect_context::&lt;leptos_fluent::I18n&gt;()</code>,
-which is what <code>tr!</code> and <code>move_tr!</code> do internally. Instead, we can pass the context
+which is what <code>tr!</code> and <code>move_tr!</code> do internally. Instead, pass the context
 as first parameter to the macros:</p>
-<pre><code class="language-rust">let i18n = expect_i18n();
+<pre><code class="language-rust">use leptos::prelude::expect_context;
+use leptos_fluent::{I18n, move_tr};
 
+let i18n = expect_context::&lt;I18n&gt;();
 let translated_signal = move_tr!(i18n, "my-translation");</code></pre>
 <p>And some shortcuts cannot be used. Rewrite all the code that calls <code>expect_context</code>
 internally:</p>
@@ -208,7 +210,10 @@ internally:</p>
 </ul>
 <h3 id="on-events-panics"><a class="header" href="#on-events-panics">On events, panics</a></h3>
 <p>For example, the next code panics when the <code>&lt;div&gt;</code> container is clicked:</p>
-<pre><code class="language-rust">#[component]
+<pre><code class="language-rust">use leptos::prelude::*;
+use leptos_fluent::tr;
+
+#[component]
 pub fn App() -&gt; impl IntoView {
     view! {
         &lt;Show when=|| true&gt;
@@ -229,7 +234,10 @@ pub fn Child() -&gt; impl IntoView {
 but with Leptos v0.6, this outsiding of the ownership tree has been ignored
 from the majority of the cases as unintended behavior.</p>
 <p>To avoid that, pass the i18n context as first parameter to <code>tr!</code> and <code>move_tr!</code>:</p>
-<pre><code class="language-rust">#[component]
+<pre><code class="language-rust">use leptos::prelude::*;
+use leptos_fluent::{I18n, tr};
+
+#[component]
 pub fn App() -&gt; impl IntoView {
     view! {
         &lt;Show when=|| true&gt;
@@ -240,7 +248,7 @@ pub fn App() -&gt; impl IntoView {
 
 #[component]
 pub fn Child() -&gt; impl IntoView {
-    let i18n = expect_i18n();
+    let i18n = expect_context::&lt;I18n&gt;();
     view! {
         &lt;div on:click=|_| {
             tr!(i18n, "my-translation");
@@ -264,17 +272,22 @@ error: argument must be a string literal
    |     ^^^^^^^^^^^^
 */</code></pre>
 <p>Instead, you can use the next <code>i18n.tr</code> and <code>i18n.tr_with_args</code> methods:</p>
-<pre><code class="language-rust">use leptos_fluent::expect_i18n;
+<pre><code class="language-rust">use leptos::prelude::expect_context;
+use leptos_fluent::I18n;
 
 let text_id = "my-translation";
-expect_i18n().tr(text_id);</code></pre>
+let i18n = expect_context::&lt;I18n&gt;();
+i18n.tr(text_id);</code></pre>
 <pre><code class="language-rust">use std::collections::HashMap;
-use leptos_fluent::expect_i18n;
+use leptos::prelude::expect_context;
+use leptos_fluent::I18n;
 
 let text_id = "hello-args";
 let mut args = HashMap::new();
 args.insert("name", "World");
-expect_i18n().tr_with_args(text_id, args);</code></pre>
+
+let i18n = expect_context::&lt;I18n&gt;();
+i18n.tr_with_args(text_id, args);</code></pre>
 <p>Note that <code>i18n.tr</code> and <code>i18n.tr_with_args</code> methods are not reactive,
 so you need to enclose their calls in a reactive context like a function to
 update the view on the fly when the language changes, and that the translations

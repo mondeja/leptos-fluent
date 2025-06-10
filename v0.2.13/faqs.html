@@ -240,7 +240,7 @@ fn render_language(lang: &amp;'static Language) -&gt; impl IntoView { ... }</cod
 accessed as context on server actions. Pass the translations as values
 if the bandwidth is not a problem or use your own statics on server side.</p>
 <pre><code class="language-rust">use leptos::prelude::*;
-use leptos_fluent::{tr, Language};
+use leptos_fluent::{tr, Language, I18n};
 
 /// Server action showing client-side translated message on console
 #[server(ShowHelloWorld, "/api")]
@@ -253,7 +253,7 @@ pub async fn show_hello_world(
 }
 
 fn render_language(lang: &amp;'static Language) -&gt; impl IntoView {
-    let i18n = expect_i18n();
+    let i18n = expect_context::&lt;I18n&gt;();
 
     // Call on click to server action with a client-side translated
     // "hello-world" message
@@ -290,7 +290,8 @@ with the method <code>I18n::meta</code>:</p>
 };
 
 // ... later
-println!("Macro parameters: {:?}", expect_i18n().meta().unwrap());</code></pre>
+let i18n = expect_context::&lt;I18n&gt;();
+println!("Macro parameters: {:?}", i18n.meta().unwrap());</code></pre>
 
                     </main>
 
