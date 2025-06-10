@@ -33,7 +33,7 @@ fn Child() -> impl IntoView {
             <div
                 id="fails"
                 on:click=|ev| {
-                    if use_context::<I18n>.is_some() {
+                    if use_context::<I18n>().is_some() {
                         ev.target()
                             .unwrap()
                             .unchecked_into::<web_sys::HtmlElement>()
