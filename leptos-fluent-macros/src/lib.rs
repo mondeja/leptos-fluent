@@ -836,7 +836,7 @@ pub fn leptos_fluent(
         let hydrate_rerender_quote = quote! {
             ::leptos::prelude::Effect::new(move |prev: Option<()>| {
                 if prev.is_none() {
-                    l.activate();
+                    #set_language_quote;
                 }
             });
         };

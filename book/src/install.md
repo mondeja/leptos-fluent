@@ -15,7 +15,7 @@ leptos-fluent = "0.2"
 
 ## SSR
 
-For server side rendering apps install **leptos-fluent** and activate
+For server side rendering apps install **leptos-fluent** and enable
 the `hydrate`, `ssr` and `actix`/`axum` features in their respective
 features set.
 
