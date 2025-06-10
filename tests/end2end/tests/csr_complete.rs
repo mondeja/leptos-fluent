@@ -1,7 +1,7 @@
 use end2end_helpers::{element_text, input_by_id, mount};
 use gloo_utils::document_element;
 use leptos::prelude::*;
-use leptos_fluent::localstorage;
+use leptos_fluent::local_storage;
 use leptos_fluent_csr_complete_example::App;
 use wasm_bindgen_test::*;
 use web_sys_ec::{Ec, Wait};
@@ -10,7 +10,7 @@ wasm_bindgen_test_configure!(run_in_browser);
 
 #[wasm_bindgen_test]
 pub async fn csr_complete_example() {
-    localstorage::delete("language");
+    local_storage::delete("language");
 
     mount!(App);
     let es = move || input_by_id("es");
@@ -60,9 +60,9 @@ pub async fn csr_complete_example() {
         .until(("html", Ec::AttributeValueIs("dir", "auto")))
         .await;
 
-    // set_language_to_localstorage
-    localstorage::delete("language");
-    assert_eq!(localstorage::get("language"), None);
+    // set_language_to_local_storage
+    local_storage::delete("language");
+    assert_eq!(local_storage::get("language"), None);
     es().click();
     Wait(1)
         .until(Ec::LocalStorageAttributeValueIs("language", "es"))
@@ -71,5 +71,5 @@ pub async fn csr_complete_example() {
     Wait(1)
         .until(Ec::LocalStorageAttributeValueIs("language", "en"))
         .await;
-    localstorage::delete("language");
+    local_storage::delete("language");
 }

@@ -1,22 +1,22 @@
 use end2end_helpers::{element_text, input_by_id, mount};
 use leptos::prelude::*;
-use leptos_fluent::{cookie, leptos_fluent, sessionstorage};
+use leptos_fluent::{cookie, leptos_fluent, local_storage};
 use leptos_fluent_csr_minimal_example::LanguageSelector;
 use wasm_bindgen_test::*;
 
 wasm_bindgen_test_configure!(run_in_browser);
 
 const COOKIE_NAME: &str = "my-weird-cookie-name";
-const SESSIONSTORAGE_KEY: &str = "my-weird-sessionstorage-key";
+const LOCALSTORAGE_KEY: &str = "my-weird-local-storage-key";
 
 #[component]
 fn I18n(children: Children) -> impl IntoView {
     leptos_fluent! {
         children: children(),
         locales: "../../examples/csr-minimal/locales",
-        initial_language_from_sessionstorage: true,
-        sessionstorage_key: SESSIONSTORAGE_KEY,
-        initial_language_from_sessionstorage_to_cookie: true,
+        initial_language_from_local_storage: true,
+        local_storage_key: LOCALSTORAGE_KEY,
+        initial_language_from_local_storage_to_cookie: true,
         cookie_name: COOKIE_NAME,
     }
 }
@@ -31,20 +31,20 @@ fn App() -> impl IntoView {
 }
 
 #[wasm_bindgen_test]
-pub async fn test_sessionstorage_to_cookie() {
+pub async fn test_local_storage_to_cookie() {
     let es = move || input_by_id("es");
     let en = move || input_by_id("en");
 
-    // initial_language_from_sessionstorage_to_cookie
+    // initial_language_from_local_storage_to_cookie
     cookie::delete(COOKIE_NAME);
-    sessionstorage::delete(SESSIONSTORAGE_KEY);
+    local_storage::delete(LOCALSTORAGE_KEY);
     {
         mount!(App);
         assert!(en().checked());
         assert_eq!(element_text("p"), "Select a language:");
     }
 
-    sessionstorage::set(SESSIONSTORAGE_KEY, "es");
+    local_storage::set(LOCALSTORAGE_KEY, "es");
     cookie::delete(COOKIE_NAME);
     {
         mount!(App);
@@ -53,7 +53,7 @@ pub async fn test_sessionstorage_to_cookie() {
         assert_eq!(cookie::get(COOKIE_NAME), Some("es".to_string()));
     }
 
-    sessionstorage::set(SESSIONSTORAGE_KEY, "en");
+    local_storage::set(LOCALSTORAGE_KEY, "en");
     cookie::delete(COOKIE_NAME);
     {
         mount!(App);

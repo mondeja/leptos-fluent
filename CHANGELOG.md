@@ -1,8 +1,17 @@
 # CHANGELOG
 
+## Unreleased - [0.2.14]
+
+### Deprecations
+
+- All the parameters of `leptos_fluent!` macro that include the terms
+  `localstorage` and `sessionstorage` in their names, have been renamed to
+  use `local_storage` and `session_storage` respectively. These deprecated
+  parameters will be removed in v0.3.0.
+
 ## 2025-06-10 - [0.2.13]
 
-### Enhancements
+### Deprecations
 
 - The function `use_i18n()` has been deprecated and will be removed in v0.3.0.
   Use `use_context::<leptos_fluent::I18n>()` instead.
@@ -14,6 +23,9 @@
   v0.3.0. Use `i18n.language.get() == lang` instead.
 - The method `Language.activate()` has been deprecated and will be
   removed in v0.3.0. Use `i18n.language.set(lang)` instead.
+
+### Enhancements
+
 - Allow to pass a single file path to `check_translations` parameter of
   `leptos_fluent!` macro.
 - Don't report syntax errors in translations checker. The Rust compiler should
@@ -827,6 +839,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.2.14]: https://github.com/mondeja/leptos-fluent/compare/v0.2.13...master
 [0.2.13]: https://github.com/mondeja/leptos-fluent/compare/v0.2.12...v0.2.13
 [0.2.12]: https://github.com/mondeja/leptos-fluent/compare/v0.2.11...v0.2.12
 [0.2.11]: https://github.com/mondeja/leptos-fluent/compare/v0.2.10...v0.2.11

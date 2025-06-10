@@ -1,13 +1,13 @@
 use end2end_helpers::{element_text, input_by_id, mount};
 use leptos::prelude::*;
-use leptos_fluent::{cookie, leptos_fluent, localstorage};
+use leptos_fluent::{cookie, leptos_fluent, local_storage};
 use leptos_fluent_csr_minimal_example::LanguageSelector;
 use wasm_bindgen_test::*;
 
 wasm_bindgen_test_configure!(run_in_browser);
 
 const COOKIE_NAME: &str = "my-weird-cookie-name";
-const LOCALSTORAGE_KEY: &str = "my-weird-localstorage-key";
+const LOCALSTORAGE_KEY: &str = "my-weird-local-storage-key";
 
 #[component]
 fn I18n(children: Children) -> impl IntoView {
@@ -16,8 +16,8 @@ fn I18n(children: Children) -> impl IntoView {
         locales: "../../examples/csr-minimal/locales",
         initial_language_from_cookie: true,
         cookie_name: COOKIE_NAME,
-        initial_language_from_cookie_to_localstorage: true,
-        localstorage_key: LOCALSTORAGE_KEY,
+        initial_language_from_cookie_to_local_storage: true,
+        local_storage_key: LOCALSTORAGE_KEY,
     }
 }
 
@@ -31,13 +31,13 @@ fn App() -> impl IntoView {
 }
 
 #[wasm_bindgen_test]
-pub async fn test_cookie_to_localstorage() {
+pub async fn test_cookie_to_local_storage() {
     let es = move || input_by_id("es");
     let en = move || input_by_id("en");
 
-    // initial_language_from_cookie_to_localstorage
+    // initial_language_from_cookie_to_local_storage
     cookie::delete(COOKIE_NAME);
-    localstorage::delete(LOCALSTORAGE_KEY);
+    local_storage::delete(LOCALSTORAGE_KEY);
     {
         mount!(App);
         assert!(en().checked());
@@ -45,20 +45,26 @@ pub async fn test_cookie_to_localstorage() {
     }
 
     cookie::set(COOKIE_NAME, "es", "");
-    localstorage::delete(LOCALSTORAGE_KEY);
+    local_storage::delete(LOCALSTORAGE_KEY);
     {
         mount!(App);
         assert!(es().checked());
         assert_eq!(element_text("p"), "Selecciona un idioma:");
-        assert_eq!(localstorage::get(LOCALSTORAGE_KEY), Some("es".to_string()));
+        assert_eq!(
+            local_storage::get(LOCALSTORAGE_KEY),
+            Some("es".to_string())
+        );
     }
 
     cookie::set(COOKIE_NAME, "en", "");
-    localstorage::delete(LOCALSTORAGE_KEY);
+    local_storage::delete(LOCALSTORAGE_KEY);
     {
         mount!(App);
         assert!(en().checked());
         assert_eq!(element_text("p"), "Select a language:");
-        assert_eq!(localstorage::get(LOCALSTORAGE_KEY), Some("en".to_string()));
+        assert_eq!(
+            local_storage::get(LOCALSTORAGE_KEY),
+            Some("en".to_string())
+        );
     }
 }

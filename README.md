@@ -102,25 +102,25 @@ fn I18nProvider(children: Children) -> impl IntoView {
         // Update language on URL parameter when changes.
         set_language_to_url_param: true,
         // Set initial language of user from URL in local storage.
-        initial_language_from_url_param_to_localstorage: true,
+        initial_language_from_url_param_to_local_storage: true,
         // Set initial language of user from URL in a cookie.
         initial_language_from_url_param_to_cookie: true,
         // Key used to get and set the current language of the
         // user on local storage. By default is `"lang"`.
-        localstorage_key: "language",
+        local_storage_key: "language",
         // Get initial language from local storage if not found
         // in an URL param.
-        initial_language_from_localstorage: true,
+        initial_language_from_local_storage: true,
         // Set the initial language of the user from
         // local storage to a cookie.
-        initial_language_from_localstorage_to_cookie: true,
+        initial_language_from_local_storage_to_cookie: true,
         // Update language on local storage when changes.
-        set_language_to_localstorage: true,
+        set_language_to_local_storage: true,
         // Get initial language from `navigator.languages`
         // if not found in local storage.
         initial_language_from_navigator: true,
         // Set initial language of user from navigator to local storage.
-        initial_language_from_navigator_to_localstorage: true,
+        initial_language_from_navigator_to_local_storage: true,
         // Set initial language of user from navigator to a cookie.
         initial_language_from_navigator_to_cookie: true,
         // Attributes to set for language cookie.
@@ -129,7 +129,7 @@ fn I18nProvider(children: Children) -> impl IntoView {
         // Update language on cookie when the language changes.
         set_language_to_cookie: true,
         // Set initial language from a cookie to local storage.
-        initial_language_from_cookie_to_localstorage: true,
+        initial_language_from_cookie_to_local_storage: true,
 
         // Server side options
         // -------------------

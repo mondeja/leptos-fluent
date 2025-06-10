@@ -1,13 +1,13 @@
 use end2end_helpers::{element_text, input_by_id, mount};
 use leptos::prelude::*;
-use leptos_fluent::{leptos_fluent, sessionstorage};
+use leptos_fluent::{leptos_fluent, local_storage};
 use leptos_fluent_csr_minimal_example::LanguageSelector;
 use wasm_bindgen_test::*;
 use web_sys_ec::{Ec, Wait};
 
 wasm_bindgen_test_configure!(run_in_browser);
 
-const SESSIONSTORAGE_KEY: &str = "sltc";
+const LOCALSTORAGE_KEY: &str = "sltc";
 
 #[component]
 fn I18n(children: Children) -> impl IntoView {
@@ -15,8 +15,8 @@ fn I18n(children: Children) -> impl IntoView {
         children: children(),
         locales: "../../../examples/csr-minimal/locales",
         initial_language_from_navigator: true,
-        sessionstorage_key: SESSIONSTORAGE_KEY,
-        set_language_to_sessionstorage: true,
+        local_storage_key: LOCALSTORAGE_KEY,
+        set_language_to_local_storage: true,
     }
 }
 
@@ -30,12 +30,12 @@ fn App() -> impl IntoView {
 }
 
 #[wasm_bindgen_test]
-pub async fn test_set_language_to_sessionstorage() {
+pub async fn test_set_language_to_local_storage() {
     let en = move || input_by_id("en");
     let es = move || input_by_id("es");
 
     mount!(App);
-    sessionstorage::delete(SESSIONSTORAGE_KEY);
+    local_storage::delete(LOCALSTORAGE_KEY);
     assert!(en().checked());
     assert_eq!(element_text("p"), "Select a language:");
 
@@ -44,8 +44,5 @@ pub async fn test_set_language_to_sessionstorage() {
         .until(("p", Ec::InnerTextContains("Selecciona un idioma:")))
         .await;
     assert!(es().checked());
-    assert_eq!(
-        sessionstorage::get(SESSIONSTORAGE_KEY),
-        Some("es".to_string())
-    );
+    assert_eq!(local_storage::get(LOCALSTORAGE_KEY), Some("es".to_string()));
 }

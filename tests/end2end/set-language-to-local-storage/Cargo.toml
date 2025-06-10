@@ -1,5 +1,5 @@
 [package]
-name = "leptos-fluent-end2end-set-language-to-localstorage-tests"
+name = "leptos-fluent-end2end-set-language-to-local-storage-tests"
 edition = "2021"
 version = "0.1.0"
 publish = false
