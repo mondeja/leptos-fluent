@@ -12,6 +12,7 @@
 ### Enhancements
 
 - Canonicalize generated paths on stable.
+- Improve `leptos_fluent!` macro error messages.
 
 ## 2025-06-10 - [0.2.13]
 

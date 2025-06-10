@@ -1,4 +1,4 @@
-error: Expected an expression with 'key: value', '#[...] key: value', 'key,' or `#[...] key,` format. Found:
+error: Expected expression with `key: value`, `#[...] key: value`, `key,` or `#[...] key,` format. Found:
        : "foo",
   --> tests/ui/leptos_fluent/stable/fail/empty_parameter.rs:18:9
    |
