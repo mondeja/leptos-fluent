@@ -811,6 +811,13 @@ a glob pattern that matches the Rust files that you want to check.</p>
 <pre><code class="language-rust">leptos_fluent! {
     check_translations: "../{app,components}/src/**/*.rs",
 }</code></pre>
+<h2 id="literal-boolean-for-workspace-projects"><a class="header" href="#literal-boolean-for-workspace-projects">Literal boolean for workspace projects</a></h2>
+<p>The parameter <code>check_translations</code> can also be a literal boolean
+instead of a glob pattern. In that case, the translations will be checked
+in all the Rust files of the workspace.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    check_translations: true,
+}</code></pre>
 <h2 id="translations-error-messages"><a class="header" href="#translations-error-messages">Translations error messages</a></h2>
 <!-- markdownlint-disable MD013 -->
 <p>When the translations stop being synchronized, you will see errors like:</p>
@@ -1443,12 +1450,12 @@ See <a href="https://mondeja.github.io/leptos-fluent/latest/languages.html"><str
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
     languages: "./locales/languages.json",
-    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 }</code></pre>
 <h3 id="check_translations"><a class="header" href="#check_translations"><code>check_translations</code></a></h3>
 <p>Check the translations at compile time. It is useful to ensure that all
 translations are correct and that there are no missing translations.</p>
-<p>Must be a <a href="https://docs.rs/globwalk/latest/globwalk/fn.glob.html">glob</a> relative to the <em>Cargo.toml</em> file.</p>
+<p>Must be a <a href="https://docs.rs/globwalk/latest/globwalk/fn.glob.html">glob</a> relative to the <em>Cargo.toml</em> file or a literal boolean.</p>
 <ul>
 <li>
 <p>For single crate projects:</p>
@@ -1467,6 +1474,13 @@ translations are correct and that there are no missing translations.</p>
 }</code></pre>
 </li>
 </ul>
+<p>When the parameter is a literal boolean, the translations will be checked
+in all the Rust files of the workspace.</p>
+<pre><code class="language-rust">leptos_fluent! {
+    locales: "./locales",
+    check_translations: true,
+    // ^^^^^^^^^^^^^^^^^^^^^
+}</code></pre>
 <h3 id="fill_translations"><a class="header" href="#fill_translations"><code>fill_translations</code></a></h3>
 <p>Add new messages found in <code>tr!</code> and <code>move_tr!</code> macros to translations files.</p>
 <ul>
