@@ -232,7 +232,7 @@ See [**4. Languages**](https://mondeja.github.io/leptos-fluent/latest/languages.
 leptos_fluent! {
     locales: "./locales",
     languages: "./locales/languages.json",
-    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 }
 ```
 
@@ -241,7 +241,7 @@ leptos_fluent! {
 Check the translations at compile time. It is useful to ensure that all
 translations are correct and that there are no missing translations.
 
-Must be a [glob] relative to the _Cargo.toml_ file.
+Must be a [glob] relative to the _Cargo.toml_ file or a literal boolean.
 
 - For single crate projects:
 
@@ -262,6 +262,17 @@ Must be a [glob] relative to the _Cargo.toml_ file.
       // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   }
   ```
+
+When the parameter is a literal boolean, the translations will be checked
+in all the Rust files of the workspace.
+
+```rust
+leptos_fluent! {
+    locales: "./locales",
+    check_translations: true,
+    // ^^^^^^^^^^^^^^^^^^^^^
+}
+```
 
 ### `fill_translations`
 
