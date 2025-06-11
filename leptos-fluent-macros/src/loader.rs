@@ -4,6 +4,13 @@ use crate::{
     languages::{read_languages_file, read_locales_folder},
     FluentFilePaths, ParsedLanguage,
 };
+#[cfg(not(feature = "ssr"))]
+use crate::{
+    fluent_entries::build_fluent_entries,
+    tr_macros::{
+        gather_tr_macro_defs_from_globstr, gather_tr_macro_defs_from_workspace,
+    },
+};
 use quote::ToTokens;
 use std::path::PathBuf;
 use std::rc::Rc;
@@ -325,21 +332,24 @@ macro_rules! parse_runtime_exprpath {
     };
 }
 
-macro_rules! struct_field_init_shorthand_not_supported {
-    ($struct_field_init_shorthand:ident, $k:ident) => {
-        if $struct_field_init_shorthand {
-            return Err(syn::Error::new(
-                $k.span(),
-                format!(
-                    concat!(
-                        "Struct field initialization shorthand is not supported",
-                        " for the parameter '{}'.",
-                    ),
-                    $k,
-                )
-            ));
-        }
-    };
+fn check_struct_field_init_shorthand(
+    struct_field_init_shorthand: bool,
+    k: &syn::Ident,
+) -> Result<()> {
+    if struct_field_init_shorthand {
+        Err(syn::Error::new(
+            k.span(),
+            format!(
+                concat!(
+                    "Struct field initialization shorthand is not supported",
+                    " for the parameter '{}'.",
+                ),
+                k,
+            ),
+        ))
+    } else {
+        Ok(())
+    }
 }
 
 /// Abstract implementation for token streams expressions.
@@ -406,6 +416,37 @@ impl LitBool {
     }
 }
 
+pub(crate) enum LitBoolOrStr {
+    Bool(syn::LitBool),
+    #[cfg_attr(feature = "ssr", allow(dead_code))]
+    Str(syn::LitStr),
+}
+
+impl Parse for LitBoolOrStr {
+    fn parse(input: ParseStream) -> Result<Self> {
+        if input.peek(syn::LitBool) {
+            Ok(LitBoolOrStr::Bool(input.parse()?))
+        } else if input.peek(syn::LitStr) {
+            Ok(LitBoolOrStr::Str(input.parse()?))
+        } else {
+            Err(syn::Error::new(
+                input.span(),
+                "Expected a literal boolean or a literal string",
+            ))
+        }
+    }
+}
+
+#[cfg(not(feature = "ssr"))]
+impl LitBoolOrStr {
+    fn span(&self) -> proc_macro2::Span {
+        match self {
+            LitBoolOrStr::Bool(lit) => lit.span(),
+            LitBoolOrStr::Str(lit) => lit.span(),
+        }
+    }
+}
+
 pub(crate) struct I18nLoader {
     pub warnings: Vec<proc_macro_warning::Warning>,
     pub fluent_file_paths: FluentFilePaths,
@@ -417,7 +458,7 @@ pub(crate) struct I18nLoader {
     pub raw_languages_path: Option<String>,
     pub locales_path: String,
     pub core_locales_path: Option<String>,
-    pub check_translations: Option<String>,
+    pub check_translations: Option<LitBoolOrStr>,
     pub fill_translations: Option<String>,
     pub provide_meta_context: Vec<LitBool>,
     pub sync_html_tag_lang: Vec<LitBoolExprOrIdent>,
@@ -497,7 +538,7 @@ pub(crate) struct I18nLoader {
 
 impl Parse for I18nLoader {
     fn parse(input: ParseStream) -> Result<Self> {
-        let workspace_path = PathBuf::from(
+        let manifest_path = PathBuf::from(
             std::env::var("CARGO_MANIFEST_DIR").unwrap_or_else(|_| "./".into()),
         );
 
@@ -508,7 +549,7 @@ impl Parse for I18nLoader {
         let mut core_locales_path: Option<syn::LitStr> = None;
         let mut default_language: Option<syn::LitStr> = None;
         let mut translations: Option<Translations> = None;
-        let mut check_translations: Option<syn::LitStr> = None;
+        let mut check_translations: Option<LitBoolOrStr> = None;
         let mut fill_translations: Option<syn::LitStr> = None;
         let mut provide_meta_context: Vec<LitBool> = Vec::new();
         let mut sync_html_tag_lang: Vec<LitBoolExprOrIdent> = Vec::new();
@@ -730,10 +771,10 @@ impl Parse for I18nLoader {
                     Some(expr.to_token_stream().to_string().as_str().into());
                 children.push(param);
             } else if k == "translations" {
-                struct_field_init_shorthand_not_supported!(
+                check_struct_field_init_shorthand(
                     struct_field_init_shorthand,
-                    k
-                );
+                    &k,
+                )?;
                 translations = Some(input.parse()?);
                 evaluate_compile_time_exprpath_set_none!(
                     exprpath_token_stream,
@@ -741,10 +782,10 @@ impl Parse for I18nLoader {
                     translations
                 );
             } else if k == "locales" {
-                struct_field_init_shorthand_not_supported!(
+                check_struct_field_init_shorthand(
                     struct_field_init_shorthand,
-                    k
-                );
+                    &k,
+                )?;
                 locales_path = Some(input.parse()?);
                 evaluate_compile_time_exprpath_set_none!(
                     exprpath_token_stream,
@@ -752,10 +793,10 @@ impl Parse for I18nLoader {
                     locales_path
                 );
             } else if k == "core_locales" {
-                struct_field_init_shorthand_not_supported!(
+                check_struct_field_init_shorthand(
                     struct_field_init_shorthand,
-                    k
-                );
+                    &k,
+                )?;
                 core_locales_path = Some(input.parse()?);
                 evaluate_compile_time_exprpath_set_none!(
                     exprpath_token_stream,
@@ -763,10 +804,10 @@ impl Parse for I18nLoader {
                     core_locales_path
                 );
             } else if k == "default_language" {
-                struct_field_init_shorthand_not_supported!(
+                check_struct_field_init_shorthand(
                     struct_field_init_shorthand,
-                    k
-                );
+                    &k,
+                )?;
                 default_language = Some(input.parse()?);
                 evaluate_compile_time_exprpath_set_none!(
                     exprpath_token_stream,
@@ -774,10 +815,10 @@ impl Parse for I18nLoader {
                     default_language
                 );
             } else if k == "languages" {
-                struct_field_init_shorthand_not_supported!(
+                check_struct_field_init_shorthand(
                     struct_field_init_shorthand,
-                    k
-                );
+                    &k,
+                )?;
                 languages_path = Some(input.parse()?);
                 evaluate_compile_time_exprpath_set_none!(
                     exprpath_token_stream,
@@ -785,10 +826,10 @@ impl Parse for I18nLoader {
                     languages_path
                 );
             } else if k == "check_translations" {
-                struct_field_init_shorthand_not_supported!(
+                check_struct_field_init_shorthand(
                     struct_field_init_shorthand,
-                    k
-                );
+                    &k,
+                )?;
                 check_translations = Some(input.parse()?);
                 evaluate_compile_time_exprpath_set_none!(
                     exprpath_token_stream,
@@ -796,10 +837,10 @@ impl Parse for I18nLoader {
                     check_translations
                 );
             } else if k == "fill_translations" {
-                struct_field_init_shorthand_not_supported!(
+                check_struct_field_init_shorthand(
                     struct_field_init_shorthand,
-                    k
-                );
+                    &k,
+                )?;
                 fill_translations = Some(input.parse()?);
                 evaluate_compile_time_exprpath_set_none!(
                     exprpath_token_stream,
@@ -1642,10 +1683,10 @@ impl Parse for I18nLoader {
             } else if k == "provide_meta_context" {
                 let mut param = LitBool::new();
                 parse_runtime_exprpath!(exprpath, param);
-                struct_field_init_shorthand_not_supported!(
+                check_struct_field_init_shorthand(
                     struct_field_init_shorthand,
-                    k
-                );
+                    &k,
+                )?;
                 param.lit = Some(input.parse::<syn::LitBool>()?.value());
                 provide_meta_context.push(param);
             } else {
@@ -1696,11 +1737,11 @@ impl Parse for I18nLoader {
 
         let languages_file = languages_path
             .as_ref()
-            .map(|langs| workspace_path.join(langs.value()));
+            .map(|langs| manifest_path.join(langs.value()));
 
         let locales_folder_path = locales_path
             .as_ref()
-            .map(|locales| workspace_path.join(locales.value()))
+            .map(|locales| manifest_path.join(locales.value()))
             .unwrap();
 
         if let Some(ref file) = languages_file {
@@ -1771,7 +1812,7 @@ impl Parse for I18nLoader {
         let mut core_locales_content = None;
         let mut core_locales_path_str = None;
         if let Some(core_locales) = &core_locales_path {
-            let core_locales = workspace_path.join(core_locales.value());
+            let core_locales = manifest_path.join(core_locales.value());
             if std::fs::metadata(&core_locales).is_err() {
                 let file_path =
                     std::path::absolute(&core_locales).unwrap_or(core_locales);
@@ -1814,112 +1855,152 @@ impl Parse for I18nLoader {
 
         #[cfg(not(feature = "ssr"))]
         if check_translations.is_some() || fill_translations.is_some() {
-            let mut f_resources_and_file_paths =
+            let f_resources_and_file_paths =
                 fluent_resources_and_file_paths.clone();
+            let (ref fluent_resources, ref fluent_file_paths) =
+                f_resources_and_file_paths;
+
+            let mut errors: Vec<String> = Vec::new();
+            let mut fluent_entries = build_fluent_entries(
+                fluent_resources,
+                fluent_file_paths,
+                &manifest_path,
+                &core_locales_path_str,
+                &core_locales_content,
+                &mut errors,
+            );
+
+            if !errors.is_empty() {
+                let message = &format!(
+                    "Unrecoverable errors:\n- {}",
+                    errors.join("\n- "),
+                );
+                return Err(syn::Error::new(
+                    if let Some(ref check_translations) = check_translations {
+                        check_translations.span()
+                    } else {
+                        fill_translations.as_ref().unwrap().span()
+                    },
+                    message,
+                ));
+            }
 
             if let Some(ref fill_translations_globstr) = fill_translations {
-                {
-                    let (ref fluent_resources, ref fluent_file_paths) =
-                        f_resources_and_file_paths;
-                    let (fill_messages, errors) =
-                        crate::translations_filler::run(
-                            &fill_translations_globstr.value(),
-                            &workspace_path,
-                            fluent_resources,
-                            fluent_file_paths,
-                            &core_locales_path_str,
-                            &core_locales_content,
-                        );
+                let fill_messages = crate::translations_filler::run(
+                    &fill_translations_globstr.value(),
+                    &manifest_path,
+                    &fluent_entries,
+                    fluent_file_paths,
+                    fluent_resources,
+                    &mut errors,
+                );
 
-                    let mut report = String::new();
-                    if !fill_messages.is_empty() {
-                        report.push_str(
-                            "Translations filled by leptos-fluent:\n",
-                        );
-                        for (file_path, message_names) in fill_messages {
-                            report.push_str(&format!("  {file_path}\n",));
-                            for message_name in message_names {
-                                report.push_str(&format!(
-                                    "    - {message_name}\n",
-                                ));
-                            }
+                let mut report = String::new();
+                if !fill_messages.is_empty() {
+                    report.push_str("Translations filled by leptos-fluent:\n");
+                    for (file_path, message_names) in fill_messages {
+                        report.push_str(&format!("  {file_path}\n",));
+                        for message_name in message_names {
+                            report
+                                .push_str(&format!("    - {message_name}\n",));
                         }
                     }
-                    if !report.is_empty() {
-                        report.push('\n');
-                        eprintln!("{report}");
+                }
+                if !report.is_empty() {
+                    report.push('\n');
+                    eprintln!("{report}");
 
-                        // resources must be recreated because new fluent entries
-                        // have been added to them
-                        let (
-                            f_resources_and_file_paths_,
-                            resources_file_paths_errors,
-                        ) = build_fluent_resources_and_file_paths(
-                            &locales_path_str,
-                        );
-                        if !resources_file_paths_errors.is_empty() {
-                            return Err(syn::Error::new(
-                                locales_path.unwrap().span(),
-                                format!(
-                                    "Errors while reading fluent resources from {}:\n- {}",
-                                    locales_path_str,
-                                    resources_file_paths_errors.join("\n- "),
-                                ),
-                            ));
-                        }
-                        f_resources_and_file_paths =
-                            f_resources_and_file_paths_;
-                    }
-
-                    if !errors.is_empty() {
-                        let message = &format!(
-                            "Unrecoverable errors:\n- {}",
-                            errors.join("\n- "),
-                        );
+                    // resources must be recreated because new fluent entries
+                    // have been added to them
+                    let (
+                        f_resources_and_file_paths_,
+                        resources_file_paths_errors,
+                    ) = build_fluent_resources_and_file_paths(
+                        &locales_path_str,
+                    );
+                    if !resources_file_paths_errors.is_empty() {
                         return Err(syn::Error::new(
-                            fill_translations_globstr.span(),
-                            message,
+                            locales_path.unwrap().span(),
+                            format!(
+                                "Errors while reading fluent resources from {}:\n- {}",
+                                locales_path_str,
+                                resources_file_paths_errors.join("\n- "),
+                            ),
                         ));
                     }
+
+                    let (ref fluent_resources, ref fluent_file_paths) =
+                        f_resources_and_file_paths_;
+
+                    fluent_entries = build_fluent_entries(
+                        fluent_resources,
+                        fluent_file_paths,
+                        &manifest_path,
+                        &core_locales_path_str,
+                        &core_locales_content,
+                        &mut errors,
+                    );
+                }
+
+                if !errors.is_empty() {
+                    let message = &format!(
+                        "Unrecoverable errors:\n- {}",
+                        errors.join("\n- "),
+                    );
+                    return Err(syn::Error::new(
+                        fill_translations_globstr.span(),
+                        message,
+                    ));
                 }
             }
 
-            if let Some(ref check_translations_globstr) = check_translations {
-                {
-                    let (ref fluent_resources, ref fluent_file_paths) =
-                        f_resources_and_file_paths;
-                    let (check_messages, errors) =
-                        crate::translations_checker::run(
-                            &check_translations_globstr.value(),
-                            &workspace_path,
-                            fluent_resources,
-                            fluent_file_paths,
-                            &core_locales_path_str,
-                            &core_locales_content,
-                        );
-
-                    let mut report = String::new();
-                    if !check_messages.is_empty() {
-                        report.push_str(&format!(
-                            "Translations check failed:\n- {}",
-                            check_messages.join("\n- "),
-                        ));
-                        if !errors.is_empty() {
-                            report.push_str("\n\n");
+            if let Some(ref check_translations_enum) = check_translations {
+                let tr_macros = match check_translations_enum {
+                    LitBoolOrStr::Str(litstr) => {
+                        gather_tr_macro_defs_from_globstr(
+                            manifest_path.join(litstr.value()),
+                            &mut errors,
+                            #[cfg(not(test))]
+                            &manifest_path,
+                        )
+                    }
+                    LitBoolOrStr::Bool(litbool) => {
+                        if litbool.value() {
+                            gather_tr_macro_defs_from_workspace(
+                                &manifest_path,
+                                &mut errors,
+                            )
+                        } else {
+                            Vec::new()
                         }
                     }
+                };
+                let check_messages = crate::translations_checker::run(
+                    &fluent_entries,
+                    &tr_macros,
+                );
+
+                let mut report = String::new();
+                if !check_messages.is_empty() {
+                    report.push_str(&format!(
+                        "Translations check failed:\n- {}",
+                        check_messages.join("\n- "),
+                    ));
                     if !errors.is_empty() {
-                        report.push_str(&format!(
-                            "Unrecoverable errors:\n- {}",
-                            errors.join("\n- "),
-                        ));
+                        report.push_str("\n\n");
                     }
-                    if !report.is_empty() {
-                        return Err(syn::Error::new(
-                            check_translations_globstr.span(),
-                            report,
-                        ));
-                    }
+                }
+                if !errors.is_empty() {
+                    report.push_str(&format!(
+                        "Unrecoverable errors:\n- {}",
+                        errors.join("\n- "),
+                    ));
+                }
+                if !report.is_empty() {
+                    return Err(syn::Error::new(
+                        check_translations_enum.span(),
+                        report,
+                    ));
                 }
             }
         }
@@ -1977,7 +2058,7 @@ impl Parse for I18nLoader {
             locales_path: locales_path.unwrap().value(),
             core_locales_path: core_locales_path_str,
             default_language: default_language_and_index,
-            check_translations: check_translations.map(|x| x.value()),
+            check_translations,
             fill_translations: fill_translations.map(|x| x.value()),
             provide_meta_context,
             sync_html_tag_lang,

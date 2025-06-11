@@ -1,63 +1,16 @@
-use crate::fluent_entries::{build_fluent_entries, FluentEntries};
-use crate::tr_macros::{gather_tr_macro_defs_from_rs_files, TranslationMacro};
-use crate::{FluentFilePaths, FluentResources};
-use std::path::Path;
+use crate::fluent_entries::FluentEntries;
+use crate::tr_macros::TranslationMacro;
 
 #[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
 pub(crate) fn run(
-    globstr: &str,
-    workspace_path: impl AsRef<Path>,
-    fluent_resources: &FluentResources,
-    fluent_file_paths: &FluentFilePaths,
-    core_locales_path: &Option<String>,
-    core_locales_content: &Option<String>,
-) -> (Vec<String>, Vec<String>) {
-    let mut errors = Vec::new();
-
-    let ws_path = workspace_path.as_ref();
-    let (tr_macros, tr_macros_errors) = gather_tr_macro_defs_from_rs_files(
-        ws_path.join(globstr),
-        #[cfg(not(test))]
-        ws_path,
-    );
-
-    #[cfg(feature = "tracing")]
-    if !tr_macros_errors.is_empty() {
-        tracing::warn!(
-            "Errors while gathering tr macros: {:#?}",
-            tr_macros_errors
-        );
-    } else {
-        tracing::trace!("Gathered tr macros: {:#?}", tr_macros);
-    }
-
-    errors.extend(tr_macros_errors);
-
-    let (fluent_entries, fluent_syntax_errors) = build_fluent_entries(
-        fluent_resources,
-        fluent_file_paths,
-        &workspace_path,
-        core_locales_path,
-        core_locales_content,
-    );
-
-    #[cfg(feature = "tracing")]
-    if !&fluent_syntax_errors.is_empty() {
-        tracing::warn!(
-            "Errors while building fluent entries: {:#?}",
-            &fluent_syntax_errors
-        );
-    } else {
-        tracing::trace!("Built fluent entries: {:#?}", fluent_entries);
-    }
-
-    errors.extend(fluent_syntax_errors);
-
+    fluent_entries: &FluentEntries,
+    tr_macros: &[TranslationMacro],
+) -> Vec<String> {
     let mut check_messages =
-        check_tr_macros_against_fluent_entries(&tr_macros, &fluent_entries);
+        check_tr_macros_against_fluent_entries(tr_macros, fluent_entries);
     check_messages.extend(check_fluent_entries_against_tr_macros(
-        &tr_macros,
-        &fluent_entries,
+        tr_macros,
+        fluent_entries,
     ));
 
     // TODO: Currently, the fluent-syntax parser does not offer a CST
@@ -72,7 +25,7 @@ pub(crate) fn run(
         );
     }
 
-    (check_messages, errors)
+    check_messages
 }
 
 fn macro_location(tr_macro: &TranslationMacro) -> String {
@@ -108,7 +61,7 @@ fn macro_location(tr_macro: &TranslationMacro) -> String {
 }
 
 fn check_tr_macros_against_fluent_entries(
-    tr_macros: &Vec<TranslationMacro>,
+    tr_macros: &[TranslationMacro],
     fluent_entries: &FluentEntries,
 ) -> Vec<String> {
     let mut error_messages: Vec<String> = Vec::new();
@@ -181,7 +134,7 @@ fn check_tr_macros_against_fluent_entries(
 }
 
 fn check_fluent_entries_against_tr_macros(
-    tr_macros: &Vec<TranslationMacro>,
+    tr_macros: &[TranslationMacro],
     fluent_entries: &FluentEntries,
 ) -> Vec<String> {
     let mut error_messages: Vec<String> = Vec::new();

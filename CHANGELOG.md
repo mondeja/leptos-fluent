@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## Unreleased - [0.2.14]
+## 2025-06-11 - [0.2.14]
 
 ### Deprecations
 
@@ -13,6 +13,8 @@
 
 - Canonicalize generated paths on stable.
 - Improve `leptos_fluent!` macro error messages.
+- Allow the parameter `check_translations` of `leptos_fluent!` macro to be
+  a literal boolean.
 
 ## 2025-06-10 - [0.2.13]
 
@@ -844,7 +846,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
-[0.2.14]: https://github.com/mondeja/leptos-fluent/compare/v0.2.13...master
+[0.2.14]: https://github.com/mondeja/leptos-fluent/compare/v0.2.13...v0.2.14
 [0.2.13]: https://github.com/mondeja/leptos-fluent/compare/v0.2.12...v0.2.13
 [0.2.12]: https://github.com/mondeja/leptos-fluent/compare/v0.2.11...v0.2.12
 [0.2.11]: https://github.com/mondeja/leptos-fluent/compare/v0.2.10...v0.2.11

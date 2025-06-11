@@ -48,6 +48,7 @@ fn get_fluent_entries_from_resource(
     resource: &fluent_templates::fluent_bundle::FluentResource,
 ) -> (Vec<FluentEntry>, Vec<String>) {
     let mut entries = Vec::new();
+    // TODO: handle errors in a mutable vector passed as reference
     let mut errors = Vec::new();
     let mut message_reference_found = false;
 
@@ -199,14 +200,14 @@ fn get_fluent_entries_from_resource(
 pub(crate) fn build_fluent_entries(
     fluent_resources: &FluentResources,
     fluent_file_paths: &FluentFilePaths,
-    workspace_path: &impl AsRef<Path>,
+    manifest_path: &impl AsRef<Path>,
     core_locales_path: &Option<String>,
     core_locales_content: &Option<String>,
-) -> (FluentEntries, Vec<String>) {
+    errors: &mut Vec<String>,
+) -> FluentEntries {
     let mut fluent_entries: FluentEntries = HashMap::new();
-    let mut errors: Vec<String> = Vec::new();
 
-    let ws_path = workspace_path.as_ref();
+    let ws_path = manifest_path.as_ref();
 
     for (lang, resources) in fluent_resources {
         fluent_entries.insert(Rc::clone(lang), vec![]);
@@ -314,7 +315,7 @@ pub(crate) fn build_fluent_entries(
             Err((resource, errs)) => {
                 let rel_file_path = pathdiff::diff_paths(
                     core_locales_path.as_ref().unwrap(),
-                    workspace_path,
+                    manifest_path,
                 )
                 .unwrap()
                 .as_path()
@@ -346,7 +347,7 @@ pub(crate) fn build_fluent_entries(
         }
     }
 
-    (fluent_entries, errors)
+    fluent_entries
 }
 
 fn line_col_from_index_content(content: &str, index: usize) -> (usize, usize) {
@@ -366,7 +367,7 @@ mod tests {
     use std::borrow::Cow;
     use std::path::PathBuf;
 
-    fn workspace_path() -> PathBuf {
+    fn manifest_path() -> PathBuf {
         PathBuf::from("./")
     }
 
@@ -403,12 +404,14 @@ mod tests {
                 vec!["./locales/es-ES/foo.ftl".to_string()],
             ),
         ]);
-        let (entries, errors) = build_fluent_entries(
+        let mut errors = Vec::new();
+        let entries = build_fluent_entries(
             &fluent_resources,
             &fluent_file_paths,
-            &workspace_path(),
+            &manifest_path(),
             &None,
             &None,
+            &mut errors,
         );
         assert!(errors.is_empty());
         assert_eq!(
@@ -454,12 +457,14 @@ mod tests {
             Rc::new("en-US".to_string()),
             vec!["./locales/en-US/foo.ftl".to_string()],
         )]);
-        let (entries, errors) = build_fluent_entries(
+        let mut errors = Vec::new();
+        let entries = build_fluent_entries(
             &fluent_resources,
             &fluent_file_paths,
-            &workspace_path(),
+            &manifest_path(),
             &None,
             &None,
+            &mut errors,
         );
         assert!(errors.is_empty());
         assert_eq!(
@@ -478,12 +483,14 @@ mod tests {
             Rc::new("en-US".to_string()),
             vec!["./locales/en-US/foo.ftl".to_string()],
         )]);
-        let (entries, errors) = build_fluent_entries(
+        let mut errors = Vec::new();
+        let entries = build_fluent_entries(
             &fluent_resources,
             &fluent_file_paths,
-            &workspace_path(),
+            &manifest_path(),
             &None,
             &None,
+            &mut errors,
         );
         assert_eq!(
             errors,
@@ -520,12 +527,14 @@ mod tests {
             Rc::new("en-US".to_string()),
             vec!["./locales/en-US/foo.ftl".to_string()],
         )]);
-        let (entries, errors) = build_fluent_entries(
+        let mut errors = Vec::new();
+        let entries = build_fluent_entries(
             &fluent_resources,
             &fluent_file_paths,
-            &workspace_path(),
+            &manifest_path(),
             &None,
             &None,
+            &mut errors,
         );
         assert_eq!(
             errors,
@@ -565,12 +574,14 @@ emails2 = Number of unread emails { NUMBER($unreadEmails) }
             Rc::new("en-US".to_string()),
             vec!["./locales/en-US/foo.ftl".to_string()],
         )]);
-        let (entries, errors) = build_fluent_entries(
+        let mut errors = Vec::new();
+        let entries = build_fluent_entries(
             &fluent_resources,
             &fluent_file_paths,
-            &workspace_path(),
+            &manifest_path(),
             &None,
             &None,
+            &mut errors,
         );
         assert!(errors.is_empty());
         assert_eq!(
@@ -623,12 +634,14 @@ your-rank = { NUMBER($pos, type: "ordinal") ->
             Rc::new("en-US".to_string()),
             vec!["./locales/en-US/foo.ftl".to_string()],
         )]);
-        let (entries, errors) = build_fluent_entries(
+        let mut errors = Vec::new();
+        let entries = build_fluent_entries(
             &fluent_resources,
             &fluent_file_paths,
-            &workspace_path(),
+            &manifest_path(),
             &None,
             &None,
+            &mut errors,
         );
         assert!(errors.is_empty());
         assert_eq!(
@@ -670,12 +683,14 @@ units-unit-conversion-continuation-recursive = {units-unit-conversion}, where {u
             Rc::new("en-US".to_string()),
             vec!["./locales/en-US/foo.ftl".to_string()],
         )]);
-        let (entries, errors) = build_fluent_entries(
+        let mut errors = Vec::new();
+        let entries = build_fluent_entries(
             &fluent_resources,
             &fluent_file_paths,
-            &workspace_path(),
+            &manifest_path(),
             &None,
             &None,
+            &mut errors,
         );
         assert!(errors.is_empty());
 
@@ -724,17 +739,18 @@ bar = My {not-found} message reference
 "#
             .to_string()],
         )]);
-
         let fluent_file_paths = HashMap::from([(
             Rc::new("en-US".to_string()),
             vec!["./locales/en-US/foo.ftl".to_string()],
         )]);
-        let (entries, errors) = build_fluent_entries(
+        let mut errors = Vec::new();
+        let entries = build_fluent_entries(
             &fluent_resources,
             &fluent_file_paths,
-            &workspace_path(),
+            &manifest_path(),
             &None,
             &None,
+            &mut errors,
         );
         assert!(!errors.is_empty());
 

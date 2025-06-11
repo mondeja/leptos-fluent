@@ -1,20 +1,20 @@
 use core::fmt::{self, Debug, Formatter};
 use quote::ToTokens;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use syn::visit::Visit;
 
-pub(crate) fn gather_tr_macro_defs_from_rs_files(
+pub(crate) fn gather_tr_macro_defs_from_globstr(
     globstr: impl AsRef<Path>,
+    errors: &mut Vec<String>,
     #[cfg(not(test))] workspace_path: impl AsRef<Path>,
-) -> (Vec<TranslationMacro>, Vec<String>) {
-    let mut errors = Vec::new();
+) -> Vec<TranslationMacro> {
     let mut tr_macros = Vec::new();
 
     let globstr = globstr.as_ref();
     if globstr.is_file() {
         tr_macros_from_file_path(
             &mut tr_macros,
-            &mut errors,
+            errors,
             &globstr.to_string_lossy(),
             #[cfg(not(test))]
             &workspace_path.as_ref().to_string_lossy(),
@@ -29,7 +29,7 @@ pub(crate) fn gather_tr_macro_defs_from_rs_files(
                             let path = entry.path();
                             tr_macros_from_file_path(
                                 &mut tr_macros,
-                                &mut errors,
+                                errors,
                                 &path.to_string_lossy(),
                                 #[cfg(not(test))]
                                 &workspace_path.as_ref().to_string_lossy(),
@@ -49,7 +49,91 @@ pub(crate) fn gather_tr_macro_defs_from_rs_files(
         }
     }
 
-    (tr_macros, errors)
+    tr_macros
+}
+
+pub(crate) fn gather_tr_macro_defs_from_workspace(
+    manifest_path: impl AsRef<Path>,
+    errors: &mut Vec<String>,
+) -> Vec<TranslationMacro> {
+    let abs_manifest_path =
+        std::path::absolute(manifest_path.as_ref()).unwrap();
+    let abs_manifest_path_clone = abs_manifest_path.clone();
+    let workspace_path = find_workspace_root(abs_manifest_path)
+        .unwrap_or(abs_manifest_path_clone);
+    let root_entries = std::fs::read_dir(&workspace_path)
+        .unwrap()
+        .filter_map(|file| file.ok());
+    let target_dir = get_target_dir(&workspace_path);
+    let mut tr_macros = Vec::new();
+
+    for root_entry in root_entries {
+        if root_entry.path() == target_dir {
+            // Skip target directory
+            continue;
+        }
+        if !root_entry.file_type().unwrap().is_dir() {
+            // Skip non-directory entries
+            continue;
+        }
+
+        let glob_path = root_entry.path().join("**/*.rs");
+        let glob_pattern = glob_path.to_string_lossy();
+        match globwalk::glob(&glob_pattern) {
+            Ok(paths) => {
+                for walker in paths {
+                    match walker {
+                        Ok(entry) => {
+                            let path = entry.path();
+                            tr_macros_from_file_path(
+                                &mut tr_macros,
+                                errors,
+                                &path.to_string_lossy(),
+                                #[cfg(not(test))]
+                                &workspace_path.display().to_string(),
+                            );
+                        }
+                        Err(error) => {
+                            errors.push(format!("Error reading file: {error}"));
+                        }
+                    }
+                }
+            }
+            Err(error) => {
+                errors.push(format!(
+                    "Error reading glob pattern \"{glob_pattern}\": {error}"
+                ));
+            }
+        };
+    }
+
+    tr_macros
+}
+
+/// Get *./target* directory for the workspace.
+fn get_target_dir(workspace_path: impl AsRef<Path>) -> PathBuf {
+    if let Ok(target_dir) = std::env::var("CARGO_TARGET_DIR") {
+        Path::new(&target_dir).to_path_buf()
+    } else {
+        workspace_path.as_ref().to_path_buf().join("target")
+    }
+}
+
+/// Search for the workspace root by looking through parents.
+///
+/// A valid workspace means that the `Cargo.toml` file exists and contains
+/// a `[workspace]` section.
+fn find_workspace_root(mut dir: PathBuf) -> Option<PathBuf> {
+    while dir.pop() {
+        let candidate = dir.join("Cargo.toml");
+        if candidate.exists() {
+            let contents = std::fs::read_to_string(&candidate).ok()?;
+            if contents.contains("[workspace]") {
+                return Some(dir.clone());
+            }
+        }
+    }
+    None
 }
 
 fn tr_macros_from_file_path(

@@ -1400,8 +1400,8 @@ pub struct LeptosFluentMeta {
     pub core_locales: Option<&'static str>,
     pub languages: Option<&'static str>,
     pub default_language: Option<&'static str>,
-    pub translations: bool, // *
-    pub check_translations: Option<&'static str>,
+    pub translations: bool,       // *
+    pub check_translations: bool, // * (maybe bool or str) TODO: improve
     pub fill_translations: Option<&'static str>,
     pub provide_meta_context: bool,
     pub sync_html_tag_lang: bool,

@@ -22,6 +22,18 @@ leptos_fluent! {
 }
 ```
 
+## Literal boolean for workspace projects
+
+The parameter `check_translations` can also be a literal boolean
+instead of a glob pattern. In that case, the translations will be checked
+in all the Rust files of the workspace.
+
+```rust
+leptos_fluent! {
+    check_translations: true,
+}
+```
+
 ## Translations error messages
 
 <!-- markdownlint-disable MD013 -->

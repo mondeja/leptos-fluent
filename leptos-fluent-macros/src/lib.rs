@@ -32,7 +32,7 @@ pub(crate) use fluent_resources::{
 };
 use languages::build_languages_quote;
 pub(crate) use languages::ParsedLanguage;
-use loader::{I18nLoader, LitBoolExprOrIdent, TokenStreamStr};
+use loader::{I18nLoader, LitBoolExprOrIdent, LitBoolOrStr, TokenStreamStr};
 use quote::{quote, ToTokens};
 
 #[cfg(feature = "debug")]
@@ -1874,6 +1874,15 @@ pub fn leptos_fluent(
                     .collect()
             };
 
+        let maybe_some_litbool_or_litstr_param =
+            |param: &Option<LitBoolOrStr>| {
+                match param {
+                    Some(LitBoolOrStr::Bool(lit_bool)) => quote!(#lit_bool),
+                    Some(LitBoolOrStr::Str(_)) => quote!(true), // TODO: add str
+                    None => quote!(None),
+                }
+            };
+
         provide_meta_context.iter().map(|param| {
             match param.lit.unwrap_or(false) {
                 true => {
@@ -1893,7 +1902,7 @@ pub fn leptos_fluent(
                         quote!(false)
                     };
                     let check_translations_quote =
-                        maybe_some_litstr_param(&check_translations);
+                        maybe_some_litbool_or_litstr_param(&check_translations);
                     let fill_translations_quote =
                         maybe_some_litstr_param(&fill_translations);
                     let sync_html_tag_lang_quote =
