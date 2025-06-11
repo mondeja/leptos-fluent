@@ -16,7 +16,7 @@ pub(crate) fn build_fluent_resources_and_file_paths(
     let dir = std::path::absolute(&dir).unwrap();
     for entry in std::fs::read_dir(&dir)
         .unwrap()
-        .filter_map(|rs| rs.ok())
+        .filter_map(|file| file.ok())
         .filter(|entry| entry.file_type().unwrap().is_dir())
     {
         if let Some(lang) = entry.file_name().into_string().ok().filter(|l| {

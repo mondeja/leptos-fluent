@@ -1,5 +1,5 @@
-use crate::fluent_entries::build_fluent_entries;
-use crate::tr_macros::gather_tr_macro_defs_from_rs_files;
+use crate::fluent_entries::FluentEntries;
+use crate::tr_macros::gather_tr_macro_defs_from_globstr;
 use crate::{FluentFilePaths, FluentResources};
 use std::collections::HashMap;
 use std::path::Path;
@@ -8,52 +8,19 @@ use std::rc::Rc;
 #[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
 pub(crate) fn run(
     globstr: &str,
-    workspace_path: impl AsRef<Path>,
-    fluent_resources: &FluentResources,
+    manifest_path: impl AsRef<Path>,
+    fluent_entries: &FluentEntries,
     fluent_file_paths: &FluentFilePaths,
-    core_locales_path: &Option<String>,
-    core_locales_content: &Option<String>,
-) -> (Vec<(String, Vec<String>)>, Vec<String>) {
-    let mut errors = Vec::new();
-
-    let (fluent_entries, fluent_syntax_errors) = build_fluent_entries(
-        fluent_resources,
-        fluent_file_paths,
-        &workspace_path,
-        core_locales_path,
-        core_locales_content,
-    );
-
-    let ws_path = workspace_path.as_ref();
-    let (tr_macros, tr_macros_errors) = gather_tr_macro_defs_from_rs_files(
+    fluent_resources: &FluentResources,
+    errors: &mut Vec<String>,
+) -> Vec<(String, Vec<String>)> {
+    let ws_path = manifest_path.as_ref();
+    let tr_macros = gather_tr_macro_defs_from_globstr(
         ws_path.join(globstr),
+        errors,
         #[cfg(not(test))]
         ws_path,
     );
-
-    #[cfg(feature = "tracing")]
-    if !tr_macros_errors.is_empty() {
-        tracing::warn!(
-            "Errors while gathering tr macros: {:#?}",
-            tr_macros_errors
-        );
-    } else {
-        tracing::trace!("Gathered tr macros: {:#?}", tr_macros);
-    }
-
-    errors.extend(tr_macros_errors);
-
-    #[cfg(feature = "tracing")]
-    if !&fluent_syntax_errors.is_empty() {
-        tracing::warn!(
-            "Errors while building fluent entries: {:#?}",
-            &fluent_syntax_errors
-        );
-    } else {
-        tracing::trace!("Built fluent entries: {:#?}", fluent_entries);
-    }
-
-    errors.extend(fluent_syntax_errors);
 
     let mut missing_message_names_by_lang: HashMap<Rc<String>, Vec<String>> =
         HashMap::new();
@@ -109,5 +76,5 @@ pub(crate) fn run(
         }
     }
 
-    (result, errors)
+    result
 }
