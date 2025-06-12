@@ -281,7 +281,7 @@ pub fn leptos_fluent(
         };
 
         let effect_quote = quote! {
-            if let Ok(l) = ::leptos_fluent::current_locale::current_locale() {
+            if let Ok(l) = ::leptos_fluent::__reexports::current_locale::current_locale() {
                 lang = ::leptos_fluent::l(&l, &LANGUAGES);
                 if let Some(l) = lang {
                     #initial_language_from_system_to_data_file_quote
@@ -749,7 +749,7 @@ pub fn leptos_fluent(
         match attr_lang_quote.is_empty() && attr_dir_quote.is_empty() {
             true => quote! {},
             false => quote! {{
-                use ::leptos_fluent::leptos_meta::{provide_meta_context, Html};
+                use ::leptos_fluent::__reexports::leptos_meta::{provide_meta_context, Html};
                 provide_meta_context();
                 ::leptos::prelude::view! {
                     <Html #attr_lang_quote #attr_dir_quote/>
@@ -1414,9 +1414,9 @@ pub fn leptos_fluent(
             let log_language_quote = quote!();
 
             let effect_quote = quote! {
-                use ::leptos_fluent::web_sys::wasm_bindgen::JsCast;
+                use ::leptos_fluent::__reexports::wasm_bindgen::JsCast;
                 let closure: Box<dyn FnMut(_)> = Box::new(
-                    move |_: ::leptos_fluent::web_sys::Window| {
+                    move |_: ::leptos_fluent::__reexports::web_sys::Window| {
                         let languages = ::leptos::prelude::window().navigator().languages().to_vec();
                         for raw_language in languages {
                             let language = raw_language.as_string();
@@ -1432,7 +1432,7 @@ pub fn leptos_fluent(
                         }
                     }
                 );
-                let cb = ::leptos_fluent::web_sys::wasm_bindgen::closure::Closure::wrap(
+                let cb = ::leptos_fluent::__reexports::wasm_bindgen::closure::Closure::wrap(
                     closure
                 );
                 ::leptos::prelude::window().add_event_listener_with_callback(
@@ -2190,8 +2190,8 @@ pub fn leptos_fluent(
 
             (
                 quote! {
-                    use ::leptos_fluent::fluent_templates;
-                    ::leptos_fluent::fluent_templates::static_loader! {
+                    use ::leptos_fluent::__reexports::fluent_templates::{static_loader, self};
+                    static_loader! {
                         static TRS = {
                             locales: #locales_path,
                             fallback_language: #fallback_language,
