@@ -269,15 +269,22 @@ pub mod session_storage;
 #[doc(hidden)]
 pub mod url;
 
+// Re-exports used by `leptos_fluent!` macro.
 #[doc(hidden)]
-#[cfg(feature = "system")]
-pub extern crate current_locale;
-#[doc(hidden)]
-pub extern crate fluent_templates;
-#[doc(hidden)]
-pub extern crate leptos_meta;
-#[doc(hidden)]
-pub extern crate web_sys;
+pub mod __reexports {
+    #[doc(hidden)]
+    #[cfg(feature = "system")]
+    pub use current_locale;
+    #[doc(hidden)]
+    pub use fluent_templates;
+    #[doc(hidden)]
+    pub use leptos_meta;
+    #[doc(hidden)]
+    pub use wasm_bindgen;
+    #[doc(hidden)]
+    pub use web_sys;
+}
+
 pub use leptos_fluent_macros::leptos_fluent;
 
 use core::hash::{Hash, Hasher};

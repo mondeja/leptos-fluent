@@ -56,7 +56,7 @@ pub mod param {
                 .history()
                 .expect("Failed to get the history from the browser")
                 .replace_state_with_url(
-                    &crate::web_sys::wasm_bindgen::JsValue::NULL,
+                    &wasm_bindgen::JsValue::NULL,
                     "",
                     Some(&url.href()),
                 )
@@ -96,7 +96,7 @@ pub mod param {
                 .history()
                 .expect("Failed to get the history from the browser")
                 .replace_state_with_url(
-                    &crate::web_sys::wasm_bindgen::JsValue::NULL,
+                    &wasm_bindgen::JsValue::NULL,
                     "",
                     Some(&url.href()),
                 )
