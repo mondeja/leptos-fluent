@@ -15,12 +15,18 @@ pub(crate) fn run(
     errors: &mut Vec<String>,
 ) -> Vec<(String, Vec<String>)> {
     let ws_path = manifest_path.as_ref();
-    let tr_macros = gather_tr_macro_defs_from_globstr(
+    let maybe_tr_macros = gather_tr_macro_defs_from_globstr(
         ws_path.join(globstr),
         errors,
         #[cfg(not(test))]
         ws_path,
     );
+    if maybe_tr_macros.is_err() {
+        // If we can't gather the macros, we just return an empty vector.
+        // The Rust compiler will raise an error if the file has a syntax error.
+        return Vec::new();
+    }
+    let tr_macros = maybe_tr_macros.unwrap();
 
     let mut missing_message_names_by_lang: HashMap<Rc<String>, Vec<String>> =
         HashMap::new();

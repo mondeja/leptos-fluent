@@ -1955,7 +1955,7 @@ impl Parse for I18nLoader {
             }
 
             if let Some(ref check_translations_enum) = check_translations {
-                let tr_macros = match check_translations_enum {
+                let maybe_tr_macros = match check_translations_enum {
                     LitBoolOrStr::Str(litstr) => {
                         gather_tr_macro_defs_from_globstr(
                             manifest_path.join(litstr.value()),
@@ -1971,36 +1971,38 @@ impl Parse for I18nLoader {
                                 &mut errors,
                             )
                         } else {
-                            Vec::new()
+                            Ok(Vec::new())
                         }
                     }
                 };
-                let check_messages = crate::translations_checker::run(
-                    &fluent_entries,
-                    &tr_macros,
-                );
+                if let Ok(tr_macros) = maybe_tr_macros {
+                    let check_messages = crate::translations_checker::run(
+                        &fluent_entries,
+                        &tr_macros,
+                    );
 
-                let mut report = String::new();
-                if !check_messages.is_empty() {
-                    report.push_str(&format!(
-                        "Translations check failed:\n- {}",
-                        check_messages.join("\n- "),
-                    ));
-                    if !errors.is_empty() {
-                        report.push_str("\n\n");
+                    let mut report = String::new();
+                    if !check_messages.is_empty() {
+                        report.push_str(&format!(
+                            "Translations check failed:\n- {}",
+                            check_messages.join("\n- "),
+                        ));
+                        if !errors.is_empty() {
+                            report.push_str("\n\n");
+                        }
                     }
-                }
-                if !errors.is_empty() {
-                    report.push_str(&format!(
-                        "Unrecoverable errors:\n- {}",
-                        errors.join("\n- "),
-                    ));
-                }
-                if !report.is_empty() {
-                    return Err(syn::Error::new(
-                        check_translations_enum.span(),
-                        report,
-                    ));
+                    if !errors.is_empty() {
+                        report.push_str(&format!(
+                            "Unrecoverable errors:\n- {}",
+                            errors.join("\n- "),
+                        ));
+                    }
+                    if !report.is_empty() {
+                        return Err(syn::Error::new(
+                            check_translations_enum.span(),
+                            report,
+                        ));
+                    }
                 }
             }
         }

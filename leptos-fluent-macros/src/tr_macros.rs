@@ -7,7 +7,7 @@ pub(crate) fn gather_tr_macro_defs_from_globstr(
     globstr: impl AsRef<Path>,
     errors: &mut Vec<String>,
     #[cfg(not(test))] workspace_path: impl AsRef<Path>,
-) -> Vec<TranslationMacro> {
+) -> Result<Vec<TranslationMacro>, ()> {
     let mut tr_macros = Vec::new();
 
     let globstr = globstr.as_ref();
@@ -18,7 +18,7 @@ pub(crate) fn gather_tr_macro_defs_from_globstr(
             &globstr.to_string_lossy(),
             #[cfg(not(test))]
             &workspace_path.as_ref().to_string_lossy(),
-        );
+        )?;
     } else {
         let glob_pattern = globstr.to_string_lossy();
         match globwalk::glob(&glob_pattern) {
@@ -33,7 +33,7 @@ pub(crate) fn gather_tr_macro_defs_from_globstr(
                                 &path.to_string_lossy(),
                                 #[cfg(not(test))]
                                 &workspace_path.as_ref().to_string_lossy(),
-                            );
+                            )?;
                         }
                         Err(error) => {
                             errors.push(format!("Error reading file: {error}"));
@@ -49,13 +49,13 @@ pub(crate) fn gather_tr_macro_defs_from_globstr(
         }
     }
 
-    tr_macros
+    Ok(tr_macros)
 }
 
 pub(crate) fn gather_tr_macro_defs_from_workspace(
     manifest_path: impl AsRef<Path>,
     errors: &mut Vec<String>,
-) -> Vec<TranslationMacro> {
+) -> Result<Vec<TranslationMacro>, ()> {
     let abs_manifest_path =
         std::path::absolute(manifest_path.as_ref()).unwrap();
     let abs_manifest_path_clone = abs_manifest_path.clone();
@@ -91,7 +91,7 @@ pub(crate) fn gather_tr_macro_defs_from_workspace(
                                 &path.to_string_lossy(),
                                 #[cfg(not(test))]
                                 &workspace_path.display().to_string(),
-                            );
+                            )?;
                         }
                         Err(error) => {
                             errors.push(format!("Error reading file: {error}"));
@@ -107,7 +107,7 @@ pub(crate) fn gather_tr_macro_defs_from_workspace(
         };
     }
 
-    tr_macros
+    Ok(tr_macros)
 }
 
 /// Get *./target* directory for the workspace.
@@ -136,12 +136,19 @@ fn find_workspace_root(mut dir: PathBuf) -> Option<PathBuf> {
     None
 }
 
+/// Parse `tr!` and `move_tr!` macro definitions from the path to a file.
+///
+/// Collects macros and errors into the provided vectors as mutable references.
+///
+/// Can `Result` in an error unit type if the file can not be parsed. In that case,
+/// we don't need to raise an error, just ignore the file and stop the checking,
+/// because the Rust compiler will raise an error if the file has a syntax error.
 fn tr_macros_from_file_path(
     tr_macros: &mut Vec<TranslationMacro>,
     errors: &mut Vec<String>,
     file_path: &str,
     #[cfg(not(test))] workspace_path: &str,
-) {
+) -> Result<(), ()> {
     if let Ok(file_content) = std::fs::read_to_string(file_path) {
         match syn::parse_file(&file_content) {
             Ok(ast) => {
@@ -154,14 +161,17 @@ fn tr_macros_from_file_path(
                     workspace_path,
                 );
                 visitor.visit_file(&ast);
+                Ok(())
             }
             Err(_) => {
                 // This error is a syntax error. Let the Rust compiler handle it.
                 // See https://github.com/mondeja/leptos-fluent/issues/330
+                Err(())
             }
         }
     } else {
         errors.push(format!("Error reading file: {file_path}"));
+        Ok(())
     }
 }
 
