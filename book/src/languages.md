@@ -37,7 +37,7 @@ let LANGUAGES = [
 - `es-ES` is built with the name `"Español (España)"` because it's defined
   as an [ISO 639 language code] and a [ISO 3166 region code].
 
-This enforces that an user will always be able to select their language in
+This enforces that a user will always be able to select their language in
 their own language, and not in the current language of the application.
 
 ## Inferred language names
