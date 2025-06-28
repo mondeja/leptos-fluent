@@ -330,7 +330,10 @@ jobs:
       - end2end-tests
       - build-examples
       - build-book
-    if: github.event.pull_request.user.login == 'mondeja' || startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master'
+    if: |
+      github.event.pull_request.user.login == 'mondeja' ||
+      startsWith(github.ref, 'refs/tags/') ||
+      github.ref == 'refs/heads/master'
     name: Test leptos-fluent-macros release
     runs-on: ubuntu-latest
     steps:
@@ -349,7 +352,10 @@ jobs:
       - end2end-tests
       - build-examples
       - build-book
-    if: github.event.pull_request.user.login == 'mondeja' || startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master'
+    if: |
+      github.event.pull_request.user.login == 'mondeja' ||
+      startsWith(github.ref, 'refs/tags/') ||
+      github.ref == 'refs/heads/master'
     name: Test leptos-fluent release
     runs-on: ubuntu-latest
     steps:
