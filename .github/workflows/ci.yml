@@ -323,18 +323,6 @@ jobs:
             leptos-fluent-type-sizes.log
             leptos-fluent-macros-type-sizes.log
 
-  debug-workflow:
-    name: Debug workflow
-    runs-on: ubuntu-latest
-    steps:
-      - name: Debug workflow conditions
-        run: |
-          echo "Login: ${{ github.event.pull_request.user.login }}"
-          echo "Ref: ${{ github.ref }}"
-          echo "Condition 1: ${{ github.event.pull_request.user.login == 'mondeja' }}"
-          echo "Condition 2: ${{ startsWith(github.ref, 'refs/tags/') }}"
-          echo "Condition 3: ${{ github.ref == 'refs/heads/master' }}"
-
   test-release-leptos-fluent-macros:
     needs:
       - qa
@@ -342,7 +330,7 @@ jobs:
       - end2end-tests
       - build-examples
       - build-book
-    if: false
+    if: ${{ github.event.pull_request.user.login }} == 'mondeja' || startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master'
     name: Test leptos-fluent-macros release
     runs-on: ubuntu-latest
     steps:
@@ -361,10 +349,7 @@ jobs:
       - end2end-tests
       - build-examples
       - build-book
-    if: |
-      '${{ github.event.pull_request.user.login }}' == 'mondeja' ||
-      startsWith(github.ref, 'refs/tags/') ||
-      github.ref == 'refs/heads/master'
+    if: ${{ github.event.pull_request.user.login }} == 'mondeja' || startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master'
     name: Test leptos-fluent release
     runs-on: ubuntu-latest
     steps:
