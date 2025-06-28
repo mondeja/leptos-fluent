@@ -331,7 +331,7 @@ jobs:
       - build-examples
       - build-book
     if: |
-      '${{ github.event.pull_request.user.login }}' == 'mondeja' ||
+      github.event.pull_request.user.login == 'mondeja' ||
       startsWith(github.ref, 'refs/tags/') ||
       github.ref == 'refs/heads/master'
     name: Test leptos-fluent-macros release
@@ -353,7 +353,7 @@ jobs:
       - build-examples
       - build-book
     if: |
-      '${{ github.event.pull_request.user.login }}' == 'mondeja' ||
+      github.event.pull_request.user.login == 'mondeja' ||
       startsWith(github.ref, 'refs/tags/') ||
       github.ref == 'refs/heads/master'
     name: Test leptos-fluent release
