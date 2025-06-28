@@ -64,7 +64,7 @@ executed in the next order:
 
 ### Order
 
-1. Get the initial languaje from a source or target: `initial_language_from_*`
+1. Get the initial language from a source or target: `initial_language_from_*`
 2. Obtain the initial language and set to a target: `initial_language_from_*_to_*`
 3. Synchronize the current language with a target: `set_language_to_*`
 
