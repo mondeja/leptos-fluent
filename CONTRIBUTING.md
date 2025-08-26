@@ -37,7 +37,7 @@ For example, to run the `csr_complete` test suite run:
 wasm-pack test --firefox --headless tests/end2end --test csr_complete
 ```
 
-[`wasm-pack test`]: https://rustwasm.github.io/wasm-pack/book/commands/test.html
+[`wasm-pack test`]: https://rustwasm.github.io/docs/wasm-pack/commands/test.html
 
 ### Unit tests
 
