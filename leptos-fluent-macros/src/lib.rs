@@ -833,7 +833,7 @@ pub fn leptos_fluent(
     let sync_language_with_session_storage_quote = quote!();
 
     let initial_language_from_url_param_quote: proc_macro2::TokenStream = {
-        #[cfg(feature = "hydrate")]
+        #[cfg(all(feature = "hydrate", not(feature = "ssr")))]
         let hydrate_rerender_quote = quote! {
             ::leptos::prelude::Effect::new(move |prev: Option<()>| {
                 if prev.is_none() {
