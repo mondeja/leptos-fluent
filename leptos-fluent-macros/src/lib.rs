@@ -193,7 +193,7 @@ pub fn leptos_fluent(
         (::leptos::prelude::expect_context::<::leptos_fluent::I18n>())()
     };
 
-    #[cfg(all(feature = "nightly", not(feature = "ssr")))]
+    #[cfg(feature = "nightly")]
     let set_language_quote = quote! {
         (::leptos::prelude::expect_context::<::leptos_fluent::I18n>())(l)
     };
@@ -203,7 +203,7 @@ pub fn leptos_fluent(
         ::leptos::prelude::expect_context::<::leptos_fluent::I18n>().language.get()
     };
 
-    #[cfg(all(not(feature = "nightly"), not(feature = "ssr")))]
+    #[cfg(not(feature = "nightly"))]
     let set_language_quote = quote! {
         ::leptos::prelude::expect_context::<::leptos_fluent::I18n>().language.set(l)
     };
