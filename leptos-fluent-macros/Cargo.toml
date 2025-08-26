@@ -21,7 +21,7 @@ quote = "1"
 syn = { version = "2", features = ["visit", "full"] }
 walkdir = ">=2"
 globwalk = "0.9"
-fluent-templates = { version = ">=0.13", default-features = false, features = [
+fluent-templates = { version = ">=0.13.1", default-features = false, features = [
   "macros",
   "walkdir",
 ] }
