@@ -271,7 +271,9 @@ jobs:
             cd examples/${{ matrix.example }}
             trunk build --release ${{ steps.build-features.outputs.features }}
       - name: Build with cargo-leptos
-        if: startsWith(matrix.example, 'ssr')
+        # TODO: On nightly MacOS, `cargo leptos` is not found after being installed
+        #       so currently is skipped
+        if: startsWith(matrix.example, 'ssr') && !(matrix.toolchain == 'nightly' && startsWith(matrix.runs-on, 'macos'))
         run: |
           cd examples/${{ matrix.example }}
           cargo leptos build --release ${{ steps.build-features.outputs.features }}
