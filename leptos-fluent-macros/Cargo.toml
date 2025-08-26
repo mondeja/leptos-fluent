@@ -25,7 +25,7 @@ fluent-templates = { version = ">=0.13.1", default-features = false, features = 
   "macros",
   "walkdir",
 ] }
-fluent-syntax = "0.12"
+fluent-syntax = ">=0.11"
 pathdiff = "0.2"
 # TODO: using the same version for cfg-expr of system-deps until a new system-deps is released
 # The problem related with trybuild locking https://github.com/dtolnay/trybuild/issues/261
