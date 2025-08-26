@@ -547,11 +547,7 @@ pub fn leptos_fluent(
         }).collect();
 
     let initial_language_from_url_path_quote: proc_macro2::TokenStream = {
-        if url_path.is_none() {
-            quote! {}
-        } else {
-            let ident = url_path.as_ref().unwrap();
-
+        if let Some(ref ident) = url_path {
             initial_language_from_url_path.iter().map(|param| {
                 #[cfg(not(feature = "ssr"))]
                 let effect_quote = {
@@ -683,6 +679,8 @@ pub fn leptos_fluent(
                     None => quote,
                 }
             }).collect()
+        } else {
+            quote!()
         }
     };
 
