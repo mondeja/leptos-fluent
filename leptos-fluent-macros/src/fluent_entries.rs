@@ -1,4 +1,5 @@
 use crate::{FluentFilePaths, FluentResources};
+use fluent_bundle::FluentResource;
 use fluent_syntax::ast::{
     CallArguments, Expression, InlineExpression, PatternElement,
 };
@@ -45,7 +46,7 @@ pub(crate) struct FluentEntry {
 }
 
 fn get_fluent_entries_from_resource(
-    resource: &fluent_templates::fluent_bundle::FluentResource,
+    resource: &FluentResource,
 ) -> (Vec<FluentEntry>, Vec<String>) {
     let mut entries = Vec::new();
     // TODO: handle errors in a mutable vector passed as reference
@@ -212,9 +213,7 @@ pub(crate) fn build_fluent_entries(
     for (lang, resources) in fluent_resources {
         fluent_entries.insert(Rc::clone(lang), vec![]);
         for resource_str in resources {
-            match fluent_templates::fluent_bundle::FluentResource::try_new(
-                resource_str.to_owned(),
-            ) {
+            match FluentResource::try_new(resource_str.to_owned()) {
                 Ok(resource) => {
                     let (entries, errs) =
                         get_fluent_entries_from_resource(&resource);
@@ -285,9 +284,7 @@ pub(crate) fn build_fluent_entries(
     }
 
     if let Some(resource_str) = &core_locales_content {
-        match fluent_templates::fluent_bundle::FluentResource::try_new(
-            resource_str.to_owned(),
-        ) {
+        match FluentResource::try_new(resource_str.to_owned()) {
             Ok(resource) => {
                 for resources in fluent_entries.values_mut() {
                     let (entries, errs) =

@@ -1670,10 +1670,11 @@ dependencies = [
 
 [[package]]
 name = "leptos-fluent"
-version = "0.2.16"
+version = "0.2.17"
 dependencies = [
  "current_locale",
  "directories",
+ "fluent-bundle",
  "fluent-templates",
  "leptos",
  "leptos-fluent-macros",
@@ -1772,10 +1773,11 @@ dependencies = [
 
 [[package]]
 name = "leptos-fluent-macros"
-version = "0.2.16"
+version = "0.2.17"
 dependencies = [
  "cfg-expr",
  "current_platform",
+ "fluent-bundle",
  "fluent-syntax",
  "fluent-templates",
  "globwalk",

@@ -290,10 +290,8 @@ pub use leptos_fluent_macros::leptos_fluent;
 use core::hash::{Hash, Hasher};
 use core::ops::Deref;
 use core::str::FromStr;
-use fluent_templates::{
-    fluent_bundle::FluentValue, loader::Loader, LanguageIdentifier,
-    StaticLoader,
-};
+use fluent_bundle::FluentValue;
+use fluent_templates::{loader::Loader, LanguageIdentifier, StaticLoader};
 #[cfg(feature = "nightly")]
 use leptos::prelude::Get;
 use leptos::{

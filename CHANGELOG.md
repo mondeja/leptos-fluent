@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 2025-08-26 - [0.2.17]
+
+### Bug fixes
+
+- Fix variable not declared when compiling with all features enabled.
+
+### Enhancements
+
+- Bump fluent-templates and fluent-syntax accordingly.
+- Make fluent-bundle a direct dependency instead of reusing the version
+  vendored by fluent-templates.
+
 ## 2025-06-28 - [0.2.16]
 
 ### Bug fixes
