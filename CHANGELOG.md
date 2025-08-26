@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 2025-08-26 - [0.2.17]
+
+### Bug fixes
+
+- Fix variable not declared when compiling with all features enabled.
+
+### Enhancements
+
+- Bump fluent-templates and fluent-syntax accordingly.
+- Make fluent-bundle a direct dependency instead of reusing the version
+  vendored by fluent-templates.
+
 ## 2025-06-28 - [0.2.16]
 
 ### Bug fixes
@@ -864,6 +876,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.2.17]: https://github.com/mondeja/leptos-fluent/compare/v0.2.16...v0.2.17
 [0.2.16]: https://github.com/mondeja/leptos-fluent/compare/v0.2.15...v0.2.16
 [0.2.15]: https://github.com/mondeja/leptos-fluent/compare/v0.2.14...v0.2.15
 [0.2.14]: https://github.com/mondeja/leptos-fluent/compare/v0.2.13...v0.2.14

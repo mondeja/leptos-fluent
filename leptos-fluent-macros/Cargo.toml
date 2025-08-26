@@ -2,7 +2,7 @@
 name = "leptos-fluent-macros"
 description = "Macros for leptos-fluent"
 edition.workspace = true
-version = "0.2.16"
+version = "0.2.17"
 rust-version = "1.79.0"
 license = "MIT"
 documentation.workspace = true
@@ -26,6 +26,7 @@ fluent-templates = { version = ">=0.13.1", default-features = false, features = 
   "walkdir",
 ] }
 fluent-syntax = ">=0.12"
+fluent-bundle = ">=0.16"
 pathdiff = "0.2"
 # TODO: using the same version for cfg-expr of system-deps until a new system-deps is released
 # The problem related with trybuild locking https://github.com/dtolnay/trybuild/issues/261

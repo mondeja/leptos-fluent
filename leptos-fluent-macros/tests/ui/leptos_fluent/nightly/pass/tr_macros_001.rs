@@ -1,7 +1,7 @@
 //! 001 if_elseif_else
 #![cfg_attr(feature = "nightly", feature(stmt_expr_attributes))]
 
-use fluent_templates::fluent_bundle::FluentValue;
+use fluent_bundle::FluentValue;
 use leptos_fluent::{move_tr, tr};
 use std::borrow::Cow;
 
