@@ -89,8 +89,6 @@
 //!         // Check translations correctness in the specified files.
 //!         #[cfg(debug_assertions)]
 //!         check_translations: "./src/**/*.rs",
-//!         // Provide a closure to customise fluent bundles.
-//!         customise: |bundle| bundle.set_transform(Some(|s| std::borrow::Cow::from(s))),
 //!
 //!         // Client side options
 //!         // -------------------

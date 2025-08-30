@@ -298,6 +298,21 @@ Add new messages found in `tr!` and `move_tr!` macros to translations files.
   }
   ```
 
+### `customise`
+
+Provide a closure to customise fluent bundles used by
+[`fluent-templates::StaticLoader`] internally.
+
+```rust
+leptos_fluent! {
+    // ...
+    customise: |bundle| {
+        bundle.set_use_isolating(false);
+        bundle.set_transform(Some(|s| std::borrow::Cow::from(s)));
+    },
+}
+```
+
 ### <span style="opacity:.5">CSR </span> | `sync_html_tag_lang`
 
 Synchronize the global [`<html lang="...">` attribute] with current language
@@ -1030,6 +1045,7 @@ leptos_fluent! {
 ```
 
 [`fluent_templates::static_loader!`]: https://docs.rs/fluent-templates/latest/fluent_templates/macro.static_loader.html
+[`fluent-templates::StaticLoader`]: https://docs.rs/fluent-templates/latest/fluent_templates/struct.StaticLoader.html
 [`<html lang="...">` attribute]: https://developer.mozilla.org/docs/Web/HTML/Global_attributes/lang
 [`<html dir="...">` attribute]: https://developer.mozilla.org/docs/Web/HTML/Global_attributes/dir
 [local storage]: https://developer.mozilla.org/docs/Web/API/Window/localStorage
