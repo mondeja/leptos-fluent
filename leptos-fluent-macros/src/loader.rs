@@ -460,6 +460,7 @@ pub(crate) struct I18nLoader {
     pub core_locales_path: Option<String>,
     pub check_translations: Option<LitBoolOrStr>,
     pub fill_translations: Option<String>,
+    pub customise: Option<syn::ExprClosure>,
     pub provide_meta_context: Vec<LitBool>,
     pub sync_html_tag_lang: Vec<LitBoolExprOrIdent>,
     pub sync_html_tag_dir: Vec<LitBoolExprOrIdent>,
@@ -551,6 +552,7 @@ impl Parse for I18nLoader {
         let mut translations: Option<Translations> = None;
         let mut check_translations: Option<LitBoolOrStr> = None;
         let mut fill_translations: Option<syn::LitStr> = None;
+        let mut customise: Option<syn::ExprClosure> = None;
         let mut provide_meta_context: Vec<LitBool> = Vec::new();
         let mut sync_html_tag_lang: Vec<LitBoolExprOrIdent> = Vec::new();
         let mut sync_html_tag_dir: Vec<LitBoolExprOrIdent> = Vec::new();
@@ -847,6 +849,8 @@ impl Parse for I18nLoader {
                     k,
                     fill_translations
                 );
+            } else if k == "customise" {
+                customise = Some(input.parse()?);
             } else if k == "sync_html_tag_lang" {
                 let mut param = LitBoolExprOrIdent::new();
                 parse_runtime_exprpath!(exprpath, param);
@@ -2062,6 +2066,7 @@ impl Parse for I18nLoader {
             default_language: default_language_and_index,
             check_translations,
             fill_translations: fill_translations.map(|x| x.value()),
+            customise,
             provide_meta_context,
             sync_html_tag_lang,
             sync_html_tag_dir,

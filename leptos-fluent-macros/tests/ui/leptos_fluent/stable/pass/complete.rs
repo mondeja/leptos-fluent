@@ -32,6 +32,7 @@ fn I18n(children: Children) -> impl IntoView {
         initial_language_from_local_storage_to_cookie: true,
         set_language_to_local_storage: true,
         initial_language_from_navigator: true,
+        customise: |bundle| bundle.set_transform(Some(|s| Cow::from(s)))
     }
 }
 

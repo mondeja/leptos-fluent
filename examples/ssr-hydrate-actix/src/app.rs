@@ -44,6 +44,7 @@ fn I18nProvider(children: Children) -> impl IntoView {
         initial_language_from_url_path_to_cookie: true,
         initial_language_from_url_path_to_local_storage: true,
         initial_language_from_url_path_to_server_function: set_language_server_function,
+        customise: |bundle| bundle.set_transform(Some(|s| std::borrow::Cow::from(s)))
     }
 }
 

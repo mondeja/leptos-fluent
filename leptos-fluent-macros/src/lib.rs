@@ -119,6 +119,7 @@ pub fn leptos_fluent(
         default_language,
         check_translations,
         fill_translations,
+        customise,
         provide_meta_context,
         sync_html_tag_lang,
         sync_html_tag_dir,
@@ -2180,11 +2181,18 @@ pub fn leptos_fluent(
             };
 
             #[cfg(feature = "disable-unicode-isolating-marks")]
-            let customise_quote = quote! {
-                customise: |bundle| bundle.set_use_isolating(false),
-            };
+            let customise_quote = customise.map_or(
+                quote! { customise: |bundle| bundle.set_use_isolating(false) },
+                |c| quote! {
+                    customise: |bundle| {
+                        bundle.set_use_isolating(false);
+                        let customise: fn(&mut ::leptos_fluent::__reexports::fluent_templates::FluentBundle<&::leptos_fluent::__reexports::fluent_bundle::FluentResource>) = #c;
+                        customise(bundle);
+                    }
+                }
+            );
             #[cfg(not(feature = "disable-unicode-isolating-marks"))]
-            let customise_quote = quote!();
+            let customise_quote = customise.map_or(quote!(), |c| quote!{ customise: #c });
 
             (
                 quote! {
