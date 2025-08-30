@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## 2025-08-30 - [0.2.18]
+
+### New features
+
+- Add `customise` argument to `leptos_fluent!` macro to customise the
+  bundles used by `fluent-templates::StaticLoader` internally.
+
+### Deprecations
+
+- The feature `disable-unicode-isolating-marks` introduced at v0.2.12 has been
+  deprecated and will be removed in v0.3.0. Use the `customise` argument of
+  `leptos_fluent!` macro instead to disable Unicode isolating marks in
+  translations.
+
 ## 2025-08-26 - [0.2.17]
 
 ### Bug fixes
@@ -876,6 +890,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.2.18]: https://github.com/mondeja/leptos-fluent/compare/v0.2.17...v0.2.18
 [0.2.17]: https://github.com/mondeja/leptos-fluent/compare/v0.2.16...v0.2.17
 [0.2.16]: https://github.com/mondeja/leptos-fluent/compare/v0.2.15...v0.2.16
 [0.2.15]: https://github.com/mondeja/leptos-fluent/compare/v0.2.14...v0.2.15

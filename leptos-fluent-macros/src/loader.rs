@@ -850,7 +850,16 @@ impl Parse for I18nLoader {
                     fill_translations
                 );
             } else if k == "customise" {
+                check_struct_field_init_shorthand(
+                    struct_field_init_shorthand,
+                    &k,
+                )?;
                 customise = Some(input.parse()?);
+                evaluate_compile_time_exprpath_set_none!(
+                    exprpath_token_stream,
+                    k,
+                    fill_translations
+                );
             } else if k == "sync_html_tag_lang" {
                 let mut param = LitBoolExprOrIdent::new();
                 parse_runtime_exprpath!(exprpath, param);
