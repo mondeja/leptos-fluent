@@ -89,6 +89,8 @@
 //!         // Check translations correctness in the specified files.
 //!         #[cfg(debug_assertions)]
 //!         check_translations: "./src/**/*.rs",
+//!         // Provide a closure to customise fluent bundles.
+//!         customise: |bundle| bundle.set_transform(Some(|s| std::borrow::Cow::from(s))),
 //!
 //!         // Client side options
 //!         // -------------------
@@ -276,9 +278,9 @@ pub mod __reexports {
     #[cfg(feature = "system")]
     pub use current_locale;
     #[doc(hidden)]
-    pub use fluent_templates;
-    #[doc(hidden)]
     pub use fluent_bundle;
+    #[doc(hidden)]
+    pub use fluent_templates;
     #[doc(hidden)]
     pub use leptos_meta;
     #[doc(hidden)]
