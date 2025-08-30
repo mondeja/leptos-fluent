@@ -278,6 +278,8 @@ pub mod __reexports {
     #[doc(hidden)]
     pub use fluent_templates;
     #[doc(hidden)]
+    pub use fluent_bundle;
+    #[doc(hidden)]
     pub use leptos_meta;
     #[doc(hidden)]
     pub use wasm_bindgen;
