@@ -90,7 +90,7 @@ fn render_language(lang: &'static Language) -> impl IntoView {
         i18n.language.set(lang);
         spawn_local(async {
             _ = show_hello_world(
-                tr!(i18n, "hello-world"),
+                tr!("hello-world"),
                 lang.name.to_string(),
             ).await;
         });

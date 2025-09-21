@@ -1,4 +1,4 @@
 [toolchain]
 channel = "stable"
 targets = ["wasm32-unknown-unknown"]
-rust-version = "1.80.1"
+rust-version = "1.88"
