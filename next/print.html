@@ -878,6 +878,7 @@ separation of contexts in the codebase.</p>
 <ul>
 <li><a href="advanced-usage.html#tr-and-move_tr-outside-reactive-graph"><code>tr!</code> and <code>move_tr!</code> outside reactive graph</a>
 <ul>
+<li><a href="advanced-usage.html#the-problem">The problem</a></li>
 <li><a href="advanced-usage.html#on-events-panics">On events, panics</a></li>
 </ul>
 </li>
@@ -894,6 +895,11 @@ separation of contexts in the codebase.</p>
 <li><a href="advanced-usage.html#destructuring-leptos_fluent-parameters">Destructuring <code>leptos_fluent!</code> parameters</a></li>
 </ul>
 <h2 id="tr-and-move_tr-outside-reactive-graph"><a class="header" href="#tr-and-move_tr-outside-reactive-graph"><code>tr!</code> and <code>move_tr!</code> outside reactive graph</a></h2>
+<p>This section of the documentation only applies to Leptos &gt;= v0.7 and &lt;= 0.8.8.
+If you're using Leptos &gt;= v0.8.9, you can ignore it.</p>
+<p>Leptos v0.8.9 introduced owner preservation in actions and event listeners
+as intended behaviour for first time in <a href="https://github.com/leptos-rs/leptos/pull/4267">leptos#4267</a>.</p>
+<h3 id="the-problem"><a class="header" href="#the-problem">The problem</a></h3>
 <p>Outside the reactive ownership tree, mainly known as the <em>reactive graph</em>,
 we can't obtain the context of <code>I18n</code> using <code>expect_context::&lt;leptos_fluent::I18n&gt;()</code>,
 which is what <code>tr!</code> and <code>move_tr!</code> do internally. Instead, pass the context
@@ -927,7 +933,7 @@ pub fn Child() -&gt; impl IntoView {
 }</code></pre>
 <p>With Leptos v0.7, whatever <code>tr!</code> macro used in the <code>on:</code> event will panic,
 but with Leptos v0.6, this outsiding of the ownership tree has been ignored
-from the majority of the cases as unintended behavior.</p>
+in almost all cases as unintended behavior.</p>
 <p>To avoid that, pass the i18n context as first parameter to <code>tr!</code> and <code>move_tr!</code>:</p>
 <pre><code class="language-rust">use leptos::prelude::*;
 use leptos_fluent::{I18n, tr};
@@ -966,7 +972,7 @@ error: argument must be a string literal
    |     tr!(text_id);
    |     ^^^^^^^^^^^^
 */</code></pre>
-<p>Instead, you can use the next <code>i18n.tr</code> and <code>i18n.tr_with_args</code> methods:</p>
+<p>Instead, you can use the methods <code>i18n.tr</code> and <code>i18n.tr_with_args</code>:</p>
 <pre><code class="language-rust">use leptos::prelude::expect_context;
 use leptos_fluent::I18n;
 
@@ -1158,7 +1164,7 @@ fn render_language(lang: &amp;'static Language) -&gt; impl IntoView {
         i18n.language.set(lang);
         spawn_local(async {
             _ = show_hello_world(
-                tr!(i18n, "hello-world"),
+                tr!("hello-world"),
                 lang.name.to_string(),
             ).await;
         });
