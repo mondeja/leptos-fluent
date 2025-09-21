@@ -4,6 +4,16 @@
 
 ## `tr!` and `move_tr!` outside reactive graph
 
+This section of the documentation only applies to Leptos >= v0.7 and <= 0.8.8.
+If you're using Leptos >= v0.8.9, you can ignore it.
+
+Leptos v0.8.9 introduced owner preservation in actions and event listeners
+as intended behaviour for first time in [leptos#4267].
+
+[leptos#4267]: https://github.com/leptos-rs/leptos/pull/4267
+
+### The problem
+
 Outside the reactive ownership tree, mainly known as the _reactive graph_,
 we can't obtain the context of `I18n` using `expect_context::<leptos_fluent::I18n>()`,
 which is what `tr!` and `move_tr!` do internally. Instead, pass the context
@@ -46,7 +56,7 @@ pub fn Child() -> impl IntoView {
 
 With Leptos v0.7, whatever `tr!` macro used in the `on:` event will panic,
 but with Leptos v0.6, this outsiding of the ownership tree has been ignored
-from the majority of the cases as unintended behavior.
+in almost all cases as unintended behavior.
 
 To avoid that, pass the i18n context as first parameter to `tr!` and `move_tr!`:
 
@@ -95,7 +105,7 @@ error: argument must be a string literal
 */
 ```
 
-Instead, you can use the next `i18n.tr` and `i18n.tr_with_args` methods:
+Instead, you can use the methods `i18n.tr` and `i18n.tr_with_args`:
 
 ```rust
 use leptos::prelude::expect_context;

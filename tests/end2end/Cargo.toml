@@ -10,12 +10,6 @@ leptos-fluent.workspace = true
 fluent-templates.workspace = true
 leptos-fluent-csr-minimal-example.workspace = true
 leptos-fluent-csr-complete-example.workspace = true
-web-sys = { version = "0.3", features = [
-  "Location",
-  "Storage",
-  "UrlSearchParams",
-] }
-wasm-bindgen.workspace = true
 wasm-bindgen-test.workspace = true
 leptos = "0.8"
 gloo-utils.workspace = true
