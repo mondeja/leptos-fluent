@@ -8,9 +8,9 @@ This section of the documentation only applies to Leptos >= v0.7 and <= 0.8.8.
 If you're using Leptos >= v0.8.9, you can ignore it.
 
 Leptos v0.8.9 introduced owner preservation in actions and event listeners
-as intended behaviour for first time in [leptos/#4267].
+as intended behaviour for first time in [leptos#4267].
 
-[leptos/#4267]: https://github.com/leptos-rs/leptos/pull/4267
+[leptos#4267]: https://github.com/leptos-rs/leptos/pull/4267
 
 ### The problem
 
