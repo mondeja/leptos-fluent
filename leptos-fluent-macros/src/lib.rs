@@ -2213,7 +2213,11 @@ pub fn leptos_fluent(
 
                 #[cfg(not(feature = "disable-unicode-isolating-marks"))]
                 {
-                    (customise.map_or(quote!(), |c| quote!{ customise: #c, }), quote!(),)
+                    (
+                        customise
+                            .map_or(quote!(), |c| quote! { customise: #c, }),
+                        quote!(),
+                    )
                 }
             };
 
