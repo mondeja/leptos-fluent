@@ -218,6 +218,7 @@ jobs:
           echo "tests=[${tests}]" >> $GITHUB_OUTPUT
 
   end2end-ssr-tests:
+    name: SSR end to end test ${{ matrix.test }} (${{ matrix.toolchain }})
     needs: discover-end2end-ssr-tests
     runs-on: ubuntu-latest
     permissions:
