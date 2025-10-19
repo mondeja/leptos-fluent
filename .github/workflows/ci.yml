@@ -163,9 +163,9 @@ jobs:
           fi
           cargo test $args -p leptos-fluent -p leptos-fluent-macros -p leptos-fluent-tests
 
-  end2end-tests:
+  end2end-csr-tests:
     needs: check-toolchain-is-stable
-    name: End to end tests (${{ matrix.browser }}, ${{ matrix.runs-on }})
+    name: CSR end to end tests (${{ matrix.browser }}, ${{ matrix.runs-on }})
     runs-on: ${{ matrix.runs-on }}
     strategy:
       fail-fast: false
@@ -202,6 +202,40 @@ jobs:
           warning_on_retry: false
           shell: bash
           command: wasm-pack-test-all tests/end2end --${{ matrix.browser }} --headless
+
+  discover-end2end-ssr-tests:
+    runs-on: ubuntu-latest
+    outputs:
+      tests: ${{ steps.set-matrix.outputs.tests }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Discover tests
+        id: set-matrix
+        run: |
+          tests=$(find tests/end2end/ssr/src/apps -mindepth 1 -maxdepth 1 -type d -printf "\"%f\"," | sed 's/,$//')
+          echo "tests=[${tests}]" >> $GITHUB_OUTPUT
+
+  end2end-ssr-tests:
+    needs: discover-end2end-ssr-tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        test: ${{ fromJson(needs.discover-end2end-ssr-tests.outputs.tests) }}
+        toolchain:
+          - stable
+          - nightly
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: ${{ matrix.toolchain }}
+          target: wasm32-unknown-unknown
+      - name: Run SSR end to end test ${{ matrix.test }}
+        run: |
+          TESTS=${{ matrix.test }} cargo test -p leptos-fluent-end2end-ssr-tests
 
   build-examples:
     needs: check-toolchain-is-stable
@@ -329,7 +363,8 @@ jobs:
     needs:
       - qa
       - unit-tests
-      - end2end-tests
+      - end2end-csr-tests
+      - end2end-ssr-tests
       - build-examples
       - build-book
     if: |
@@ -351,7 +386,8 @@ jobs:
     needs:
       - qa
       - unit-tests
-      - end2end-tests
+      - end2end-csr-tests
+      - end2end-ssr-tests
       - build-examples
       - build-book
     if: |

@@ -1,0 +1,21 @@
+[package]
+name = "leptos-fluent-end2end-ssr-tests"
+edition = "2021"
+version = "0.1.0"
+publish = false
+
+[dependencies]
+end2end-ssr-helpers = { path = "helpers" }
+end2end-ssr-helpers-macros = { path = "helpers/macros" }
+ctor = "0.6"
+
+[dev-dependencies]
+thirtyfour = "0.36"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "time"] }
+anyhow = "1"
+reqwest = { version = "0.12", features = ["blocking"] }
+serial_test = "3"
+futures-util = "0.3"
+
+[build-dependencies]
+which = "8"

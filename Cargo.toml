@@ -7,12 +7,16 @@ members = [
   "examples/ssr-hydrate-actix",
   "examples/ssr-hydrate-axum",
   "tests",
-  "tests/end2end",
-  "tests/end2end/helpers",
-  "tests/end2end/initial-language-from-navigator",
-  "tests/end2end/set-language-to-cookie",
-  "tests/end2end/set-language-to-local-storage",
-  "tests/end2end/set-language-to-session-storage",
+  "tests/end2end/csr",
+  "tests/end2end/csr/helpers",
+  "tests/end2end/csr/initial-language-from-navigator",
+  "tests/end2end/csr/set-language-to-cookie",
+  "tests/end2end/csr/set-language-to-local-storage",
+  "tests/end2end/csr/set-language-to-session-storage",
+  "tests/end2end/ssr",
+  "tests/end2end/ssr/helpers",
+  "tests/end2end/ssr/helpers/macros",
+  "tests/end2end/ssr/src/apps/*",
 ]
 resolver = "2"
 
@@ -32,7 +36,7 @@ panic = "abort"
 
 [workspace.dependencies]
 leptos-fluent = { path = "./leptos-fluent" }
-end2end-helpers = { path = "./tests/end2end/helpers" }
+end2end-csr-helpers = { path = "./tests/end2end/csr/helpers" }
 wasm-bindgen = "0.2"
 wasm-bindgen-test = "0.3"
 gloo-utils = { version = "0.2", default-features = false }

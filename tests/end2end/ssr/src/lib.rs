@@ -1,0 +1,58 @@
+use ctor::{ctor, dtor};
+use end2end_ssr_helpers::{
+    start_chromedriver, wait_until_chromedriver_ready,
+    wait_until_chromedriver_terminated,
+};
+
+static mut DRIVER: Option<std::process::Child> = None;
+
+#[ctor]
+fn setup_tests() {
+    let child = start_chromedriver();
+    wait_until_chromedriver_ready();
+    unsafe {
+        DRIVER = Some(child);
+    }
+}
+
+#[dtor]
+fn teardown_tests() {
+    #[allow(static_mut_refs)]
+    let maybe_child = unsafe { DRIVER.take() };
+    if let Some(mut child) = maybe_child {
+        let _ = child.kill();
+        wait_until_chromedriver_terminated(&mut child);
+        #[allow(clippy::print_stdout)]
+        {
+            println!("✅ chromedriver process terminated.");
+        }
+    } else {
+        #[allow(clippy::print_stdout)]
+        {
+            println!("⚠️ No chromedriver process found to terminate.");
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use end2end_ssr_helpers_macros::e2e_test;
+
+    #[e2e_test]
+    async fn initial_language_from_accept_language_header_axum() {
+        let driver = world.driver();
+        world.goto_root().await?;
+        let title = driver.find(By::Css("h1")).await?;
+        assert_eq!(title.text().await?, "Welcome to Leptos!");
+
+        let client = reqwest::Client::new();
+        // Send request with Accept-Language header
+        let response = client
+            .get(world.host())
+            .header("Accept-Language", "es-ES,es;q=0.9")
+            .send()
+            .await?;
+        let body = response.text().await?;
+        assert!(body.contains("¡Bienvenido a Leptos!"), "{}", body);
+    }
+}
