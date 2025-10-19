@@ -40,11 +40,6 @@ mod tests {
 
     #[e2e_test]
     async fn initial_language_from_accept_language_header_axum() {
-        let driver = world.driver();
-        world.goto_root().await?;
-        let title = driver.find(By::Css("h1")).await?;
-        assert_eq!(title.text().await?, "Welcome to Leptos!");
-
         let client = reqwest::Client::new();
         // Send request with Accept-Language header
         let response = client
@@ -54,5 +49,13 @@ mod tests {
             .await?;
         let body = response.text().await?;
         assert!(body.contains("¡Bienvenido a Leptos!"), "{}", body);
+
+        let response = client
+            .get(world.host())
+            .header("Accept-Language", "en-US,en;q=0.9")
+            .send()
+            .await?;
+        let body = response.text().await?;
+        assert!(body.contains("Welcome to Leptos!"), "{}", body);
     }
 }
