@@ -239,7 +239,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install cargo-leptos
         run: |
-          cargo binstall -y --force cargo-leptos
+          cargo binstall -y --force cargo-leptos@0.2.44
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Setup Rust
@@ -294,7 +294,7 @@ jobs:
       - name: Install cargo-leptos
         if: startsWith(matrix.example, 'ssr')
         run: |
-          cargo binstall -y --force cargo-leptos
+          cargo binstall -y --force cargo-leptos@0.2.44
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Get build features
