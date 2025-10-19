@@ -204,6 +204,7 @@ jobs:
           command: wasm-pack-test-all tests/end2end --${{ matrix.browser }} --headless
 
   discover-end2end-ssr-tests:
+    name: Discover SSR end to end tests
     runs-on: ubuntu-latest
     permissions:
       contents: read

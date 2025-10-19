@@ -938,7 +938,6 @@ dependencies = [
 name = "end2end-ssr-helpers-macros"
 version = "0.1.0"
 dependencies = [
- "proc-macro2",
  "quote",
  "syn",
 ]
