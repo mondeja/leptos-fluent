@@ -285,11 +285,7 @@ jobs:
       - name: Install cargo-leptos
         if: startsWith(matrix.example, 'ssr')
         run: |
-          if ! command -v cargo-leptos &> /dev/null; then
-            cargo binstall -y cargo-leptos
-          else
-            echo "cargo-leptos is already installed"
-          fi
+          cargo binstall -y --force cargo-leptos
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Get build features
