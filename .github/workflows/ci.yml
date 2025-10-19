@@ -205,6 +205,8 @@ jobs:
 
   discover-end2end-ssr-tests:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     outputs:
       tests: ${{ steps.set-matrix.outputs.tests }}
     steps:
@@ -218,6 +220,8 @@ jobs:
   end2end-ssr-tests:
     needs: discover-end2end-ssr-tests
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     strategy:
       matrix:
         test: ${{ fromJson(needs.discover-end2end-ssr-tests.outputs.tests) }}
