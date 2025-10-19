@@ -1,0 +1,12 @@
+[package]
+name = "end2end-ssr-helpers-macros"
+edition = "2021"
+version = "0.1.0"
+publish = false
+
+[lib]
+proc-macro = true
+
+[dependencies]
+quote = "1"
+syn = { version = "2", features = ["full"] }

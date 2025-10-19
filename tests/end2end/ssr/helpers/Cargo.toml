@@ -1,0 +1,11 @@
+[package]
+name = "end2end-ssr-helpers"
+edition = "2021"
+version = "0.1.0"
+publish = false
+
+[dependencies]
+reqwest = { version = "0.12", features = ["blocking"] }
+tokio = { version = "1", features = ["time", "process"] }
+thirtyfour = "0.36"
+anyhow = "1"

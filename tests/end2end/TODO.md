@@ -2,7 +2,7 @@
 
 ## Macro parameters
 
-- `initial_language_from_accept_language_header`
+- `initial_language_from_accept_language_header` (Actix)
 - `cookie_attrs`
 - `initial_language_from_system`
 - `set_language_to_data_file`
