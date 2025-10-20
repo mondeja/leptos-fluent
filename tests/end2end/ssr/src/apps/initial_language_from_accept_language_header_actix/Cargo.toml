@@ -55,6 +55,7 @@ lib-features = ["hydrate"]
 [package.metadata.cargo-machete]
 ignored = [
   "actix-web",
+  "actix-files",
   "console_error_panic_hook",
   "http",
   "leptos_actix",
