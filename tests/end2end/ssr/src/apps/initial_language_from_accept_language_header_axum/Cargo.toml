@@ -77,3 +77,6 @@ lib-default-features = false
 #
 # Optional. Defaults to "release".
 lib-profile-release = "wasm-release"
+
+[package.metadata.cargo-machete]
+ignored = ["axum", "console_error_panic_hook", "leptos_axum", "leptos_meta", "leptos_router", "tokio", "wasm-bindgen"]
