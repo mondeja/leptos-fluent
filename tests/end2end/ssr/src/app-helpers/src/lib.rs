@@ -31,7 +31,7 @@ macro_rules! shell {
                         <MetaTags />
                     </head>
                     <body>
-                        $app
+                        <$app/>
                     </body>
                 </html>
             }
