@@ -98,7 +98,6 @@ fn extract_world_param_from_fn_sig_inputs(
     sig_inputs: &syn::punctuated::Punctuated<syn::FnArg, syn::token::Comma>,
 ) -> Option<(&syn::Ident, bool)> {
     for input in sig_inputs {
-        // check if the argument is named `world` and is of type `WorldWithDriver`
         if let syn::FnArg::Typed(pat_type) = input {
             if let syn::Pat::Ident(pat_ident) = &*pat_type.pat {
                 if let syn::Type::Path(type_path) = &*pat_type.ty {
