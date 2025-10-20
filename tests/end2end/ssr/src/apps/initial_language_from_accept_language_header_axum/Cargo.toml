@@ -15,7 +15,8 @@ leptos_axum = { version = "0.8.0", optional = true }
 leptos_meta = { version = "0.8.0" }
 tokio = { version = "1", features = ["rt-multi-thread"], optional = true }
 wasm-bindgen = { version = "=0.2.100", optional = true }
-leptos-fluent = { path = "../../../../../../leptos-fluent" }
+leptos-fluent.workspace = true
+app-helpers = { path = "../../app-helpers" }
 
 [features]
 hydrate = [

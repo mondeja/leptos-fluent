@@ -1,5 +1,5 @@
 use proc_macro::TokenStream;
-use quote::quote;
+use quote::{quote, ToTokens};
 use syn::{parse_macro_input, ItemFn};
 
 fn discover_tests() -> Vec<String> {
@@ -16,7 +16,7 @@ fn discover_tests() -> Vec<String> {
 }
 
 #[proc_macro_attribute]
-pub fn e2e_test(_attr: TokenStream, item: TokenStream) -> TokenStream {
+pub fn e2e_test(_args: TokenStream, item: TokenStream) -> TokenStream {
     let item_fn = parse_macro_input!(item as ItemFn);
     let fn_name = item_fn.sig.ident;
     let fn_name_str = fn_name.to_string();
@@ -28,12 +28,32 @@ pub fn e2e_test(_attr: TokenStream, item: TokenStream) -> TokenStream {
     let (ignore_attr, setup_quote, body_quote, teadown_quote) = if is_ignored {
         (quote!(#[ignore]), quote!(), quote!(Ok(())), quote!())
     } else {
+        let body_as_string = fn_body.clone().into_token_stream().to_string();
+
+        // The world needs the driver if:
+        //   a) the body contains "driver()"
+        //   b) the function signature contains an argument named `world` of type `WorldWithDriver`
+        let world_needs_driver = body_as_string.contains("driver()")
+            || fn_signature_contains_world_with_driver(&item_fn.sig.inputs);
+        let (setup_driver_quote, teardown_driver_quote) = if world_needs_driver
+        {
+            (
+                quote! {
+                    let world: ::end2end_ssr_helpers::WorldWithDriver = world.with_driver().await;
+                },
+                quote! {
+                    world.driver().clone().quit().await?;
+                },
+            )
+        } else {
+            (quote!(), quote!())
+        };
         (
             quote!(),
             quote! {
-                let world = ::end2end_ssr_helpers::World::from_server_pid(
-                    ::end2end_ssr_helpers::init_server(#fn_name_str).await,
-                ).await;
+                let __server_pid = ::end2end_ssr_helpers::init_server(#fn_name_str).await;
+                let world: ::end2end_ssr_helpers::World = ::end2end_ssr_helpers::World::new(__server_pid);
+                #setup_driver_quote
             },
             quote! {
                 use thirtyfour::prelude::*;
@@ -48,7 +68,7 @@ pub fn e2e_test(_attr: TokenStream, item: TokenStream) -> TokenStream {
                 .await;
             },
             quote! {
-                world.driver().clone().quit().await?;
+                #teardown_driver_quote
                 ::end2end_ssr_helpers::terminate_server(world.server_pid()).await;
                 match __body_result {
                     Ok(Ok(())) => Ok(()),
@@ -72,4 +92,28 @@ pub fn e2e_test(_attr: TokenStream, item: TokenStream) -> TokenStream {
     };
 
     result.into()
+}
+
+fn fn_signature_contains_world_with_driver(
+    sig_inputs: &syn::punctuated::Punctuated<syn::FnArg, syn::token::Comma>,
+) -> bool {
+    for input in sig_inputs {
+        // check if the argument is named `world` and is of type `WorldWithDriver`
+        if let syn::FnArg::Typed(pat_type) = input {
+            if let syn::Pat::Ident(pat_ident) = &*pat_type.pat {
+                if pat_ident.ident == "world" {
+                    if let syn::Type::Path(type_path) = &*pat_type.ty {
+                        if let Some(last_segment) =
+                            type_path.path.segments.last()
+                        {
+                            if last_segment.ident == "WorldWithDriver" {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    false
 }

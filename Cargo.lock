@@ -280,6 +280,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a23eb6b1614318a8071c9b2521f36b424b2c83db5eb3a0fead4a6c0809af6e61"
 
 [[package]]
+name = "app-helpers"
+version = "0.1.0"
+dependencies = [
+ "leptos",
+ "leptos_meta",
+ "leptos_router",
+]
+
+[[package]]
 name = "arc-swap"
 version = "1.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1965,7 +1974,6 @@ dependencies = [
  "end2end-ssr-helpers",
  "end2end-ssr-helpers-macros",
  "futures-util",
- "reqwest",
  "serial_test",
  "thirtyfour",
  "tokio",
@@ -3575,6 +3583,7 @@ checksum = "6980e8d7511241f8acf4aebddbb1ff938df5eebe98691418c4468d0b72a96a67"
 name = "ssr_test_initial_language_from_accept_language_header_axum"
 version = "0.1.0"
 dependencies = [
+ "app-helpers",
  "axum",
  "console_error_panic_hook",
  "leptos",

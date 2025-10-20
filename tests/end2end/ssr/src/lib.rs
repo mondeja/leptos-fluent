@@ -36,12 +36,13 @@ fn teardown_tests() {
 
 #[cfg(test)]
 mod tests {
+    #[allow(unused_imports)]
+    use end2end_ssr_helpers::{World, WorldWithDriver};
     use end2end_ssr_helpers_macros::e2e_test;
 
     #[e2e_test]
-    async fn initial_language_from_accept_language_header_axum() {
-        let client = reqwest::Client::new();
-        // Send request with Accept-Language header
+    async fn initial_language_from_accept_language_header_axum(world: World) {
+        let client = world.client();
         let response = client
             .get(world.host())
             .header("Accept-Language", "es-ES,es;q=0.9")
