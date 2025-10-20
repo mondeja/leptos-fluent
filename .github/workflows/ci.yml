@@ -9,6 +9,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.head_ref }} # one group per branch or PR
+  cancel-in-progress: true
+
 jobs:
   check-toolchain-is-stable:
     name: Check toolchain is stable
@@ -242,6 +246,11 @@ jobs:
           cargo binstall -y --force cargo-leptos@0.2.42
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Change toolchain to nightly
+        if: matrix.toolchain == 'nightly'
+        uses: ./.github/actions/set-toolchain
+        with:
+          channel: nightly
       - name: Setup Rust
         uses: actions-rust-lang/setup-rust-toolchain@v1
         with:

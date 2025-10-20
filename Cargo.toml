@@ -16,6 +16,7 @@ members = [
   "tests/end2end/ssr",
   "tests/end2end/ssr/helpers",
   "tests/end2end/ssr/helpers/macros",
+  "tests/end2end/ssr/src/app-helpers",
   "tests/end2end/ssr/src/apps/*",
 ]
 resolver = "2"
