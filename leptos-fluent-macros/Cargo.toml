@@ -33,6 +33,7 @@ pathdiff = "0.2"
 cfg-expr = ">=0.10,<0.16"
 current_platform = ">=0.2"
 serde = { version = "1", default-features = false, features = [
+  "alloc",
   "derive",
 ], optional = true }
 serde_json = { version = "1", optional = true }
