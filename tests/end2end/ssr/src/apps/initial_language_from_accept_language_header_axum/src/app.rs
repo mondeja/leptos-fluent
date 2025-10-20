@@ -7,7 +7,7 @@ app_helpers::shell_and_app_impl!(HomePage);
 fn I18nProvider(children: Children) -> impl IntoView {
     leptos_fluent! {
         children: children(),
-        locales: "../../../../../../examples/ssr-hydrate-axum/locales",
+        locales: "../../locales",
         initial_language_from_accept_language_header: true,
     }
 }

@@ -8,7 +8,7 @@ fn I18nProvider(children: Children) -> impl IntoView {
     leptos_fluent! {
         children: children(),
         locales: "../../locales",
-        initial_language_from_accept_language_header: true,
+        initial_language_from_cookie: true,
     }
 }
 
