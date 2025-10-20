@@ -64,15 +64,11 @@ jobs:
           command: pre-commit run --all-files --show-diff-on-failure
       - name: Check all features
         if: matrix.job == 'check-all-features'
-        # TODO: failing due to a serde bug
-        continue-on-error: true
         run: |
           pre-commit run --all-files --verbose \
             --config tests/end2end/.pre-commit-config.yaml \
             cargo-check-all-features
       - name: Build all features
-        # TODO: failing due to a serde bug
-        continue-on-error: true
         if: matrix.job == 'build-all-features'
         run: |
           pre-commit run --all-files --verbose \
