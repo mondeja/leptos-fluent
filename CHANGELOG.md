@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2025-10-20 - [0.2.19]
+
+### Bug fixes
+
+- Fix serde dependency definition in leptos-fluent-macros crate to
+  include a minimal set of features to be able to compile with
+  serde >= 1.0.226.
+
 ## 2025-08-30 - [0.2.18]
 
 ### New features
@@ -890,6 +898,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.2.19]: https://github.com/mondeja/leptos-fluent/compare/v0.2.18...v0.2.19
 [0.2.18]: https://github.com/mondeja/leptos-fluent/compare/v0.2.17...v0.2.18
 [0.2.17]: https://github.com/mondeja/leptos-fluent/compare/v0.2.16...v0.2.17
 [0.2.16]: https://github.com/mondeja/leptos-fluent/compare/v0.2.15...v0.2.16

@@ -50,6 +50,7 @@ mod tests {
             .await?;
         let body = response.text().await?;
         assert!(body.contains("¡Bienvenido a Leptos!"), "{}", body);
+        assert!(!body.contains("Welcome to Leptos!"), "{}", body);
 
         let response = client
             .get(world.host())
@@ -58,5 +59,28 @@ mod tests {
             .await?;
         let body = response.text().await?;
         assert!(body.contains("Welcome to Leptos!"), "{}", body);
+        assert!(!body.contains("¡Bienvenido a Leptos!"), "{}", body);
+    }
+
+    #[e2e_test]
+    async fn initial_language_from_accept_language_header_actix(world: World) {
+        let client = world.client();
+        let response = client
+            .get(world.host())
+            .header("Accept-Language", "es-ES,es;q=0.9")
+            .send()
+            .await?;
+        let body = response.text().await?;
+        assert!(body.contains("¡Bienvenido a Leptos!"), "{}", body);
+        assert!(!body.contains("Welcome to Leptos!"), "{}", body);
+
+        let response = client
+            .get(world.host())
+            .header("Accept-Language", "en-US,en;q=0.9")
+            .send()
+            .await?;
+        let body = response.text().await?;
+        assert!(body.contains("Welcome to Leptos!"), "{}", body);
+        assert!(!body.contains("¡Bienvenido a Leptos!"), "{}", body);
     }
 }
