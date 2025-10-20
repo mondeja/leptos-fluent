@@ -127,4 +127,36 @@ mod tests {
         assert!(body.contains("Welcome to Leptos!"), "{}", body);
         assert!(!body.contains("¡Bienvenido a Leptos!"), "{}", body);
     }
+
+    #[e2e_test]
+    async fn initial_language_from_url_param_axum(world: World) {
+        let (client, host) = (world.client(), world.host());
+        let url = format!("{host}?lang=es");
+        let response = client.get(url).send().await?;
+        let body = response.text().await?;
+        assert!(body.contains("¡Bienvenido a Leptos!"), "{}", body);
+        assert!(!body.contains("Welcome to Leptos!"), "{}", body);
+
+        let url = format!("{host}?lang=en");
+        let response = client.get(url).send().await?;
+        let body = response.text().await?;
+        assert!(body.contains("Welcome to Leptos!"), "{}", body);
+        assert!(!body.contains("¡Bienvenido a Leptos!"), "{}", body);
+    }
+
+    #[e2e_test]
+    async fn initial_language_from_url_param_actix(world: World) {
+        let (client, host) = (world.client(), world.host());
+        let url = format!("{host}?lang=es");
+        let response = client.get(url).send().await?;
+        let body = response.text().await?;
+        assert!(body.contains("¡Bienvenido a Leptos!"), "{}", body);
+        assert!(!body.contains("Welcome to Leptos!"), "{}", body);
+
+        let url = format!("{host}?lang=en");
+        let response = client.get(url).send().await?;
+        let body = response.text().await?;
+        assert!(body.contains("Welcome to Leptos!"), "{}", body);
+        assert!(!body.contains("¡Bienvenido a Leptos!"), "{}", body);
+    }
 }

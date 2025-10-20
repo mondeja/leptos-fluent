@@ -3588,6 +3588,39 @@ dependencies = [
 ]
 
 [[package]]
+name = "ssr_test_initial_language_from_url_param_actix"
+version = "0.1.0"
+dependencies = [
+ "actix-files",
+ "actix-web",
+ "app-helpers",
+ "console_error_panic_hook",
+ "http 1.3.1",
+ "leptos",
+ "leptos-fluent",
+ "leptos_actix",
+ "leptos_meta",
+ "leptos_router",
+ "wasm-bindgen",
+]
+
+[[package]]
+name = "ssr_test_initial_language_from_url_param_axum"
+version = "0.1.0"
+dependencies = [
+ "app-helpers",
+ "axum",
+ "console_error_panic_hook",
+ "leptos",
+ "leptos-fluent",
+ "leptos_axum",
+ "leptos_meta",
+ "leptos_router",
+ "tokio",
+ "wasm-bindgen",
+]
+
+[[package]]
 name = "stable_deref_trait"
 version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
