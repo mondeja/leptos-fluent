@@ -42,9 +42,9 @@ mod tests {
 
     #[e2e_test]
     async fn initial_language_from_accept_language_header_axum(world: World) {
-        let client = world.client();
+        let (client, host) = (world.client(), world.host());
         let response = client
-            .get(world.host())
+            .get(host)
             .header("Accept-Language", "es-ES,es;q=0.9")
             .send()
             .await?;
@@ -53,7 +53,7 @@ mod tests {
         assert!(!body.contains("Welcome to Leptos!"), "{}", body);
 
         let response = client
-            .get(world.host())
+            .get(host)
             .header("Accept-Language", "en-US,en;q=0.9")
             .send()
             .await?;
@@ -64,9 +64,9 @@ mod tests {
 
     #[e2e_test]
     async fn initial_language_from_accept_language_header_actix(world: World) {
-        let client = world.client();
+        let (client, host) = (world.client(), world.host());
         let response = client
-            .get(world.host())
+            .get(host)
             .header("Accept-Language", "es-ES,es;q=0.9")
             .send()
             .await?;
@@ -75,8 +75,52 @@ mod tests {
         assert!(!body.contains("Welcome to Leptos!"), "{}", body);
 
         let response = client
-            .get(world.host())
+            .get(host)
             .header("Accept-Language", "en-US,en;q=0.9")
+            .send()
+            .await?;
+        let body = response.text().await?;
+        assert!(body.contains("Welcome to Leptos!"), "{}", body);
+        assert!(!body.contains("¡Bienvenido a Leptos!"), "{}", body);
+    }
+
+    #[e2e_test]
+    async fn initial_language_from_cookie_axum(world: World) {
+        let (client, host) = (world.client(), world.host());
+        let response = client
+            .get(host)
+            .header("Cookie", "lf-lang=es")
+            .send()
+            .await?;
+        let body = response.text().await?;
+        assert!(body.contains("¡Bienvenido a Leptos!"), "{}", body);
+        assert!(!body.contains("Welcome to Leptos!"), "{}", body);
+
+        let response = client
+            .get(host)
+            .header("Cookie", "lf-lang=en")
+            .send()
+            .await?;
+        let body = response.text().await?;
+        assert!(body.contains("Welcome to Leptos!"), "{}", body);
+        assert!(!body.contains("¡Bienvenido a Leptos!"), "{}", body);
+    }
+
+    #[e2e_test]
+    async fn initial_language_from_cookie_actix(world: World) {
+        let (client, host) = (world.client(), world.host());
+        let response = client
+            .get(host)
+            .header("Cookie", "lf-lang=es")
+            .send()
+            .await?;
+        let body = response.text().await?;
+        assert!(body.contains("¡Bienvenido a Leptos!"), "{}", body);
+        assert!(!body.contains("Welcome to Leptos!"), "{}", body);
+
+        let response = client
+            .get(host)
+            .header("Cookie", "lf-lang=en")
             .send()
             .await?;
         let body = response.text().await?;
