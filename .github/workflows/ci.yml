@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.head_ref }} # one group per branch or PR
+  group: ${{ github.workflow }}-${{ github.ref }} # one group per branch or PR
   cancel-in-progress: true
 
 jobs:
