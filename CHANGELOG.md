@@ -10,7 +10,6 @@
   improved cookie, storage, URL parameter, data-file and `Accept-Language`
   helpers now avoid panics, log unexpected errors, and report when operations
   cannot be completed.
-  > > > > > > >
 
 ## 2025-10-20 - [0.2.19]
 
