@@ -15,12 +15,12 @@ pub fn get(key: &str) -> Option<String> {
                 );
                 return None;
             }
-            Err(error) => {
+            Err(_error) => {
                 #[cfg(feature = "tracing")]
                 tracing::trace!(
                     "Failed to access session storage when getting key \"{}\": {:?}",
                     key,
-                    error
+                    _error
                 );
                 return None;
             }
