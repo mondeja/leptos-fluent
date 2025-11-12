@@ -8,6 +8,16 @@
   quality weights are handled correctly.
 - Avoid panics when browser local or session storage is unavailable by
   gracefully handling access errors.
+- Prevent cookie helpers from panicking when the browser document cannot
+  be accessed or cookies cannot be read.
+- Handle file system errors gracefully when reading or writing the desktop
+  data file storage backend.
+- Avoid panics in URL parameter helpers when browser APIs fail (e.g.
+  history or location access denied).
+- Report failures to set or delete browser cookies instead of silently
+  ignoring them.
+- Gracefully handle invalid `q` quality values in `Accept-Language`
+  headers rather than silently accepting them as 1.0.
 
 ## 2025-10-20 - [0.2.19]
 
