@@ -46,12 +46,12 @@ pub fn get(key: &str) -> Option<String> {
 
                 None
             }
-            Err(error) => {
+            Err(_error) => {
                 #[cfg(feature = "tracing")]
                 tracing::trace!(
                     "Failed to get session storage key \"{}\" from browser: {:?}",
                     key,
-                    error
+                    _error
                 );
 
                 None
@@ -79,13 +79,13 @@ pub fn set(key: &str, value: &str) {
                     value
                 );
             }
-            Err(error) => {
+            Err(_error) => {
                 #[cfg(feature = "tracing")]
                 tracing::trace!(
                     "Failed to set session storage key \"{}\" in browser with value {:?}: {:?}",
                     key,
                     value,
-                    error
+                    _error
                 );
             }
         },
@@ -96,12 +96,12 @@ pub fn set(key: &str, value: &str) {
                 key
             );
         }
-        Err(error) => {
+        Err(_error) => {
             #[cfg(feature = "tracing")]
             tracing::trace!(
                 "Failed to access session storage when setting key \"{}\": {:?}",
                 key,
-                error
+                _error
             );
         }
     }
@@ -126,12 +126,12 @@ pub fn delete(key: &str) {
                         key
                     );
                 }
-                Err(error) => {
+                Err(_error) => {
                     #[cfg(feature = "tracing")]
                     tracing::trace!(
                         "Failed to delete session storage key \"{}\" in browser: {:?}",
                         key,
-                        error
+                        _error
                     );
                 }
             },
@@ -142,12 +142,12 @@ pub fn delete(key: &str) {
                     key
                 );
             }
-            Err(error) => {
+            Err(_error) => {
                 #[cfg(feature = "tracing")]
                 tracing::trace!(
                     "Failed to access session storage when deleting key \"{}\": {:?}",
                     key,
-                    error
+                    _error
                 );
             }
         }

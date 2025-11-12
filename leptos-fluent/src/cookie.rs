@@ -10,12 +10,12 @@ pub fn get(name: &str) -> Option<String> {
             .dyn_into::<web_sys::HtmlDocument>()
         {
             Ok(document) => document,
-            Err(error) => {
+            Err(_error) => {
                 #[cfg(feature = "tracing")]
                 tracing::trace!(
                     "Failed to cast document to HtmlDocument when getting cookie \"{}\": {:?}",
                     name,
-                    error
+                    _error
                 );
                 return None;
             }
@@ -23,12 +23,12 @@ pub fn get(name: &str) -> Option<String> {
 
         let mut cookies = match document.cookie() {
             Ok(cookies) => cookies,
-            Err(error) => {
+            Err(_error) => {
                 #[cfg(feature = "tracing")]
                 tracing::trace!(
                     "Failed to read cookies from browser when getting cookie \"{}\": {:?}",
                     name,
-                    error
+                    _error
                 );
                 return None;
             }
@@ -69,21 +69,21 @@ fn set_cookie(new_value: &str) -> bool {
     match leptos::prelude::document().dyn_into::<web_sys::HtmlDocument>() {
         Ok(document) => match document.set_cookie(new_value) {
             Ok(()) => true,
-            Err(error) => {
+            Err(_error) => {
                 #[cfg(feature = "tracing")]
                 tracing::trace!(
                     "Failed to set cookie value {:?}: {:?}",
                     new_value,
-                    error
+                    _error
                 );
                 false
             }
         },
-        Err(error) => {
+        Err(_error) => {
             #[cfg(feature = "tracing")]
             tracing::trace!(
                 "Failed to cast document to HtmlDocument when setting cookie: {:?}",
-                error
+                _error
             );
             false
         }

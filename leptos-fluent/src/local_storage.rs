@@ -46,12 +46,12 @@ pub fn get(key: &str) -> Option<String> {
 
                 None
             }
-            Err(error) => {
+            Err(_error) => {
                 #[cfg(feature = "tracing")]
                 tracing::trace!(
                     "Failed to get local storage key \"{}\" from browser: {:?}",
                     key,
-                    error
+                    _error
                 );
 
                 None

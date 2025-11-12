@@ -47,12 +47,12 @@ pub mod param {
             let window = leptos::prelude::window();
             let href = match window.location().href() {
                 Ok(href) => href,
-                Err(error) => {
+                Err(_error) => {
                     #[cfg(feature = "tracing")]
                     tracing::trace!(
                         "Failed to get location.href from the browser when setting URL parameter \"{}\": {:?}",
                         k,
-                        error
+                        _error
                     );
                     return;
                 }
@@ -60,12 +60,12 @@ pub mod param {
 
             let url = match web_sys::Url::new(&href) {
                 Ok(url) => url,
-                Err(error) => {
+                Err(_error) => {
                     #[cfg(feature = "tracing")]
                     tracing::trace!(
                         "Failed to parse location.href when setting URL parameter \"{}\": {:?}",
                         k,
-                        error
+                        _error
                     );
                     return;
                 }
@@ -73,7 +73,7 @@ pub mod param {
             url.search_params().set(k, v);
 
             if let Ok(history) = window.history() {
-                if let Err(error) = history.replace_state_with_url(
+                if let Err(_error) = history.replace_state_with_url(
                     &wasm_bindgen::JsValue::NULL,
                     "",
                     Some(&url.href()),
@@ -82,7 +82,7 @@ pub mod param {
                     tracing::trace!(
                         "Failed to replace the history state when setting URL parameter \"{}\": {:?}",
                         k,
-                        error
+                        _error
                     );
                 }
             } else {
@@ -118,12 +118,12 @@ pub mod param {
             let window = leptos::prelude::window();
             let href = match window.location().href() {
                 Ok(href) => href,
-                Err(error) => {
+                Err(_error) => {
                     #[cfg(feature = "tracing")]
                     tracing::trace!(
                         "Failed to get location.href from the browser when deleting URL parameter \"{}\": {:?}",
                         k,
-                        error
+                        _error
                     );
                     return;
                 }
@@ -131,12 +131,12 @@ pub mod param {
 
             let url = match web_sys::Url::new(&href) {
                 Ok(url) => url,
-                Err(error) => {
+                Err(_error) => {
                     #[cfg(feature = "tracing")]
                     tracing::trace!(
                         "Failed to parse location.href when deleting URL parameter \"{}\": {:?}",
                         k,
-                        error
+                        _error
                     );
                     return;
                 }
@@ -144,7 +144,7 @@ pub mod param {
             url.search_params().delete(k);
 
             if let Ok(history) = window.history() {
-                if let Err(error) = history.replace_state_with_url(
+                if let Err(_error) = history.replace_state_with_url(
                     &wasm_bindgen::JsValue::NULL,
                     "",
                     Some(&url.href()),
@@ -153,7 +153,7 @@ pub mod param {
                     tracing::trace!(
                         "Failed to replace the history state when deleting URL parameter \"{}\": {:?}",
                         k,
-                        error
+                        _error
                     );
                 }
             } else {
