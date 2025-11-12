@@ -4,6 +4,8 @@
 
 ### Bug fixes
 
+- Fix parsing of `Accept-Language` header so multiple language tags with
+  quality weights are handled correctly.
 - Hardened browser and desktop integrations to handle failures gracefully:
   improved cookie, storage, URL parameter, data-file and `Accept-Language`
   helpers now avoid panics, log unexpected errors, and report when operations
