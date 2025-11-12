@@ -26,23 +26,37 @@ pub fn get(key: &str) -> Option<String> {
             }
         };
 
-        let result = storage.get_item(key).ok().flatten();
+        match storage.get_item(key) {
+            Ok(Some(result)) => {
+                #[cfg(feature = "tracing")]
+                tracing::trace!(
+                    "Got local storage key \"{}\" from browser: {:?}",
+                    key,
+                    result
+                );
 
-        #[cfg(feature = "tracing")]
-        if let Some(ref result) = result {
-            tracing::trace!(
-                "Got local storage key \"{}\" from browser: {:?}",
-                key,
-                result
-            );
-        } else {
-            tracing::trace!(
-                "Got no local storage key \"{}\" from browser",
-                key
-            );
+                Some(result)
+            }
+            Ok(None) => {
+                #[cfg(feature = "tracing")]
+                tracing::trace!(
+                    "Got no local storage key \"{}\" from browser",
+                    key
+                );
+
+                None
+            }
+            Err(error) => {
+                #[cfg(feature = "tracing")]
+                tracing::trace!(
+                    "Failed to get local storage key \"{}\" from browser: {:?}",
+                    key,
+                    error
+                );
+
+                None
+            }
         }
-
-        result
     }
 
     #[cfg(feature = "ssr")]

@@ -18,6 +18,8 @@
   ignoring them.
 - Gracefully handle invalid `q` quality values in `Accept-Language`
   headers rather than silently accepting them as 1.0.
+- Distinguish between missing and errored local/session storage operations
+  by logging browser failures when reading, writing, or deleting keys.
 
 ## 2025-10-20 - [0.2.19]
 

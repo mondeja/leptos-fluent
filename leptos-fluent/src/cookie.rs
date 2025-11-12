@@ -136,10 +136,7 @@ pub fn delete(name: &str) {
             tracing::trace!("Deleted cookie \"{}\" in browser", name);
         } else {
             #[cfg(feature = "tracing")]
-            tracing::trace!(
-                "Failed to delete cookie \"{}\" in browser",
-                name
-            );
+            tracing::trace!("Failed to delete cookie \"{}\" in browser", name);
         }
     }
 
