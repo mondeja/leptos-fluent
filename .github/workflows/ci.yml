@@ -223,7 +223,7 @@ jobs:
           echo "tests=[${tests}]" >> $GITHUB_OUTPUT
 
   end2end-ssr-tests:
-    name: SSR end to end test ${{ matrix.test }} (${{ matrix.toolchain }})
+    name: SSR end to end test ${{ matrix.test }}
     needs: discover-end2end-ssr-tests
     runs-on: ubuntu-latest
     permissions:
@@ -231,9 +231,6 @@ jobs:
     strategy:
       matrix:
         test: ${{ fromJson(needs.discover-end2end-ssr-tests.outputs.tests) }}
-        toolchain:
-          - stable
-          - nightly
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -246,15 +243,10 @@ jobs:
           cargo binstall -y --force cargo-leptos@0.2.42
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Change toolchain to nightly
-        if: matrix.toolchain == 'nightly'
-        uses: ./.github/actions/set-toolchain
-        with:
-          channel: nightly
       - name: Setup Rust
         uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
-          toolchain: ${{ matrix.toolchain }}
+          toolchain: stable
           target: wasm32-unknown-unknown
       - name: Run SSR end to end test ${{ matrix.test }}
         run: |
