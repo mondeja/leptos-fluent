@@ -5,12 +5,28 @@ pub fn get(key: &str) -> Option<String> {
 
     #[cfg(not(feature = "ssr"))]
     {
-        let result = leptos::prelude::window()
-            .local_storage()
-            .unwrap()
-            .unwrap()
-            .get_item(key)
-            .unwrap_or(None);
+        let storage = match leptos::prelude::window().local_storage() {
+            Ok(Some(storage)) => storage,
+            Ok(None) => {
+                #[cfg(feature = "tracing")]
+                tracing::trace!(
+                    "Local storage unavailable in browser when getting key \"{}\"",
+                    key
+                );
+                return None;
+            }
+            Err(_error) => {
+                #[cfg(feature = "tracing")]
+                tracing::trace!(
+                    "Failed to access local storage when getting key \"{}\": {:?}",
+                    key,
+                    _error
+                );
+                return None;
+            }
+        };
+
+        let result = storage.get_item(key).ok().flatten();
 
         #[cfg(feature = "tracing")]
         if let Some(ref result) = result {
@@ -39,12 +55,8 @@ pub fn get(key: &str) -> Option<String> {
 #[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
 pub fn set(key: &str, value: &str) {
     #[cfg(not(feature = "ssr"))]
-    {
-        _ = ::leptos::prelude::window()
-            .local_storage()
-            .unwrap()
-            .unwrap()
-            .set_item(key, value);
+    if let Ok(Some(storage)) = ::leptos::prelude::window().local_storage() {
+        _ = storage.set_item(key, value);
 
         #[cfg(feature = "tracing")]
         tracing::trace!(
@@ -52,7 +64,13 @@ pub fn set(key: &str, value: &str) {
             key,
             value
         );
-    };
+    } else {
+        #[cfg(feature = "tracing")]
+        tracing::trace!(
+            "Local storage unavailable in browser when setting key \"{}\"",
+            key
+        );
+    }
 
     #[cfg(feature = "ssr")]
     {
@@ -65,13 +83,17 @@ pub fn set(key: &str, value: &str) {
 pub fn delete(key: &str) {
     #[cfg(not(feature = "ssr"))]
     {
-        _ = ::leptos::prelude::window()
-            .local_storage()
-            .unwrap()
-            .unwrap()
-            .remove_item(key);
-        #[cfg(feature = "tracing")]
-        tracing::trace!("Deleted local storage key \"{}\" in browser", key);
+        if let Ok(Some(storage)) = ::leptos::prelude::window().local_storage() {
+            _ = storage.remove_item(key);
+            #[cfg(feature = "tracing")]
+            tracing::trace!("Deleted local storage key \"{}\" in browser", key);
+        } else {
+            #[cfg(feature = "tracing")]
+            tracing::trace!(
+                "Local storage unavailable in browser when deleting key \"{}\"",
+                key
+            );
+        }
     }
 
     #[cfg(feature = "ssr")]
