@@ -56,8 +56,7 @@ pub fn get(key: &str) -> Option<String> {
 pub fn set(key: &str, value: &str) {
     #[cfg(not(feature = "ssr"))]
     {
-        if let Ok(Some(storage)) =
-            ::leptos::prelude::window().session_storage()
+        if let Ok(Some(storage)) = ::leptos::prelude::window().session_storage()
         {
             _ = storage.set_item(key, value);
 
@@ -87,8 +86,7 @@ pub fn set(key: &str, value: &str) {
 pub fn delete(key: &str) {
     #[cfg(not(feature = "ssr"))]
     {
-        if let Ok(Some(storage)) =
-            ::leptos::prelude::window().session_storage()
+        if let Ok(Some(storage)) = ::leptos::prelude::window().session_storage()
         {
             _ = storage.remove_item(key);
             #[cfg(feature = "tracing")]

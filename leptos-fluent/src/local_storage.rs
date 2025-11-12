@@ -56,9 +56,7 @@ pub fn get(key: &str) -> Option<String> {
 pub fn set(key: &str, value: &str) {
     #[cfg(not(feature = "ssr"))]
     {
-        if let Ok(Some(storage)) =
-            ::leptos::prelude::window().local_storage()
-        {
+        if let Ok(Some(storage)) = ::leptos::prelude::window().local_storage() {
             _ = storage.set_item(key, value);
 
             #[cfg(feature = "tracing")]
@@ -87,15 +85,10 @@ pub fn set(key: &str, value: &str) {
 pub fn delete(key: &str) {
     #[cfg(not(feature = "ssr"))]
     {
-        if let Ok(Some(storage)) =
-            ::leptos::prelude::window().local_storage()
-        {
+        if let Ok(Some(storage)) = ::leptos::prelude::window().local_storage() {
             _ = storage.remove_item(key);
             #[cfg(feature = "tracing")]
-            tracing::trace!(
-                "Deleted local storage key \"{}\" in browser",
-                key
-            );
+            tracing::trace!("Deleted local storage key \"{}\" in browser", key);
         } else {
             #[cfg(feature = "tracing")]
             tracing::trace!(
