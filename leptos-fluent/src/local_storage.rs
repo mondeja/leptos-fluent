@@ -55,24 +55,22 @@ pub fn get(key: &str) -> Option<String> {
 #[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
 pub fn set(key: &str, value: &str) {
     #[cfg(not(feature = "ssr"))]
-    {
-        if let Ok(Some(storage)) = ::leptos::prelude::window().local_storage() {
-            _ = storage.set_item(key, value);
+    if let Ok(Some(storage)) = ::leptos::prelude::window().local_storage() {
+        _ = storage.set_item(key, value);
 
-            #[cfg(feature = "tracing")]
-            tracing::trace!(
-                "Set local storage key \"{}\" in browser with value {:?}",
-                key,
-                value
-            );
-        } else {
-            #[cfg(feature = "tracing")]
-            tracing::trace!(
-                "Local storage unavailable in browser when setting key \"{}\"",
-                key
-            );
-        }
-    };
+        #[cfg(feature = "tracing")]
+        tracing::trace!(
+            "Set local storage key \"{}\" in browser with value {:?}",
+            key,
+            value
+        );
+    } else {
+        #[cfg(feature = "tracing")]
+        tracing::trace!(
+            "Local storage unavailable in browser when setting key \"{}\"",
+            key
+        );
+    }
 
     #[cfg(feature = "ssr")]
     {
