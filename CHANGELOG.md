@@ -6,6 +6,8 @@
 
 - Fix parsing of `Accept-Language` header so multiple language tags with
   quality weights are handled correctly.
+- Avoid panics when browser local or session storage is unavailable by
+  gracefully handling access errors.
 
 ## 2025-10-20 - [0.2.19]
 
