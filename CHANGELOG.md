@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## Unreleased
+
+### Bug fixes
+
+- Fix parsing of `Accept-Language` header so multiple language tags with
+  quality weights are handled correctly.
+
 ## 2025-10-20 - [0.2.19]
 
 ### Bug fixes

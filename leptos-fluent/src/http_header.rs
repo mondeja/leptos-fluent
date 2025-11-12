@@ -1,29 +1,28 @@
 #[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
 pub fn parse(header: &str) -> Vec<String> {
-    let mut parsed_lang: Vec<_> = header
-        .split(';')
-        .map(|lang| {
-            let mut langs = lang.split(',').peekable();
-            let q = if let Some(a) = langs
-                .peek()
-                .and_then(|maybe_q| maybe_q.trim().strip_prefix("q="))
-            {
-                let q = a.parse::<f32>().unwrap_or(1.0);
-                langs.next();
-                q
-            } else {
-                1.0
-            };
-            (q, langs)
+    let mut entries: Vec<(f32, String)> = header
+        .split(',')
+        .filter_map(|raw| {
+            let mut parts = raw.trim().split(';');
+            let tag = parts.next()?.trim();
+            if tag.is_empty() {
+                return None;
+            }
+
+            let mut quality = 1.0_f32;
+            for part in parts {
+                if let Some(value) = part.trim().strip_prefix("q=") {
+                    quality = value.parse().unwrap_or(1.0);
+                }
+            }
+
+            Some((quality, tag.to_string()))
         })
         .collect();
 
-    parsed_lang.sort_unstable_by(|a, b| b.0.total_cmp(&a.0));
+    entries.sort_unstable_by(|a, b| b.0.total_cmp(&a.0));
 
-    let result = parsed_lang
-        .into_iter()
-        .flat_map(|(_q, langs)| langs.map(str::trim).map(String::from))
-        .collect();
+    let result = entries.into_iter().map(|(_, tag)| tag).collect();
 
     #[cfg(feature = "tracing")]
     tracing::trace!(
