@@ -69,21 +69,41 @@ pub fn get(key: &str) -> Option<String> {
 #[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
 pub fn set(key: &str, value: &str) {
     #[cfg(not(feature = "ssr"))]
-    if let Ok(Some(storage)) = ::leptos::prelude::window().local_storage() {
-        _ = storage.set_item(key, value);
-
-        #[cfg(feature = "tracing")]
-        tracing::trace!(
-            "Set local storage key \"{}\" in browser with value {:?}",
-            key,
-            value
-        );
-    } else {
-        #[cfg(feature = "tracing")]
-        tracing::trace!(
-            "Local storage unavailable in browser when setting key \"{}\"",
-            key
-        );
+    match ::leptos::prelude::window().local_storage() {
+        Ok(Some(storage)) => match storage.set_item(key, value) {
+            Ok(()) => {
+                #[cfg(feature = "tracing")]
+                tracing::trace!(
+                    "Set local storage key \"{}\" in browser with value {:?}",
+                    key,
+                    value
+                );
+            }
+            Err(error) => {
+                #[cfg(feature = "tracing")]
+                tracing::trace!(
+                    "Failed to set local storage key \"{}\" in browser with value {:?}: {:?}",
+                    key,
+                    value,
+                    error
+                );
+            }
+        },
+        Ok(None) => {
+            #[cfg(feature = "tracing")]
+            tracing::trace!(
+                "Local storage unavailable in browser when setting key \"{}\"",
+                key
+            );
+        }
+        Err(error) => {
+            #[cfg(feature = "tracing")]
+            tracing::trace!(
+                "Failed to access local storage when setting key \"{}\": {:?}",
+                key,
+                error
+            );
+        }
     }
 
     #[cfg(feature = "ssr")]
@@ -97,16 +117,39 @@ pub fn set(key: &str, value: &str) {
 pub fn delete(key: &str) {
     #[cfg(not(feature = "ssr"))]
     {
-        if let Ok(Some(storage)) = ::leptos::prelude::window().local_storage() {
-            _ = storage.remove_item(key);
-            #[cfg(feature = "tracing")]
-            tracing::trace!("Deleted local storage key \"{}\" in browser", key);
-        } else {
-            #[cfg(feature = "tracing")]
-            tracing::trace!(
-                "Local storage unavailable in browser when deleting key \"{}\"",
-                key
-            );
+        match ::leptos::prelude::window().local_storage() {
+            Ok(Some(storage)) => match storage.remove_item(key) {
+                Ok(()) => {
+                    #[cfg(feature = "tracing")]
+                    tracing::trace!(
+                        "Deleted local storage key \"{}\" in browser",
+                        key
+                    );
+                }
+                Err(error) => {
+                    #[cfg(feature = "tracing")]
+                    tracing::trace!(
+                        "Failed to delete local storage key \"{}\" in browser: {:?}",
+                        key,
+                        error
+                    );
+                }
+            },
+            Ok(None) => {
+                #[cfg(feature = "tracing")]
+                tracing::trace!(
+                    "Local storage unavailable in browser when deleting key \"{}\"",
+                    key
+                );
+            }
+            Err(error) => {
+                #[cfg(feature = "tracing")]
+                tracing::trace!(
+                    "Failed to access local storage when deleting key \"{}\": {:?}",
+                    key,
+                    error
+                );
+            }
         }
     }
 
