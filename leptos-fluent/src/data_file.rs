@@ -11,8 +11,29 @@ pub fn set(data_file_key: &str, language: &str) {
             _ = fs::create_dir_all(data_dir);
         }
         let data_file = data_dir.join(format!("data_file-{data_file_key}"));
-        let mut file = File::create(data_file).unwrap();
-        _ = file.write_all(language.as_bytes());
+        let mut file = match File::create(&data_file) {
+            Ok(file) => file,
+            Err(_error) => {
+                #[cfg(feature = "tracing")]
+                tracing::trace!(
+                    "Failed to create data file \"{}\" for key \"{}\": {:?}",
+                    data_file.display(),
+                    data_file_key,
+                    _error
+                );
+                return;
+            }
+        };
+
+        if let Err(_error) = file.write_all(language.as_bytes()) {
+            #[cfg(feature = "tracing")]
+            tracing::trace!(
+                "Failed to write language \"{}\" to data file \"{}\": {:?}",
+                language,
+                data_file.display(),
+                _error
+            );
+        }
 
         #[cfg(feature = "tracing")]
         tracing::trace!(
@@ -50,9 +71,31 @@ pub fn get(data_file_key: &str) -> Option<String> {
             );
             return None;
         }
-        let mut file = File::open(&data_file).unwrap();
+        let mut file = match File::open(&data_file) {
+            Ok(file) => file,
+            Err(_error) => {
+                #[cfg(feature = "tracing")]
+                tracing::trace!(
+                    "Failed to open data file \"{}\" for key \"{}\": {:?}",
+                    data_file.display(),
+                    data_file_key,
+                    _error
+                );
+                return None;
+            }
+        };
+
         let mut contents = String::new();
-        _ = file.read_to_string(&mut contents);
+        if let Err(_error) = file.read_to_string(&mut contents) {
+            #[cfg(feature = "tracing")]
+            tracing::trace!(
+                "Failed to read data file \"{}\" for key \"{}\": {:?}",
+                data_file.display(),
+                data_file_key,
+                _error
+            );
+            return None;
+        }
         if contents.is_empty() {
             #[cfg(feature = "tracing")]
             tracing::trace!(
@@ -74,8 +117,19 @@ pub fn delete(data_file_key: &str) {
     {
         let data_dir = proj_dirs.data_dir();
         let data_file = data_dir.join(format!("data_file-{data_file_key}"));
-        _ = fs::remove_file(&data_file);
-        #[cfg(feature = "tracing")]
-        tracing::trace!("Deleted data file \"{:?}\"", &data_file);
+        match fs::remove_file(&data_file) {
+            Ok(()) => {
+                #[cfg(feature = "tracing")]
+                tracing::trace!("Deleted data file \"{:?}\"", &data_file);
+            }
+            Err(_error) => {
+                #[cfg(feature = "tracing")]
+                tracing::trace!(
+                    "Failed to delete data file \"{}\": {:?}",
+                    data_file.display(),
+                    _error
+                );
+            }
+        }
     }
 }

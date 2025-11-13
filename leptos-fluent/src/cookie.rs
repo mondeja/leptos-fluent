@@ -6,11 +6,33 @@ pub fn get(name: &str) -> Option<String> {
         tracing::trace!("Getting cookie \"{name}\" from browser");
 
         use wasm_bindgen::JsCast;
-        let mut cookies = leptos::prelude::document()
+        let document = match leptos::prelude::document()
             .dyn_into::<web_sys::HtmlDocument>()
-            .unwrap()
-            .cookie()
-            .unwrap_or("".to_string());
+        {
+            Ok(document) => document,
+            Err(_error) => {
+                #[cfg(feature = "tracing")]
+                tracing::trace!(
+                    "Failed to cast document to HtmlDocument when getting cookie \"{}\": {:?}",
+                    name,
+                    _error
+                );
+                return None;
+            }
+        };
+
+        let mut cookies = match document.cookie() {
+            Ok(cookies) => cookies,
+            Err(_error) => {
+                #[cfg(feature = "tracing")]
+                tracing::trace!(
+                    "Failed to read cookies from browser when getting cookie \"{}\": {:?}",
+                    name,
+                    _error
+                );
+                return None;
+            }
+        };
         if cookies.is_empty() {
             return None;
         }
@@ -42,12 +64,30 @@ pub fn get(name: &str) -> Option<String> {
 }
 
 #[cfg(not(feature = "ssr"))]
-fn set_cookie(new_value: &str) {
+fn set_cookie(new_value: &str) -> bool {
     use wasm_bindgen::JsCast;
-    _ = leptos::prelude::document()
-        .dyn_into::<web_sys::HtmlDocument>()
-        .unwrap()
-        .set_cookie(new_value);
+    match leptos::prelude::document().dyn_into::<web_sys::HtmlDocument>() {
+        Ok(document) => match document.set_cookie(new_value) {
+            Ok(()) => true,
+            Err(_error) => {
+                #[cfg(feature = "tracing")]
+                tracing::trace!(
+                    "Failed to set cookie value {:?}: {:?}",
+                    new_value,
+                    _error
+                );
+                false
+            }
+        },
+        Err(_error) => {
+            #[cfg(feature = "tracing")]
+            tracing::trace!(
+                "Failed to cast document to HtmlDocument when setting cookie: {:?}",
+                _error
+            );
+            false
+        }
+    }
 }
 
 #[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
@@ -59,15 +99,22 @@ pub fn set(name: &str, value: &str, attrs: &str) {
             new_value.push_str("; ");
             new_value.push_str(attrs);
         }
-        set_cookie(&new_value);
-
-        #[cfg(feature = "tracing")]
-        tracing::trace!(
-            "Set cookie \"{}\" in browser {:?} with attributes {:?}",
-            name,
-            new_value,
-            attrs
-        );
+        if set_cookie(&new_value) {
+            #[cfg(feature = "tracing")]
+            tracing::trace!(
+                "Set cookie \"{}\" in browser {:?} with attributes {:?}",
+                name,
+                new_value,
+                attrs
+            );
+        } else {
+            #[cfg(feature = "tracing")]
+            tracing::trace!(
+                "Failed to set cookie \"{}\" in browser with attributes {:?}",
+                name,
+                attrs
+            );
+        }
     }
 
     #[cfg(feature = "ssr")]
@@ -84,10 +131,13 @@ pub fn delete(name: &str) {
     {
         let new_value =
             format!("{name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT");
-        set_cookie(&new_value);
-
-        #[cfg(feature = "tracing")]
-        tracing::trace!("Deleted cookie \"{}\" in browser", name);
+        if set_cookie(&new_value) {
+            #[cfg(feature = "tracing")]
+            tracing::trace!("Deleted cookie \"{}\" in browser", name);
+        } else {
+            #[cfg(feature = "tracing")]
+            tracing::trace!("Failed to delete cookie \"{}\" in browser", name);
+        }
     }
 
     #[cfg(feature = "ssr")]

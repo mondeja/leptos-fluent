@@ -26,23 +26,37 @@ pub fn get(key: &str) -> Option<String> {
             }
         };
 
-        let result = storage.get_item(key).ok().flatten();
+        match storage.get_item(key) {
+            Ok(Some(result)) => {
+                #[cfg(feature = "tracing")]
+                tracing::trace!(
+                    "Got session storage key \"{}\" from browser: {:?}",
+                    key,
+                    result
+                );
 
-        #[cfg(feature = "tracing")]
-        if let Some(ref result) = result {
-            tracing::trace!(
-                "Got session storage key \"{}\" from browser: {:?}",
-                key,
-                result
-            );
-        } else {
-            tracing::trace!(
-                "Got no session storage key \"{}\" from browser",
-                key
-            );
+                Some(result)
+            }
+            Ok(None) => {
+                #[cfg(feature = "tracing")]
+                tracing::trace!(
+                    "Got no session storage key \"{}\" from browser",
+                    key
+                );
+
+                None
+            }
+            Err(_error) => {
+                #[cfg(feature = "tracing")]
+                tracing::trace!(
+                    "Failed to get session storage key \"{}\" from browser: {:?}",
+                    key,
+                    _error
+                );
+
+                None
+            }
         }
-
-        result
     }
 
     #[cfg(feature = "ssr")]
@@ -55,21 +69,41 @@ pub fn get(key: &str) -> Option<String> {
 #[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
 pub fn set(key: &str, value: &str) {
     #[cfg(not(feature = "ssr"))]
-    if let Ok(Some(storage)) = ::leptos::prelude::window().session_storage() {
-        _ = storage.set_item(key, value);
-
-        #[cfg(feature = "tracing")]
-        tracing::trace!(
-            "Set session storage key \"{}\" in browser with value {:?}",
-            key,
-            value
-        );
-    } else {
-        #[cfg(feature = "tracing")]
-        tracing::trace!(
-            "Session storage unavailable in browser when setting key \"{}\"",
-            key
-        );
+    match ::leptos::prelude::window().session_storage() {
+        Ok(Some(storage)) => match storage.set_item(key, value) {
+            Ok(()) => {
+                #[cfg(feature = "tracing")]
+                tracing::trace!(
+                    "Set session storage key \"{}\" in browser with value {:?}",
+                    key,
+                    value
+                );
+            }
+            Err(_error) => {
+                #[cfg(feature = "tracing")]
+                tracing::trace!(
+                    "Failed to set session storage key \"{}\" in browser with value {:?}: {:?}",
+                    key,
+                    value,
+                    _error
+                );
+            }
+        },
+        Ok(None) => {
+            #[cfg(feature = "tracing")]
+            tracing::trace!(
+                "Session storage unavailable in browser when setting key \"{}\"",
+                key
+            );
+        }
+        Err(_error) => {
+            #[cfg(feature = "tracing")]
+            tracing::trace!(
+                "Failed to access session storage when setting key \"{}\": {:?}",
+                key,
+                _error
+            );
+        }
     }
 
     #[cfg(feature = "ssr")]
@@ -83,20 +117,39 @@ pub fn set(key: &str, value: &str) {
 pub fn delete(key: &str) {
     #[cfg(not(feature = "ssr"))]
     {
-        if let Ok(Some(storage)) = ::leptos::prelude::window().session_storage()
-        {
-            _ = storage.remove_item(key);
-            #[cfg(feature = "tracing")]
-            tracing::trace!(
-                "Deleted session storage key \"{}\" in browser",
-                key
-            );
-        } else {
-            #[cfg(feature = "tracing")]
-            tracing::trace!(
-                "Session storage unavailable in browser when deleting key \"{}\"",
-                key
-            );
+        match ::leptos::prelude::window().session_storage() {
+            Ok(Some(storage)) => match storage.remove_item(key) {
+                Ok(()) => {
+                    #[cfg(feature = "tracing")]
+                    tracing::trace!(
+                        "Deleted session storage key \"{}\" in browser",
+                        key
+                    );
+                }
+                Err(_error) => {
+                    #[cfg(feature = "tracing")]
+                    tracing::trace!(
+                        "Failed to delete session storage key \"{}\" in browser: {:?}",
+                        key,
+                        _error
+                    );
+                }
+            },
+            Ok(None) => {
+                #[cfg(feature = "tracing")]
+                tracing::trace!(
+                    "Session storage unavailable in browser when deleting key \"{}\"",
+                    key
+                );
+            }
+            Err(_error) => {
+                #[cfg(feature = "tracing")]
+                tracing::trace!(
+                    "Failed to access session storage when deleting key \"{}\": {:?}",
+                    key,
+                    _error
+                );
+            }
         }
     }
 

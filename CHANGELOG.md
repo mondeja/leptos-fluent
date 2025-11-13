@@ -6,8 +6,10 @@
 
 - Fix parsing of `Accept-Language` header so multiple language tags with
   quality weights are handled correctly.
-- Avoid panics when browser local or session storage is unavailable by
-  gracefully handling access errors.
+- Hardened browser and desktop integrations to handle failures gracefully:
+  improved cookie, storage, URL parameter, data-file and `Accept-Language`
+  helpers now avoid panics, log unexpected errors, and report when operations
+  cannot be completed.
 
 ## 2025-10-20 - [0.2.19]
 

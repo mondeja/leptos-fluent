@@ -44,23 +44,54 @@ pub mod param {
     pub fn set(k: &str, v: &str) {
         #[cfg(not(feature = "ssr"))]
         {
-            let url = web_sys::Url::new(
-                &leptos::prelude::window()
-                    .location()
-                    .href()
-                    .expect("Failed to get location.href from the browser"),
-            )
-            .expect("Failed to parse location.href from the browser");
+            let window = leptos::prelude::window();
+            let href = match window.location().href() {
+                Ok(href) => href,
+                Err(_error) => {
+                    #[cfg(feature = "tracing")]
+                    tracing::trace!(
+                        "Failed to get location.href from the browser when setting URL parameter \"{}\": {:?}",
+                        k,
+                        _error
+                    );
+                    return;
+                }
+            };
+
+            let url = match web_sys::Url::new(&href) {
+                Ok(url) => url,
+                Err(_error) => {
+                    #[cfg(feature = "tracing")]
+                    tracing::trace!(
+                        "Failed to parse location.href when setting URL parameter \"{}\": {:?}",
+                        k,
+                        _error
+                    );
+                    return;
+                }
+            };
             url.search_params().set(k, v);
-            leptos::prelude::window()
-                .history()
-                .expect("Failed to get the history from the browser")
-                .replace_state_with_url(
+
+            if let Ok(history) = window.history() {
+                if let Err(_error) = history.replace_state_with_url(
                     &wasm_bindgen::JsValue::NULL,
                     "",
                     Some(&url.href()),
-                )
-                .expect("Failed to replace the history state");
+                ) {
+                    #[cfg(feature = "tracing")]
+                    tracing::trace!(
+                        "Failed to replace the history state when setting URL parameter \"{}\": {:?}",
+                        k,
+                        _error
+                    );
+                }
+            } else {
+                #[cfg(feature = "tracing")]
+                tracing::trace!(
+                    "Failed to get the history from the browser when setting URL parameter \"{}\"",
+                    k
+                );
+            }
 
             #[cfg(feature = "tracing")]
             tracing::trace!(
@@ -84,23 +115,54 @@ pub mod param {
     pub fn delete(k: &str) {
         #[cfg(not(feature = "ssr"))]
         {
-            let url = web_sys::Url::new(
-                &leptos::prelude::window()
-                    .location()
-                    .href()
-                    .expect("Failed to get location.href from the browser"),
-            )
-            .expect("Failed to parse location.href from the browser");
+            let window = leptos::prelude::window();
+            let href = match window.location().href() {
+                Ok(href) => href,
+                Err(_error) => {
+                    #[cfg(feature = "tracing")]
+                    tracing::trace!(
+                        "Failed to get location.href from the browser when deleting URL parameter \"{}\": {:?}",
+                        k,
+                        _error
+                    );
+                    return;
+                }
+            };
+
+            let url = match web_sys::Url::new(&href) {
+                Ok(url) => url,
+                Err(_error) => {
+                    #[cfg(feature = "tracing")]
+                    tracing::trace!(
+                        "Failed to parse location.href when deleting URL parameter \"{}\": {:?}",
+                        k,
+                        _error
+                    );
+                    return;
+                }
+            };
             url.search_params().delete(k);
-            leptos::prelude::window()
-                .history()
-                .expect("Failed to get the history from the browser")
-                .replace_state_with_url(
+
+            if let Ok(history) = window.history() {
+                if let Err(_error) = history.replace_state_with_url(
                     &wasm_bindgen::JsValue::NULL,
                     "",
                     Some(&url.href()),
-                )
-                .expect("Failed to replace the history state");
+                ) {
+                    #[cfg(feature = "tracing")]
+                    tracing::trace!(
+                        "Failed to replace the history state when deleting URL parameter \"{}\": {:?}",
+                        k,
+                        _error
+                    );
+                }
+            } else {
+                #[cfg(feature = "tracing")]
+                tracing::trace!(
+                    "Failed to get the history from the browser when deleting URL parameter \"{}\"",
+                    k
+                );
+            }
 
             #[cfg(feature = "tracing")]
             tracing::trace!(
