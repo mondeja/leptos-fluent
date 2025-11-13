@@ -6,10 +6,12 @@
 
 - Fix parsing of `Accept-Language` header so multiple language tags with
   quality weights are handled correctly.
-- Hardened browser and desktop integrations to handle failures gracefully:
-  improved cookie, storage, URL parameter, data-file and `Accept-Language`
+- Harden browser and desktop integrations to handle failures gracefully:
+  updated cookie, storage, URL parameter, data-file and `Accept-Language`
   helpers now avoid panics, log unexpected errors, and report when operations
   cannot be completed.
+- Detect failures creating, reading or deleting desktop data files and
+  provide tracing details instead of silently ignoring them.
 
 ## 2025-10-20 - [0.2.19]
 
