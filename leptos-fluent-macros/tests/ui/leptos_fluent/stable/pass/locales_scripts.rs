@@ -5,7 +5,6 @@ use leptos_fluent::{leptos_fluent, move_tr};
 fn I18n(children: Children) -> impl IntoView {
     leptos_fluent! {
         children: children(),
-        default_language: "sr-Latn",
         locales: "../../../../leptos-fluent-macros/tests/ui/leptos_fluent/stable/pass/locales_scripts",
         default_language: "sr-Latn",
     }
