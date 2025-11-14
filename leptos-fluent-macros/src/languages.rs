@@ -428,7 +428,13 @@ fn locale_from_parts(
 
 fn display_name_with_script(name: &str, script: Option<&str>) -> String {
     match script {
-        Some(script_subtag) => format!("{} ({})", name, script_subtag),
+        Some(script_subtag) => {
+            if name.contains(script_subtag) {
+                name.to_string()
+            } else {
+                format!("{name} ({script_subtag})")
+            }
+        }
         None => name.to_string(),
     }
 }
@@ -437,44 +443,43 @@ fn language_name_with_script_override(
     code: &str,
     script: &str,
 ) -> Option<&'static str> {
-    let normalized = code.to_lowercase().replace('_', "-");
-    match normalized.as_str() {
-        "sr-latn" => Some("Srpski (Latinica)"),
-        "sr-cyrl" => Some("Српски (Ћирилица)"),
-        "sr-latn-ba" => Some("Srpski (Latinica, Bosna i Hercegovina)"),
-        "sr-cyrl-ba" => Some("Српски (Ћирилица, Босна и Херцеговина)"),
-        "sr-latn-me" => Some("Srpski (Latinica, Crna Gora)"),
-        "sr-cyrl-me" => Some("Српски (Ћирилица, Црна Гора)"),
-        "sr-latn-rs" => Some("Srpski (Latinica, Srbija)"),
-        "sr-cyrl-rs" => Some("Српски (Ћирилица, Србија)"),
-        "sr-latn-xk" => Some("Srpski (Latinica, Kosovo)"),
-        "sr-cyrl-xk" => Some("Српски (Ћирилица, Косово)"),
-        "sr-latn-bih" => Some("Srpski (Latinica, Bosna i Hercegovina)"),
-        "sr-cyrl-bih" => Some("Српски (Ћирилица, Босна и Херцеговина)"),
-        "sr-latn-mne" => Some("Srpski (Latinica, Crna Gora)"),
-        "sr-cyrl-mne" => Some("Српски (Ћирилица, Црна Гора)"),
-        "sr-latn-srb" => Some("Srpski (Latinica, Srbija)"),
-        "sr-cyrl-srb" => Some("Српски (Ћирилица, Србија)"),
-        "sr-latn-xkk" => Some("Srpski (Latinica, Kosovo)"),
-        "sr-cyrl-xkk" => Some("Српски (Ћирилица, Косово)"),
-        "sr" if script.eq_ignore_ascii_case("Latn") => {
-            Some("Srpski (Latinica)")
-        }
-        "sr" if script.eq_ignore_ascii_case("Cyrl") => {
-            Some("Српски (Ћирилица)")
-        }
-        "zh-hans" | "zh" if script.eq_ignore_ascii_case("Hans") => {
-            Some("中文 (简体)")
-        }
-        "zh-hant" | "zh" if script.eq_ignore_ascii_case("Hant") => {
-            Some("中文 (繁體)")
-        }
-        "zh-hans-cn" => Some("中文 (简体)"),
-        "zh-hant-tw" => Some("中文 (繁體)"),
-        "zh-hant-hk" => Some("中文 (香港繁體)"),
-        "zh-hans-hk" => Some("中文 (香港简体)"),
-        "zh-hans-sg" => Some("中文 (新加坡简体)"),
-        "zh-hant-mo" => Some("中文 (澳門繁體)"),
+    let mut normalized = code.to_lowercase().replace('_', "-");
+    let mut parts = normalized.split('-').collect::<Vec<&str>>();
+    if parts.len() >= 3
+        && parts[1].len() == 4
+        && parts[1].chars().all(|c| c.is_ascii_alphabetic())
+    {
+        parts.remove(1);
+        normalized = parts.join("-");
+    }
+    let script_lc = script.to_lowercase();
+    match (normalized.as_str(), script_lc.as_str()) {
+        ("sr", "latn") => Some("Srpski (Latinica)"),
+        ("sr", "cyrl") => Some("Српски (Ћирилица)"),
+        ("sr-ba", "latn") => Some("Srpski (Latinica, Bosna i Hercegovina)"),
+        ("sr-ba", "cyrl") => Some("Српски (Ћирилица, Босна и Херцеговина)"),
+        ("sr-me", "latn") => Some("Srpski (Latinica, Crna Gora)"),
+        ("sr-me", "cyrl") => Some("Српски (Ћирилица, Црна Гора)"),
+        ("sr-rs", "latn") => Some("Srpski (Latinica, Srbija)"),
+        ("sr-rs", "cyrl") => Some("Српски (Ћирилица, Србија)"),
+        ("sr-xk", "latn") => Some("Srpski (Latinica, Kosovo)"),
+        ("sr-xk", "cyrl") => Some("Српски (Ћирилица, Косово)"),
+        ("sr-bih", "latn") => Some("Srpski (Latinica, Bosna i Hercegovina)"),
+        ("sr-bih", "cyrl") => Some("Српски (Ћирилица, Босна и Херцеговина)"),
+        ("sr-mne", "latn") => Some("Srpski (Latinica, Crna Gora)"),
+        ("sr-mne", "cyrl") => Some("Српски (Ћирилица, Црна Гора)"),
+        ("sr-srb", "latn") => Some("Srpski (Latinica, Srbija)"),
+        ("sr-srb", "cyrl") => Some("Српски (Ћирилица, Србија)"),
+        ("sr-xkk", "latn") => Some("Srpski (Latinica, Kosovo)"),
+        ("sr-xkk", "cyrl") => Some("Српски (Ћирилица, Косово)"),
+        ("zh", "hans") | ("zh-hans", _) => Some("中文 (简体)"),
+        ("zh", "hant") | ("zh-hant", _) => Some("中文 (繁體)"),
+        ("zh-cn", "hans") => Some("中文 (简体)"),
+        ("zh-tw", "hant") => Some("中文 (繁體)"),
+        ("zh-hk", "hant") => Some("中文 (香港繁體)"),
+        ("zh-hk", "hans") => Some("中文 (香港简体)"),
+        ("zh-sg", "hans") => Some("中文 (新加坡简体)"),
+        ("zh-mo", "hant") => Some("中文 (澳門繁體)"),
         _ => None,
     }
 }
