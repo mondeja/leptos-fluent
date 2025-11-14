@@ -28,25 +28,25 @@ pub fn set(data_file_key: &str, language: &str) {
     let data_file = data_dir.join(format!("data_file-{data_file_key}"));
     let mut file = match File::create(&data_file) {
         Ok(file) => file,
-        Err(error) => {
+        Err(_error) => {
             #[cfg(feature = "tracing")]
             tracing::trace!(
                 "Failed to create data file \"{}\" for key \"{}\": {:?}",
                 data_file.display(),
                 data_file_key,
-                error
+                _error
             );
             return;
         }
     };
 
-    if let Err(error) = file.write_all(language.as_bytes()) {
+    if let Err(_error) = file.write_all(language.as_bytes()) {
         #[cfg(feature = "tracing")]
         tracing::trace!(
             "Failed to write language \"{}\" to data file \"{}\": {:?}",
             language,
             data_file.display(),
-            error
+            _error
         );
         return;
     }
@@ -104,26 +104,26 @@ pub fn get(data_file_key: &str) -> Option<String> {
     }
     let mut file = match File::open(&data_file) {
         Ok(file) => file,
-        Err(error) => {
+        Err(_error) => {
             #[cfg(feature = "tracing")]
             tracing::trace!(
                 "Failed to open data file \"{}\" for key \"{}\": {:?}",
                 data_file.display(),
                 data_file_key,
-                error
+                _error
             );
             return None;
         }
     };
 
     let mut contents = String::new();
-    if let Err(error) = file.read_to_string(&mut contents) {
+    if let Err(_error) = file.read_to_string(&mut contents) {
         #[cfg(feature = "tracing")]
         tracing::trace!(
             "Failed to read data file \"{}\" for key \"{}\": {:?}",
             data_file.display(),
             data_file_key,
-            error
+            _error
         );
         return None;
     }
@@ -165,12 +165,12 @@ pub fn delete(data_file_key: &str) {
                 data_file.display()
             );
         }
-        Err(error) => {
+        Err(_error) => {
             #[cfg(feature = "tracing")]
             tracing::trace!(
                 "Failed to delete data file \"{}\": {:?}",
                 data_file.display(),
-                error
+                _error
             );
         }
     }
