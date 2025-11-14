@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### New features
+
+- Support language entries with script subtags, automatically detecting
+  script, flag and display name when using `sr-Latn`, `sr-Cyrl`, `zh-Hans`,
+  `zh-Hant`, and similar BCP 47 tags.
+
 ### Enhancements
 
 - Detect failures creating, reading or deleting desktop data files and

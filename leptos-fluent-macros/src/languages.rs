@@ -383,6 +383,7 @@ fn extract_script_from_lang_code(code: &str) -> Option<String> {
     })
 }
 
+#[cfg(any(feature = "json", feature = "yaml", feature = "json5"))]
 fn locale_from_lang_code(
     lang_code: &str,
     lang_name: &str,
