@@ -396,9 +396,14 @@ fn locale_from_lang_code(
             .and_then(|country_code| country_code_to_emoji_flag(&country_code))
             .map(|f| f.to_owned())
     });
+    
+    // Only append script to display name if it's not a custom override
+    // (lang_name from languages file should be used as-is if it's explicit)
+    let final_name = display_name_with_script(lang_name, script.as_deref());
+    
     (
         lang_code.to_owned(),
-        display_name_with_script(lang_name, script.as_deref()),
+        final_name,
         dir.to_owned(),
         flag,
         script,
@@ -417,9 +422,23 @@ fn locale_from_parts(
     let flag = code_to_country_code(lang_code)
         .and_then(|country_code| country_code_to_emoji_flag(&country_code))
         .map(|f| f.to_string());
+    
+    // Check if the name already has script information (from language_name_with_script_override)
+    let final_name = if let Some(ref script_val) = script_owned {
+        if language_name_with_script_override(lang_code, script_val).is_some() {
+            // Name already includes script info, don't append it again
+            lang_name.to_string()
+        } else {
+            // Name doesn't have script info, append it
+            display_name_with_script(lang_name, Some(script_val))
+        }
+    } else {
+        lang_name.to_string()
+    };
+    
     (
         lang_code.to_string(),
-        display_name_with_script(lang_name, script_owned.as_deref()),
+        final_name,
         lang_dir.to_string(),
         flag,
         script_owned,
@@ -530,6 +549,42 @@ mod tests {
         assert_eq!(code_to_country_code("sr-Cyrl-RS"), Some("RS".to_string()));
         assert_eq!(code_to_country_code("zh-Hant-TW"), Some("TW".to_string()));
         assert_eq!(code_to_country_code("zh-Hans-CN"), Some("CN".to_string()));
+    }
+
+    #[test]
+    fn script_not_duplicated_in_locale_from_parts() {
+        // Test that script subtags are not displayed twice
+        // when language_name_with_script_override provides a name
+        
+        let locale = locale_from_parts(
+            "sr-Latn-RS",
+            "Srpski (Latinica, Srbija)",
+            "ltr",
+            Some(&"Latn".to_string()),
+        );
+        
+        // The name should be used as-is without appending "(Latn)"
+        assert_eq!(locale.1, "Srpski (Latinica, Srbija)");
+        assert!(!locale.1.contains("(Latn)"));
+        
+        // Test Chinese variants
+        let locale = locale_from_parts(
+            "zh-Hans-CN",
+            "中文 (简体)",
+            "ltr",
+            Some(&"Hans".to_string()),
+        );
+        assert_eq!(locale.1, "中文 (简体)");
+        assert!(!locale.1.contains("(Hans)"));
+        
+        // Test that script IS appended when not in override list
+        let locale = locale_from_parts(
+            "en-Latn",
+            "English",
+            "ltr",
+            Some(&"Latn".to_string()),
+        );
+        assert_eq!(locale.1, "English (Latn)");
     }
 }
 
