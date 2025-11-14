@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-### Bug fixes
+### Enhancements
 
 - Detect failures creating, reading or deleting desktop data files and
   provide tracing details instead of silently ignoring them.
