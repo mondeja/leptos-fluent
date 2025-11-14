@@ -23,11 +23,15 @@ let LANGUAGES = [
     id: unic_langid::langid!("en"),
     name: "English",
     dir: leptos_fluent::WritingDirection::Ltr,
+    flag: Some("🇬🇧"),
+    script: None,
   },
   leptos_fluent::Language {
     id: unic_langid::langid!("es-ES"),
     name: "Español (España)",
     dir: leptos_fluent::WritingDirection::Ltr,
+    flag: Some("🇪🇸"),
+    script: None,
   },
 ]
 ```

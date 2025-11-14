@@ -349,6 +349,8 @@ pub struct Language {
     pub dir: &'static WritingDirection,
     /// Flag of the country of the language as emoji (if any)
     pub flag: Option<&'static str>,
+    /// Optional script subtag for languages with multiple scripts (e.g. `Latn`).
+    pub script: Option<&'static str>,
 }
 
 impl Language {

@@ -7,7 +7,9 @@ type LangCode = String;
 type LangName = String;
 type LangDir = String;
 type LangFlag = Option<String>;
-pub(crate) type ParsedLanguage = (LangCode, LangName, LangDir, LangFlag);
+type LangScript = Option<String>;
+pub(crate) type ParsedLanguage =
+    (LangCode, LangName, LangDir, LangFlag, LangScript);
 
 #[cfg(any(feature = "json", feature = "yaml", feature = "json5"))]
 #[derive(serde::Deserialize)]
@@ -25,51 +27,30 @@ fn fill_languages_file(
     let mut locales = vec![];
     for tuple in languages {
         match tuple {
-            RawLanguagesFileLanguage::Basic(lang_code, lang_name) => {
-                locales.push((
-                    lang_code.to_owned(),
-                    lang_name.to_owned(),
-                    iso639_to_dir(&code_to_iso639(lang_code)).to_string(),
-                    match code_to_country_code(lang_code) {
-                        Some(country_code) => {
-                            country_code_to_emoji_flag(&country_code)
-                                .map(|f| f.to_owned())
-                        }
-                        None => None,
-                    },
-                ));
-            }
+            RawLanguagesFileLanguage::Basic(lang_code, lang_name) => locales
+                .push(locale_from_lang_code(
+                    lang_code,
+                    lang_name,
+                    iso639_to_dir(&code_to_iso639(lang_code)),
+                    None,
+                )),
             RawLanguagesFileLanguage::CodeNameDir(
                 lang_code,
                 lang_name,
                 dir,
-            ) => {
-                locales.push((
-                    lang_code.to_owned(),
-                    lang_name.to_owned(),
-                    dir.to_owned(),
-                    match code_to_country_code(lang_code) {
-                        Some(country_code) => {
-                            country_code_to_emoji_flag(&country_code)
-                                .map(|f| f.to_owned())
-                        }
-                        None => None,
-                    },
-                ));
-            }
+            ) => locales
+                .push(locale_from_lang_code(lang_code, lang_name, dir, None)),
             RawLanguagesFileLanguage::CodeNameDirFlag(
                 lang_code,
                 lang_name,
                 dir,
                 flag,
-            ) => {
-                locales.push((
-                    lang_code.to_owned(),
-                    lang_name.to_owned(),
-                    dir.to_owned(),
-                    Some(flag.to_owned()),
-                ));
-            }
+            ) => locales.push(locale_from_lang_code(
+                lang_code,
+                lang_name,
+                dir,
+                Some(flag.to_owned()),
+            )),
         }
     }
     locales
@@ -272,7 +253,7 @@ pub(crate) fn read_locales_folder(
 
     let mut errors = vec![];
 
-    let mut language_codes: Vec<(String, Rc<str>)> = vec![];
+    let mut language_codes: Vec<(String, Rc<str>, LangScript)> = vec![];
     for entry in fs::read_dir(path).expect("Couldn't read locales folder") {
         let entry = entry.expect("Couldn't read entry");
         let path = entry.path();
@@ -281,13 +262,18 @@ pub(crate) fn read_locales_folder(
         }
         let lang_code = path.file_name().unwrap().to_str().unwrap();
         let iso639_code = code_to_iso639(lang_code).into_owned();
-        language_codes.push((iso639_code, Rc::clone(&lang_code.into())));
+        let script = extract_script_from_lang_code(lang_code);
+        language_codes.push((
+            iso639_code,
+            Rc::clone(&lang_code.into()),
+            script,
+        ));
     }
 
     let iso639_language_codes: Vec<&str> =
-        language_codes.iter().map(|(a, _)| a.as_ref()).collect();
+        language_codes.iter().map(|(a, _, _)| a.as_ref()).collect();
     let mut locales = vec![];
-    for (iso639_code, lang_code) in &language_codes {
+    for (iso639_code, lang_code, script) in &language_codes {
         let use_country_code = iso639_language_codes
             .iter()
             .filter(|&c| c == iso639_code)
@@ -306,15 +292,11 @@ pub(crate) fn read_locales_folder(
             continue;
         }
         let lang_dir = iso639_to_dir(iso639_code);
-        let flag = match code_to_country_code(lang_code) {
-            Some(country_code) => country_code_to_emoji_flag(&country_code),
-            None => None,
-        };
-        locales.push((
-            lang_code.to_string(),
-            lang_name.to_string(),
-            lang_dir.to_string(),
-            flag.map(|f| f.to_string()),
+        locales.push(locale_from_parts(
+            lang_code,
+            lang_name,
+            lang_dir,
+            script.as_ref(),
         ));
     }
     locales.sort_by(|a, b| a.1.cmp(&b.1));
@@ -336,9 +318,9 @@ pub(crate) fn build_languages_quote(
         "[{}]",
         languages
             .iter()
-            .map(|(id, name, dir, flag)| generate_code_for_static_language(
-                id, name, dir, flag
-            ))
+            .map(|(id, name, dir, flag, script)| {
+                generate_code_for_static_language(id, name, dir, flag, script)
+            })
             .collect::<Vec<String>>()
             .join(",")
     )
@@ -351,6 +333,7 @@ fn generate_code_for_static_language(
     name: &str,
     dir: &str,
     flag: &Option<String>,
+    script: &Option<String>,
 ) -> String {
     format!(
         concat!(
@@ -358,7 +341,8 @@ fn generate_code_for_static_language(
             "id:&::leptos_fluent::__reexports::fluent_templates::loader::langid!(\"{}\"),",
             "name:\"{}\",",
             "dir:{},",
-            "flag:{}",
+            "flag:{},",
+            "script:{}",
             "}}",
         ),
         id,
@@ -371,8 +355,81 @@ fn generate_code_for_static_language(
         match flag {
             Some(f) => format!("Some(\"{f}\")"),
             None => "None".to_string(),
-        }
+        },
+        match script {
+            Some(s) => format!("Some(\"{s}\")"),
+            None => "None".to_string(),
+        },
     )
+}
+
+fn extract_script_from_lang_code(code: &str) -> Option<String> {
+    let mut parts = code.split(['-', '_']);
+    let _language = parts.next();
+    parts.find_map(|part| {
+        if part.len() == 4 && part.chars().all(|c| c.is_ascii_alphabetic()) {
+            let mut normalized = String::with_capacity(4);
+            let mut chars = part.chars();
+            if let Some(first) = chars.next() {
+                normalized.push(first.to_ascii_uppercase());
+            }
+            for ch in chars {
+                normalized.push(ch.to_ascii_lowercase());
+            }
+            Some(normalized)
+        } else {
+            None
+        }
+    })
+}
+
+fn locale_from_lang_code(
+    lang_code: &str,
+    lang_name: &str,
+    dir: &str,
+    explicit_flag: Option<String>,
+) -> ParsedLanguage {
+    let script = extract_script_from_lang_code(lang_code);
+    let flag = explicit_flag.or_else(|| {
+        code_to_country_code(lang_code)
+            .and_then(|country_code| country_code_to_emoji_flag(&country_code))
+            .map(|f| f.to_owned())
+    });
+    (
+        lang_code.to_owned(),
+        display_name_with_script(lang_name, script.as_deref()),
+        dir.to_owned(),
+        flag,
+        script,
+    )
+}
+
+fn locale_from_parts(
+    lang_code: &str,
+    lang_name: &str,
+    lang_dir: &str,
+    script: Option<&String>,
+) -> ParsedLanguage {
+    let script_owned = script
+        .cloned()
+        .or_else(|| extract_script_from_lang_code(lang_code));
+    let flag = code_to_country_code(lang_code)
+        .and_then(|country_code| country_code_to_emoji_flag(&country_code))
+        .map(|f| f.to_string());
+    (
+        lang_code.to_string(),
+        display_name_with_script(lang_name, script_owned.as_deref()),
+        lang_dir.to_string(),
+        flag,
+        script_owned,
+    )
+}
+
+fn display_name_with_script(name: &str, script: Option<&str>) -> String {
+    match script {
+        Some(script_subtag) => format!("{} ({})", name, script_subtag),
+        None => name.to_string(),
+    }
 }
 
 fn code_to_iso639(code: &str) -> Cow<'_, str> {
