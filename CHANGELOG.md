@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## Unreleased
+
+### Enhancements
+
+- Detect failures creating, reading or deleting desktop data files and
+  provide tracing details instead of silently ignoring them.
+
 ## 2025-11-13 - [0.2.20]
 
 ### Bug fixes
