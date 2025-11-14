@@ -432,6 +432,106 @@ fn display_name_with_script(name: &str, script: Option<&str>) -> String {
     }
 }
 
+fn language_name_with_script_override(
+    code: &str,
+    script: &str,
+) -> Option<&'static str> {
+    let normalized = code.to_lowercase().replace('_', "-");
+    match normalized.as_str() {
+        "sr-latn" => Some("Srpski (Latinica)"),
+        "sr-cyrl" => Some("Српски (Ћирилица)"),
+        "sr-latn-ba" => Some("Srpski (Latinica, Bosna i Hercegovina)"),
+        "sr-cyrl-ba" => Some("Српски (Ћирилица, Босна и Херцеговина)"),
+        "sr-latn-me" => Some("Srpski (Latinica, Crna Gora)"),
+        "sr-cyrl-me" => Some("Српски (Ћирилица, Црна Гора)"),
+        "sr-latn-rs" => Some("Srpski (Latinica, Srbija)"),
+        "sr-cyrl-rs" => Some("Српски (Ћирилица, Србија)"),
+        "sr-latn-xk" => Some("Srpski (Latinica, Kosovo)"),
+        "sr-cyrl-xk" => Some("Српски (Ћирилица, Косово)"),
+        "sr-latn-bih" => Some("Srpski (Latinica, Bosna i Hercegovina)"),
+        "sr-cyrl-bih" => Some("Српски (Ћирилица, Босна и Херцеговина)"),
+        "sr-latn-mne" => Some("Srpski (Latinica, Crna Gora)"),
+        "sr-cyrl-mne" => Some("Српски (Ћирилица, Црна Гора)"),
+        "sr-latn-srb" => Some("Srpski (Latinica, Srbija)"),
+        "sr-cyrl-srb" => Some("Српски (Ћирилица, Србија)"),
+        "sr-latn-xkk" => Some("Srpski (Latinica, Kosovo)"),
+        "sr-cyrl-xkk" => Some("Српски (Ћирилица, Косово)"),
+        "sr" if script.eq_ignore_ascii_case("Latn") => {
+            Some("Srpski (Latinica)")
+        }
+        "sr" if script.eq_ignore_ascii_case("Cyrl") => {
+            Some("Српски (Ћирилица)")
+        }
+        "zh-hans" | "zh" if script.eq_ignore_ascii_case("Hans") => {
+            Some("中文 (简体)")
+        }
+        "zh-hant" | "zh" if script.eq_ignore_ascii_case("Hant") => {
+            Some("中文 (繁體)")
+        }
+        "zh-hans-cn" => Some("中文 (简体)"),
+        "zh-hant-tw" => Some("中文 (繁體)"),
+        "zh-hant-hk" => Some("中文 (香港繁體)"),
+        "zh-hans-hk" => Some("中文 (香港简体)"),
+        "zh-hans-sg" => Some("中文 (新加坡简体)"),
+        "zh-hant-mo" => Some("中文 (澳門繁體)"),
+        _ => None,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn extract_script_handles_sr_and_zh_variants() {
+        assert_eq!(
+            extract_script_from_lang_code("sr-Latn-RS"),
+            Some("Latn".into())
+        );
+        assert_eq!(
+            extract_script_from_lang_code("sr-Cyrl"),
+            Some("Cyrl".into())
+        );
+        assert_eq!(
+            extract_script_from_lang_code("zh-Hans-CN"),
+            Some("Hans".into())
+        );
+        assert_eq!(
+            extract_script_from_lang_code("zh-Hant-TW"),
+            Some("Hant".into())
+        );
+        assert_eq!(extract_script_from_lang_code("en-US"), None);
+    }
+
+    #[test]
+    fn language_name_override_applies_for_scripts() {
+        assert_eq!(
+            language_name_from_language_code("sr-Latn-RS", true),
+            "Srpski (Latinica, Srbija)"
+        );
+        assert_eq!(
+            language_name_from_language_code("sr-Cyrl-RS", true),
+            "Српски (Ћирилица, Србија)"
+        );
+        assert_eq!(
+            language_name_from_language_code("zh-Hant-TW", true),
+            "中文 (繁體)"
+        );
+        assert_eq!(
+            language_name_from_language_code("zh-Hans-CN", true),
+            "中文 (简体)"
+        );
+    }
+
+    #[test]
+    fn country_code_detection_ignores_script() {
+        assert_eq!(code_to_country_code("sr-Latn-RS"), Some("RS".to_string()));
+        assert_eq!(code_to_country_code("sr-Cyrl-RS"), Some("RS".to_string()));
+        assert_eq!(code_to_country_code("zh-Hant-TW"), Some("TW".to_string()));
+        assert_eq!(code_to_country_code("zh-Hans-CN"), Some("CN".to_string()));
+    }
+}
+
 fn code_to_iso639(code: &str) -> Cow<'_, str> {
     let splitter = if code.contains('_') {
         '_'
@@ -460,7 +560,18 @@ fn code_to_country_code(code: &str) -> Option<String> {
     } else {
         return None;
     };
-    Some(code.split(splitter).collect::<Vec<&str>>()[1].to_string())
+    let mut parts = code.split(splitter).collect::<Vec<&str>>();
+    if parts.len() <= 1 {
+        return None;
+    }
+    if parts[1].len() == 4 && parts[1].chars().all(|c| c.is_ascii_alphabetic())
+    {
+        if parts.len() <= 2 {
+            return None;
+        }
+        parts.remove(1);
+    }
+    parts.get(1).map(|part| part.to_ascii_uppercase())
 }
 
 /// Convert an ISO-639 language code to a directionality string.
@@ -659,9 +770,23 @@ fn language_name_from_language_code(
     code: &str,
     use_country_code: bool,
 ) -> &'static str {
+    if let Some(script) = extract_script_from_lang_code(code) {
+        if let Some(name) = language_name_with_script_override(code, &script) {
+            return name;
+        }
+    }
+
     if use_country_code {
-        let c = code.to_string().to_lowercase().replace('_', "-");
-        match c.as_str() {
+        let mut normalized = code.to_string().to_lowercase().replace('_', "-");
+        let mut parts = normalized.split('-').collect::<Vec<&str>>();
+        if parts.len() >= 3
+            && parts[1].len() == 4
+            && parts[1].chars().all(|c| c.is_ascii_alphabetic())
+        {
+            parts.remove(1);
+            normalized = parts.join("-");
+        }
+        match normalized.as_str() {
             // lang (3 letter) -> number
             "jbo-001" => return "Lojban (World)",
             // lang (2 letter) -> country (2 letter)
