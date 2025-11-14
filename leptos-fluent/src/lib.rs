@@ -339,7 +339,7 @@ pub struct Language {
     /// Language identifier
     ///
     /// Can be any valid language tag, such as `en`, `es`, `en-US`, `es-ES`, etc.
-    pub id: &'static LanguageIdentifier,
+    pub id: &'static str,
     /// Language name
     ///
     /// The name of the language, such as `English`, `Español`, etc.
@@ -437,15 +437,11 @@ macro_rules! impl_attr_value_for_language {
         type CloneableOwned = String;
 
         fn html_len(&self) -> usize {
-            self.id.to_string().len()
+            self.id.len()
         }
 
         fn to_html(self, key: &str, buf: &mut String) {
-            <&str as AttributeValue>::to_html(
-                self.id.to_string().as_str(),
-                key,
-                buf,
-            );
+            <&str as AttributeValue>::to_html(self.id, key, buf);
         }
 
         fn to_template(_key: &str, _buf: &mut String) {}
@@ -565,9 +561,19 @@ impl I18n {
     pub fn tr(&self, text_id: &str) -> String {
         let found = self.translations.with(|translations| {
             self.language.with(|language| {
-                translations
-                    .iter()
-                    .find_map(|tr| tr.try_lookup(language.id, text_id))
+                let maybe_lang_id = LanguageIdentifier::from_str(language.id);
+                if let Ok(lang_id) = maybe_lang_id {
+                    translations
+                        .iter()
+                        .find_map(|tr| tr.try_lookup(&lang_id, text_id))
+                } else {
+                    #[cfg(feature = "tracing")]
+                    tracing::error!(
+                        "Invalid language identifier \"{}\"",
+                        language.id
+                    );
+                    None
+                }
             })
         });
 
@@ -623,7 +629,18 @@ impl I18n {
         let found = self.translations.with(|translations| {
             self.language.with(|language| {
                 translations.iter().find_map(|tr| {
-                    tr.try_lookup_with_args(language.id, text_id, args)
+                    let maybe_lang_id =
+                        LanguageIdentifier::from_str(language.id);
+                    if let Ok(lang_id) = maybe_lang_id {
+                        tr.try_lookup_with_args(&lang_id, text_id, args)
+                    } else {
+                        #[cfg(feature = "tracing")]
+                        tracing::error!(
+                            "Invalid language identifier \"{}\"",
+                            language.id
+                        );
+                        None
+                    }
                 })
             })
         });
@@ -1327,22 +1344,30 @@ pub fn language_from_str_between_languages(
     #[cfg(feature = "tracing")]
     tracing::trace!(
         concat!(
-            "Searching for language with code \"{}\".\n",
+            "Searching for language with code {:?}.\n",
             " Available languages: {}",
         ),
         code,
         languages
             .iter()
-            .map(|lang| format!("\"{}\"", lang.id))
+            .map(|lang| format!("{:?}", lang.id))
             .collect::<Vec<_>>()
             .join(", ")
     );
 
+    let languages_identifiers: std::collections::HashMap<
+        &'static str,
+        LanguageIdentifier,
+    > = languages
+        .iter()
+        .map(|lang| {
+            (lang.id, { LanguageIdentifier::from_str(lang.id).unwrap() })
+        })
+        .collect();
     match LanguageIdentifier::from_str(code) {
-        Ok(target_lang) => match languages
-            .iter()
-            .find(|lang| lang.id.matches(&target_lang, false, false))
-        {
+        Ok(target_lang) => match languages.iter().find(|lang| {
+            languages_identifiers[lang.id].matches(&target_lang, false, false)
+        }) {
             Some(lang) => {
                 #[cfg(feature = "tracing")]
                 tracing::trace!(
@@ -1361,10 +1386,13 @@ pub fn language_from_str_between_languages(
                         None,
                         None,
                     );
-                match languages
-                    .iter()
-                    .find(|lang| lang.id.matches(&lazy_target_lang, true, true))
-                {
+                match languages.iter().find(|lang| {
+                    languages_identifiers[lang.id].matches(
+                        &lazy_target_lang,
+                        true,
+                        true,
+                    )
+                }) {
                     Some(lang) => {
                         #[cfg(feature = "tracing")]
                         tracing::trace!(

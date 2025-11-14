@@ -259,7 +259,7 @@ pub fn leptos_fluent(
             let effect_quote = quote! {
                 ::leptos_fluent::data_file::set(
                     #data_file_key_quote,
-                    &l.id.to_string(),
+                    &l.id,
                 );
             };
 
@@ -421,7 +421,7 @@ pub fn leptos_fluent(
             let effect_quote = quote! {
                 ::leptos_fluent::cookie::set(
                     #cookie_name_quote,
-                    &l.id.to_string(),
+                    &l.id,
                     &#cookie_attrs_quote
                 );
             };
@@ -446,7 +446,7 @@ pub fn leptos_fluent(
             let effect_quote = quote! {
                 ::leptos_fluent::local_storage::set(
                     #local_storage_key_quote,
-                    &l.id.to_string()
+                    &l.id
                 );
             };
 
@@ -510,24 +510,27 @@ pub fn leptos_fluent(
     };
 
     let sync_language_with_server_function_quote: proc_macro2::TokenStream =
-        set_language_to_server_function.iter().map(|param| {
-            let ident = &param.expr;
-            let effect_quote = quote! {
-                ::leptos::prelude::Effect::new(move |_| {
-                    ::leptos::task::spawn(async {
-                        _ = #ident(#get_language_quote.id.to_string()).await;
+        set_language_to_server_function
+            .iter()
+            .map(|param| {
+                let ident = &param.expr;
+                let effect_quote = quote! {
+                    ::leptos::prelude::Effect::new(move |_| {
+                        ::leptos::task::spawn(async {
+                            _ = #ident(#get_language_quote.id.to_string()).await;
+                        });
                     });
-                });
-            };
+                };
 
-            match param.expr {
-                Some(_) => match param.exprpath {
-                    Some(ref path) => quote! { #path{#effect_quote} },
-                    None => effect_quote,
-                },
-                None => quote!(),
-            }
-        }).collect();
+                match param.expr {
+                    Some(_) => match param.exprpath {
+                        Some(ref path) => quote! { #path{#effect_quote} },
+                        None => effect_quote,
+                    },
+                    None => quote!(),
+                }
+            })
+            .collect();
 
     let initial_language_from_url_path_to_server_function_quote: proc_macro2::TokenStream =
         initial_language_from_url_path_to_server_function.iter().map(|param| {
@@ -557,7 +560,7 @@ pub fn leptos_fluent(
                             let effect_quote = quote! {
                                 ::leptos_fluent::cookie::set(
                                     #cookie_name_quote,
-                                    &l.id.to_string(),
+                                    &l.id,
                                     &#cookie_attrs_quote
                                 );
                             };
@@ -583,7 +586,7 @@ pub fn leptos_fluent(
                             let effect_quote = quote! {
                                 ::leptos_fluent::local_storage::set(
                                     #local_storage_key_quote,
-                                    &l.id.to_string()
+                                    &l.id
                                 );
                             };
 
@@ -608,7 +611,7 @@ pub fn leptos_fluent(
                             let effect_quote = quote! {
                                 ::leptos_fluent::session_storage::set(
                                     #local_storage_key_quote,
-                                    &l.id.to_string()
+                                    &l.id
                                 );
                             };
 
@@ -735,7 +738,7 @@ pub fn leptos_fluent(
             match sync_html_tag_lang_bool_quote.to_string() == "false" {
                 true => quote! {},
                 false => {
-                    quote! { attr:lang=|| {#get_language_quote.id.to_string()} }
+                    quote! { attr:lang=|| {#get_language_quote.id} }
                 }
             };
         let attr_dir_quote = match sync_html_tag_dir_bool_quote.to_string()
@@ -771,7 +774,7 @@ pub fn leptos_fluent(
             ::leptos::prelude::Effect::new(move |_| {
                 ::leptos_fluent::local_storage::set(
                     #local_storage_key_quote,
-                    &#get_language_quote.id.to_string()
+                    &#get_language_quote.id
                 );
             });
         };
@@ -804,7 +807,7 @@ pub fn leptos_fluent(
             ::leptos::prelude::Effect::new(move |_| {
                 ::leptos_fluent::session_storage::set(
                     #session_storage_key_quote,
-                    &#get_language_quote.id.to_string()
+                    &#get_language_quote.id
                 );
             });
         };
@@ -849,7 +852,7 @@ pub fn leptos_fluent(
             let effect_quote = quote! {
                 ::leptos_fluent::local_storage::set(
                     #local_storage_key_quote,
-                    &l.id.to_string()
+                    &l.id
                 );
             };
 
@@ -873,7 +876,7 @@ pub fn leptos_fluent(
             let effect_quote = quote! {
                 ::leptos_fluent::session_storage::set(
                     #session_storage_key_quote,
-                    &l.id.to_string()
+                    &l.id
                 );
             };
 
@@ -897,7 +900,7 @@ pub fn leptos_fluent(
             let effect_quote = quote! {
                 ::leptos_fluent::cookie::set(
                     #cookie_name_quote,
-                    &l.id.to_string(),
+                    &l.id,
                     &#cookie_attrs_quote
                 );
             };
@@ -1029,7 +1032,7 @@ pub fn leptos_fluent(
         let set_cookie_quote = quote! {
             ::leptos_fluent::cookie::set(
                 #cookie_name_quote,
-                &l.id.to_string(),
+                &l.id,
                 &#cookie_attrs_quote
             );
         };
@@ -1055,7 +1058,7 @@ pub fn leptos_fluent(
         let set_session_storage_quote = quote! {
             ::leptos_fluent::session_storage::set(
                 #session_storage_key_quote,
-                &l.id.to_string()
+                &l.id
             );
         };
 
@@ -1131,7 +1134,7 @@ pub fn leptos_fluent(
         let set_cookie_quote = quote! {
             ::leptos_fluent::cookie::set(
                 #cookie_name_quote,
-                &l.id.to_string(),
+                &l.id,
                 &#cookie_attrs_quote
             );
         };
@@ -1157,7 +1160,7 @@ pub fn leptos_fluent(
         let set_local_storage_quote = quote! {
             ::leptos_fluent::local_storage::set(
                 #local_storage_key_quote,
-                &l.id.to_string()
+                &l.id
             );
         };
 
@@ -1275,7 +1278,7 @@ pub fn leptos_fluent(
             let effect_quote = quote! {
                 ::leptos_fluent::local_storage::set(
                     #local_storage_key_quote,
-                    &l.id.to_string()
+                    &l.id
                 );
             };
 
@@ -1297,7 +1300,7 @@ pub fn leptos_fluent(
             let effect_quote = quote! {
                 ::leptos_fluent::session_storage::set(
                     #session_storage_key_quote,
-                    &l.id.to_string()
+                    &l.id
                 );
             };
 
@@ -1319,7 +1322,7 @@ pub fn leptos_fluent(
             let effect_quote = quote! {
                 ::leptos_fluent::cookie::set(
                     #cookie_name_quote,
-                    &l.id.to_string(),
+                    &l.id,
                     &#cookie_attrs_quote
                 );
             };
@@ -1578,7 +1581,7 @@ pub fn leptos_fluent(
             let effect_quote = quote! {
                 ::leptos_fluent::local_storage::set(
                     #local_storage_key_quote,
-                    &l.id.to_string()
+                    &l.id
                 );
             };
 
@@ -1600,7 +1603,7 @@ pub fn leptos_fluent(
             let effect_quote = quote! {
                 ::leptos_fluent::session_storage::set(
                     #session_storage_key_quote,
-                    &l.id.to_string()
+                    &l.id
                 );
             };
 
