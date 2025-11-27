@@ -12,16 +12,17 @@ pub fn parse(header: &str) -> Vec<String> {
             let mut quality = 1.0_f32;
             for part in parts {
                 if let Some(value) = part.trim().strip_prefix("q=") {
-                    quality = value.parse().unwrap_or({
-                        #[cfg(feature = "tracing")]
+                    let result = value.parse();
+                    #[cfg(feature = "tracing")]
+                    let result = result.inspect_err(|error|{
                         tracing::trace!(
                             "Invalid quality value {:?} in Accept-Language header \"{}\": {:?}",
                             value,
                             header,
-                            _error
+                            error
                         );
-                        1.0
                     });
+                    quality = result.unwrap_or(1.0);
                 }
             }
 
