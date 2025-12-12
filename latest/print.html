@@ -453,7 +453,7 @@ This can lead to warnings in console output like:</p>
 <a class="admonition-anchor-link" href="basic-usage.html#admonition-warning"></a>
 </div>
 <div>
-<pre><code class="language-shell">At `./path/to/file.rs:ln`, you access a signal or memo (defined at
+<pre><code>At `./path/to/file.rs:ln`, you access a signal or memo (defined at
 `./path/to/file.rs:ln`) outside of a reactive context. This might mean your
 app is not responding to changes in signal values in the way you expect.
 </code></pre>
@@ -498,8 +498,9 @@ i18n.language.set(lang);</code></pre>
 <div>
 <p>When <code>nightly</code> feature is enabled, can be updated passing a new language to the
 context as a function with:</p>
-<pre><code class="language-rust">let i18n = expect_context::&lt;I18n&gt;();
-i18n(lang);</code></pre>
+<pre><code>let i18n = expect_context::&lt;I18n&gt;();
+i18n(lang);
+</code></pre>
 </div>
 </div>
 <h3 id="get-active-language"><a class="header" href="#get-active-language">Get active language</a></h3>
@@ -519,11 +520,12 @@ let lang = i18n.language.get();</code></pre>
 <div>
 <p>With <code>nightly</code> feature enabled, can get the active language calling the context
 as a function:</p>
-<pre><code class="language-rust">use leptos::prelude::*;
+<pre><code>use leptos::prelude::*;
 use leptos_fluent::I18n;
 
 let i18n = expect_context::&lt;I18n&gt;();
-let lang = i18n();</code></pre>
+let lang = i18n();
+</code></pre>
 </div>
 </div>
 <h3 id="get-available-languages"><a class="header" href="#get-available-languages">Get available languages</a></h3>
@@ -1342,7 +1344,7 @@ executed in the next order:</p>
 <a class="admonition-anchor-link" href="leptos_fluent.html#admonition-example"></a>
 </div>
 <div>
-<pre><code class="language-rust">leptos_fluent! {
+<pre><code>leptos_fluent! {
     // ..
     // Get the initial language from the source operative system
     initial_language_from_system: true,
@@ -1354,7 +1356,8 @@ executed in the next order:</p>
     set_language_to_data_file: true,
     // Unique file name to set the language for this app:
     data_file_key: "system-language-example",
-};</code></pre>
+};
+</code></pre>
 </div>
 </div>
 <h2 id="parameters"><a class="header" href="#parameters">Parameters</a></h2>
