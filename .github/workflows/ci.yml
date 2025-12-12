@@ -517,10 +517,11 @@ jobs:
         uses: mondeja/get-current-crate-version@main
         with:
           working-directory: leptos-fluent
-      - name: Install mdbook
-        uses: taiki-e/install-action@v2
-        with:
-          tool: mdbook,mdbook-admonish,mdbook-toc
+      - name: Install mdbook and plugins
+        run: |
+          cargo install mdbook --version 0.4.52
+          cargo install mdbook-admonish --version 1.20.0
+          cargo install mdbook-toc  --version 0.14.2
       - name: Install cargo binstall
         uses: cargo-bins/cargo-binstall@main
         env:
