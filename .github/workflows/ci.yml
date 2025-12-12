@@ -118,7 +118,7 @@ jobs:
         run: |
           cargo install mdbook --version 0.4.52
           cargo install mdbook-admonish --version 1.20.0
-          cargo install mdbook-toc
+          cargo install mdbook-toc  --version 0.14.2
       - name: Build book
         working-directory: book
         run: |
