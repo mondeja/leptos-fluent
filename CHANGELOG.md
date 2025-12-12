@@ -7,6 +7,8 @@
 ### Bug fixes
 
 - Fix variable name when activating the `tracing` feature.
+- Fix new versions of Rust not compiling because of missing nightly
+  `proc_macro::tracked_path`.
 
 ### Enhancements
 
