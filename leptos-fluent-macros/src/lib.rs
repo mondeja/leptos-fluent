@@ -20,7 +20,6 @@ mod translations_filler;
 
 pub(crate) use exprpath::evaluate_exprpath;
 use files_tracker::build_files_tracker_quote;
-#[cfg(not(feature = "ssr"))]
 pub(crate) use fluent_resources::FluentResources;
 pub(crate) use fluent_resources::{
     build_fluent_resources_and_file_paths, FluentFilePaths,
