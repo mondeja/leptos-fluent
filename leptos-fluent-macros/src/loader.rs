@@ -1866,7 +1866,6 @@ impl Parse for I18nLoader {
             ));
         }
 
-        #[cfg(not(feature = "ssr"))]
         if check_translations.is_some() || fill_translations.is_some() {
             let f_resources_and_file_paths =
                 fluent_resources_and_file_paths.clone();
