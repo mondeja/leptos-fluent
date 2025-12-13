@@ -12,7 +12,8 @@ fn I18nProvider(children: Children) -> impl IntoView {
         children: children(),
         locales: "./locales",
         default_language: "en",
-        #[cfg(debug_assertions)] check_translations: "./src/**/*.rs",
+        #[cfg(all(debug_assertions, not(feature = "ssr")))]
+        check_translations: "./src/**/*.rs",
         sync_html_tag_lang: true,
         sync_html_tag_dir: true,
         cookie_name: "lang",

@@ -89,8 +89,8 @@
 //!         // the provided configuration.
 //!         default_language: "en",
 //!         // Check translations correctness in the specified files.
-//!         #[cfg(debug_assertions)]
-//!         check_translations: "./src/**/*.rs",
+//!         #[cfg(all(debug_assertions, not(feature = "ssr")))]
+//!         check_translations: true,
 //!
 //!         // Client side options
 //!         // -------------------
