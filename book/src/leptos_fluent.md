@@ -198,23 +198,13 @@ language when a translation is not found in the current language.
 ### `core_locales`
 
 Common locale resources that are shared across all locales.
-Must be relative to the _Cargo.toml_ file, the same
-used in the [`fluent_templates::static_loader!`] macro:
+Must be relative to the _Cargo.toml_ file:
 
 ```rust
-static_loader! {
-    pub static TRANSLATIONS = {
-        locales: "./locales",
-        core_locales: "./locales/core",
-        fallback_language: "en",
-    };
-}
-
 leptos_fluent! {
     locales: "./locales",
     core_locales: "./locales/core",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    translations: [TRANSLATIONS],
 }
 ```
 

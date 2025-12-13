@@ -21,14 +21,16 @@
 //! ```toml
 //! [dependencies]
 //! leptos-fluent = "0.2"
+//! axum = { version = "0.8", optional = true }
 //!
 //! [features]
 //! hydrate = [
-//!   "leptos-fluent/hydrate"
+//!   "leptos-fluent/hydrate",
 //! ]
 //! ssr = [
 //!   "leptos-fluent/ssr",
-//!   "leptos-fluent/actix",  # actix and axum are supported
+//!   "leptos-fluent/axum",  # actix and axum are supported
+//!   "dep:axum",
 //! ]
 //! ```
 //!
@@ -239,7 +241,6 @@
 //! - **JSON5 languages file**: `json5`
 //! - **Tracing support**: `tracing`
 //! - **Debugging**: `debug`
-//! - **Disable Unicode isolating marks**: `disable-unicode-isolating-marks`
 //!
 //! # Resources
 //!
