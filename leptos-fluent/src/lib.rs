@@ -297,6 +297,8 @@ use fluent_bundle::FluentValue;
 use fluent_templates::{loader::Loader, LanguageIdentifier, StaticLoader};
 #[cfg(feature = "nightly")]
 use leptos::prelude::Get;
+#[allow(unused_imports)]
+use leptos::prelude::Set;
 use leptos::{
     attr::AttributeValue,
     prelude::{guards::ReadGuard, use_context, Read, RwSignal, Signal, With},
