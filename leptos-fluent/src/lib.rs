@@ -299,9 +299,7 @@ use fluent_templates::{loader::Loader, LanguageIdentifier, StaticLoader};
 use leptos::prelude::Get;
 use leptos::{
     attr::AttributeValue,
-    prelude::{
-        guards::ReadGuard, use_context, Read, RwSignal, Set, Signal, With,
-    },
+    prelude::{guards::ReadGuard, use_context, Read, RwSignal, Signal, With},
 };
 use std::borrow::Cow;
 use std::sync::LazyLock;
@@ -350,28 +348,6 @@ pub struct Language {
     pub dir: &'static WritingDirection,
     /// Flag of the country of the language as emoji (if any)
     pub flag: Option<&'static str>,
-}
-
-impl Language {
-    /// Get if the language is the active language.
-    #[deprecated(
-        since = "0.2.13",
-        note = "will be removed in v0.3.0. Use `&i18n.language.get() == lang` instead of `lang.is_active()`."
-    )]
-    #[inline(always)]
-    pub fn is_active(&'static self) -> bool {
-        self == leptos::prelude::expect_context::<I18n>().language.read()
-    }
-
-    /// Set the language as the active language.
-    #[deprecated(
-        since = "0.2.13",
-        note = "will be removed in v0.3.0. Use `&i18n.language.set(lang)` instead of `lang.activate()`."
-    )]
-    #[inline(always)]
-    pub fn activate(&'static self) {
-        leptos::prelude::expect_context::<I18n>().language.set(self);
-    }
 }
 
 impl PartialEq for Language {
@@ -731,8 +707,6 @@ const EXPECT_I18N_ERROR_MESSAGE: &str = concat!(
     " reachable. Use instead:\n",
     "  - `tr!(i18n, \"text-id\")` instead of `tr!(\"text-id\")`.\n",
     "  - `move_tr!(i18n, \"text-id\")` instead of `move_tr!(\"text-id\")`.\n",
-    "  - `i18n.language.set(lang)` instead of `lang.activate()`.\n",
-    "  - `lang == i18n.language.get()` instead of `lang.is_active()`.\n",
     "  - Copy `i18n` context instead of getting it with `expect_context::<leptos_fluent::I18n>()`.",
 );
 
