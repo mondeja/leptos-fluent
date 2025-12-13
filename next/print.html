@@ -220,7 +220,7 @@ development environment and contribute to the project.</p>
 <li><a href="install.html#compatibility">Compatibility</a></li>
 </ul>
 <h2 id="csr"><a class="header" href="#csr">CSR</a></h2>
-<p>For client side rendering apps install <strong>leptos-fluent</strong>:</p>
+<p>For client side rendering apps just install <strong>leptos-fluent</strong>:</p>
 <pre><code class="language-toml">[dependencies]
 leptos-fluent = "0.2"
 </code></pre>
@@ -230,14 +230,16 @@ the <code>hydrate</code>, <code>ssr</code> and <code>actix</code>/<code>axum</co
 features set.</p>
 <pre><code class="language-toml">[dependencies]
 leptos-fluent = "0.2"
+axum = { version = "0.8", optional = true }
 
 [features]
 hydrate = [
-  "leptos-fluent/hydrate"
+  "leptos-fluent/hydrate",
 ]
 ssr = [
   "leptos-fluent/ssr",
   "leptos-fluent/axum",  # actix and axum are supported
+  "dep:axum",
 ]
 
 # Using cargo-leptos
@@ -246,8 +248,8 @@ watch-additional-files = ["locales"]
 </code></pre>
 <h2 id="desktop-applications"><a class="header" href="#desktop-applications">Desktop applications</a></h2>
 <p><strong>leptos-fluent</strong> can be installed on non-wasm targets, like desktop
-applications. You need to install <code>leptos-fluent</code>, <a href="https://github.com/XAMPPRocky/fluent-templates"><code>fluent-templates</code></a>
-and enable the <code>system</code> feature:</p>
+applications. You need to install <strong>leptos-fluent</strong>, and enable the
+<code>system</code> feature:</p>
 <pre><code class="language-toml">[dependencies]
 leptos-fluent = { version = "0.2", features = ["system"] }
 </code></pre>
@@ -264,7 +266,6 @@ leptos-fluent = { version = "0.2", features = ["system"] }
 <li><strong>JSON5 languages file</strong>: <code>json5</code></li>
 <li><strong>Tracing support</strong>: <code>tracing</code></li>
 <li><strong>Debugging</strong>: <code>debug</code></li>
-<li><strong>Disable Unicode isolating marks</strong>: <code>disable-unicode-isolating-marks</code></li>
 </ul>
 <h2 id="nightly-toolchain"><a class="header" href="#nightly-toolchain">Nightly toolchain</a></h2>
 <p><strong>leptos-fluent</strong> builds nightly functionalities by enabling the <code>nightly</code>
@@ -788,17 +789,9 @@ of the names.</p>
 first one in the languages file or language code folder by their alphabetical
 order will used as the initial of the user when no other initialization
 language is discovered.</p>
-<pre><code class="language-rust">static_loader! {
-    static TRANSLATIONS = {
-        locales: "./locales",
-        fallback_language: "en",
-    };
-}
-
-#[component]
+<pre><code class="language-rust">#[component]
 pub fn App() -&gt; impl IntoView {
     leptos_fluent! {
-        translations: [TRANSLATIONS],
         languages: "./locales/languages.json5",
         default_language: "en",
     };
@@ -1435,21 +1428,11 @@ of <a href="https://docs.rs/fluent-templates/latest/fluent_templates/macro.stati
 language when a translation is not found in the current language.</p>
 <h3 id="core_locales"><a class="header" href="#core_locales"><code>core_locales</code></a></h3>
 <p>Common locale resources that are shared across all locales.
-Must be relative to the <em>Cargo.toml</em> file, the same
-used in the <a href="https://docs.rs/fluent-templates/latest/fluent_templates/macro.static_loader.html"><code>fluent_templates::static_loader!</code></a> macro:</p>
-<pre><code class="language-rust">static_loader! {
-    pub static TRANSLATIONS = {
-        locales: "./locales",
-        core_locales: "./locales/core",
-        fallback_language: "en",
-    };
-}
-
-leptos_fluent! {
+Must be relative to the <em>Cargo.toml</em> file:</p>
+<pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
     core_locales: "./locales/core",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    translations: [TRANSLATIONS],
 }</code></pre>
 <h3 id="languages-1"><a class="header" href="#languages-1"><code>languages</code></a></h3>
 <p>Path to a file containing the list of languages supported by the application.

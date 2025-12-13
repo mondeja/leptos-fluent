@@ -276,17 +276,9 @@ of the names.</p>
 first one in the languages file or language code folder by their alphabetical
 order will used as the initial of the user when no other initialization
 language is discovered.</p>
-<pre><code class="language-rust">static_loader! {
-    static TRANSLATIONS = {
-        locales: "./locales",
-        fallback_language: "en",
-    };
-}
-
-#[component]
+<pre><code class="language-rust">#[component]
 pub fn App() -&gt; impl IntoView {
     leptos_fluent! {
-        translations: [TRANSLATIONS],
         languages: "./locales/languages.json5",
         default_language: "en",
     };
