@@ -106,7 +106,6 @@ pub fn leptos_fluent(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
     let I18nLoader {
-        warnings,
         fluent_file_paths,
         children,
         translations,
@@ -2148,8 +2147,6 @@ pub fn leptos_fluent(
         }).collect()
     };
 
-    let warnings_quote: proc_macro2::TokenStream =
-        warnings.iter().map(|warning| quote!(#warning)).collect();
     let other_quotes = quote! {
         #sync_language_with_server_function_quote
         #sync_language_with_local_storage_quote
@@ -2160,7 +2157,6 @@ pub fn leptos_fluent(
         #set_language_from_navigator_quote
         #files_tracker_quote
         #leptos_fluent_provide_meta_context_quote
-        #warnings_quote
     };
 
     let initial_language_index = match default_language {
