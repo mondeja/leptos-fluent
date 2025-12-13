@@ -10,12 +10,10 @@ extern crate proc_macro;
 pub(crate) mod cookie;
 mod exprpath;
 mod files_tracker;
-#[cfg(not(feature = "ssr"))]
 pub(crate) mod fluent_entries;
 mod fluent_resources;
 mod languages;
 mod loader;
-#[cfg(not(feature = "ssr"))]
 pub(crate) mod tr_macros;
 mod translations_checker;
 mod translations_filler;
