@@ -79,23 +79,23 @@ Sources are read-only and targets are read-write.
 
 ### Commented example
 
-````admonish example
-```rust
-leptos_fluent! {
-    // ..
-    // Get the initial language from the source operative system
-    initial_language_from_system: true,
-    // and set to the target file.
-    initial_language_from_system_to_data_file: true,
-    // If a target data file exists, get the initial language from it.
-    initial_language_from_data_file: true,
-    // When the language is updated, set it to the file.
-    set_language_to_data_file: true,
-    // Unique file name to set the language for this app:
-    data_file_key: "system-language-example",
-};
+```admonish example
+
+    leptos_fluent! {
+        // ..
+        // Get the initial language from the source operative system
+        initial_language_from_system: true,
+        // and set to the target file.
+        initial_language_from_system_to_data_file: true,
+        // If a target data file exists, get the initial language from it.
+        initial_language_from_data_file: true,
+        // When the language is updated, set it to the file.
+        set_language_to_data_file: true,
+        // Unique file name to set the language for this app:
+        data_file_key: "system-language-example",
+    };
+
 ```
-````
 
 ## Parameters
 
@@ -198,23 +198,13 @@ language when a translation is not found in the current language.
 ### `core_locales`
 
 Common locale resources that are shared across all locales.
-Must be relative to the _Cargo.toml_ file, the same
-used in the [`fluent_templates::static_loader!`] macro:
+Must be relative to the _Cargo.toml_ file:
 
 ```rust
-static_loader! {
-    pub static TRANSLATIONS = {
-        locales: "./locales",
-        core_locales: "./locales/core",
-        fallback_language: "en",
-    };
-}
-
 leptos_fluent! {
     locales: "./locales",
     core_locales: "./locales/core",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    translations: [TRANSLATIONS],
 }
 ```
 

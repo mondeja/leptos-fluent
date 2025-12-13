@@ -8,6 +8,14 @@
   script, flag and display name when using `sr-Latn`, `sr-Cyrl`, `zh-Hans`,
   `zh-Hant`, and similar BCP 47 tags.
 
+## 2025-12-12 - [0.2.21]
+
+### Bug fixes
+
+- Fix variable name when activating the `tracing` feature.
+- Fix new versions of Rust not compiling because of missing nightly
+  `proc_macro::tracked_path`.
+
 ### Enhancements
 
 - Detect failures creating, reading or deleting desktop data files and
@@ -922,6 +930,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.2.21]: https://github.com/mondeja/leptos-fluent/compare/v0.2.20...v0.2.21
 [0.2.20]: https://github.com/mondeja/leptos-fluent/compare/v0.2.19...v0.2.20
 [0.2.19]: https://github.com/mondeja/leptos-fluent/compare/v0.2.18...v0.2.19
 [0.2.18]: https://github.com/mondeja/leptos-fluent/compare/v0.2.17...v0.2.18

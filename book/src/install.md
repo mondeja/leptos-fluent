@@ -6,7 +6,7 @@
 
 ## CSR
 
-For client side rendering apps install **leptos-fluent**:
+For client side rendering apps just install **leptos-fluent**:
 
 ```toml
 [dependencies]
@@ -22,14 +22,16 @@ features set.
 ```toml
 [dependencies]
 leptos-fluent = "0.2"
+axum = { version = "0.8", optional = true }
 
 [features]
 hydrate = [
-  "leptos-fluent/hydrate"
+  "leptos-fluent/hydrate",
 ]
 ssr = [
   "leptos-fluent/ssr",
   "leptos-fluent/axum",  # actix and axum are supported
+  "dep:axum",
 ]
 
 # Using cargo-leptos
@@ -40,8 +42,8 @@ watch-additional-files = ["locales"]
 ## Desktop applications
 
 **leptos-fluent** can be installed on non-wasm targets, like desktop
-applications. You need to install `leptos-fluent`, [`fluent-templates`]
-and enable the `system` feature:
+applications. You need to install **leptos-fluent**, and enable the
+`system` feature:
 
 ```toml
 [dependencies]
@@ -61,7 +63,6 @@ leptos-fluent = { version = "0.2", features = ["system"] }
 - **JSON5 languages file**: `json5`
 - **Tracing support**: `tracing`
 - **Debugging**: `debug`
-- **Disable Unicode isolating marks**: `disable-unicode-isolating-marks`
 
 ## Nightly toolchain
 
@@ -121,7 +122,6 @@ leptos-fluent = { version = "0.2", features = ["tracing"] }
 fluent-templates = "0.13"
 ```
 
-[`fluent-templates`]: https://github.com/XAMPPRocky/fluent-templates
 [`cargo leptos`]: https://github.com/leptos-rs/cargo-leptos
 [`tracing`]: https://docs.rs/tracing/latest/tracing
 

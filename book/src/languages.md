@@ -119,17 +119,9 @@ order will used as the initial of the user when no other initialization
 language is discovered.
 
 ```rust
-static_loader! {
-    static TRANSLATIONS = {
-        locales: "./locales",
-        fallback_language: "en",
-    };
-}
-
 #[component]
 pub fn App() -> impl IntoView {
     leptos_fluent! {
-        translations: [TRANSLATIONS],
         languages: "./locales/languages.json5",
         default_language: "en",
     };

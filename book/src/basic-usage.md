@@ -140,13 +140,13 @@ a reactive context. Note that if is not inside a reactive context,
 the translation won't be updated on the fly when the language changes.
 This can lead to warnings in console output like:
 
-````admonish warning
-```shell
-At `./path/to/file.rs:ln`, you access a signal or memo (defined at
-`./path/to/file.rs:ln`) outside of a reactive context. This might mean your
-app is not responding to changes in signal values in the way you expect.
+```admonish warning
+
+    At `./path/to/file.rs:ln`, you access a signal or memo (defined at
+    `./path/to/file.rs:ln`) outside of a reactive context. This might mean your
+    app is not responding to changes in signal values in the way you expect.
+
 ```
-````
 
 Can be fixed by replacing calls to [`tr!`] with [`move_tr!`] or wrapping the
 [`tr!`] calls in a reactive context.
@@ -202,15 +202,14 @@ let i18n = expect_context::<I18n>();
 i18n.language.set(lang);
 ```
 
-````admonish tip title='Nightly'
+```admonish tip title='Nightly'
 When `nightly` feature is enabled, can be updated passing a new language to the
 context as a function with:
 
-```rust
-let i18n = expect_context::<I18n>();
-i18n(lang);
+    let i18n = expect_context::<I18n>();
+    i18n(lang);
+
 ```
-````
 
 ### Get active language
 
@@ -224,18 +223,17 @@ let i18n = expect_context::<I18n>();
 let lang = i18n.language.get();
 ```
 
-````admonish tip title='Nightly'
+```admonish tip title='Nightly'
 With `nightly` feature enabled, can get the active language calling the context
 as a function:
 
-```rust
-use leptos::prelude::*;
-use leptos_fluent::I18n;
+    use leptos::prelude::*;
+    use leptos_fluent::I18n;
 
-let i18n = expect_context::<I18n>();
-let lang = i18n();
+    let i18n = expect_context::<I18n>();
+    let lang = i18n();
+
 ```
-````
 
 ### Get available languages
 

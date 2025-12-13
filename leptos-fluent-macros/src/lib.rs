@@ -1,6 +1,5 @@
 #![deny(missing_docs)]
 #![forbid(unsafe_code)]
-#![cfg_attr(feature = "nightly", feature(track_path))]
 
 //! Macros for [leptos-fluent].
 //!
