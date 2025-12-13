@@ -417,7 +417,6 @@ impl LitBool {
 
 pub(crate) enum LitBoolOrStr {
     Bool(syn::LitBool),
-    #[cfg_attr(feature = "ssr", allow(dead_code))]
     Str(syn::LitStr),
 }
 
@@ -436,7 +435,6 @@ impl Parse for LitBoolOrStr {
     }
 }
 
-#[cfg(not(feature = "ssr"))]
 impl LitBoolOrStr {
     fn span(&self) -> proc_macro2::Span {
         match self {
@@ -1820,7 +1818,6 @@ impl Parse for I18nLoader {
             locales_folder_path.as_path().to_str().unwrap().to_string();
 
         // core_locales
-        #[cfg(not(feature = "ssr"))]
         let mut core_locales_content = None;
         let mut core_locales_path_str = None;
         if let Some(core_locales) = &core_locales_path {
@@ -1841,7 +1838,6 @@ impl Parse for I18nLoader {
                     )
                 ));
             } else {
-                #[cfg(not(feature = "ssr"))]
                 {
                     core_locales_content =
                         Some(std::fs::read_to_string(&core_locales).unwrap());
