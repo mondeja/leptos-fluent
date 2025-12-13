@@ -2179,46 +2179,8 @@ pub fn leptos_fluent(
                 None => quote!(),
             };
 
-            let (customise_quote, warnings_quote) = {
-                #[cfg(feature = "disable-unicode-isolating-marks")]
-                {
-                    (
-                        customise.map_or(
-                            quote!(customise: |bundle| bundle.set_use_isolating(false),),
-                            |c| quote! {
-                                customise: |bundle| {
-                                    bundle.set_use_isolating(false);
-                                    let customise: fn(&mut ::leptos_fluent::__reexports::fluent_templates::FluentBundle<&::leptos_fluent::__reexports::fluent_bundle::FluentResource>) = #c;
-                                    customise(bundle);
-                                },
-                            }
-                        ),
-                        {
-                            // warning for `disable-unicode-isolating-marks` feature
-                            // TODO: remove it in v0.3.0
-                            let warning = proc_macro_warning::FormattedWarning::new_deprecated(
-                                "disable_unicode_isolating_marks",
-                                "The feature `disable-unicode-isolating-marks` has been deprecated \
-                                and will be removed in v0.3.0. Use the `customise` argument of \
-                                `leptos_fluent!` macro with the value \
-                                `|bundle| bundle.set_use_isolating(false)` instead to disable Unicode \
-                                isolating marks in translations.",
-                                proc_macro2::Span::call_site(),
-                            );
-                            quote!(#warning)
-                        },
-                    )
-                }
-
-                #[cfg(not(feature = "disable-unicode-isolating-marks"))]
-                {
-                    (
-                        customise
-                            .map_or(quote!(), |c| quote! { customise: #c, }),
-                        quote!(),
-                    )
-                }
-            };
+            let customise_quote =
+                customise.map_or(quote!(), |c| quote! { customise: #c, });
 
             (
                 quote! {
