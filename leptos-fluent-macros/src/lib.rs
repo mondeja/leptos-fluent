@@ -17,7 +17,6 @@ mod languages;
 mod loader;
 #[cfg(not(feature = "ssr"))]
 pub(crate) mod tr_macros;
-#[cfg(not(feature = "ssr"))]
 mod translations_checker;
 #[cfg(not(feature = "ssr"))]
 mod translations_filler;
