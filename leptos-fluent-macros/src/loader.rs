@@ -4,7 +4,6 @@ use crate::{
     languages::{read_languages_file, read_locales_folder},
     FluentFilePaths, ParsedLanguage,
 };
-#[cfg(not(feature = "ssr"))]
 use crate::{
     fluent_entries::build_fluent_entries,
     tr_macros::{
