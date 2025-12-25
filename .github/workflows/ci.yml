@@ -206,46 +206,26 @@ jobs:
           shell: bash
           command: wasm-pack-test-all tests/end2end --${{ matrix.browser }} --headless
 
-  prepare-ssr-test-matrix:
-    name: Prepare SSR test matrix
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    outputs:
-      matrix: ${{ steps.prepare.outputs.matrix }}
-    steps:
-      - uses: actions/checkout@v3
-      - name: Discover and group SSR tests
-        id: prepare
-        run: |
-          BATCH_SIZE=10
-          # Discover tests
-          tests=$(find tests/end2end/ssr/src/apps \
-            -mindepth 1 -maxdepth 1 -type d -printf '"%f",')
-          tests="[${tests%,}]"
-          echo "Discovered tests:"
-          echo "$tests"
-
-          # Group tests into batches
-          matrix=$(echo "$tests" | jq -c --argjson size "$BATCH_SIZE" '
-            [range(0; length; $size) as $i | {tests: .[$i:$i+$size]}]
-          ')
-          echo "Generated matrix:"
-          echo "$matrix"
-          echo "matrix=$(echo $matrix | jq -c tostring)" >> $GITHUB_OUTPUT
-
   end2end-ssr-tests:
-    name: SSR end to end test
-    needs: prepare-ssr-test-matrix
+    name: SSR end to end tests
+    needs: check-toolchain-is-stable
     runs-on: ubuntu-latest
     permissions:
       contents: read
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(fromJson(needs.prepare-ssr-test-matrix.outputs.matrix)) }}
+      matrix:
+        include:
+          - tests:
+              - "initial_language_from_url_param_axum"
+              - "initial_language_from_cookie_actix"
+              - "initial_language_from_cookie_axum"
+              - "initial_language_from_accept_language_header_axum"
+              - "initial_language_from_url_param_actix"
+              - "initial_language_from_accept_language_header_actix"
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install cargo binstall
         uses: cargo-bins/cargo-binstall@main
         env:
@@ -259,11 +239,11 @@ jobs:
         with:
           toolchain: stable
           target: wasm32-unknown-unknown
-      - name: Run SSR end to end tests
+      - name: Run SSR end-to-end tests
         run: |
-          echo "Running SSR tests batch: ${{ join(matrix.tests, ', ') }}"
+          echo "Running batch: ${{ join(matrix.tests, ', ') }}"
           for test in ${{ join(matrix.tests, ' ') }}; do
-            echo "▶ Running SSR test: $test"
+            echo "▶ Running test: $test"
             TESTS="$test" cargo test -p leptos-fluent-end2end-ssr-tests
           done
 
