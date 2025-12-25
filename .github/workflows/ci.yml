@@ -232,7 +232,7 @@ jobs:
           ')
           echo "Generated matrix:"
           echo "$matrix"
-          echo "matrix=$matrix" >> $GITHUB_OUTPUT
+          echo "matrix=$(echo $matrix | jq -c tostring)" >> $GITHUB_OUTPUT
 
   end2end-ssr-tests:
     name: SSR end to end test
@@ -242,7 +242,7 @@ jobs:
       contents: read
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.prepare-ssr-test-matrix.outputs.matrix) }}
+      matrix: ${{ fromJson(fromJson(needs.prepare-ssr-test-matrix.outputs.matrix)) }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -251,8 +251,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install cargo-leptos
-        run: |
-          cargo binstall -y --force cargo-leptos@0.2.42
+        run: cargo binstall -y --force cargo-leptos@0.2.42
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Setup Rust
@@ -262,9 +261,7 @@ jobs:
           target: wasm32-unknown-unknown
       - name: Run SSR end to end tests
         run: |
-          echo "Running SSR tests batch:"
-          echo "${{ join(matrix.tests, ', ') }}"
-
+          echo "Running SSR tests batch: ${{ join(matrix.tests, ', ') }}"
           for test in ${{ join(matrix.tests, ' ') }}; do
             echo "▶ Running SSR test: $test"
             TESTS="$test" cargo test -p leptos-fluent-end2end-ssr-tests
