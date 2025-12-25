@@ -18,7 +18,7 @@ fn I18n(children: Children) -> impl IntoView {
         locales: "../../../../examples/csr-minimal/locales",
         #[cfg(feature = "ssr")]
         check_translations: "../../../../leptos-fluent-macros/tests/ui/leptos_fluent/fail/check_translations_cfg_feature.rs",
-        #[cfg(all(not(feature = "ssr")))]
+        #[cfg(all(not(feature = "ssr"), debug_assertions))]
         check_translations: "../../../../leptos-fluent-macros/tests/ui/leptos_fluent/fail/check_translations_cfg_feature.rs",
     }
 }
