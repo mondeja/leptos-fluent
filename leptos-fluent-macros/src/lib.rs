@@ -2172,7 +2172,6 @@ pub fn leptos_fluent(
                             #customise_quote
                         };
                     }
-                    #warnings_quote
                 },
                 quote!(vec![&TRS]),
             )
