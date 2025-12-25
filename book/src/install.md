@@ -10,7 +10,7 @@ For client side rendering apps just install **leptos-fluent**:
 
 ```toml
 [dependencies]
-leptos-fluent = "0.2"
+leptos-fluent = "0.3"
 ```
 
 ## SSR
@@ -21,7 +21,7 @@ features set.
 
 ```toml
 [dependencies]
-leptos-fluent = "0.2"
+leptos-fluent = "0.3"
 axum = { version = "0.8", optional = true }
 
 [features]
@@ -47,7 +47,7 @@ applications. You need to install **leptos-fluent**, and enable the
 
 ```toml
 [dependencies]
-leptos-fluent = { version = "0.2", features = ["system"] }
+leptos-fluent = { version = "0.3", features = ["system"] }
 ```
 
 ## Features
@@ -71,7 +71,7 @@ feature:
 
 ```toml
 [dependencies]
-leptos-fluent = { version = "0.2", features = ["nightly"] }
+leptos-fluent = { version = "0.3", features = ["nightly"] }
 ```
 
 ## Language files
@@ -84,7 +84,7 @@ enabled:
 
 ```toml
 [dependencies]
-leptos-fluent = { version = "0.2", features = ["json5"] }
+leptos-fluent = { version = "0.3", features = ["json5"] }
 ```
 
 <!-- markdownlint-enable MD013 -->
@@ -118,7 +118,7 @@ To enable [`tracing`] support, add the `tracing` feature to **leptos-fluent**:
 
 ```toml
 [dependencies]
-leptos-fluent = { version = "0.2", features = ["tracing"] }
+leptos-fluent = { version = "0.3", features = ["tracing"] }
 fluent-templates = "0.13"
 ```
 
@@ -128,6 +128,7 @@ fluent-templates = "0.13"
 ## Compatibility
 
 | **leptos-fluent** | **leptos** |
-| ----------------- | ---------- |
+| :---------------: | :--------: |
+| 0.3               | 0.8        |
 | 0.2               | 0.7 / 0.8  |
 | 0.1               | 0.6        |

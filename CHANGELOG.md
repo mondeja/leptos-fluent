@@ -1,12 +1,58 @@
 # CHANGELOG
 
-## Unreleased
+## 2025-12-13 - [0.3.0]
+
+### Breaking changes
+
+#### Removed functions to simplify API
+
+The next deprecated functions have been removed:
+
+- `i18n` (use `expect_context::<leptos_fluent::I18n>()` instead)
+- `use_i18n` (use `use_context::<leptos_fluent::I18n>()` instead)
+- `expect_i18n` (use `expect_context::<leptos_fluent::I18n>()` instead)
+- `Language.is_active` (use `i18n.language.get() == lang` instead)
+- `Language.activate` (use `i18n.language.set(lang)` instead)
+- `tr_impl` (use `i18n.tr(id)` method instead)
+- `tr_with_args_impl` (use `i18n.tr_with_args(id, args)` method instead)
+
+#### Removed options including `localstorage` and `sessionstorage`
+
+The deprecated options variants including the terms `localstorage` and
+`sessionstorage` in their names have been removed. Use the new variants
+including `local_storage` and `session_storage`.
+
+#### `Language.id` is now a  `&'static str`
+
+The type of the `id` field of the `Language` struct has been changed
+from `unic_langid::LanguageIdentifier` to `&'static str`. This simplifies
+the usage of the `Language` struct and avoids unnecessary conversions.
+
+#### `*_translations` options are executed on all targets
+
+The options `check_translations` and `fill_translations` of `leptos_fluent!`
+were executed only on non-SSR targets by default. Now they are executed
+on all targets, so you need to disable them for SSR builds to prevent
+showing the same errors both in server and client builds.
+
+Use the `#[cfg(not(feature = "ssr"))]` attribute to disable them for SSR builds:
+
+```rust
+leptos_fluent! {
+    #[cfg(not(feature = "ssr"))]
+    check_translations: true,
+}
+```
 
 ### New features
 
-- Support language entries with script subtags, automatically detecting
-  script, flag and display name when using `sr-Latn`, `sr-Cyrl`, `zh-Hans`,
-  `zh-Hant`, and similar BCP 47 tags.
+#### Language entries with script subtags
+
+Add support for language entries with script subtags, automatically detecting
+script, flag and display name when using `sr-Latn`, `sr-Cyrl`, `zh-Hans`,
+`zh-Hant`, and similar BCP 47 tags.
+
+Includes the addition of an `Option<&'static str>` `script` field to `Language`.
 
 ## 2025-12-12 - [0.2.21]
 
@@ -930,6 +976,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
+[0.3.0]: https://github.com/mondeja/leptos-fluent/compare/v0.2.21...v0.3.0
 [0.2.21]: https://github.com/mondeja/leptos-fluent/compare/v0.2.20...v0.2.21
 [0.2.20]: https://github.com/mondeja/leptos-fluent/compare/v0.2.19...v0.2.20
 [0.2.19]: https://github.com/mondeja/leptos-fluent/compare/v0.2.18...v0.2.19
