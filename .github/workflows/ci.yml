@@ -223,15 +223,34 @@ jobs:
           tests=$(find tests/end2end/ssr/src/apps -mindepth 1 -maxdepth 1 -type d -printf "\"%f\"," | sed 's/,$//')
           echo "tests=[${tests}]" >> $GITHUB_OUTPUT
 
+  create-ssr-test-groups:
+    name: Create SSR test groups
+    runs-on: ubuntu-latest
+    needs: discover-end2end-ssr-tests
+    outputs:
+      matrix: ${{ steps.group-tests.outputs.matrix }}
+    steps:
+      - name: Group tests
+        id: group-tests
+        run: |
+          TESTS='${{ needs.discover-end2end-ssr-tests.outputs.tests }}'
+          BATCH_SIZE=5
+
+          echo "$TESTS" | jq -c --argjson size "$BATCH_SIZE" '
+            [range(0; length; $size) as $i | .[$i:$i+$size]]
+          ' | jq -c '{include: .}' > matrix.json
+
+          echo "matrix=$(cat matrix.json)" >> $GITHUB_OUTPUT
+
   end2end-ssr-tests:
     name: SSR end to end test ${{ matrix.test }}
-    needs: discover-end2end-ssr-tests
+    needs: create-ssr-test-groups
     runs-on: ubuntu-latest
     permissions:
       contents: read
     strategy:
-      matrix:
-        test: ${{ fromJson(needs.discover-end2end-ssr-tests.outputs.tests) }}
+      fail-fast: false
+      matrix: ${{ fromJson(needs.create-ssr-test-groups.outputs.matrix) }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -249,9 +268,15 @@ jobs:
         with:
           toolchain: stable
           target: wasm32-unknown-unknown
-      - name: Run SSR end to end test ${{ matrix.test }}
+      - name: Run SSR end to end tests
         run: |
-          TESTS=${{ matrix.test }} cargo test -p leptos-fluent-end2end-ssr-tests
+          echo "Running SSR tests batch:"
+          echo "${{ join(matrix.include, ', ') }}"
+
+          for test in ${{ join(matrix.include, ' ') }}; do
+            echo "▶ Running SSR test: $test"
+            TESTS="$test" cargo test -p leptos-fluent-end2end-ssr-tests
+          done
 
   build-examples:
     needs: check-toolchain-is-stable
