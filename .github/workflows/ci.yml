@@ -324,47 +324,35 @@ jobs:
             runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      # --- Nightly toolchain ---
       - name: Set nightly toolchain
         if: matrix.toolchain == 'nightly'
         uses: ./.github/actions/set-toolchain
         with:
           channel: nightly
-
-      # --- Rust setup ---
       - name: Setup Rust
         uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           target: wasm32-unknown-unknown
-
-      # --- Install tools ---
       - name: Install trunk (CSR only)
         if: startsWith(matrix.example, 'csr')
         uses: taiki-e/install-action@v2
         with:
           tool: trunk
-
       - name: Install cargo binstall (SSR only)
         if: startsWith(matrix.example, 'ssr')
         uses: cargo-bins/cargo-binstall@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Install cargo-leptos (SSR only)
         if: startsWith(matrix.example, 'ssr')
         run: cargo binstall -y --force cargo-leptos@0.2.42
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # --- Build features ---
       - name: Get build features
         id: build-features
         run: |
           FEATURES=$([ "${{ matrix.toolchain }}" == "nightly" ] && echo "--features=leptos-fluent/nightly" || echo "")
           echo "features=$FEATURES" >> $GITHUB_OUTPUT
-
-      # --- CSR build ---
       - name: Build with trunk
         if: startsWith(matrix.example, 'csr')
         uses: nick-fields/retry@v3
@@ -376,26 +364,19 @@ jobs:
           command: |
             cd examples/${{ matrix.example }}
             trunk build --release ${{ steps.build-features.outputs.features }}
-
-      # --- SSR build ---
       - name: Build with cargo-leptos
         if: startsWith(matrix.example, 'ssr') && !(matrix.toolchain == 'nightly' && startsWith(matrix.runs-on, 'macos'))
         run: |
           cd examples/${{ matrix.example }}
           cargo leptos build --release ${{ steps.build-features.outputs.features }}
-
-      # --- GTK installation ---
       - name: Install GTK4 (Ubuntu)
         if: endsWith(matrix.example, 'gtk') && startsWith(matrix.runs-on, 'ubuntu')
         run: |
           sudo apt-get update
           sudo apt-get install -y libgtk-4-dev
-
       - name: Install GTK4 (MacOS)
         if: endsWith(matrix.example, 'gtk') && startsWith(matrix.runs-on, 'macos')
         run: brew install gtk4
-
-      # --- System examples ---
       - name: Build with cargo (system only)
         if: startsWith(matrix.example, 'system')
         run: |
