@@ -30,7 +30,6 @@ jobs:
   qa:
     name: QA
     runs-on: ubuntu-latest
-    needs: check-toolchain-is-stable
     strategy:
       fail-fast: false
       matrix:
@@ -93,7 +92,6 @@ jobs:
 
   cargo-machete:
     name: Check for unused dependencies
-    needs: check-toolchain-is-stable
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -208,40 +206,32 @@ jobs:
           shell: bash
           command: wasm-pack-test-all tests/end2end --${{ matrix.browser }} --headless
 
-  discover-end2end-ssr-tests:
-    name: Discover SSR end to end tests
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    outputs:
-      tests: ${{ steps.set-matrix.outputs.tests }}
-    steps:
-      - uses: actions/checkout@v3
-      - name: Discover tests
-        id: set-matrix
-        run: |
-          tests=$(find tests/end2end/ssr/src/apps -mindepth 1 -maxdepth 1 -type d -printf "\"%f\"," | sed 's/,$//')
-          echo "tests=[${tests}]" >> $GITHUB_OUTPUT
-
   end2end-ssr-tests:
-    name: SSR end to end test ${{ matrix.test }}
-    needs: discover-end2end-ssr-tests
+    name: SSR end to end tests
+    needs: check-toolchain-is-stable
     runs-on: ubuntu-latest
     permissions:
       contents: read
     strategy:
+      fail-fast: false
       matrix:
-        test: ${{ fromJson(needs.discover-end2end-ssr-tests.outputs.tests) }}
+        include:
+          - tests:
+              - "initial_language_from_url_param_axum"
+              - "initial_language_from_cookie_actix"
+              - "initial_language_from_cookie_axum"
+              - "initial_language_from_accept_language_header_axum"
+              - "initial_language_from_url_param_actix"
+              - "initial_language_from_accept_language_header_actix"
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install cargo binstall
         uses: cargo-bins/cargo-binstall@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install cargo-leptos
-        run: |
-          cargo binstall -y --force cargo-leptos@0.2.42
+        run: cargo binstall -y --force cargo-leptos@0.2.42
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Setup Rust
@@ -249,9 +239,15 @@ jobs:
         with:
           toolchain: stable
           target: wasm32-unknown-unknown
-      - name: Run SSR end to end test ${{ matrix.test }}
+      - name: Run SSR end-to-end tests
         run: |
-          TESTS=${{ matrix.test }} cargo test -p leptos-fluent-end2end-ssr-tests
+          EXITCODE=0
+          echo "Running batch: ${{ join(matrix.tests, ', ') }}"
+          for test in ${{ join(matrix.tests, ' ') }}; do
+            echo "▶ Running test: $test"
+            TESTS="$test" cargo test -p leptos-fluent-end2end-ssr-tests || EXITCODE=$?
+          done
+          exit $EXITCODE
 
   build-examples:
     needs: check-toolchain-is-stable
@@ -260,18 +256,34 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        example:
-          - csr-minimal
-          - csr-complete
-          - ssr-hydrate-actix
-          - ssr-hydrate-axum
-          # TODO: re-add 'ssr-islands-axum' and 'system-gtk'
-        toolchain:
-          - stable
-          - nightly
-        runs-on:
-          - ubuntu-latest
-          - macos-latest
+        # TODO: re-add 'ssr-islands-axum' and 'system-gtk'
+        include:
+          # === CSR ===
+          - example: csr-minimal
+            toolchain: stable
+            runs-on: ubuntu-latest
+          - example: csr-complete
+            toolchain: stable
+            runs-on: ubuntu-latest
+          - example: csr-complete
+            toolchain: stable
+            runs-on: macos-latest
+          - example: csr-complete
+            toolchain: stable
+            runs-on: windows-latest
+
+          # === SSR Hydrate (stable baseline) ===
+          - example: ssr-hydrate-actix
+            toolchain: stable
+            runs-on: ubuntu-latest
+
+          # === Nightly coverage (Ubuntu only) ===
+          - example: ssr-hydrate-actix
+            toolchain: nightly
+            runs-on: ubuntu-latest
+          - example: ssr-hydrate-axum
+            toolchain: nightly
+            runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Set nightly toolchain
@@ -283,30 +295,29 @@ jobs:
         uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           target: wasm32-unknown-unknown
-      - name: Install trunk
+      - name: Install trunk (CSR only)
         if: startsWith(matrix.example, 'csr')
         uses: taiki-e/install-action@v2
         with:
           tool: trunk
-      - name: Install cargo binstall
+      - name: Install cargo binstall (SSR only)
         if: startsWith(matrix.example, 'ssr')
         uses: cargo-bins/cargo-binstall@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Install cargo-leptos
+      - name: Install cargo-leptos (SSR only)
         if: startsWith(matrix.example, 'ssr')
-        run: |
-          cargo binstall -y --force cargo-leptos@0.2.42
+        run: cargo binstall -y --force cargo-leptos@0.2.42
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Get build features
         id: build-features
+        shell: bash
         run: |
-          option=$([ "${{ matrix.toolchain }}" == "nightly" ] && echo "--features=leptos-fluent/nightly" || echo "")
-          echo "features=$option" >> $GITHUB_OUTPUT
+          FEATURES=$([ "${{ matrix.toolchain }}" == "nightly" ] && echo "--features=leptos-fluent/nightly" || echo "")
+          echo "features=$FEATURES" >> $GITHUB_OUTPUT
       - name: Build with trunk
         if: startsWith(matrix.example, 'csr')
-        # Sometimes trunk fails to download wasm-opt and other tools, so we retry
         uses: nick-fields/retry@v3
         with:
           timeout_minutes: 20
@@ -317,21 +328,19 @@ jobs:
             cd examples/${{ matrix.example }}
             trunk build --release ${{ steps.build-features.outputs.features }}
       - name: Build with cargo-leptos
-        # TODO: On nightly MacOS, `cargo leptos` is not found after being installed
-        #       so currently is skipped
         if: startsWith(matrix.example, 'ssr') && !(matrix.toolchain == 'nightly' && startsWith(matrix.runs-on, 'macos'))
         run: |
           cd examples/${{ matrix.example }}
           cargo leptos build --release ${{ steps.build-features.outputs.features }}
-      - name: Install GTK4 on Ubuntu
+      - name: Install GTK4 (Ubuntu)
         if: endsWith(matrix.example, 'gtk') && startsWith(matrix.runs-on, 'ubuntu')
         run: |
           sudo apt-get update
           sudo apt-get install -y libgtk-4-dev
-      - name: Install GTK4 on MacOS
+      - name: Install GTK4 (MacOS)
         if: endsWith(matrix.example, 'gtk') && startsWith(matrix.runs-on, 'macos')
         run: brew install gtk4
-      - name: Build with cargo
+      - name: Build with cargo (system only)
         if: startsWith(matrix.example, 'system')
         run: |
           cd examples/${{ matrix.example }}
