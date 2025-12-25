@@ -292,12 +292,13 @@ use core::str::FromStr;
 use fluent_bundle::FluentValue;
 use fluent_templates::{loader::Loader, LanguageIdentifier, StaticLoader};
 #[cfg(feature = "nightly")]
-use leptos::prelude::{Get, Set};
+use leptos::prelude::Set;
 use leptos::{
     attr::AttributeValue,
-    prelude::{guards::ReadGuard, Read, RwSignal, Signal, With},
+    prelude::{guards::ReadGuard, Get, Read, RwSignal, Signal, Update, With},
 };
 use std::borrow::Cow;
+use std::collections::HashMap;
 use std::sync::LazyLock;
 
 /// Direction of the text
@@ -480,9 +481,25 @@ pub struct I18n {
     pub languages: &'static [&'static Language],
     /// Signal with a vector of fluent-templates static loaders.
     pub translations: Signal<Vec<&'static LazyLock<StaticLoader>>>,
+    /// Cache for language identifiers.
+    language_id_cache: RwSignal<HashMap<&'static str, LanguageIdentifier>>,
 }
 
 impl I18n {
+    #![allow(missing_docs)]
+    pub fn new(
+        language: RwSignal<&'static Language>,
+        languages: &'static [&'static Language],
+        translations: Signal<Vec<&'static LazyLock<StaticLoader>>>,
+    ) -> Self {
+        Self {
+            language,
+            languages,
+            translations,
+            language_id_cache: RwSignal::new(HashMap::new()),
+        }
+    }
+
     /// Get meta information about the i18n context.
     ///
     /// Useful to get at runtime the parameters that created the context
@@ -514,6 +531,35 @@ impl I18n {
         ))
     }
 
+    fn get_language_identifier(
+        &self,
+        lang: &'static Language,
+    ) -> Option<LanguageIdentifier> {
+        // Intenta obtener del cache primero
+        let cached = self
+            .language_id_cache
+            .with(|cache| cache.get(lang.id).cloned());
+
+        if let Some(id) = cached {
+            return Some(id);
+        }
+
+        // Si no está en cache, parsea e inserta
+        match LanguageIdentifier::from_str(lang.id) {
+            Ok(id) => {
+                self.language_id_cache.update(|cache| {
+                    cache.insert(lang.id, id.clone());
+                });
+                Some(id)
+            }
+            Err(_) => {
+                #[cfg(feature = "tracing")]
+                tracing::error!("Invalid language identifier \"{}\"", lang.id);
+                None
+            }
+        }
+    }
+
     /// Get the translation of a text identifier to the current language.
     ///
     /// ```rust,ignore
@@ -532,25 +578,16 @@ impl I18n {
         tracing::instrument(level = "trace", skip_all)
     )]
     pub fn tr(&self, text_id: &str) -> String {
-        let found = self.language.with(|language| {
-            let lang_id = match LanguageIdentifier::from_str(language.id) {
-                Ok(id) => id,
-                Err(_) => {
-                    #[cfg(feature = "tracing")]
-                    tracing::error!(
-                        "Invalid language identifier \"{}\"",
-                        language.id
-                    );
-                    return None;
-                }
-            };
+        let language = self.language.get();
 
-            self.translations.with(|translations| {
-                translations
-                    .iter()
-                    .find_map(|tr| tr.try_lookup(&lang_id, text_id))
-            })
-        });
+        let found =
+            self.get_language_identifier(language).and_then(|lang_id| {
+                self.translations.with(|translations| {
+                    translations
+                        .iter()
+                        .find_map(|tr| tr.try_lookup(&lang_id, text_id))
+                })
+            });
 
         #[cfg(feature = "tracing")]
         match &found {
@@ -596,25 +633,16 @@ impl I18n {
         text_id: &str,
         args: &std::collections::HashMap<Cow<'static, str>, FluentValue>,
     ) -> String {
-        let found = self.language.with(|language| {
-            let lang_id = match LanguageIdentifier::from_str(language.id) {
-                Ok(id) => id,
-                Err(_) => {
-                    #[cfg(feature = "tracing")]
-                    tracing::error!(
-                        "Invalid language identifier \"{}\"",
-                        language.id
-                    );
-                    return None;
-                }
-            };
+        let language = self.language.get();
 
-            self.translations.with(|translations| {
-                translations.iter().find_map(|tr| {
-                    tr.try_lookup_with_args(&lang_id, text_id, args)
+        let found =
+            self.get_language_identifier(language).and_then(|lang_id| {
+                self.translations.with(|translations| {
+                    translations.iter().find_map(|tr| {
+                        tr.try_lookup_with_args(&lang_id, text_id, args)
+                    })
                 })
-            })
-        });
+            });
 
         #[cfg(feature = "tracing")]
         match &found {

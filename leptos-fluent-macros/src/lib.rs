@@ -2194,11 +2194,11 @@ pub fn leptos_fluent(
 
             #fluent_templates_quote;
 
-            let i18n = ::leptos_fluent::I18n {
-                language: ::leptos::prelude::RwSignal::new(initial_lang),
-                languages: &LANGUAGES,
-                translations: ::leptos::prelude::Signal::derive(move || #translations_quote),
-            };
+            let i18n = ::leptos_fluent::I18n::new(
+                ::leptos::prelude::RwSignal::new(initial_lang),                  // language
+                &LANGUAGES,                                                      // languages
+                ::leptos::prelude::Signal::derive(move || #translations_quote),  // translations
+            );
             ::leptos::context::provide_context::<::leptos_fluent::I18n>(i18n);
             i18n
         }
