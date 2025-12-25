@@ -20,7 +20,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! leptos-fluent = "0.2"
+//! leptos-fluent = 3"
 //! axum = { version = "0.8", optional = true }
 //!
 //! [features]
