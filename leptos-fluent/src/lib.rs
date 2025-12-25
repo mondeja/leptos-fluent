@@ -228,7 +228,6 @@
 //! ## Features
 //!
 //! - **Server Side Rendering**: `ssr`
-//! - **Hydration**: `hydrate`
 //! - **Actix Web integration**: `actix`
 //! - **Axum integration**: `axum`
 //! - **Nightly toolchain**: `nightly`
