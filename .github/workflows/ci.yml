@@ -215,17 +215,14 @@ jobs:
       matrix: ${{ steps.prepare.outputs.matrix }}
     steps:
       - uses: actions/checkout@v3
-
       - name: Discover and group SSR tests
         id: prepare
         run: |
           BATCH_SIZE=10
-
           # Discover tests
           tests=$(find tests/end2end/ssr/src/apps \
             -mindepth 1 -maxdepth 1 -type d -printf '"%f",')
           tests="[${tests%,}]"
-
           echo "Discovered tests:"
           echo "$tests"
 
@@ -233,14 +230,12 @@ jobs:
           echo "$tests" | jq -c --argjson size "$BATCH_SIZE" '
             [range(0; length; $size) as $i | .[$i:$i+$size]]
           ' | jq -c '{include: .}' > matrix.json
-
           echo "Generated matrix:"
           cat matrix.json
-
           echo "matrix=$(cat matrix.json)" >> $GITHUB_OUTPUT
 
   end2end-ssr-tests:
-    name: SSR end to end test ${{ matrix.test }}
+    name: SSR end to end test
     needs: prepare-ssr-test-matrix
     runs-on: ubuntu-latest
     permissions:
