@@ -24,9 +24,6 @@
 //! axum = { version = "0.8", optional = true }
 //!
 //! [features]
-//! hydrate = [
-//!   "leptos-fluent/hydrate",
-//! ]
 //! ssr = [
 //!   "leptos-fluent/ssr",
 //!   "leptos-fluent/axum",  # actix and axum are supported

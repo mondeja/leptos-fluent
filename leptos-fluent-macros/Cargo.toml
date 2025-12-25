@@ -51,7 +51,6 @@ leptos-fluent.workspace = true
 nightly = ["proc-macro2/span-locations"]
 system = []
 tracing = ["dep:tracing"]
-hydrate = []
 ssr = []
 actix = []
 axum = []
