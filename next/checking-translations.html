@@ -189,17 +189,24 @@ a glob pattern that matches the Rust files that you want to check.</p>
 <p>The pattern must be relative to the location of the <em>Cargo.toml</em> file.</p>
 <p>For single crate projects, it would be something like:</p>
 <pre><code class="language-rust">leptos_fluent! {
+    #[cfg(not(feature = "ssr"))]
     check_translations: "./src/**/*.rs",
 }</code></pre>
 <p>For workspace projects, it could be something like:</p>
 <pre><code class="language-rust">leptos_fluent! {
+    #[cfg(not(feature = "ssr"))]
     check_translations: "../{app,components}/src/**/*.rs",
 }</code></pre>
+<p>Note that, by default, checking of translations is enabled on all targets,
+so it must be disabled for server side rendering (SSR) builds to prevent
+from showing the same errors both in server and client builds. This is
+achieved by using the <code>#[cfg(not(feature = "ssr"))]</code> attribute.</p>
 <h2 id="literal-boolean-for-workspace-projects"><a class="header" href="#literal-boolean-for-workspace-projects">Literal boolean for workspace projects</a></h2>
 <p>The parameter <code>check_translations</code> can also be a literal boolean
 instead of a glob pattern. In that case, the translations will be checked
 in all the Rust files of the workspace.</p>
 <pre><code class="language-rust">leptos_fluent! {
+    #[cfg(not(feature = "ssr"))]
     check_translations: true,
 }</code></pre>
 <h2 id="translations-error-messages"><a class="header" href="#translations-error-messages">Translations error messages</a></h2>

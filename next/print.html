@@ -809,17 +809,24 @@ a glob pattern that matches the Rust files that you want to check.</p>
 <p>The pattern must be relative to the location of the <em>Cargo.toml</em> file.</p>
 <p>For single crate projects, it would be something like:</p>
 <pre><code class="language-rust">leptos_fluent! {
+    #[cfg(not(feature = "ssr"))]
     check_translations: "./src/**/*.rs",
 }</code></pre>
 <p>For workspace projects, it could be something like:</p>
 <pre><code class="language-rust">leptos_fluent! {
+    #[cfg(not(feature = "ssr"))]
     check_translations: "../{app,components}/src/**/*.rs",
 }</code></pre>
+<p>Note that, by default, checking of translations is enabled on all targets,
+so it must be disabled for server side rendering (SSR) builds to prevent
+from showing the same errors both in server and client builds. This is
+achieved by using the <code>#[cfg(not(feature = "ssr"))]</code> attribute.</p>
 <h2 id="literal-boolean-for-workspace-projects"><a class="header" href="#literal-boolean-for-workspace-projects">Literal boolean for workspace projects</a></h2>
 <p>The parameter <code>check_translations</code> can also be a literal boolean
 instead of a glob pattern. In that case, the translations will be checked
 in all the Rust files of the workspace.</p>
 <pre><code class="language-rust">leptos_fluent! {
+    #[cfg(not(feature = "ssr"))]
     check_translations: true,
 }</code></pre>
 <h2 id="translations-error-messages"><a class="header" href="#translations-error-messages">Translations error messages</a></h2>
@@ -1463,6 +1470,7 @@ translations are correct and that there are no missing translations.</p>
 <p>For single crate projects:</p>
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
+    #[cfg(not(feature = "ssr"))]
     check_translations: "./src/**/*.rs",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 }</code></pre>
@@ -1471,6 +1479,7 @@ translations are correct and that there are no missing translations.</p>
 <p>For workspace projects:</p>
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
+    #[cfg(not(feature = "ssr"))]
     check_translations: "../{app,components}/src/**/*.rs",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 }</code></pre>
@@ -1480,9 +1489,14 @@ translations are correct and that there are no missing translations.</p>
 in all the Rust files of the workspace.</p>
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
+    #[cfg(not(feature = "ssr"))]
     check_translations: true,
     // ^^^^^^^^^^^^^^^^^^^^^
 }</code></pre>
+<p>Note that, by default, checking of translations is enabled on all targets,
+so it must be disabled for server side rendering (SSR) builds to prevent
+from showing the same errors both in server and client builds. This is
+achieved by using the <code>#[cfg(not(feature = "ssr"))]</code> attribute.</p>
 <h3 id="fill_translations"><a class="header" href="#fill_translations"><code>fill_translations</code></a></h3>
 <p>Add new messages found in <code>tr!</code> and <code>move_tr!</code> macros to translations files.</p>
 <ul>
@@ -1490,6 +1504,7 @@ in all the Rust files of the workspace.</p>
 <p>For single crate projects:</p>
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
+    #[cfg(not(feature = "ssr"))]
     fill_translations: "./src/**/*.rs",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 }</code></pre>
@@ -1498,11 +1513,16 @@ in all the Rust files of the workspace.</p>
 <p>For workspace projects:</p>
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
+    #[cfg(not(feature = "ssr"))]
     fill_translations: "../{app,components}/src/**/*.rs",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 }</code></pre>
 </li>
 </ul>
+<p>Note that, by default, filling of translations is enabled on all targets,
+so it must be disabled for server side rendering (SSR) builds to prevent
+from filling the files twice both in server and client builds. This is
+achieved by using the <code>#[cfg(not(feature = "ssr"))]</code> attribute.</p>
 <h3 id="customise"><a class="header" href="#customise"><code>customise</code></a></h3>
 <p>Provide a closure to customise fluent bundles used by
 <a href="https://docs.rs/fluent-templates/latest/fluent_templates/struct.StaticLoader.html"><code>fluent-templates::StaticLoader</code></a> internally.</p>

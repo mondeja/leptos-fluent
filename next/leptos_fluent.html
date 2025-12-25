@@ -455,6 +455,7 @@ translations are correct and that there are no missing translations.</p>
 <p>For single crate projects:</p>
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
+    #[cfg(not(feature = "ssr"))]
     check_translations: "./src/**/*.rs",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 }</code></pre>
@@ -463,6 +464,7 @@ translations are correct and that there are no missing translations.</p>
 <p>For workspace projects:</p>
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
+    #[cfg(not(feature = "ssr"))]
     check_translations: "../{app,components}/src/**/*.rs",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 }</code></pre>
@@ -472,9 +474,14 @@ translations are correct and that there are no missing translations.</p>
 in all the Rust files of the workspace.</p>
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
+    #[cfg(not(feature = "ssr"))]
     check_translations: true,
     // ^^^^^^^^^^^^^^^^^^^^^
 }</code></pre>
+<p>Note that, by default, checking of translations is enabled on all targets,
+so it must be disabled for server side rendering (SSR) builds to prevent
+from showing the same errors both in server and client builds. This is
+achieved by using the <code>#[cfg(not(feature = "ssr"))]</code> attribute.</p>
 <h3 id="fill_translations"><a class="header" href="#fill_translations"><code>fill_translations</code></a></h3>
 <p>Add new messages found in <code>tr!</code> and <code>move_tr!</code> macros to translations files.</p>
 <ul>
@@ -482,6 +489,7 @@ in all the Rust files of the workspace.</p>
 <p>For single crate projects:</p>
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
+    #[cfg(not(feature = "ssr"))]
     fill_translations: "./src/**/*.rs",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 }</code></pre>
@@ -490,11 +498,16 @@ in all the Rust files of the workspace.</p>
 <p>For workspace projects:</p>
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
+    #[cfg(not(feature = "ssr"))]
     fill_translations: "../{app,components}/src/**/*.rs",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 }</code></pre>
 </li>
 </ul>
+<p>Note that, by default, filling of translations is enabled on all targets,
+so it must be disabled for server side rendering (SSR) builds to prevent
+from filling the files twice both in server and client builds. This is
+achieved by using the <code>#[cfg(not(feature = "ssr"))]</code> attribute.</p>
 <h3 id="customise"><a class="header" href="#customise"><code>customise</code></a></h3>
 <p>Provide a closure to customise fluent bundles used by
 <a href="https://docs.rs/fluent-templates/latest/fluent_templates/struct.StaticLoader.html"><code>fluent-templates::StaticLoader</code></a> internally.</p>
