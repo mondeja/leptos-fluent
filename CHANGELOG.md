@@ -49,6 +49,15 @@ leptos_fluent! {
 The features `hydrate` and `disable-unicode-isolating-marks` have been
 removed and will throw an error if used.
 
+#### Changed type of `Language.id` field
+
+The type of the `id` field of the `Language` struct has been changed
+from `pub id: &'static fluent_templates::LanguageIdentifier`, to
+`pub id: &'static str`.
+
+Use `fluent_templates::LanguageIdentifier::from_str(language.id)`
+to convert it back.
+
 ### New features
 
 #### Language entries with script subtags
