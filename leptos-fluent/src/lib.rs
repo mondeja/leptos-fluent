@@ -1238,80 +1238,65 @@ pub fn language_from_str_between_languages(
 ) -> Option<&'static Language> {
     #[cfg(feature = "tracing")]
     tracing::trace!(
-        concat!(
-            "Searching for language with code {:?}.\n",
-            " Available languages: {}",
-        ),
+        "Searching for language with code {:?}. Available languages: {}",
         code,
         languages
             .iter()
-            .map(|lang| format!("{:?}", lang.id))
+            .map(|lang| lang.id)
             .collect::<Vec<_>>()
             .join(", ")
     );
 
-    let languages_identifiers: std::collections::HashMap<
-        &'static str,
-        LanguageIdentifier,
-    > = languages
+    let target_lang = LanguageIdentifier::from_str(code).ok()?;
+    let languages_identifiers: Vec<(&'static Language, LanguageIdentifier)> =
+        languages
+            .iter()
+            .filter_map(|&lang| {
+                LanguageIdentifier::from_str(lang.id)
+                    .ok()
+                    .map(|id| (lang, id))
+            })
+            .collect();
+
+    // Exact search
+    if let Some(&(lang, _)) = languages_identifiers
         .iter()
-        .map(|lang| {
-            (lang.id, { LanguageIdentifier::from_str(lang.id).unwrap() })
-        })
-        .collect();
-    match LanguageIdentifier::from_str(code) {
-        Ok(target_lang) => match languages.iter().find(|lang| {
-            languages_identifiers[lang.id].matches(&target_lang, false, false)
-        }) {
-            Some(lang) => {
-                #[cfg(feature = "tracing")]
-                tracing::trace!(
-                    "Language with code \"{}\" found with exact search: \"{}\"",
-                    code,
-                    lang.id
-                );
-
-                Some(lang)
-            }
-            None => {
-                let lazy_target_lang =
-                    LanguageIdentifier::from_raw_parts_unchecked(
-                        target_lang.language,
-                        None,
-                        None,
-                        None,
-                    );
-                match languages.iter().find(|lang| {
-                    languages_identifiers[lang.id].matches(
-                        &lazy_target_lang,
-                        true,
-                        true,
-                    )
-                }) {
-                    Some(lang) => {
-                        #[cfg(feature = "tracing")]
-                        tracing::trace!(
-                            "Language with code \"{}\" found with fuzzy search: \"{}\"",
-                            code,
-                            lang.id
-                        );
-
-                        Some(lang)
-                    }
-                    None => {
-                        #[cfg(feature = "tracing")]
-                        tracing::trace!(
-                            "Language with code \"{}\" not found",
-                            code
-                        );
-
-                        None
-                    }
-                }
-            }
-        },
-        Err(_) => None,
+        .find(|(_, id)| id.matches(&target_lang, false, false))
+    {
+        #[cfg(feature = "tracing")]
+        tracing::trace!(
+            "Language with code \"{}\" found with exact search: \"{}\"",
+            code,
+            lang.id
+        );
+        return Some(lang);
     }
+
+    // Fuzzy search
+    let lazy_target_lang = LanguageIdentifier::from_raw_parts_unchecked(
+        target_lang.language,
+        None,
+        None,
+        None,
+    );
+
+    if let Some(&(lang, _)) = languages_identifiers
+        .iter()
+        .find(|(_, id)| id.matches(&lazy_target_lang, true, true))
+    {
+        #[cfg(feature = "tracing")]
+        tracing::trace!(
+            "Language with code \"{}\" found with fuzzy search: \"{}\"",
+            code,
+            lang.id
+        );
+        return Some(lang);
+    }
+
+    #[cfg(feature = "tracing")]
+    tracing::trace!("Language with code \"{}\" not found", code);
+
+    None
 }
 
 // Used by `leptos_fluent!` macro
