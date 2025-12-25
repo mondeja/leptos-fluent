@@ -227,12 +227,12 @@ jobs:
           echo "$tests"
 
           # Group tests into batches
-          echo "$tests" | jq -c --argjson size "$BATCH_SIZE" '
-            [range(0; length; $size) as $i | .[$i:$i+$size]]
-          ' | jq -c '{include: .}' > matrix.json
+          matrix=$(echo "$tests" | jq -c --argjson size "$BATCH_SIZE" '
+            [range(0; length; $size) as $i | {tests: .[$i:$i+$size]}]
+          ')
           echo "Generated matrix:"
-          cat matrix.json
-          echo "matrix=$(cat matrix.json)" >> $GITHUB_OUTPUT
+          echo "$matrix"
+          echo "matrix=$matrix" >> $GITHUB_OUTPUT
 
   end2end-ssr-tests:
     name: SSR end to end test
@@ -263,9 +263,9 @@ jobs:
       - name: Run SSR end to end tests
         run: |
           echo "Running SSR tests batch:"
-          echo "${{ join(matrix.include, ', ') }}"
+          echo "${{ join(matrix.tests, ', ') }}"
 
-          for test in ${{ join(matrix.include, ' ') }}; do
+          for test in ${{ join(matrix.tests, ' ') }}; do
             echo "▶ Running SSR test: $test"
             TESTS="$test" cargo test -p leptos-fluent-end2end-ssr-tests
           done
