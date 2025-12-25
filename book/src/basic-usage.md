@@ -116,7 +116,7 @@ path = "src/lib.rs"
 
 [dependencies]
 leptos = { version = "0.8", features = ["csr"] }
-leptos-fluent = "0.2"
+leptos-fluent = "0.3"
 console_error_panic_hook = "0.1"
 
 # Using cargo-leptos

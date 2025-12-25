@@ -50,7 +50,7 @@ pub fn LanguageSelector() -> impl IntoView {
         </fieldset>
         <pre>
             {move_tr!(
-                if {i18n.language.get().id.to_string() == *"en"} {
+                if {i18n.language.get().id == "en"} {
                     "language-is-english"
                 } else {
                     "language-is-spanish"

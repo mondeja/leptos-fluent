@@ -1,0 +1,2 @@
+# en translations
+hello = Hello!

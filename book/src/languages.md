@@ -20,14 +20,18 @@ compile time:
 ```rust
 let LANGUAGES = [
   leptos_fluent::Language {
-    id: unic_langid::langid!("en"),
+    id: "en",
     name: "English",
     dir: leptos_fluent::WritingDirection::Ltr,
+    flag: Some("🇬🇧"),
+    script: None,
   },
   leptos_fluent::Language {
-    id: unic_langid::langid!("es-ES"),
+    id: "es-ES",
     name: "Español (España)",
     dir: leptos_fluent::WritingDirection::Ltr,
+    flag: Some("🇪🇸"),
+    script: None,
   },
 ]
 ```
@@ -82,7 +86,7 @@ format you want to use in the _Cargo.toml_ file:
 
 ```toml
 [dependencies]
-leptos-fluent = { version = "0.2", features = ["json5"] }
+leptos-fluent = { version = "0.3", features = ["json5"] }
 ```
 
 Available features for languages file formats are:

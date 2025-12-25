@@ -20,7 +20,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! leptos-fluent = "0.2"
+//! leptos-fluent = "0.3"
 //! axum = { version = "0.8", optional = true }
 //!
 //! [features]
@@ -292,12 +292,13 @@ use core::str::FromStr;
 use fluent_bundle::FluentValue;
 use fluent_templates::{loader::Loader, LanguageIdentifier, StaticLoader};
 #[cfg(feature = "nightly")]
-use leptos::prelude::{Get, Set};
+use leptos::prelude::Set;
 use leptos::{
     attr::AttributeValue,
-    prelude::{guards::ReadGuard, Read, RwSignal, Signal, With},
+    prelude::{guards::ReadGuard, Get, Read, RwSignal, Signal, Update, With},
 };
 use std::borrow::Cow;
+use std::collections::HashMap;
 use std::sync::LazyLock;
 
 /// Direction of the text
@@ -334,7 +335,7 @@ pub struct Language {
     /// Language identifier
     ///
     /// Can be any valid language tag, such as `en`, `es`, `en-US`, `es-ES`, etc.
-    pub id: &'static LanguageIdentifier,
+    pub id: &'static str,
     /// Language name
     ///
     /// The name of the language, such as `English`, `Español`, etc.
@@ -344,6 +345,8 @@ pub struct Language {
     pub dir: &'static WritingDirection,
     /// Flag of the country of the language as emoji (if any)
     pub flag: Option<&'static str>,
+    /// Optional script subtag for languages with multiple scripts (e.g. `Latn`).
+    pub script: Option<&'static str>,
 }
 
 impl PartialEq for Language {
@@ -408,15 +411,11 @@ macro_rules! impl_attr_value_for_language {
         type CloneableOwned = String;
 
         fn html_len(&self) -> usize {
-            self.id.to_string().len()
+            self.id.len()
         }
 
         fn to_html(self, key: &str, buf: &mut String) {
-            <&str as AttributeValue>::to_html(
-                self.id.to_string().as_str(),
-                key,
-                buf,
-            );
+            <&str as AttributeValue>::to_html(self.id, key, buf);
         }
 
         fn to_template(_key: &str, _buf: &mut String) {}
@@ -482,9 +481,25 @@ pub struct I18n {
     pub languages: &'static [&'static Language],
     /// Signal with a vector of fluent-templates static loaders.
     pub translations: Signal<Vec<&'static LazyLock<StaticLoader>>>,
+    /// Cache for language identifiers.
+    language_id_cache: RwSignal<HashMap<&'static str, LanguageIdentifier>>,
 }
 
 impl I18n {
+    #![allow(missing_docs)]
+    pub fn new(
+        language: RwSignal<&'static Language>,
+        languages: &'static [&'static Language],
+        translations: Signal<Vec<&'static LazyLock<StaticLoader>>>,
+    ) -> Self {
+        Self {
+            language,
+            languages,
+            translations,
+            language_id_cache: RwSignal::new(HashMap::new()),
+        }
+    }
+
     /// Get meta information about the i18n context.
     ///
     /// Useful to get at runtime the parameters that created the context
@@ -516,6 +531,35 @@ impl I18n {
         ))
     }
 
+    fn get_language_identifier(
+        &self,
+        lang: &'static Language,
+    ) -> Option<LanguageIdentifier> {
+        // Intenta obtener del cache primero
+        let cached = self
+            .language_id_cache
+            .with(|cache| cache.get(lang.id).cloned());
+
+        if let Some(id) = cached {
+            return Some(id);
+        }
+
+        // Si no está en cache, parsea e inserta
+        match LanguageIdentifier::from_str(lang.id) {
+            Ok(id) => {
+                self.language_id_cache.update(|cache| {
+                    cache.insert(lang.id, id.clone());
+                });
+                Some(id)
+            }
+            Err(_) => {
+                #[cfg(feature = "tracing")]
+                tracing::error!("Invalid language identifier \"{}\"", lang.id);
+                None
+            }
+        }
+    }
+
     /// Get the translation of a text identifier to the current language.
     ///
     /// ```rust,ignore
@@ -534,36 +578,34 @@ impl I18n {
         tracing::instrument(level = "trace", skip_all)
     )]
     pub fn tr(&self, text_id: &str) -> String {
-        let found = self.translations.with(|translations| {
-            self.language.with(|language| {
-                translations
-                    .iter()
-                    .find_map(|tr| tr.try_lookup(language.id, text_id))
-            })
-        });
+        let language = self.language.get();
+
+        let found =
+            self.get_language_identifier(language).and_then(|lang_id| {
+                self.translations.with(|translations| {
+                    translations
+                        .iter()
+                        .find_map(|tr| tr.try_lookup(&lang_id, text_id))
+                })
+            });
 
         #[cfg(feature = "tracing")]
-        {
-            if found.is_none() {
+        match &found {
+            None => {
                 tracing::warn!(
-                "Localization message \"{text_id}\" not found in any translation"
-            );
-            } else {
+                    "Localization message \"{text_id}\" not found in any translation"
+                );
+            }
+            Some(translated) => {
                 tracing::trace!(
-                    "{}",
-                    format!(
-                        concat!(
-                        "Localization message \"{}\" found in a translation.",
-                        " Translated to \"{}\"."
-                    ),
-                        text_id,
-                        found.as_ref().unwrap()
-                    ),
+                    "Localization message \"{}\" found in a translation. Translated to \"{}\".",
+                    text_id,
+                    translated
                 );
             }
         }
 
-        found.unwrap_or(format!("Unknown localization {text_id}"))
+        found.unwrap_or_else(|| format!("Unknown localization {text_id}"))
     }
 
     /// Get the translation of a text identifier to the current language with arguments.
@@ -591,36 +633,34 @@ impl I18n {
         text_id: &str,
         args: &std::collections::HashMap<Cow<'static, str>, FluentValue>,
     ) -> String {
-        let found = self.translations.with(|translations| {
-            self.language.with(|language| {
-                translations.iter().find_map(|tr| {
-                    tr.try_lookup_with_args(language.id, text_id, args)
+        let language = self.language.get();
+
+        let found =
+            self.get_language_identifier(language).and_then(|lang_id| {
+                self.translations.with(|translations| {
+                    translations.iter().find_map(|tr| {
+                        tr.try_lookup_with_args(&lang_id, text_id, args)
+                    })
                 })
-            })
-        });
+            });
 
         #[cfg(feature = "tracing")]
-        {
-            if found.is_none() {
+        match &found {
+            None => {
                 tracing::warn!(
-                "Localization message \"{text_id}\" not found in any translation"
-            );
-            } else {
+                    "Localization message \"{text_id}\" not found in any translation"
+                );
+            }
+            Some(translated) => {
                 tracing::trace!(
-                    "{}",
-                    format!(
-                        concat!(
-                        "Localization message \"{}\" found in a translation.",
-                        " Translated to \"{}\"."
-                    ),
-                        text_id,
-                        found.as_ref().unwrap()
-                    ),
+                    "Localization message \"{}\" found in a translation. Translated to \"{}\".",
+                    text_id,
+                    translated
                 );
             }
         }
 
-        found.unwrap_or(format!("Unknown localization {text_id}"))
+        found.unwrap_or_else(|| format!("Unknown localization {text_id}"))
     }
 }
 
@@ -1219,69 +1259,65 @@ pub fn language_from_str_between_languages(
 ) -> Option<&'static Language> {
     #[cfg(feature = "tracing")]
     tracing::trace!(
-        concat!(
-            "Searching for language with code \"{}\".\n",
-            " Available languages: {}",
-        ),
+        "Searching for language with code {:?}. Available languages: {}",
         code,
         languages
             .iter()
-            .map(|lang| format!("\"{}\"", lang.id))
+            .map(|lang| lang.id)
             .collect::<Vec<_>>()
             .join(", ")
     );
 
-    match LanguageIdentifier::from_str(code) {
-        Ok(target_lang) => match languages
+    let target_lang = LanguageIdentifier::from_str(code).ok()?;
+    let languages_identifiers: Vec<(&'static Language, LanguageIdentifier)> =
+        languages
             .iter()
-            .find(|lang| lang.id.matches(&target_lang, false, false))
-        {
-            Some(lang) => {
-                #[cfg(feature = "tracing")]
-                tracing::trace!(
-                    "Language with code \"{}\" found with exact search: \"{}\"",
-                    code,
-                    lang.id
-                );
+            .filter_map(|&lang| {
+                LanguageIdentifier::from_str(lang.id)
+                    .ok()
+                    .map(|id| (lang, id))
+            })
+            .collect();
 
-                Some(lang)
-            }
-            None => {
-                let lazy_target_lang =
-                    LanguageIdentifier::from_raw_parts_unchecked(
-                        target_lang.language,
-                        None,
-                        None,
-                        None,
-                    );
-                match languages
-                    .iter()
-                    .find(|lang| lang.id.matches(&lazy_target_lang, true, true))
-                {
-                    Some(lang) => {
-                        #[cfg(feature = "tracing")]
-                        tracing::trace!(
-                            "Language with code \"{}\" found with fuzzy search: \"{}\"",
-                            code,
-                            lang.id
-                        );
-
-                        Some(lang)
-                    }
-                    None => {
-                        #[cfg(feature = "tracing")]
-                        tracing::trace!(
-                            "Language with code \"{}\" not found",
-                            code
-                        );
-
-                        None
-                    }
-                }
-            }
-        },
-        Err(_) => None,
+    // Exact search
+    if let Some(&(lang, _)) = languages_identifiers
+        .iter()
+        .find(|(_, id)| id.matches(&target_lang, false, false))
+    {
+        #[cfg(feature = "tracing")]
+        tracing::trace!(
+            "Language with code \"{}\" found with exact search: \"{}\"",
+            code,
+            lang.id
+        );
+        return Some(lang);
     }
+
+    // Fuzzy search
+    let lazy_target_lang = LanguageIdentifier::from_raw_parts_unchecked(
+        target_lang.language,
+        None,
+        None,
+        None,
+    );
+
+    if let Some(&(lang, _)) = languages_identifiers
+        .iter()
+        .find(|(_, id)| id.matches(&lazy_target_lang, true, true))
+    {
+        #[cfg(feature = "tracing")]
+        tracing::trace!(
+            "Language with code \"{}\" found with fuzzy search: \"{}\"",
+            code,
+            lang.id
+        );
+        return Some(lang);
+    }
+
+    #[cfg(feature = "tracing")]
+    tracing::trace!("Language with code \"{}\" not found", code);
+
+    None
 }
 
 // Used by `leptos_fluent!` macro
