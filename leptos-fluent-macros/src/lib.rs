@@ -328,18 +328,19 @@ pub fn leptos_fluent(
                     None => quote! { "" },
                 };
 
-                // TODO: optimize checking if empty at compile time when literal
-                let effect_quote = quote! {
-                    ::leptos::prelude::Effect::new(move |_| {
-                        if #set_language_to_data_file_quote.is_empty() {
-                            return;
+                let effect_quote =
+                    if set_language_to_data_file_quote.to_string() == "\"\"" {
+                        quote! {}
+                    } else {
+                        quote! {
+                            ::leptos::prelude::Effect::new(move |_| {
+                                ::leptos_fluent::data_file::set(
+                                    #set_language_to_data_file_quote,
+                                    &#get_language_quote.id.to_string(),
+                                );
+                            });
                         }
-                        ::leptos_fluent::data_file::set(
-                            #set_language_to_data_file_quote,
-                            &#get_language_quote.id.to_string(),
-                        );
-                    });
-                };
+                    };
 
                 match param.expr {
                     Some(ref expr) => {
@@ -373,10 +374,10 @@ pub fn leptos_fluent(
                     None => quote! { "" },
                 };
 
+                if initial_language_from_data_file_quote.to_string() == "\"\"" {
+                    return quote! {};
+                }
                 let effect_quote = quote! {
-                    if #initial_language_from_data_file_quote.is_empty() {
-                        return;
-                    }
                     if let Some(l) = ::leptos_fluent::data_file::get(
                         #initial_language_from_data_file_quote
                     ) {
@@ -825,18 +826,6 @@ pub fn leptos_fluent(
     let sync_language_with_session_storage_quote = quote!();
 
     let initial_language_from_url_param_quote: proc_macro2::TokenStream = {
-        #[cfg(all(feature = "hydrate", not(feature = "ssr")))]
-        let hydrate_rerender_quote = quote! {
-            ::leptos::prelude::Effect::new(move |prev: Option<()>| {
-                if prev.is_none() {
-                    #set_language_quote;
-                }
-            });
-        };
-
-        #[cfg(all(not(feature = "hydrate"), not(feature = "ssr")))]
-        let hydrate_rerender_quote = quote! {};
-
         #[cfg(not(feature = "ssr"))]
         let set_to_local_storage_quote: proc_macro2::TokenStream = {
             let effect_quote = quote! {
@@ -941,7 +930,6 @@ pub fn leptos_fluent(
             if let Some(l) = ::leptos_fluent::url::param::get(#url_param_quote) {
                 lang = ::leptos_fluent::l(&l, &LANGUAGES);
                 if let Some(l) = lang {
-                    #hydrate_rerender_quote
                     #set_to_local_storage_quote
                     #set_to_session_storage_quote
                     #set_to_cookie_quote

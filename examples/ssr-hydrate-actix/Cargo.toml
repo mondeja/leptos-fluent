@@ -21,7 +21,6 @@ wasm-bindgen.workspace = true
 [features]
 hydrate = [
   "leptos/hydrate",
-  "leptos-fluent/hydrate",
 ]
 ssr = [
   "dep:actix-files",

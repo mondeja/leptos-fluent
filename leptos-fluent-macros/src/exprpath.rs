@@ -39,8 +39,6 @@ pub(crate) fn evaluate_exprpath(
                     cfg!(feature = "nightly")
                 } else if *f == "ssr" {
                     cfg!(feature = "ssr")
-                } else if *f == "hydrate" {
-                    cfg!(feature = "hydrate")
                 } else if *f == "system" {
                     cfg!(feature = "system")
                 } else if *f == "tracing" {

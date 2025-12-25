@@ -27,7 +27,7 @@ wasm-bindgen.workspace = true
 
 [features]
 csr = ["leptos/csr"]
-hydrate = ["leptos/hydrate", "leptos-fluent/hydrate"]
+hydrate = ["leptos/hydrate"]
 ssr = [
   "dep:axum",
   "dep:tokio",
