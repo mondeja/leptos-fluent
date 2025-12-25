@@ -532,46 +532,43 @@ impl I18n {
         tracing::instrument(level = "trace", skip_all)
     )]
     pub fn tr(&self, text_id: &str) -> String {
-        let found = self.translations.with(|translations| {
-            self.language.with(|language| {
-                let maybe_lang_id = LanguageIdentifier::from_str(language.id);
-                if let Ok(lang_id) = maybe_lang_id {
-                    translations
-                        .iter()
-                        .find_map(|tr| tr.try_lookup(&lang_id, text_id))
-                } else {
+        let found = self.language.with(|language| {
+            let lang_id = match LanguageIdentifier::from_str(language.id) {
+                Ok(id) => id,
+                Err(_) => {
                     #[cfg(feature = "tracing")]
                     tracing::error!(
                         "Invalid language identifier \"{}\"",
                         language.id
                     );
-                    None
+                    return None;
                 }
+            };
+
+            self.translations.with(|translations| {
+                translations
+                    .iter()
+                    .find_map(|tr| tr.try_lookup(&lang_id, text_id))
             })
         });
 
         #[cfg(feature = "tracing")]
-        {
-            if found.is_none() {
+        match &found {
+            None => {
                 tracing::warn!(
-                "Localization message \"{text_id}\" not found in any translation"
-            );
-            } else {
+                    "Localization message \"{text_id}\" not found in any translation"
+                );
+            }
+            Some(translated) => {
                 tracing::trace!(
-                    "{}",
-                    format!(
-                        concat!(
-                        "Localization message \"{}\" found in a translation.",
-                        " Translated to \"{}\"."
-                    ),
-                        text_id,
-                        found.as_ref().unwrap()
-                    ),
+                    "Localization message \"{}\" found in a translation. Translated to \"{}\".",
+                    text_id,
+                    translated
                 );
             }
         }
 
-        found.unwrap_or(format!("Unknown localization {text_id}"))
+        found.unwrap_or_else(|| format!("Unknown localization {text_id}"))
     }
 
     /// Get the translation of a text identifier to the current language with arguments.
@@ -599,47 +596,43 @@ impl I18n {
         text_id: &str,
         args: &std::collections::HashMap<Cow<'static, str>, FluentValue>,
     ) -> String {
-        let found = self.translations.with(|translations| {
-            self.language.with(|language| {
+        let found = self.language.with(|language| {
+            let lang_id = match LanguageIdentifier::from_str(language.id) {
+                Ok(id) => id,
+                Err(_) => {
+                    #[cfg(feature = "tracing")]
+                    tracing::error!(
+                        "Invalid language identifier \"{}\"",
+                        language.id
+                    );
+                    return None;
+                }
+            };
+
+            self.translations.with(|translations| {
                 translations.iter().find_map(|tr| {
-                    let maybe_lang_id =
-                        LanguageIdentifier::from_str(language.id);
-                    if let Ok(lang_id) = maybe_lang_id {
-                        tr.try_lookup_with_args(&lang_id, text_id, args)
-                    } else {
-                        #[cfg(feature = "tracing")]
-                        tracing::error!(
-                            "Invalid language identifier \"{}\"",
-                            language.id
-                        );
-                        None
-                    }
+                    tr.try_lookup_with_args(&lang_id, text_id, args)
                 })
             })
         });
 
         #[cfg(feature = "tracing")]
-        {
-            if found.is_none() {
+        match &found {
+            None => {
                 tracing::warn!(
-                "Localization message \"{text_id}\" not found in any translation"
-            );
-            } else {
+                    "Localization message \"{text_id}\" not found in any translation"
+                );
+            }
+            Some(translated) => {
                 tracing::trace!(
-                    "{}",
-                    format!(
-                        concat!(
-                        "Localization message \"{}\" found in a translation.",
-                        " Translated to \"{}\"."
-                    ),
-                        text_id,
-                        found.as_ref().unwrap()
-                    ),
+                    "Localization message \"{}\" found in a translation. Translated to \"{}\".",
+                    text_id,
+                    translated
                 );
             }
         }
 
-        found.unwrap_or(format!("Unknown localization {text_id}"))
+        found.unwrap_or_else(|| format!("Unknown localization {text_id}"))
     }
 }
 
