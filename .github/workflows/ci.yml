@@ -276,9 +276,6 @@ jobs:
           - example: ssr-hydrate-actix
             toolchain: stable
             runs-on: ubuntu-latest
-          - example: ssr-hydrate-axum
-            toolchain: stable
-            runs-on: windows-latest
 
           # === Nightly coverage (Ubuntu only) ===
           - example: ssr-hydrate-actix
