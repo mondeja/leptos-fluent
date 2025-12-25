@@ -21,7 +21,7 @@ Add the following to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-leptos-fluent = 3"
+leptos-fluent = "0.3"
 axum = { version = "0.8", optional = true }
 
 [features]
