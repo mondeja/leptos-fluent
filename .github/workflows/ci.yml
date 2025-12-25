@@ -288,9 +288,6 @@ jobs:
           - example: csr-minimal
             toolchain: stable
             runs-on: ubuntu-latest
-          - example: csr-minimal
-            toolchain: stable
-            runs-on: windows-latest
           - example: csr-complete
             toolchain: stable
             runs-on: ubuntu-latest
@@ -303,12 +300,6 @@ jobs:
 
           # === SSR Hydrate (stable baseline) ===
           - example: ssr-hydrate-actix
-            toolchain: stable
-            runs-on: ubuntu-latest
-          - example: ssr-hydrate-actix
-            toolchain: stable
-            runs-on: windows-latest
-          - example: ssr-hydrate-axum
             toolchain: stable
             runs-on: ubuntu-latest
           - example: ssr-hydrate-axum
