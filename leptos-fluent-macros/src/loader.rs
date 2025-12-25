@@ -4,7 +4,6 @@ use crate::{
     languages::{read_languages_file, read_locales_folder},
     FluentFilePaths, ParsedLanguage,
 };
-#[cfg(not(feature = "ssr"))]
 use crate::{
     fluent_entries::build_fluent_entries,
     tr_macros::{
@@ -418,7 +417,6 @@ impl LitBool {
 
 pub(crate) enum LitBoolOrStr {
     Bool(syn::LitBool),
-    #[cfg_attr(feature = "ssr", allow(dead_code))]
     Str(syn::LitStr),
 }
 
@@ -437,7 +435,6 @@ impl Parse for LitBoolOrStr {
     }
 }
 
-#[cfg(not(feature = "ssr"))]
 impl LitBoolOrStr {
     fn span(&self) -> proc_macro2::Span {
         match self {
@@ -1767,7 +1764,6 @@ impl Parse for I18nLoader {
             locales_folder_path.as_path().to_str().unwrap().to_string();
 
         // core_locales
-        #[cfg(not(feature = "ssr"))]
         let mut core_locales_content = None;
         let mut core_locales_path_str = None;
         if let Some(core_locales) = &core_locales_path {
@@ -1788,7 +1784,6 @@ impl Parse for I18nLoader {
                     )
                 ));
             } else {
-                #[cfg(not(feature = "ssr"))]
                 {
                     core_locales_content =
                         Some(std::fs::read_to_string(&core_locales).unwrap());
@@ -1812,7 +1807,6 @@ impl Parse for I18nLoader {
             ));
         }
 
-        #[cfg(not(feature = "ssr"))]
         if check_translations.is_some() || fill_translations.is_some() {
             let f_resources_and_file_paths =
                 fluent_resources_and_file_paths.clone();
