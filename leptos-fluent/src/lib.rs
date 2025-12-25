@@ -296,12 +296,10 @@ use core::str::FromStr;
 use fluent_bundle::FluentValue;
 use fluent_templates::{loader::Loader, LanguageIdentifier, StaticLoader};
 #[cfg(feature = "nightly")]
-use leptos::prelude::Get;
-#[allow(unused_imports)]
-use leptos::prelude::Set;
+use leptos::prelude::{Get, Set};
 use leptos::{
     attr::AttributeValue,
-    prelude::{guards::ReadGuard, use_context, Read, RwSignal, Signal, With},
+    prelude::{guards::ReadGuard, Read, RwSignal, Signal, With},
 };
 use std::borrow::Cow;
 use std::sync::LazyLock;
@@ -689,56 +687,6 @@ impl Fn<(&'static Language,)> for I18n {
     ) -> Self::Output {
         self.language.set(&lang)
     }
-}
-
-/// Get the current context for localization.
-#[deprecated(
-    since = "0.2.13",
-    note = "will be removed in v0.3.0. Use `use_context::<leptos_fluent::I18n>()` instead of `use_i18n()`."
-)]
-#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace"))]
-#[inline(always)]
-pub fn use_i18n() -> Option<I18n> {
-    use_context::<I18n>()
-}
-
-const EXPECT_I18N_ERROR_MESSAGE: &str = concat!(
-    "I18n context is missing, use the `leptos_fluent!` macro to provide it.\n\n",
-    "If you're sure that the context has been provided probably the invocation",
-    " resides outside of the reactive ownership tree, thus the context is not",
-    " reachable. Use instead:\n",
-    "  - `tr!(i18n, \"text-id\")` instead of `tr!(\"text-id\")`.\n",
-    "  - `move_tr!(i18n, \"text-id\")` instead of `move_tr!(\"text-id\")`.\n",
-    "  - Copy `i18n` context instead of getting it with `expect_context::<leptos_fluent::I18n>()`.",
-);
-
-/// Expect the current context for localization.
-#[deprecated(
-    since = "0.2.13",
-    note = "will be removed in v0.3.0. Use `expect_context::<leptos_fluent::I18n>()` instead of `expect_i18n()`."
-)]
-#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace"))]
-#[inline]
-pub fn expect_i18n() -> I18n {
-    if let Some(i18n) = use_context::<I18n>() {
-        i18n
-    } else {
-        #[cfg(feature = "tracing")]
-        tracing::error!(EXPECT_I18N_ERROR_MESSAGE);
-        panic!("{}", EXPECT_I18N_ERROR_MESSAGE)
-    }
-}
-
-/// Expect the current context for localization.
-#[deprecated(
-    since = "0.2.13",
-    note = "will be removed in v0.3.0. Use `expect_context::<leptos_fluent::I18n>()` instead of `i18n()`."
-)]
-#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace"))]
-#[inline(always)]
-pub fn i18n() -> I18n {
-    #[allow(deprecated)]
-    expect_i18n()
 }
 
 /// Translate a text identifier to the current language.
