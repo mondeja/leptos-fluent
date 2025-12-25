@@ -208,49 +208,48 @@ jobs:
           shell: bash
           command: wasm-pack-test-all tests/end2end --${{ matrix.browser }} --headless
 
-  discover-end2end-ssr-tests:
-    name: Discover SSR end to end tests
+  prepare-ssr-test-matrix:
+    name: Prepare SSR test matrix
     runs-on: ubuntu-latest
     permissions:
       contents: read
     outputs:
-      tests: ${{ steps.set-matrix.outputs.tests }}
+      matrix: ${{ steps.prepare.outputs.matrix }}
     steps:
       - uses: actions/checkout@v3
-      - name: Discover tests
-        id: set-matrix
-        run: |
-          tests=$(find tests/end2end/ssr/src/apps -mindepth 1 -maxdepth 1 -type d -printf "\"%f\"," | sed 's/,$//')
-          echo "tests=[${tests}]" >> $GITHUB_OUTPUT
 
-  create-ssr-test-groups:
-    name: Create SSR test groups
-    runs-on: ubuntu-latest
-    needs: discover-end2end-ssr-tests
-    outputs:
-      matrix: ${{ steps.group-tests.outputs.matrix }}
-    steps:
-      - name: Group tests
-        id: group-tests
+      - name: Discover and group SSR tests
+        id: prepare
         run: |
-          TESTS='${{ needs.discover-end2end-ssr-tests.outputs.tests }}'
-          BATCH_SIZE=5
+          BATCH_SIZE=10
 
-          echo "$TESTS" | jq -c --argjson size "$BATCH_SIZE" '
+          # Discover tests
+          tests=$(find tests/end2end/ssr/src/apps \
+            -mindepth 1 -maxdepth 1 -type d -printf '"%f",')
+          tests="[${tests%,}]"
+
+          echo "Discovered tests:"
+          echo "$tests"
+
+          # Group tests into batches
+          echo "$tests" | jq -c --argjson size "$BATCH_SIZE" '
             [range(0; length; $size) as $i | .[$i:$i+$size]]
           ' | jq -c '{include: .}' > matrix.json
+
+          echo "Generated matrix:"
+          cat matrix.json
 
           echo "matrix=$(cat matrix.json)" >> $GITHUB_OUTPUT
 
   end2end-ssr-tests:
     name: SSR end to end test ${{ matrix.test }}
-    needs: create-ssr-test-groups
+    needs: prepare-ssr-test-matrix
     runs-on: ubuntu-latest
     permissions:
       contents: read
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.create-ssr-test-groups.outputs.matrix) }}
+      matrix: ${{ fromJson(needs.prepare-ssr-test-matrix.outputs.matrix) }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
