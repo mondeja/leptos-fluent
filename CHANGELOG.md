@@ -1,12 +1,12 @@
 # CHANGELOG
 
-## 2025-12-13 - [0.3.0]
+## 2025-12-25 - [0.3.0]
 
 ### Breaking changes
 
 #### Removed functions to simplify API
 
-The next deprecated functions have been removed:
+The next deprecated functions and methods have been removed:
 
 - `i18n` (use `expect_context::<leptos_fluent::I18n>()` instead)
 - `use_i18n` (use `use_context::<leptos_fluent::I18n>()` instead)
@@ -22,7 +22,7 @@ The deprecated options variants including the terms `localstorage` and
 `sessionstorage` in their names have been removed. Use the new variants
 including `local_storage` and `session_storage`.
 
-#### `Language.id` is now a  `&'static str`
+#### `Language.id` is now a `&'static str`
 
 The type of the `id` field of the `Language` struct has been changed
 from `unic_langid::LanguageIdentifier` to `&'static str`. This simplifies
@@ -44,6 +44,11 @@ leptos_fluent! {
 }
 ```
 
+#### Removed features `hydrate` and `disable-unicode-isolating-marks`
+
+The features `hydrate` and `disable-unicode-isolating-marks` have been
+removed and will throw an error if used.
+
 ### New features
 
 #### Language entries with script subtags
@@ -53,6 +58,10 @@ script, flag and display name when using `sr-Latn`, `sr-Cyrl`, `zh-Hans`,
 `zh-Hant`, and similar BCP 47 tags.
 
 Includes the addition of an `Option<&'static str>` `script` field to `Language`.
+
+### Bug fixes
+
+- The URL does not set the language on hydration when using `initial_language_from_url_param`.
 
 ## 2025-12-12 - [0.2.21]
 
