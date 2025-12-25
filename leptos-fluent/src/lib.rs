@@ -296,7 +296,7 @@ use core::str::FromStr;
 use fluent_bundle::FluentValue;
 use fluent_templates::{loader::Loader, LanguageIdentifier, StaticLoader};
 #[cfg(feature = "nightly")]
-use leptos::prelude::Get;
+use leptos::prelude::{Get, Set};
 use leptos::{
     attr::AttributeValue,
     prelude::{guards::ReadGuard, Read, RwSignal, Signal, With},
