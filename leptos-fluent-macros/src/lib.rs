@@ -10,21 +10,16 @@ extern crate proc_macro;
 pub(crate) mod cookie;
 mod exprpath;
 mod files_tracker;
-#[cfg(not(feature = "ssr"))]
 pub(crate) mod fluent_entries;
 mod fluent_resources;
 mod languages;
 mod loader;
-#[cfg(not(feature = "ssr"))]
 pub(crate) mod tr_macros;
-#[cfg(not(feature = "ssr"))]
 mod translations_checker;
-#[cfg(not(feature = "ssr"))]
 mod translations_filler;
 
 pub(crate) use exprpath::evaluate_exprpath;
 use files_tracker::build_files_tracker_quote;
-#[cfg(not(feature = "ssr"))]
 pub(crate) use fluent_resources::FluentResources;
 pub(crate) use fluent_resources::{
     build_fluent_resources_and_file_paths, FluentFilePaths,
@@ -106,7 +101,6 @@ pub fn leptos_fluent(
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
     let I18nLoader {
-        warnings,
         fluent_file_paths,
         children,
         translations,
@@ -2136,8 +2130,6 @@ pub fn leptos_fluent(
         }).collect()
     };
 
-    let warnings_quote: proc_macro2::TokenStream =
-        warnings.iter().map(|warning| quote!(#warning)).collect();
     let other_quotes = quote! {
         #sync_language_with_server_function_quote
         #sync_language_with_local_storage_quote
@@ -2148,7 +2140,6 @@ pub fn leptos_fluent(
         #set_language_from_navigator_quote
         #files_tracker_quote
         #leptos_fluent_provide_meta_context_quote
-        #warnings_quote
     };
 
     let initial_language_index = match default_language {
@@ -2167,46 +2158,8 @@ pub fn leptos_fluent(
                 None => quote!(),
             };
 
-            let (customise_quote, warnings_quote) = {
-                #[cfg(feature = "disable-unicode-isolating-marks")]
-                {
-                    (
-                        customise.map_or(
-                            quote!(customise: |bundle| bundle.set_use_isolating(false),),
-                            |c| quote! {
-                                customise: |bundle| {
-                                    bundle.set_use_isolating(false);
-                                    let customise: fn(&mut ::leptos_fluent::__reexports::fluent_templates::FluentBundle<&::leptos_fluent::__reexports::fluent_bundle::FluentResource>) = #c;
-                                    customise(bundle);
-                                },
-                            }
-                        ),
-                        {
-                            // warning for `disable-unicode-isolating-marks` feature
-                            // TODO: remove it in v0.3.0
-                            let warning = proc_macro_warning::FormattedWarning::new_deprecated(
-                                "disable_unicode_isolating_marks",
-                                "The feature `disable-unicode-isolating-marks` has been deprecated \
-                                and will be removed in v0.3.0. Use the `customise` argument of \
-                                `leptos_fluent!` macro with the value \
-                                `|bundle| bundle.set_use_isolating(false)` instead to disable Unicode \
-                                isolating marks in translations.",
-                                proc_macro2::Span::call_site(),
-                            );
-                            quote!(#warning)
-                        },
-                    )
-                }
-
-                #[cfg(not(feature = "disable-unicode-isolating-marks"))]
-                {
-                    (
-                        customise
-                            .map_or(quote!(), |c| quote! { customise: #c, }),
-                        quote!(),
-                    )
-                }
-            };
+            let customise_quote =
+                customise.map_or(quote!(), |c| quote! { customise: #c, });
 
             (
                 quote! {

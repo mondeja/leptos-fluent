@@ -10,6 +10,7 @@ For single crate projects, it would be something like:
 
 ```rust
 leptos_fluent! {
+    #[cfg(not(feature = "ssr"))]
     check_translations: "./src/**/*.rs",
 }
 ```
@@ -18,9 +19,15 @@ For workspace projects, it could be something like:
 
 ```rust
 leptos_fluent! {
+    #[cfg(not(feature = "ssr"))]
     check_translations: "../{app,components}/src/**/*.rs",
 }
 ```
+
+Note that, by default, checking of translations is enabled on all targets,
+so it must be disabled for server side rendering (SSR) builds to prevent
+from showing the same errors both in server and client builds. This is
+achieved by using the `#[cfg(not(feature = "ssr"))]` attribute.
 
 ## Literal boolean for workspace projects
 
@@ -30,6 +37,7 @@ in all the Rust files of the workspace.
 
 ```rust
 leptos_fluent! {
+    #[cfg(not(feature = "ssr"))]
     check_translations: true,
 }
 ```

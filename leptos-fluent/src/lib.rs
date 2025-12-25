@@ -293,11 +293,11 @@ use fluent_bundle::FluentValue;
 use fluent_templates::{loader::Loader, LanguageIdentifier, StaticLoader};
 #[cfg(feature = "nightly")]
 use leptos::prelude::Get;
+#[allow(unused_imports)]
+use leptos::prelude::Set;
 use leptos::{
     attr::AttributeValue,
-    prelude::{
-        guards::ReadGuard, use_context, Read, RwSignal, Set, Signal, With,
-    },
+    prelude::{guards::ReadGuard, use_context, Read, RwSignal, Signal, With},
 };
 use std::borrow::Cow;
 use std::sync::LazyLock;
@@ -346,28 +346,6 @@ pub struct Language {
     pub dir: &'static WritingDirection,
     /// Flag of the country of the language as emoji (if any)
     pub flag: Option<&'static str>,
-}
-
-impl Language {
-    /// Get if the language is the active language.
-    #[deprecated(
-        since = "0.2.13",
-        note = "will be removed in v0.3.0. Use `&i18n.language.get() == lang` instead of `lang.is_active()`."
-    )]
-    #[inline(always)]
-    pub fn is_active(&'static self) -> bool {
-        self == leptos::prelude::expect_context::<I18n>().language.read()
-    }
-
-    /// Set the language as the active language.
-    #[deprecated(
-        since = "0.2.13",
-        note = "will be removed in v0.3.0. Use `&i18n.language.set(lang)` instead of `lang.activate()`."
-    )]
-    #[inline(always)]
-    pub fn activate(&'static self) {
-        leptos::prelude::expect_context::<I18n>().language.set(self);
-    }
 }
 
 impl PartialEq for Language {
@@ -727,8 +705,6 @@ const EXPECT_I18N_ERROR_MESSAGE: &str = concat!(
     " reachable. Use instead:\n",
     "  - `tr!(i18n, \"text-id\")` instead of `tr!(\"text-id\")`.\n",
     "  - `move_tr!(i18n, \"text-id\")` instead of `move_tr!(\"text-id\")`.\n",
-    "  - `i18n.language.set(lang)` instead of `lang.activate()`.\n",
-    "  - `lang == i18n.language.get()` instead of `lang.is_active()`.\n",
     "  - Copy `i18n` context instead of getting it with `expect_context::<leptos_fluent::I18n>()`.",
 );
 
@@ -759,32 +735,6 @@ pub fn expect_i18n() -> I18n {
 pub fn i18n() -> I18n {
     #[allow(deprecated)]
     expect_i18n()
-}
-
-/// Get the translation of a text identifier to the current language.
-#[deprecated(
-    since = "0.2.7",
-    note = "will be removed in v0.3.0. Use `i18n.tr(text_id)` instead of `tr_impl(i18n, text_id)`."
-)]
-#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
-#[inline(always)]
-pub fn tr_impl(i18n: I18n, text_id: &str) -> String {
-    i18n.tr(text_id)
-}
-
-/// Get the translation of a text identifier to the current language with arguments.
-#[deprecated(
-    since = "0.2.7",
-    note = "will be removed in v0.3.0. Use `i18n.tr_with_args(text_id, args)` instead of `tr_with_args_impl(i18n, text_id, args)`."
-)]
-#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
-#[inline(always)]
-pub fn tr_with_args_impl(
-    i18n: I18n,
-    text_id: &str,
-    args: &std::collections::HashMap<Cow<'static, str>, FluentValue>,
-) -> String {
-    i18n.tr_with_args(text_id, args)
 }
 
 /// Translate a text identifier to the current language.
