@@ -341,6 +341,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Get build features
         id: build-features
+        shell: bash
         run: |
           FEATURES=$([ "${{ matrix.toolchain }}" == "nightly" ] && echo "--features=leptos-fluent/nightly" || echo "")
           echo "features=$FEATURES" >> $GITHUB_OUTPUT
