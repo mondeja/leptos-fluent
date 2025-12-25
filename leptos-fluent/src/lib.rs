@@ -784,32 +784,6 @@ pub fn i18n() -> I18n {
     expect_i18n()
 }
 
-/// Get the translation of a text identifier to the current language.
-#[deprecated(
-    since = "0.2.7",
-    note = "will be removed in v0.3.0. Use `i18n.tr(text_id)` instead of `tr_impl(i18n, text_id)`."
-)]
-#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
-#[inline(always)]
-pub fn tr_impl(i18n: I18n, text_id: &str) -> String {
-    i18n.tr(text_id)
-}
-
-/// Get the translation of a text identifier to the current language with arguments.
-#[deprecated(
-    since = "0.2.7",
-    note = "will be removed in v0.3.0. Use `i18n.tr_with_args(text_id, args)` instead of `tr_with_args_impl(i18n, text_id, args)`."
-)]
-#[cfg_attr(feature = "tracing", tracing::instrument(level = "trace", skip_all))]
-#[inline(always)]
-pub fn tr_with_args_impl(
-    i18n: I18n,
-    text_id: &str,
-    args: &std::collections::HashMap<Cow<'static, str>, FluentValue>,
-) -> String {
-    i18n.tr_with_args(text_id, args)
-}
-
 /// Translate a text identifier to the current language.
 ///
 /// ```rust,ignore
