@@ -10,21 +10,16 @@ extern crate proc_macro;
 pub(crate) mod cookie;
 mod exprpath;
 mod files_tracker;
-#[cfg(not(feature = "ssr"))]
 pub(crate) mod fluent_entries;
 mod fluent_resources;
 mod languages;
 mod loader;
-#[cfg(not(feature = "ssr"))]
 pub(crate) mod tr_macros;
-#[cfg(not(feature = "ssr"))]
 mod translations_checker;
-#[cfg(not(feature = "ssr"))]
 mod translations_filler;
 
 pub(crate) use exprpath::evaluate_exprpath;
 use files_tracker::build_files_tracker_quote;
-#[cfg(not(feature = "ssr"))]
 pub(crate) use fluent_resources::FluentResources;
 pub(crate) use fluent_resources::{
     build_fluent_resources_and_file_paths, FluentFilePaths,

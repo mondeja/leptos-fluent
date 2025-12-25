@@ -238,6 +238,7 @@ Must be a [glob] relative to the _Cargo.toml_ file or a literal boolean.
   ```rust
   leptos_fluent! {
       locales: "./locales",
+      #[cfg(not(feature = "ssr"))]
       check_translations: "./src/**/*.rs",
       // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   }
@@ -248,6 +249,7 @@ Must be a [glob] relative to the _Cargo.toml_ file or a literal boolean.
   ```rust
   leptos_fluent! {
       locales: "./locales",
+      #[cfg(not(feature = "ssr"))]
       check_translations: "../{app,components}/src/**/*.rs",
       // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   }
@@ -259,10 +261,16 @@ in all the Rust files of the workspace.
 ```rust
 leptos_fluent! {
     locales: "./locales",
+    #[cfg(not(feature = "ssr"))]
     check_translations: true,
     // ^^^^^^^^^^^^^^^^^^^^^
 }
 ```
+
+Note that, by default, checking of translations is enabled on all targets,
+so it must be disabled for server side rendering (SSR) builds to prevent
+from showing the same errors both in server and client builds. This is
+achieved by using the `#[cfg(not(feature = "ssr"))]` attribute.
 
 ### `fill_translations`
 
@@ -273,6 +281,7 @@ Add new messages found in `tr!` and `move_tr!` macros to translations files.
   ```rust
   leptos_fluent! {
       locales: "./locales",
+      #[cfg(not(feature = "ssr"))]
       fill_translations: "./src/**/*.rs",
       // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   }
@@ -283,10 +292,16 @@ Add new messages found in `tr!` and `move_tr!` macros to translations files.
   ```rust
   leptos_fluent! {
       locales: "./locales",
+      #[cfg(not(feature = "ssr"))]
       fill_translations: "../{app,components}/src/**/*.rs",
       // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   }
   ```
+
+Note that, by default, filling of translations is enabled on all targets,
+so it must be disabled for server side rendering (SSR) builds to prevent
+from filling the files twice both in server and client builds. This is
+achieved by using the `#[cfg(not(feature = "ssr"))]` attribute.
 
 ### `customise`
 
