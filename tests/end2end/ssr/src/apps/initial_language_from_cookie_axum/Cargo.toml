@@ -23,7 +23,6 @@ hydrate = [
   "leptos/hydrate",
   "dep:console_error_panic_hook",
   "dep:wasm-bindgen",
-  "leptos-fluent/hydrate",
 ]
 ssr = [
   "dep:axum",

@@ -55,30 +55,6 @@ repos:
             -A,
             deprecated,
           ]
-      - id: clippy
-        alias: clippy-hydrate
-        name: clippy-hydrate
-        args:
-          [
-            --features=hydrate,
-            --exclude=leptos-fluent-ssr-hydrate-axum-example,
-            --workspace,
-            --,
-            -D,
-            warnings,
-            -D,
-            clippy::perf,
-            -D,
-            clippy::print_stdout,
-            -D,
-            clippy::explicit_iter_loop,
-            -D,
-            clippy::uninlined_format_args,
-            -D,
-            clippy::semicolon_if_nothing_returned,
-            -A,
-            deprecated,
-          ]
   - repo: https://github.com/mondeja/rust-pc-hooks
     rev: v1.3.0
     hooks:

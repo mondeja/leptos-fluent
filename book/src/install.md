@@ -16,8 +16,7 @@ leptos-fluent = "0.3"
 ## SSR
 
 For server side rendering apps install **leptos-fluent** and enable
-the `hydrate`, `ssr` and `actix`/`axum` features in their respective
-features set.
+`ssr` and `actix` / `axum` features in their respective features set.
 
 ```toml
 [dependencies]
@@ -25,9 +24,6 @@ leptos-fluent = "0.3"
 axum = { version = "0.8", optional = true }
 
 [features]
-hydrate = [
-  "leptos-fluent/hydrate",
-]
 ssr = [
   "leptos-fluent/ssr",
   "leptos-fluent/axum",  # actix and axum are supported
@@ -53,7 +49,6 @@ leptos-fluent = { version = "0.3", features = ["system"] }
 ## Features
 
 - **Server Side Rendering**: `ssr`
-- **Hydration**: `hydrate`
 - **Actix Web integration**: `actix`
 - **Axum integration**: `axum`
 - **Nightly toolchain**: `nightly`

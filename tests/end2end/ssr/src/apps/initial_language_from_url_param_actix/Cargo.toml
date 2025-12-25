@@ -21,7 +21,7 @@ app-helpers = { path = "../../app-helpers" }
 
 [features]
 csr = ["leptos/csr"]
-hydrate = ["leptos/hydrate", "leptos-fluent/hydrate"]
+hydrate = ["leptos/hydrate"]
 ssr = [
   "dep:actix-files",
   "dep:actix-web",
