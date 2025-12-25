@@ -241,11 +241,13 @@ jobs:
           target: wasm32-unknown-unknown
       - name: Run SSR end-to-end tests
         run: |
+          EXITCODE=0
           echo "Running batch: ${{ join(matrix.tests, ', ') }}"
           for test in ${{ join(matrix.tests, ' ') }}; do
             echo "▶ Running test: $test"
-            TESTS="$test" cargo test -p leptos-fluent-end2end-ssr-tests
+            TESTS="$test" cargo test -p leptos-fluent-end2end-ssr-tests || EXITCODE=$?
           done
+          exit $EXITCODE
 
   build-examples:
     needs: check-toolchain-is-stable
