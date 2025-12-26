@@ -222,13 +222,13 @@ development environment and contribute to the project.</p>
 <h2 id="csr"><a class="header" href="#csr">CSR</a></h2>
 <p>For client side rendering apps just install <strong>leptos-fluent</strong>:</p>
 <pre><code class="language-toml">[dependencies]
-leptos-fluent = "0.2"
+leptos-fluent = "0.3"
 </code></pre>
 <h2 id="ssr"><a class="header" href="#ssr">SSR</a></h2>
 <p>For server side rendering apps install <strong>leptos-fluent</strong> and enable
 <code>ssr</code> and <code>actix</code> / <code>axum</code> features in their respective features set.</p>
 <pre><code class="language-toml">[dependencies]
-leptos-fluent = "0.2"
+leptos-fluent = "0.3"
 axum = { version = "0.8", optional = true }
 
 [features]
@@ -247,7 +247,7 @@ watch-additional-files = ["locales"]
 applications. You need to install <strong>leptos-fluent</strong>, and enable the
 <code>system</code> feature:</p>
 <pre><code class="language-toml">[dependencies]
-leptos-fluent = { version = "0.2", features = ["system"] }
+leptos-fluent = { version = "0.3", features = ["system"] }
 </code></pre>
 <h2 id="features"><a class="header" href="#features">Features</a></h2>
 <ul>
@@ -266,7 +266,7 @@ leptos-fluent = { version = "0.2", features = ["system"] }
 <p><strong>leptos-fluent</strong> builds nightly functionalities by enabling the <code>nightly</code>
 feature:</p>
 <pre><code class="language-toml">[dependencies]
-leptos-fluent = { version = "0.2", features = ["nightly"] }
+leptos-fluent = { version = "0.3", features = ["nightly"] }
 </code></pre>
 <h2 id="language-files"><a class="header" href="#language-files">Language files</a></h2>
 <p>By default, <strong>leptos-fluent</strong> supports JSON languages files. To use other
@@ -274,7 +274,7 @@ formats to load custom languages, the <code>json5</code> or <code>yaml</code> fe
 enabled:</p>
 <!-- markdownlint-disable MD013 -->
 <pre><code class="language-toml">[dependencies]
-leptos-fluent = { version = "0.2", features = ["json5"] }
+leptos-fluent = { version = "0.3", features = ["json5"] }
 </code></pre>
 <!-- markdownlint-enable MD013 -->
 <div id="admonition-tip" class="admonition admonish-tip" role="note" aria-labelledby="admonition-tip-title">
@@ -303,13 +303,14 @@ watch-additional-files = ["examples/csr/locales"]
 <h2 id="tracing"><a class="header" href="#tracing">Tracing</a></h2>
 <p>To enable <a href="https://docs.rs/tracing/latest/tracing"><code>tracing</code></a> support, add the <code>tracing</code> feature to <strong>leptos-fluent</strong>:</p>
 <pre><code class="language-toml">[dependencies]
-leptos-fluent = { version = "0.2", features = ["tracing"] }
+leptos-fluent = { version = "0.3", features = ["tracing"] }
 fluent-templates = "0.13"
 </code></pre>
 <h2 id="compatibility"><a class="header" href="#compatibility">Compatibility</a></h2>
-<div class="table-wrapper"><table><thead><tr><th><strong>leptos-fluent</strong></th><th><strong>leptos</strong></th></tr></thead><tbody>
-<tr><td>0.2</td><td>0.7 / 0.8</td></tr>
-<tr><td>0.1</td><td>0.6</td></tr>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center"><strong>leptos-fluent</strong></th><th style="text-align: center"><strong>leptos</strong></th></tr></thead><tbody>
+<tr><td style="text-align: center">0.3</td><td style="text-align: center">0.8</td></tr>
+<tr><td style="text-align: center">0.2</td><td style="text-align: center">0.7 / 0.8</td></tr>
+<tr><td style="text-align: center">0.1</td><td style="text-align: center">0.6</td></tr>
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="basic-usage"><a class="header" href="#basic-usage">Basic usage</a></h1>
 <ul>
@@ -424,7 +425,7 @@ path = "src/lib.rs"
 
 [dependencies]
 leptos = { version = "0.8", features = ["csr"] }
-leptos-fluent = "0.2"
+leptos-fluent = "0.3"
 console_error_panic_hook = "0.1"
 
 # Using cargo-leptos
@@ -705,14 +706,18 @@ of the application. This strategy is based on the <em>locales/</em> directory.</
 compile time:</p>
 <pre><code class="language-rust">let LANGUAGES = [
   leptos_fluent::Language {
-    id: unic_langid::langid!("en"),
+    id: "en",
     name: "English",
     dir: leptos_fluent::WritingDirection::Ltr,
+    flag: Some("🇬🇧"),
+    script: None,
   },
   leptos_fluent::Language {
-    id: unic_langid::langid!("es-ES"),
+    id: "es-ES",
     name: "Español (España)",
     dir: leptos_fluent::WritingDirection::Ltr,
+    flag: Some("🇪🇸"),
+    script: None,
   },
 ]</code></pre>
 <ul>
@@ -751,7 +756,7 @@ be relative to the <em>Cargo.toml</em> file.</p>
 <p>In order to use a languages file, you must enable the feature for the file
 format you want to use in the <em>Cargo.toml</em> file:</p>
 <pre><code class="language-toml">[dependencies]
-leptos-fluent = { version = "0.2", features = ["json5"] }
+leptos-fluent = { version = "0.3", features = ["json5"] }
 </code></pre>
 <p>Available features for languages file formats are:</p>
 <ul>
