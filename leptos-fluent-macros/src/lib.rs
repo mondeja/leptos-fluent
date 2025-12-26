@@ -1783,8 +1783,8 @@ pub fn leptos_fluent(
             #initial_language_from_url_param_quote
             #initial_language_from_url_path_quote
             #initial_language_from_cookie_quote
-            #initial_language_from_local_storage_quote
             #initial_language_from_session_storage_quote
+            #initial_language_from_local_storage_quote
             #initial_language_from_navigator_quote
         }
 
@@ -2135,8 +2135,8 @@ pub fn leptos_fluent(
 
     let other_quotes = quote! {
         #sync_language_with_server_function_quote
-        #sync_language_with_local_storage_quote
         #sync_language_with_session_storage_quote
+        #sync_language_with_local_storage_quote
         #sync_language_with_url_param_quote
         #sync_language_with_cookie_quote
         #sync_language_with_data_file_quote
