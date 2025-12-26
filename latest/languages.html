@@ -197,14 +197,18 @@ of the application. This strategy is based on the <em>locales/</em> directory.</
 compile time:</p>
 <pre><code class="language-rust">let LANGUAGES = [
   leptos_fluent::Language {
-    id: unic_langid::langid!("en"),
+    id: "en",
     name: "English",
     dir: leptos_fluent::WritingDirection::Ltr,
+    flag: Some("🇬🇧"),
+    script: None,
   },
   leptos_fluent::Language {
-    id: unic_langid::langid!("es-ES"),
+    id: "es-ES",
     name: "Español (España)",
     dir: leptos_fluent::WritingDirection::Ltr,
+    flag: Some("🇪🇸"),
+    script: None,
   },
 ]</code></pre>
 <ul>
@@ -243,7 +247,7 @@ be relative to the <em>Cargo.toml</em> file.</p>
 <p>In order to use a languages file, you must enable the feature for the file
 format you want to use in the <em>Cargo.toml</em> file:</p>
 <pre><code class="language-toml">[dependencies]
-leptos-fluent = { version = "0.2", features = ["json5"] }
+leptos-fluent = { version = "0.3", features = ["json5"] }
 </code></pre>
 <p>Available features for languages file formats are:</p>
 <ul>
@@ -276,17 +280,9 @@ of the names.</p>
 first one in the languages file or language code folder by their alphabetical
 order will used as the initial of the user when no other initialization
 language is discovered.</p>
-<pre><code class="language-rust">static_loader! {
-    static TRANSLATIONS = {
-        locales: "./locales",
-        fallback_language: "en",
-    };
-}
-
-#[component]
+<pre><code class="language-rust">#[component]
 pub fn App() -&gt; impl IntoView {
     leptos_fluent! {
-        translations: [TRANSLATIONS],
         languages: "./locales/languages.json5",
         default_language: "en",
     };

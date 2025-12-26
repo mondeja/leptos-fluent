@@ -420,21 +420,11 @@ of <a href="https://docs.rs/fluent-templates/latest/fluent_templates/macro.stati
 language when a translation is not found in the current language.</p>
 <h3 id="core_locales"><a class="header" href="#core_locales"><code>core_locales</code></a></h3>
 <p>Common locale resources that are shared across all locales.
-Must be relative to the <em>Cargo.toml</em> file, the same
-used in the <a href="https://docs.rs/fluent-templates/latest/fluent_templates/macro.static_loader.html"><code>fluent_templates::static_loader!</code></a> macro:</p>
-<pre><code class="language-rust">static_loader! {
-    pub static TRANSLATIONS = {
-        locales: "./locales",
-        core_locales: "./locales/core",
-        fallback_language: "en",
-    };
-}
-
-leptos_fluent! {
+Must be relative to the <em>Cargo.toml</em> file:</p>
+<pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
     core_locales: "./locales/core",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    translations: [TRANSLATIONS],
 }</code></pre>
 <h3 id="languages"><a class="header" href="#languages"><code>languages</code></a></h3>
 <p>Path to a file containing the list of languages supported by the application.
@@ -465,6 +455,7 @@ translations are correct and that there are no missing translations.</p>
 <p>For single crate projects:</p>
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
+    #[cfg(not(feature = "ssr"))]
     check_translations: "./src/**/*.rs",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 }</code></pre>
@@ -473,6 +464,7 @@ translations are correct and that there are no missing translations.</p>
 <p>For workspace projects:</p>
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
+    #[cfg(not(feature = "ssr"))]
     check_translations: "../{app,components}/src/**/*.rs",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 }</code></pre>
@@ -482,9 +474,14 @@ translations are correct and that there are no missing translations.</p>
 in all the Rust files of the workspace.</p>
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
+    #[cfg(not(feature = "ssr"))]
     check_translations: true,
     // ^^^^^^^^^^^^^^^^^^^^^
 }</code></pre>
+<p>Note that, by default, checking of translations is enabled on all targets,
+so it must be disabled for server side rendering (SSR) builds to prevent
+from showing the same errors both in server and client builds. This is
+achieved by using the <code>#[cfg(not(feature = "ssr"))]</code> attribute.</p>
 <h3 id="fill_translations"><a class="header" href="#fill_translations"><code>fill_translations</code></a></h3>
 <p>Add new messages found in <code>tr!</code> and <code>move_tr!</code> macros to translations files.</p>
 <ul>
@@ -492,6 +489,7 @@ in all the Rust files of the workspace.</p>
 <p>For single crate projects:</p>
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
+    #[cfg(not(feature = "ssr"))]
     fill_translations: "./src/**/*.rs",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 }</code></pre>
@@ -500,11 +498,16 @@ in all the Rust files of the workspace.</p>
 <p>For workspace projects:</p>
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
+    #[cfg(not(feature = "ssr"))]
     fill_translations: "../{app,components}/src/**/*.rs",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 }</code></pre>
 </li>
 </ul>
+<p>Note that, by default, filling of translations is enabled on all targets,
+so it must be disabled for server side rendering (SSR) builds to prevent
+from filling the files twice both in server and client builds. This is
+achieved by using the <code>#[cfg(not(feature = "ssr"))]</code> attribute.</p>
 <h3 id="customise"><a class="header" href="#customise"><code>customise</code></a></h3>
 <p>Provide a closure to customise fluent bundles used by
 <a href="https://docs.rs/fluent-templates/latest/fluent_templates/struct.StaticLoader.html"><code>fluent-templates::StaticLoader</code></a> internally.</p>

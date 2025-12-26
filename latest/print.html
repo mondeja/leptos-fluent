@@ -220,24 +220,22 @@ development environment and contribute to the project.</p>
 <li><a href="install.html#compatibility">Compatibility</a></li>
 </ul>
 <h2 id="csr"><a class="header" href="#csr">CSR</a></h2>
-<p>For client side rendering apps install <strong>leptos-fluent</strong>:</p>
+<p>For client side rendering apps just install <strong>leptos-fluent</strong>:</p>
 <pre><code class="language-toml">[dependencies]
-leptos-fluent = "0.2"
+leptos-fluent = "0.3"
 </code></pre>
 <h2 id="ssr"><a class="header" href="#ssr">SSR</a></h2>
 <p>For server side rendering apps install <strong>leptos-fluent</strong> and enable
-the <code>hydrate</code>, <code>ssr</code> and <code>actix</code>/<code>axum</code> features in their respective
-features set.</p>
+<code>ssr</code> and <code>actix</code> / <code>axum</code> features in their respective features set.</p>
 <pre><code class="language-toml">[dependencies]
-leptos-fluent = "0.2"
+leptos-fluent = "0.3"
+axum = { version = "0.8", optional = true }
 
 [features]
-hydrate = [
-  "leptos-fluent/hydrate"
-]
 ssr = [
   "leptos-fluent/ssr",
   "leptos-fluent/axum",  # actix and axum are supported
+  "dep:axum",
 ]
 
 # Using cargo-leptos
@@ -246,15 +244,14 @@ watch-additional-files = ["locales"]
 </code></pre>
 <h2 id="desktop-applications"><a class="header" href="#desktop-applications">Desktop applications</a></h2>
 <p><strong>leptos-fluent</strong> can be installed on non-wasm targets, like desktop
-applications. You need to install <code>leptos-fluent</code>, <a href="https://github.com/XAMPPRocky/fluent-templates"><code>fluent-templates</code></a>
-and enable the <code>system</code> feature:</p>
+applications. You need to install <strong>leptos-fluent</strong>, and enable the
+<code>system</code> feature:</p>
 <pre><code class="language-toml">[dependencies]
-leptos-fluent = { version = "0.2", features = ["system"] }
+leptos-fluent = { version = "0.3", features = ["system"] }
 </code></pre>
 <h2 id="features"><a class="header" href="#features">Features</a></h2>
 <ul>
 <li><strong>Server Side Rendering</strong>: <code>ssr</code></li>
-<li><strong>Hydration</strong>: <code>hydrate</code></li>
 <li><strong>Actix Web integration</strong>: <code>actix</code></li>
 <li><strong>Axum integration</strong>: <code>axum</code></li>
 <li><strong>Nightly toolchain</strong>: <code>nightly</code></li>
@@ -264,13 +261,12 @@ leptos-fluent = { version = "0.2", features = ["system"] }
 <li><strong>JSON5 languages file</strong>: <code>json5</code></li>
 <li><strong>Tracing support</strong>: <code>tracing</code></li>
 <li><strong>Debugging</strong>: <code>debug</code></li>
-<li><strong>Disable Unicode isolating marks</strong>: <code>disable-unicode-isolating-marks</code></li>
 </ul>
 <h2 id="nightly-toolchain"><a class="header" href="#nightly-toolchain">Nightly toolchain</a></h2>
 <p><strong>leptos-fluent</strong> builds nightly functionalities by enabling the <code>nightly</code>
 feature:</p>
 <pre><code class="language-toml">[dependencies]
-leptos-fluent = { version = "0.2", features = ["nightly"] }
+leptos-fluent = { version = "0.3", features = ["nightly"] }
 </code></pre>
 <h2 id="language-files"><a class="header" href="#language-files">Language files</a></h2>
 <p>By default, <strong>leptos-fluent</strong> supports JSON languages files. To use other
@@ -278,7 +274,7 @@ formats to load custom languages, the <code>json5</code> or <code>yaml</code> fe
 enabled:</p>
 <!-- markdownlint-disable MD013 -->
 <pre><code class="language-toml">[dependencies]
-leptos-fluent = { version = "0.2", features = ["json5"] }
+leptos-fluent = { version = "0.3", features = ["json5"] }
 </code></pre>
 <!-- markdownlint-enable MD013 -->
 <div id="admonition-tip" class="admonition admonish-tip" role="note" aria-labelledby="admonition-tip-title">
@@ -307,13 +303,14 @@ watch-additional-files = ["examples/csr/locales"]
 <h2 id="tracing"><a class="header" href="#tracing">Tracing</a></h2>
 <p>To enable <a href="https://docs.rs/tracing/latest/tracing"><code>tracing</code></a> support, add the <code>tracing</code> feature to <strong>leptos-fluent</strong>:</p>
 <pre><code class="language-toml">[dependencies]
-leptos-fluent = { version = "0.2", features = ["tracing"] }
+leptos-fluent = { version = "0.3", features = ["tracing"] }
 fluent-templates = "0.13"
 </code></pre>
 <h2 id="compatibility"><a class="header" href="#compatibility">Compatibility</a></h2>
-<div class="table-wrapper"><table><thead><tr><th><strong>leptos-fluent</strong></th><th><strong>leptos</strong></th></tr></thead><tbody>
-<tr><td>0.2</td><td>0.7 / 0.8</td></tr>
-<tr><td>0.1</td><td>0.6</td></tr>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center"><strong>leptos-fluent</strong></th><th style="text-align: center"><strong>leptos</strong></th></tr></thead><tbody>
+<tr><td style="text-align: center">0.3</td><td style="text-align: center">0.8</td></tr>
+<tr><td style="text-align: center">0.2</td><td style="text-align: center">0.7 / 0.8</td></tr>
+<tr><td style="text-align: center">0.1</td><td style="text-align: center">0.6</td></tr>
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="basic-usage"><a class="header" href="#basic-usage">Basic usage</a></h1>
 <ul>
@@ -428,7 +425,7 @@ path = "src/lib.rs"
 
 [dependencies]
 leptos = { version = "0.8", features = ["csr"] }
-leptos-fluent = "0.2"
+leptos-fluent = "0.3"
 console_error_panic_hook = "0.1"
 
 # Using cargo-leptos
@@ -709,14 +706,18 @@ of the application. This strategy is based on the <em>locales/</em> directory.</
 compile time:</p>
 <pre><code class="language-rust">let LANGUAGES = [
   leptos_fluent::Language {
-    id: unic_langid::langid!("en"),
+    id: "en",
     name: "English",
     dir: leptos_fluent::WritingDirection::Ltr,
+    flag: Some("🇬🇧"),
+    script: None,
   },
   leptos_fluent::Language {
-    id: unic_langid::langid!("es-ES"),
+    id: "es-ES",
     name: "Español (España)",
     dir: leptos_fluent::WritingDirection::Ltr,
+    flag: Some("🇪🇸"),
+    script: None,
   },
 ]</code></pre>
 <ul>
@@ -755,7 +756,7 @@ be relative to the <em>Cargo.toml</em> file.</p>
 <p>In order to use a languages file, you must enable the feature for the file
 format you want to use in the <em>Cargo.toml</em> file:</p>
 <pre><code class="language-toml">[dependencies]
-leptos-fluent = { version = "0.2", features = ["json5"] }
+leptos-fluent = { version = "0.3", features = ["json5"] }
 </code></pre>
 <p>Available features for languages file formats are:</p>
 <ul>
@@ -788,17 +789,9 @@ of the names.</p>
 first one in the languages file or language code folder by their alphabetical
 order will used as the initial of the user when no other initialization
 language is discovered.</p>
-<pre><code class="language-rust">static_loader! {
-    static TRANSLATIONS = {
-        locales: "./locales",
-        fallback_language: "en",
-    };
-}
-
-#[component]
+<pre><code class="language-rust">#[component]
 pub fn App() -&gt; impl IntoView {
     leptos_fluent! {
-        translations: [TRANSLATIONS],
         languages: "./locales/languages.json5",
         default_language: "en",
     };
@@ -816,17 +809,24 @@ a glob pattern that matches the Rust files that you want to check.</p>
 <p>The pattern must be relative to the location of the <em>Cargo.toml</em> file.</p>
 <p>For single crate projects, it would be something like:</p>
 <pre><code class="language-rust">leptos_fluent! {
+    #[cfg(not(feature = "ssr"))]
     check_translations: "./src/**/*.rs",
 }</code></pre>
 <p>For workspace projects, it could be something like:</p>
 <pre><code class="language-rust">leptos_fluent! {
+    #[cfg(not(feature = "ssr"))]
     check_translations: "../{app,components}/src/**/*.rs",
 }</code></pre>
+<p>Note that, by default, checking of translations is enabled on all targets,
+so it must be disabled for server side rendering (SSR) builds to prevent
+from showing the same errors both in server and client builds. This is
+achieved by using the <code>#[cfg(not(feature = "ssr"))]</code> attribute.</p>
 <h2 id="literal-boolean-for-workspace-projects"><a class="header" href="#literal-boolean-for-workspace-projects">Literal boolean for workspace projects</a></h2>
 <p>The parameter <code>check_translations</code> can also be a literal boolean
 instead of a glob pattern. In that case, the translations will be checked
 in all the Rust files of the workspace.</p>
 <pre><code class="language-rust">leptos_fluent! {
+    #[cfg(not(feature = "ssr"))]
     check_translations: true,
 }</code></pre>
 <h2 id="translations-error-messages"><a class="header" href="#translations-error-messages">Translations error messages</a></h2>
@@ -1435,21 +1435,11 @@ of <a href="https://docs.rs/fluent-templates/latest/fluent_templates/macro.stati
 language when a translation is not found in the current language.</p>
 <h3 id="core_locales"><a class="header" href="#core_locales"><code>core_locales</code></a></h3>
 <p>Common locale resources that are shared across all locales.
-Must be relative to the <em>Cargo.toml</em> file, the same
-used in the <a href="https://docs.rs/fluent-templates/latest/fluent_templates/macro.static_loader.html"><code>fluent_templates::static_loader!</code></a> macro:</p>
-<pre><code class="language-rust">static_loader! {
-    pub static TRANSLATIONS = {
-        locales: "./locales",
-        core_locales: "./locales/core",
-        fallback_language: "en",
-    };
-}
-
-leptos_fluent! {
+Must be relative to the <em>Cargo.toml</em> file:</p>
+<pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
     core_locales: "./locales/core",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    translations: [TRANSLATIONS],
 }</code></pre>
 <h3 id="languages-1"><a class="header" href="#languages-1"><code>languages</code></a></h3>
 <p>Path to a file containing the list of languages supported by the application.
@@ -1480,6 +1470,7 @@ translations are correct and that there are no missing translations.</p>
 <p>For single crate projects:</p>
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
+    #[cfg(not(feature = "ssr"))]
     check_translations: "./src/**/*.rs",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 }</code></pre>
@@ -1488,6 +1479,7 @@ translations are correct and that there are no missing translations.</p>
 <p>For workspace projects:</p>
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
+    #[cfg(not(feature = "ssr"))]
     check_translations: "../{app,components}/src/**/*.rs",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 }</code></pre>
@@ -1497,9 +1489,14 @@ translations are correct and that there are no missing translations.</p>
 in all the Rust files of the workspace.</p>
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
+    #[cfg(not(feature = "ssr"))]
     check_translations: true,
     // ^^^^^^^^^^^^^^^^^^^^^
 }</code></pre>
+<p>Note that, by default, checking of translations is enabled on all targets,
+so it must be disabled for server side rendering (SSR) builds to prevent
+from showing the same errors both in server and client builds. This is
+achieved by using the <code>#[cfg(not(feature = "ssr"))]</code> attribute.</p>
 <h3 id="fill_translations"><a class="header" href="#fill_translations"><code>fill_translations</code></a></h3>
 <p>Add new messages found in <code>tr!</code> and <code>move_tr!</code> macros to translations files.</p>
 <ul>
@@ -1507,6 +1504,7 @@ in all the Rust files of the workspace.</p>
 <p>For single crate projects:</p>
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
+    #[cfg(not(feature = "ssr"))]
     fill_translations: "./src/**/*.rs",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 }</code></pre>
@@ -1515,11 +1513,16 @@ in all the Rust files of the workspace.</p>
 <p>For workspace projects:</p>
 <pre><code class="language-rust">leptos_fluent! {
     locales: "./locales",
+    #[cfg(not(feature = "ssr"))]
     fill_translations: "../{app,components}/src/**/*.rs",
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 }</code></pre>
 </li>
 </ul>
+<p>Note that, by default, filling of translations is enabled on all targets,
+so it must be disabled for server side rendering (SSR) builds to prevent
+from filling the files twice both in server and client builds. This is
+achieved by using the <code>#[cfg(not(feature = "ssr"))]</code> attribute.</p>
 <h3 id="customise"><a class="header" href="#customise"><code>customise</code></a></h3>
 <p>Provide a closure to customise fluent bundles used by
 <a href="https://docs.rs/fluent-templates/latest/fluent_templates/struct.StaticLoader.html"><code>fluent-templates::StaticLoader</code></a> internally.</p>
