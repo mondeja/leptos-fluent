@@ -17,8 +17,8 @@ The initial language of the user can be set in different ways:
 | [URL path]                      | ✅  | ✅  |   ❌    | `initial_language_from_url_path`               |
 | [Cookie]                        | ✅  | ✅  |   ❌    | `initial_language_from_cookie`                 |
 | [Server function]               | ✅  | ✅  |   ❌    | `initial_language_from_server_function`        |
-| Browser [local storage]         | ✅  | ❌  |   ❌    | `initial_language_from_local_storage`          |
 | Browser [session storage]       | ✅  | ❌  |   ❌    | `initial_language_from_session_storage`        |
+| Browser [local storage]         | ✅  | ❌  |   ❌    | `initial_language_from_local_storage`          |
 | Browser [`navigator.languages`] | ✅  | ❌  |   ❌    | `initial_language_from_navigator`              |
 | [`Accept-Language`] header      | ❌  | ✅  |   ❌    | `initial_language_from_accept_language_header` |
 | [System language]               | ❌  | ❌  |   ✅    | `initial_language_from_system`                 |
@@ -39,8 +39,8 @@ The order of precedence is:
   1. [URL parameter]
   1. [URL path]
   1. [Cookie]
-  1. Browser [local storage]
   1. Browser [session storage]
+  1. Browser [local storage]
   1. Browser [`navigator.languages`]
 - **Desktop** ([`system` feature][desktop-applications])
   1. Data file
@@ -56,8 +56,8 @@ following strategies are available:
 | :------------------------ | :-------------------------------- |
 | [URL parameter]           | `set_language_to_url_param`       |
 | [Cookie]                  | `set_language_to_cookie`          |
-| Browser [local storage]   | `set_language_to_local_storage`   |
 | Browser [session storage] | `set_language_to_session_storage` |
+| Browser [local storage]   | `set_language_to_local_storage`   |
 | [Server function]         | `set_language_to_server_function` |
 
 When the user changes the language in the browser settings, the framework can
@@ -138,8 +138,8 @@ The names of the settings can be configured using the following parameters:
 | :------------------------ | :-------------------- | :-----------: |
 | [Cookie]                  | `cookie_name`         |  `"lf-lang"`  |
 | [Cookie attributes]       | `cookie_attrs`        |     `""`      |
-| Browser [local storage]   | `local_storage_key`   |   `"lang"`    |
 | Browser [session storage] | `session_storage_key` |   `"lang"`    |
+| Browser [local storage]   | `local_storage_key`   |   `"lang"`    |
 | [URL parameter]           | `url_param`           |   `"lang"`    |
 | [URL path] extractor `fn` | `url_path`            |      ❌       |
 
