@@ -34,12 +34,6 @@ The deprecated options variants including the terms `localstorage` and
 `sessionstorage` in their names have been removed. Use the new variants
 including `local_storage` and `session_storage`.
 
-#### `Language.id` is now a `&'static str`
-
-The type of the `id` field of the `Language` struct has been changed
-from `unic_langid::LanguageIdentifier` to `&'static str`. This simplifies
-the usage of the `Language` struct and avoids unnecessary conversions.
-
 #### `*_translations` options are executed on all targets
 
 The options `check_translations` and `fill_translations` of `leptos_fluent!`
@@ -61,7 +55,7 @@ leptos_fluent! {
 The features `hydrate` and `disable-unicode-isolating-marks` have been
 removed and will throw an error if used.
 
-#### Changed type of `Language.id` field
+#### `Language.id` is now a `&'static str`
 
 The type of the `id` field of the `Language` struct has been changed
 from `pub id: &'static fluent_templates::LanguageIdentifier`, to
