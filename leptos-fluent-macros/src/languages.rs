@@ -398,7 +398,7 @@ fn locale_from_lang_code(
     });
     (
         lang_code.to_owned(),
-        display_name_with_script(lang_name, script.as_deref()),
+        lang_name.to_owned(),
         dir.to_owned(),
         flag,
         script,
@@ -419,24 +419,11 @@ fn locale_from_parts(
         .map(|f| f.to_string());
     (
         lang_code.to_string(),
-        display_name_with_script(lang_name, script_owned.as_deref()),
+        lang_name.to_string(),
         lang_dir.to_string(),
         flag,
         script_owned,
     )
-}
-
-fn display_name_with_script(name: &str, script: Option<&str>) -> String {
-    match script {
-        Some(script_subtag) => {
-            if name.contains(script_subtag) {
-                name.to_string()
-            } else {
-                format!("{name} ({script_subtag})")
-            }
-        }
-        None => name.to_string(),
-    }
 }
 
 fn language_name_with_script_override(
