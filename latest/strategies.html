@@ -213,8 +213,8 @@
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/URL/pathname">URL path</a></td><td style="text-align: center">✅</td><td style="text-align: center">✅</td><td style="text-align: center">❌</td><td style="text-align: left"><code>initial_language_from_url_path</code></td></tr>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/Document/cookie">Cookie</a></td><td style="text-align: center">✅</td><td style="text-align: center">✅</td><td style="text-align: center">❌</td><td style="text-align: left"><code>initial_language_from_cookie</code></td></tr>
 <tr><td style="text-align: left"><a href="https://book.leptos.dev/server/25_server_functions.html">Server function</a></td><td style="text-align: center">✅</td><td style="text-align: center">✅</td><td style="text-align: center">❌</td><td style="text-align: left"><code>initial_language_from_server_function</code></td></tr>
-<tr><td style="text-align: left">Browser <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a></td><td style="text-align: center">✅</td><td style="text-align: center">❌</td><td style="text-align: center">❌</td><td style="text-align: left"><code>initial_language_from_local_storage</code></td></tr>
 <tr><td style="text-align: left">Browser <a href="https://developer.mozilla.org/docs/Web/API/Window/sessionStorage">session storage</a></td><td style="text-align: center">✅</td><td style="text-align: center">❌</td><td style="text-align: center">❌</td><td style="text-align: left"><code>initial_language_from_session_storage</code></td></tr>
+<tr><td style="text-align: left">Browser <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a></td><td style="text-align: center">✅</td><td style="text-align: center">❌</td><td style="text-align: center">❌</td><td style="text-align: left"><code>initial_language_from_local_storage</code></td></tr>
 <tr><td style="text-align: left">Browser <a href="https://developer.mozilla.org/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a></td><td style="text-align: center">✅</td><td style="text-align: center">❌</td><td style="text-align: center">❌</td><td style="text-align: left"><code>initial_language_from_navigator</code></td></tr>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/HTTP/Headers/Accept-Language"><code>Accept-Language</code></a> header</td><td style="text-align: center">❌</td><td style="text-align: center">✅</td><td style="text-align: center">❌</td><td style="text-align: left"><code>initial_language_from_accept_language_header</code></td></tr>
 <tr><td style="text-align: left"><a href="https://github.com/i509VCB/current_locale">System language</a></td><td style="text-align: center">❌</td><td style="text-align: center">❌</td><td style="text-align: center">✅</td><td style="text-align: left"><code>initial_language_from_system</code></td></tr>
@@ -240,8 +240,8 @@ The order of precedence is:</p>
 <li><a href="https://developer.mozilla.org/docs/Web/API/URLSearchParams">URL parameter</a></li>
 <li><a href="https://developer.mozilla.org/docs/Web/API/URL/pathname">URL path</a></li>
 <li><a href="https://developer.mozilla.org/docs/Web/API/Document/cookie">Cookie</a></li>
-<li>Browser <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a></li>
 <li>Browser <a href="https://developer.mozilla.org/docs/Web/API/Window/sessionStorage">session storage</a></li>
+<li>Browser <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a></li>
 <li>Browser <a href="https://developer.mozilla.org/docs/Web/API/Navigator/languages"><code>navigator.languages</code></a></li>
 </ol>
 </li>
@@ -259,8 +259,8 @@ following strategies are available:</p>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/latest/leptos_fluent.html"><code>leptos_fluent!</code></a></th></tr></thead><tbody>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/URLSearchParams">URL parameter</a></td><td style="text-align: left"><code>set_language_to_url_param</code></td></tr>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/Document/cookie">Cookie</a></td><td style="text-align: left"><code>set_language_to_cookie</code></td></tr>
-<tr><td style="text-align: left">Browser <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a></td><td style="text-align: left"><code>set_language_to_local_storage</code></td></tr>
 <tr><td style="text-align: left">Browser <a href="https://developer.mozilla.org/docs/Web/API/Window/sessionStorage">session storage</a></td><td style="text-align: left"><code>set_language_to_session_storage</code></td></tr>
+<tr><td style="text-align: left">Browser <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a></td><td style="text-align: left"><code>set_language_to_local_storage</code></td></tr>
 <tr><td style="text-align: left"><a href="https://book.leptos.dev/server/25_server_functions.html">Server function</a></td><td style="text-align: left"><code>set_language_to_server_function</code></td></tr>
 </tbody></table>
 </div>
@@ -328,8 +328,8 @@ update the language in the client. The following side effects are available:</p>
 <div class="table-wrapper"><table><thead><tr><th style="text-align: left">Strategy</th><th style="text-align: left"><a href="https://mondeja.github.io/leptos-fluent/latest/leptos_fluent.html"><code>leptos_fluent!</code></a></th><th style="text-align: center">Default value</th></tr></thead><tbody>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/Document/cookie">Cookie</a></td><td style="text-align: left"><code>cookie_name</code></td><td style="text-align: center"><code>"lf-lang"</code></td></tr>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/Document/cookie#write_a_new_cookie">Cookie attributes</a></td><td style="text-align: left"><code>cookie_attrs</code></td><td style="text-align: center"><code>""</code></td></tr>
-<tr><td style="text-align: left">Browser <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a></td><td style="text-align: left"><code>local_storage_key</code></td><td style="text-align: center"><code>"lang"</code></td></tr>
 <tr><td style="text-align: left">Browser <a href="https://developer.mozilla.org/docs/Web/API/Window/sessionStorage">session storage</a></td><td style="text-align: left"><code>session_storage_key</code></td><td style="text-align: center"><code>"lang"</code></td></tr>
+<tr><td style="text-align: left">Browser <a href="https://developer.mozilla.org/docs/Web/API/Window/localStorage">local storage</a></td><td style="text-align: left"><code>local_storage_key</code></td><td style="text-align: center"><code>"lang"</code></td></tr>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/URLSearchParams">URL parameter</a></td><td style="text-align: left"><code>url_param</code></td><td style="text-align: center"><code>"lang"</code></td></tr>
 <tr><td style="text-align: left"><a href="https://developer.mozilla.org/docs/Web/API/URL/pathname">URL path</a> extractor <code>fn</code></td><td style="text-align: left"><code>url_path</code></td><td style="text-align: center">❌</td></tr>
 </tbody></table>
