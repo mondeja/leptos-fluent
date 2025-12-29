@@ -1,12 +1,16 @@
 # CHANGELOG
 
-## [Unreleased]
+## 2025-12-29 - [0.3.1]
 
 ### Enhancements
 
 - Discover language from session storage before local storage when using
   `initial_language_from_local_storage` and
   `initial_language_from_session_storage` parameters of `leptos_fluent!`.
+
+### Bug fixes
+
+- Fix redundant scripts in language name when using script subtags.
 
 ## 2025-12-25 - [0.3.0]
 
@@ -1002,7 +1006,7 @@ version to `0.1` during installation.
 
 - Added all ISO-639-1 and ISO-639-2 languages.
 
-[Unreleased]: https://github.com/mondeja/leptos-fluent/compare/v0.3.0...master
+[0.3.1]: https://github.com/mondeja/leptos-fluent/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/mondeja/leptos-fluent/compare/v0.2.21...v0.3.0
 [0.2.21]: https://github.com/mondeja/leptos-fluent/compare/v0.2.20...v0.2.21
 [0.2.20]: https://github.com/mondeja/leptos-fluent/compare/v0.2.19...v0.2.20
