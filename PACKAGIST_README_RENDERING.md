@@ -143,7 +143,7 @@ $elements = [
     'span', 'summary',
 ];
 
-$config = HtmlSanitizerConfig::new();
+$config = new HtmlSanitizerConfig();
 foreach ($elements as $el) {
     $config = $config->allowElement($el);
 }
