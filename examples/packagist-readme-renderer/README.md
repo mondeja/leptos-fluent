@@ -40,6 +40,14 @@ This renders the README with full Packagist-style transformations:
 - Anchor links prefixed with `user-content-`
 - External links get security attributes
 
+### HTML Preview (with styling)
+
+```bash
+php view.php ../../README.md github.com mondeja/leptos-fluent > preview.html
+```
+
+This generates a complete HTML document with styling similar to Packagist's README display. Open `preview.html` in your browser to see the rendered result.
+
 ### Arguments
 
 ```
@@ -53,23 +61,28 @@ php render.php <readme-file> [host] [owner/repo]
 ## Examples
 
 ```bash
-# Render this project's README
+# Render this project's README (HTML only)
 php render.php ../../README.md github.com mondeja/leptos-fluent > leptos-fluent.html
+
+# View this project's README with styling
+php view.php ../../README.md github.com mondeja/leptos-fluent > leptos-fluent-preview.html
 
 # Render any markdown file
 echo "# Hello World\nThis is **markdown**" > test.md
 php render.php test.md > test.html
 
-# View in browser
-php render.php ../../README.md github.com mondeja/leptos-fluent | python3 -c "import sys; print('<html><head><meta charset=\"utf-8\"><style>body{max-width:800px;margin:50px auto;font-family:sans-serif;line-height:1.6;}code{background:#f4f4f4;padding:2px 6px;border-radius:3px;}pre{background:#f4f4f4;padding:10px;border-radius:5px;overflow-x:auto;}</style></head><body>' + sys.stdin.read() + '</body></html>')" > preview.html
+# Create a styled preview
+php view.php sample.md github.com example/repo > sample-preview.html
 ```
 
 ## Files
 
-- **render.php** - Main rendering script
+- **render.php** - Main rendering script (outputs HTML fragment)
+- **view.php** - HTML viewer with Packagist-like styling (outputs complete HTML document)
 - **src/ReadmeLinkSanitizer.php** - Custom sanitizer for links (from Packagist)
 - **src/ReadmeImageSanitizer.php** - Custom sanitizer for images (from Packagist)
 - **composer.json** - Dependencies configuration
+- **sample.md** - Sample markdown file for testing
 
 ## How It Works
 

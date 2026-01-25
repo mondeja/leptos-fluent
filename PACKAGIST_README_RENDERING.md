@@ -2,6 +2,18 @@
 
 This document explains how Packagist.org renders README.md files from package repositories and provides a way to reproduce the rendering locally.
 
+## Quick Start
+
+For a working example that reproduces Packagist's README rendering:
+
+```bash
+cd examples/packagist-readme-renderer
+composer install
+php view.php ../../README.md github.com mondeja/leptos-fluent > preview.html
+```
+
+Open `preview.html` in your browser to see the rendered result.
+
 ## Overview
 
 Based on research of the [composer/packagist](https://github.com/composer/packagist) repository, Packagist uses a multi-step process to render README files:
