@@ -1,0 +1,87 @@
+<?php
+
+/**
+ * ReadmeLinkSanitizer - Sanitizes links in README files
+ * 
+ * This is a simplified version of Packagist's ReadmeLinkSanitizer
+ * Source: https://github.com/composer/packagist/blob/main/src/HtmlSanitizer/ReadmeLinkSanitizer.php
+ */
+
+namespace PackagistReadmeRenderer;
+
+use Composer\Pcre\Preg;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
+use Symfony\Component\HtmlSanitizer\Visitor\AttributeSanitizer\AttributeSanitizerInterface;
+
+class ReadmeLinkSanitizer implements AttributeSanitizerInterface
+{
+    public function __construct(
+        private ?string $host,
+        private string $ownerRepo,
+        private string $basePath
+    ) {
+    }
+
+    public function getSupportedAttributes(): ?array
+    {
+        return ['href', 'target', 'id'];
+    }
+
+    public function getSupportedElements(): ?array
+    {
+        return ['a'];
+    }
+
+    public function sanitizeAttribute(
+        string $element,
+        string $attribute,
+        string $value,
+        HtmlSanitizerConfig $config
+    ): ?string {
+        if ($attribute === 'target') {
+            if ($value !== '') {
+                return '_blank';
+            }
+            return null;
+        }
+
+        if ($attribute === 'id') {
+            if (!str_starts_with($value, 'user-content-')) {
+                return 'user-content-' . $value;
+            }
+            return $value;
+        }
+
+        // Handle anchor links
+        if (str_starts_with($value, '#') && !str_starts_with($value, '#user-content-')) {
+            return '#user-content-' . substr($value, 1);
+        }
+
+        // Allow mailto links as-is
+        if (str_starts_with($value, 'mailto:')) {
+            return $value;
+        }
+
+        // Convert relative links to absolute for GitHub
+        if ($this->host === 'github.com' && !str_contains($value, '//')) {
+            return 'https://github.com/' . $this->ownerRepo . '/blob/HEAD/' . $this->basePath . $value;
+        }
+
+        // Convert relative links to absolute for GitLab
+        if ($this->host === 'gitlab.com' && !str_contains($value, '//')) {
+            return 'https://gitlab.com/' . $this->ownerRepo . '/-/blob/HEAD/' . $this->basePath . $value;
+        }
+
+        // Convert private GitHub images to public CDN
+        if (str_starts_with($value, 'https://private-user-images.githubusercontent.com/')) {
+            return Preg::replace(
+                '{^https://private-user-images.githubusercontent.com/\d+/\d+-([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})\.\w+\?.*$}',
+                'https://github.com/user-attachments/assets/$1',
+                $value,
+                1
+            );
+        }
+
+        return $value;
+    }
+}
