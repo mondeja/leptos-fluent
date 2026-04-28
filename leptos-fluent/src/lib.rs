@@ -538,7 +538,7 @@ impl I18n {
         // Intenta obtener del cache primero
         let cached = self
             .language_id_cache
-            .with(|cache| cache.get(lang.id).cloned());
+            .with_untracked(|cache| cache.get(lang.id).cloned());
 
         if let Some(id) = cached {
             return Some(id);
@@ -578,11 +578,11 @@ impl I18n {
         tracing::instrument(level = "trace", skip_all)
     )]
     pub fn tr(&self, text_id: &str) -> String {
-        let language = self.language.get();
+        let language = self.language.get_untracked();
 
         let found =
             self.get_language_identifier(language).and_then(|lang_id| {
-                self.translations.with(|translations| {
+                self.translations.with_untracked(|translations| {
                     translations
                         .iter()
                         .find_map(|tr| tr.try_lookup(&lang_id, text_id))
@@ -633,11 +633,11 @@ impl I18n {
         text_id: &str,
         args: &std::collections::HashMap<Cow<'static, str>, FluentValue>,
     ) -> String {
-        let language = self.language.get();
+        let language = self.language.get_untracked();
 
         let found =
             self.get_language_identifier(language).and_then(|lang_id| {
-                self.translations.with(|translations| {
+                self.translations.with_untracked(|translations| {
                     translations.iter().find_map(|tr| {
                         tr.try_lookup_with_args(&lang_id, text_id, args)
                     })
